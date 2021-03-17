@@ -1,5 +1,6 @@
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ChatMainPage extends StatefulWidget {
   static const String routeName = '/material/scrollable-tabs';
@@ -75,7 +76,9 @@ class ChatMainPageState extends State<ChatMainPage>
                 print("####### ${page.text}");
                 return Tab(
                     text: page.text,
-                    icon: Badge(
+                    icon:
+                        //Icon(Icons.ac_unit),
+                        Badge(
                       toAnimate: true,
                       borderRadius: BorderRadius.circular(80),
                       badgeColor: Colors.red,
@@ -131,6 +134,9 @@ class ChatMainPageState extends State<ChatMainPage>
             ),
           );
         }).toList(),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => print("gd"),
       ),
     );
   }
