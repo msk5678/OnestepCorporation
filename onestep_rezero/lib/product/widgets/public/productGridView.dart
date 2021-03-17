@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:onestep_rezero/product/widgets/public/productItem.dart';
 
 class ProductGridView extends StatelessWidget {
-  const ProductGridView({Key key}) : super(key: key);
+  final List itemList;
+  const ProductGridView({Key key, this.itemList}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -22,13 +24,11 @@ class ProductGridView extends StatelessWidget {
         crossAxisSpacing: 7,
       ),
       children: [
-        // ...widget.allProductProvider.products
-        //     .map(
-        //       (product) => ClothItem(
-        //         product: product,
-        //       ),
-        //     )
-        //     .toList(),
+        ...itemList
+            .map(
+              (product) => ProductItem(product: product),
+            )
+            .toList(),
       ],
     );
   }

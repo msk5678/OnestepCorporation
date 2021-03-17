@@ -28,6 +28,7 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
+  
   #firebase
   firebase_core: ^1.0.1
   cloud_firestore: ^1.0.1
@@ -37,13 +38,43 @@ dependencies:
   firebase_dynamic_links: ^0.8.0
   google_sign_in: ^5.0.0
 
+  #image
+  cached_network_image: ^2.5.1
+  image_picker: ^0.7.2+1
+  multi_image_picker: ^4.8.0  # 이미지 피커
+  photo_view: ^0.11.1          # image fullViewer
+  flutter_swiper: ^1.1.6       # image slider
+  ###########
+
+  #formatter
+  pattern_formatter: ^2.0.0    # 숫자, 날짜 format 라이브러리
+  random_string: ^2.2.0-nullsafety  # fireStoreage image random name
+  ###########
+
   #provider
   flutter_riverpod: ^0.13.1
   state_notifier: ^0.7.0
 
+  #permission
+  permission_handler: ^6.1.0   # 권한 요청
+  ##############
+  
+  #floatingButton
+  unicorndial: "^1.1.5"        # multi floatingActionButton 
+  ############
+  
+  #time
+  timeago: ^3.0.2 # 몇분전, 몇일전 표시
+  ###########
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  #moor
+  build_runner: ^1.11.5
+  moor_generator: ^4.1.0  
+  ############
+
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -57,9 +88,8 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  assets:
+    - icons/category/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
