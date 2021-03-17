@@ -3,6 +3,7 @@ import 'package:onestep_rezero/board/boardMain.dart';
 import 'package:onestep_rezero/home/homeMain.dart';
 import 'package:onestep_rezero/myinfo/myinfoMain.dart';
 import 'package:onestep_rezero/notification/notificationMain.dart';
+import 'package:onestep_rezero/notification/page/chatMain.dart';
 import 'package:onestep_rezero/product/pages/productMain.dart';
 
 class BottomNavigationItem {
@@ -33,7 +34,9 @@ class BottomNavigationItem {
           title: Text("게시판"),
         ),
         BottomNavigationItem(
-          page: NotificationMain(),
+          page:
+              //NotificationMain(),
+              ChatMainPage(),
           icon: Icon(Icons.notifications_none),
           title: Text("알림"),
         ),
