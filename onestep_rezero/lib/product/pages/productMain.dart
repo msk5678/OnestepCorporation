@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onestep_rezero/product/widgets/main/body.dart';
+import 'package:onestep_rezero/product/widgets/main/floatingButton.dart';
 import 'package:onestep_rezero/product/widgets/main/header.dart';
 
 class ProductMain extends StatefulWidget {
@@ -14,6 +16,7 @@ class _ProductMainState extends State<ProductMain> {
   @override
   void initState() {
     _scrollController.addListener(scrollListener);
+    context.read(productMainService).fetchProducts();
     super.initState();
   }
 
@@ -26,7 +29,16 @@ class _ProductMainState extends State<ProductMain> {
   void scrollListener() {
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent) {
-      // widget.allProductProvider.fetchNextProducts();
+      context.read(productMainService).fetchNextProducts();
+    }
+
+    print(_scrollController.offset);
+    if (_scrollController.offset >= 600) {
+      print("이상");
+      context.read(floatingStateProvider).state = true;
+    } else {
+      print("이하");
+      context.read(floatingStateProvider).state = false;
     }
   }
 
@@ -39,17 +51,19 @@ class _ProductMainState extends State<ProductMain> {
       elevation: 0,
       backgroundColor: Colors.white,
       actions: <Widget>[
-        new IconButton(
-          icon: new Icon(
-            Icons.refresh,
-            color: Colors.black,
-          ),
-          onPressed: () => {
-            // setState(() {
-            //   widget.allProductProvider.fetchProducts();
-            // })
-          },
-        ),
+        // new IconButton(
+        //   icon: new Icon(
+        //     Icons.refresh,
+        //     color: Colors.black,
+        //   ),
+        //   onPressed: () => {
+        //     // setState(() {
+        //     _scrollController.position
+        //         .moveTo(0.5, duration: Duration(milliseconds: 500)),
+        //     context.read(productMainService).fetchProducts(),
+        //     // })
+        //   },
+        // ),
         new IconButton(
           icon: new Icon(
             Icons.search,
@@ -92,39 +106,8 @@ class _ProductMainState extends State<ProductMain> {
 
   Future<void> _refreshPage() async {
     setState(() {
-      // widget.allProductProvider.fetchProducts();
+      context.read(productMainService).fetchProducts();
     });
-  }
-
-  Widget renderBody() {
-    var _size = MediaQuery.of(context).size;
-    final double _itemHeight = (_size.height - kToolbarHeight - 24) / 2.28;
-    final double _itemWidth = _size.width / 2;
-    return Padding(
-      padding: EdgeInsets.only(top: 10),
-      child: GridView(
-        shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
-        padding: EdgeInsets.symmetric(horizontal: 15),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          childAspectRatio: _itemWidth > _itemHeight
-              ? (_itemHeight / _itemWidth)
-              : (_itemWidth / _itemHeight),
-          crossAxisCount: 3,
-          mainAxisSpacing: 15,
-          crossAxisSpacing: 7,
-        ),
-        children: [
-          // ...widget.allProductProvider.products
-          //     .map(
-          //       (product) => ClothItem(
-          //         product: product,
-          //       ),
-          //     )
-          //     .toList(),
-        ],
-      ),
-    );
   }
 
   @override
@@ -155,13 +138,14 @@ class _ProductMainState extends State<ProductMain> {
                               fontSize: 15, fontWeight: FontWeight.w600))),
                 ),
                 // productitem
-                // renderBody(),
+
                 ProductMainBody(),
               ],
             ),
           ),
         ),
       ),
+      floatingActionButton: FloatingButton(),
     );
   }
 }

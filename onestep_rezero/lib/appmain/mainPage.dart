@@ -9,7 +9,6 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int _currentIndex;
-  final GlobalKey<ScaffoldState> _globalKey = GlobalKey();
   static DateTime currentBackPressTime;
 
   @override
@@ -29,13 +28,6 @@ class _MainPageState extends State<MainPage> {
         duration: Duration(seconds: 2),
         content: Text("한번더 누르면 종료"),
       ));
-
-      // _globalKey.currentState!
-      //   ..hideCurrentSnackBar()
-      //   ..showSnackBar(SnackBar(
-      //     duration: Duration(seconds: 2),
-      //     content: Text("한번더 누르면 종료"),
-      //   ));
       return false;
     }
     return true;
