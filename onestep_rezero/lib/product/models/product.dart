@@ -7,7 +7,7 @@ class Product {
   final String explain;
   final int views;
 
-  final List<dynamic> favoriteuserlist;
+  final Map<String, dynamic> favoriteuserlist;
 
   final DateTime uploadtime;
   final DateTime updatetime;
