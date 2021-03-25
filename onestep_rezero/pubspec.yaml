@@ -28,7 +28,10 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
-  
+
+  #shared_preferences
+  shared_preferences: ^2.0.5
+
   #firebase
   firebase_core: ^1.0.1
   cloud_firestore: ^1.0.1
@@ -54,6 +57,7 @@ dependencies:
   #provider
   flutter_riverpod: ^0.13.1
   state_notifier: ^0.7.0
+  provider: ^4.3.2+2
 
   #ui
   badges: ^1.1.3
@@ -68,14 +72,17 @@ dependencies:
   
   #time
   timeago: ^3.0.2 # 몇분전, 몇일전 표시
+
+  #timer
+  flutter_countdown_timer: ^3.0.0
+  
+  #toast
+  fluttertoast: ^8.0.3
   ###########
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  #moor
-  build_runner: ^1.11.5
-  moor_generator: ^4.1.0  
   ############
 
 

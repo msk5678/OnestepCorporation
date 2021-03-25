@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:onestep_rezero/board/boardMain.dart';
-import 'package:onestep_rezero/home/homeMain.dart';
-import 'package:onestep_rezero/myinfo/myinfoMain.dart';
+import 'package:onestep_rezero/home/pages/homeMain.dart';
+import 'package:onestep_rezero/login/pages/loginJoinPage.dart';
+import 'package:onestep_rezero/myinfo/pages/myinfoMain.dart';
 import 'package:onestep_rezero/notification/notificationMain.dart';
 import 'package:onestep_rezero/notification/page/chatMain.dart';
 import 'package:onestep_rezero/product/pages/productMain.dart';
@@ -29,7 +30,8 @@ class BottomNavigationItem {
           title: Text("장터"),
         ),
         BottomNavigationItem(
-          page: BoardMain(),
+          // page: BoardMain(),
+          page: LoginJoinPage(),
           icon: Icon(Icons.list),
           title: Text("게시판"),
         ),
