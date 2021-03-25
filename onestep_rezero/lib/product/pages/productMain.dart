@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:onestep_rezero/product/widgets/main/body.dart';
-import 'package:onestep_rezero/product/widgets/main/header.dart';
+
+import 'package:onestep_rezero/product/widgets/main/productMainBody.dart';
+import 'package:onestep_rezero/product/widgets/main/productMainHeader.dart';
 
 class ProductMain extends StatefulWidget {
   @override
@@ -158,12 +159,10 @@ class _ProductMainState extends State<ProductMain> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                // category
                 ProductMainHeader(),
                 SizedBox(
                     height: 10,
                     child: Container(color: Color.fromRGBO(240, 240, 240, 1))),
-
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Padding(
@@ -172,7 +171,6 @@ class _ProductMainState extends State<ProductMain> {
                           style: TextStyle(
                               fontSize: 15, fontWeight: FontWeight.w600))),
                 ),
-                // productitem
                 ProductMainBody(),
               ],
             ),

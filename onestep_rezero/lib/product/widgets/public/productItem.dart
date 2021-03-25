@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:onestep_rezero/animation/favoriteAnimation.dart';
 import 'package:onestep_rezero/product/models/product.dart';
+import 'package:onestep_rezero/product/pages/productDetail.dart';
 import 'package:onestep_rezero/product/util/favoriteFirebaseApi.dart';
 import 'package:onestep_rezero/timeUtil.dart';
 
@@ -33,11 +34,10 @@ class _ProductItemState extends State<ProductItem> {
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController _favoriteTextController =
-        widget.product.favoriteuserlist == null
-            ? TextEditingController(text: "0")
-            : TextEditingController(
-                text: "${widget.product.favoriteuserlist.length}");
+    TextEditingController _favoriteTextController = TextEditingController(
+        text: widget.product.favoriteuserlist == null
+            ? "0"
+            : "${widget.product.favoriteuserlist.length}");
 
     Widget setFavorite() {
       bool chk = widget.product.favoriteuserlist == null ||
@@ -80,9 +80,8 @@ class _ProductItemState extends State<ProductItem> {
                       _isRunning = false;
                     },
                     child: Icon(
-                      snapshot.data ? Icons.favorite_border : Icons.favorite,
-                      color: Colors.pink,
-                    ),
+                        snapshot.data ? Icons.favorite_border : Icons.favorite,
+                        color: snapshot.data ? Colors.white : Colors.pink),
                   ),
                 ],
               ),
@@ -106,6 +105,9 @@ class _ProductItemState extends State<ProductItem> {
 
     return GestureDetector(
       onTap: () {
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) =>
+                ClothDetail(docId: widget.product.firestoreid)));
         // Navigator.of(context).pushNamed(
         //   '/DetailProduct',
         //   arguments: {"PRODUCTID": product.firestoreid},

@@ -5,7 +5,7 @@ class Product {
   final String category;
   final String price;
   final String explain;
-  final int views;
+  final Map<String, dynamic> views;
 
   final Map<String, dynamic> favoriteuserlist;
 

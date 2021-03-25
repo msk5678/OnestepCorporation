@@ -38,19 +38,20 @@ dependencies:
   firebase_dynamic_links: ^0.8.0
   google_sign_in: ^5.0.0
   firebase_database: ^6.1.0
-
+  ###########
 
   #image
-  cached_network_image: ^2.5.1
-  image_picker: ^0.7.2+1
-  multi_image_picker: ^4.8.0  # 이미지 피커
+  cached_network_image: ^2.5.1 
+  image_picker: ^0.7.2+1       # 이미지 피커
+  multi_image_picker: ^4.8.0   # 멀티 이미지 피커
   photo_view: ^0.11.1          # image fullViewer
   flutter_swiper: ^1.1.6       # image slider
   ###########
 
   #formatter
-  pattern_formatter: ^2.0.0    # 숫자, 날짜 format 라이브러리
+  pattern_formatter: ^2.0.0         # 숫자, 날짜 format 라이브러리
   random_string: ^2.2.0-nullsafety  # fireStoreage image random name
+  timeago: ^3.0.2 # 몇분전, 몇일전 표시
   ###########
 
   #provider
@@ -59,6 +60,8 @@ dependencies:
 
   #uis
   badges: ^1.2.0  
+  ##########
+  
   #permission
   permission_handler: ^6.1.0   # 권한 요청
   ##############
@@ -66,12 +69,10 @@ dependencies:
   #floatingButton
   unicorndial: "^1.1.5"        # multi floatingActionButton 
   ############
-  
-  #time
-  timeago: ^3.0.2 # 몇분전, 몇일전 표시
-  ###########
+
   #json
   json_serializable: ^4.0.1
+  ##########
 
 dev_dependencies:
   flutter_test:
