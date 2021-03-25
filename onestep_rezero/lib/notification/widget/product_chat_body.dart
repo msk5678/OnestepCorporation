@@ -7,6 +7,5 @@
 //   @override
 //   Widget build(BuildContext context, ScopedReader watch) {
 //     final productlist = watch(productMainService.state);
-
 //   }
 // }

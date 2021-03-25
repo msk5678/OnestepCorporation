@@ -2,6 +2,8 @@ import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'hookMain.dart';
+
 class ChatMainPage extends StatefulWidget {
   static const String routeName = '/material/scrollable-tabs';
   @override
@@ -126,7 +128,8 @@ class ChatMainPageState extends State<ChatMainPage>
                         //RealTimePage()
                         :
                         //BoardChatPage()
-                        Text("ㄱㄷ")
+                        Test()
+                    //Text("ㄱㄷ")
                     //RealTimePage()
                     );
               },
