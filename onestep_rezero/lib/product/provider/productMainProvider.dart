@@ -1,42 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onestep_rezero/product/models/product.dart';
-
-import '../productFirebaseApi.dart';
+import 'package:onestep_rezero/product/util/productFirebaseApi.dart';
 
 class ProductMainService extends StateNotifier<List<Product>> {
   final _productsSnapshot = <DocumentSnapshot>[];
   final int documentLimit = 12;
   bool _hasNext = true;
-  bool _isFetchingUsers = false;
+  bool _isFetching = false;
   List<Product> product = [];
 
   ProductMainService() : super(const []);
 
-  // List<Product> get products => _productsSnapshot.map((snap) {
-  //       final product = snap.data();
-
-  //       return Product(
-  //         firestoreid: snap.id,
-  //         uid: product['uid'],
-  //         title: product['title'],
-  //         category: product['category'],
-  //         favoriteuserlist: product['favoriteuserlist'],
-  //         price: product['price'],
-  //         hide: product['hide'],
-  //         deleted: product['deleted'],
-  //         images: product['images'],
-  //         bumptime: product['bumptime'].toDate(),
-  //       );
-  //     }).toList();
-
-  Future zeroProducts() async {
-    state = [];
-  }
-
   Future fetchProducts() async {
-    if (_isFetchingUsers) return;
-    _isFetchingUsers = true;
+    if (_isFetching) return;
+    _isFetching = true;
     _hasNext = true;
     _productsSnapshot.clear();
     try {
@@ -65,12 +43,12 @@ class ProductMainService extends StateNotifier<List<Product>> {
 
       if (snap.docs.length < documentLimit) _hasNext = false;
     } catch (error) {}
-    _isFetchingUsers = false;
+    _isFetching = false;
   }
 
   Future fetchNextProducts() async {
-    if (_isFetchingUsers || !_hasNext) return;
-    _isFetchingUsers = true;
+    if (_isFetching || !_hasNext) return;
+    _isFetching = true;
 
     try {
       final snap = await ProductFirebaseApi.getAllProducts(
@@ -79,6 +57,7 @@ class ProductMainService extends StateNotifier<List<Product>> {
             _productsSnapshot.isNotEmpty ? _productsSnapshot.last : null,
       );
       _productsSnapshot.addAll(snap.docs);
+
       state = _productsSnapshot.map((snap) {
         final _product = snap.data();
 
@@ -98,7 +77,6 @@ class ProductMainService extends StateNotifier<List<Product>> {
 
       if (snap.docs.length < documentLimit) _hasNext = false;
     } catch (error) {}
-
-    _isFetchingUsers = false;
+    _isFetching = false;
   }
 }

@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:onestep_rezero/product/widgets/main/body.dart';
-import 'package:onestep_rezero/product/widgets/main/floatingButton.dart';
-import 'package:onestep_rezero/product/widgets/main/header.dart';
+
+import 'package:onestep_rezero/product/widgets/main/productMainBody.dart';
+import 'package:onestep_rezero/product/widgets/main/productMainHeader.dart';
 
 class ProductMain extends StatefulWidget {
   @override
@@ -12,6 +15,8 @@ class ProductMain extends StatefulWidget {
 
 class _ProductMainState extends State<ProductMain> {
   final ScrollController _scrollController = ScrollController();
+  final StreamController<bool> _streamController = StreamController<bool>();
+  bool _isVisibility = false;
 
   @override
   void initState() {
@@ -23,22 +28,26 @@ class _ProductMainState extends State<ProductMain> {
   @override
   void dispose() {
     _scrollController.dispose();
+    _streamController.close();
     super.dispose();
   }
 
   void scrollListener() {
-    if (_scrollController.position.pixels ==
-        _scrollController.position.maxScrollExtent) {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 300) {
       context.read(productMainService).fetchNextProducts();
     }
 
-    print(_scrollController.offset);
     if (_scrollController.offset >= 600) {
-      print("이상");
-      context.read(floatingStateProvider).state = true;
-    } else {
-      print("이하");
-      context.read(floatingStateProvider).state = false;
+      if (!_isVisibility) {
+        _isVisibility = true;
+        _streamController.sink.add(true);
+      }
+    } else if (_scrollController.offset < 600) {
+      if (_isVisibility) {
+        _isVisibility = false;
+        _streamController.sink.add(false);
+      }
     }
   }
 
@@ -105,9 +114,36 @@ class _ProductMainState extends State<ProductMain> {
   }
 
   Future<void> _refreshPage() async {
-    setState(() {
-      context.read(productMainService).fetchProducts();
-    });
+    context.read(productMainService).fetchProducts();
+  }
+
+  Widget floatingButton() {
+    return StreamBuilder<bool>(
+      stream: _streamController.stream,
+      initialData: false,
+      builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+        return Visibility(
+          visible: snapshot.data,
+          child: Container(
+            height: 40.0,
+            width: 40.0,
+            child: FittedBox(
+              child: FloatingActionButton(
+                onPressed: () {
+                  _scrollController.position
+                      .moveTo(0.5, duration: Duration(milliseconds: 200));
+                },
+                child:
+                    Icon(Icons.keyboard_arrow_up_rounded, color: Colors.black),
+                backgroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(100.0))),
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -123,12 +159,10 @@ class _ProductMainState extends State<ProductMain> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                // category
                 ProductMainHeader(),
                 SizedBox(
                     height: 10,
                     child: Container(color: Color.fromRGBO(240, 240, 240, 1))),
-
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Padding(
@@ -137,15 +171,13 @@ class _ProductMainState extends State<ProductMain> {
                           style: TextStyle(
                               fontSize: 15, fontWeight: FontWeight.w600))),
                 ),
-                // productitem
-
                 ProductMainBody(),
               ],
             ),
           ),
         ),
       ),
-      floatingActionButton: FloatingButton(),
+      floatingActionButton: floatingButton(),
     );
   }
 }

@@ -5,9 +5,9 @@ class Product {
   final String category;
   final String price;
   final String explain;
-  final int views;
+  final Map<String, dynamic> views;
 
-  final List<dynamic> favoriteuserlist;
+  final Map<String, dynamic> favoriteuserlist;
 
   final DateTime uploadtime;
   final DateTime updatetime;
