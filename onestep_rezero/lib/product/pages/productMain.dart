@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:onestep_rezero/favorite/pages/favoriteMain.dart';
 
 import 'package:onestep_rezero/product/widgets/main/productMainBody.dart';
 import 'package:onestep_rezero/product/widgets/main/productMainHeader.dart';
+import 'package:onestep_rezero/search/pages/searchProduct.dart';
 
 class ProductMain extends StatefulWidget {
   @override
@@ -79,17 +81,9 @@ class _ProductMainState extends State<ProductMain> {
             color: Colors.black,
           ),
           onPressed: () => {
-            // Navigator.of(context).push(
-            //   MaterialPageRoute(
-            //     builder: (context) => Consumer<SearchProvider>(
-            //       builder: (context, searchProvider, _) =>
-            //           SearchProductBoardWidget(
-            //         searchProvider: searchProvider,
-            //         type: 'product',
-            //       ),
-            //     ),
-            //   ),
-            // ),
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => SearchProduct()),
+            ),
           },
         ),
         new IconButton(
@@ -98,15 +92,11 @@ class _ProductMainState extends State<ProductMain> {
             color: Colors.pink,
           ),
           onPressed: () => {
-            // Navigator.of(context).push(
-            //   MaterialPageRoute(
-            //     builder: (context) => Consumer<FavoriteProvider>(
-            //       builder: (context, favoriteProvider, _) => FavoriteWidget(
-            //         favoriteProvider: favoriteProvider,
-            //       ),
-            //     ),
-            //   ),
-            // ),
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => FavoriteMain(),
+              ),
+            ),
           },
         ),
       ],

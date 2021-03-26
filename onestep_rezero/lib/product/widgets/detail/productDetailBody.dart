@@ -5,8 +5,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:onestep_rezero/animation/favoriteAnimation.dart';
+import 'package:onestep_rezero/favorite/utils/favoriteFirebaseApi.dart';
 import 'package:onestep_rezero/product/models/product.dart';
-import 'package:onestep_rezero/product/util/favoriteFirebaseApi.dart';
 import 'package:onestep_rezero/product/widgets/public/productItem.dart';
 import 'package:onestep_rezero/timeUtil.dart';
 
@@ -360,13 +360,15 @@ class _ProductDetailBodyState extends State<ProductDetailBody> {
               if (_isRunning == false) {
                 _isRunning = true;
                 if (snapshot.data) {
-                  FavoriteFirbaseApi.insertFavorite(widget.product.firestoreid);
+                  FavoriteFirebaseApi.insertFavorite(
+                      widget.product.firestoreid);
                   _streamController.sink.add(false);
                   FavoriteAnimation().showFavoriteDialog(context);
                   _favoriteTextController.text =
                       (int.parse(_favoriteTextController.text) + 1).toString();
                 } else {
-                  FavoriteFirbaseApi.deleteFavorite(widget.product.firestoreid);
+                  FavoriteFirebaseApi.deleteFavorite(
+                      widget.product.firestoreid);
                   _streamController.sink.add(true);
                   _favoriteTextController.text =
                       (int.parse(_favoriteTextController.text) - 1).toString();

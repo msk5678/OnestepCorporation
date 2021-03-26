@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onestep_rezero/product/models/product.dart';
-import 'package:onestep_rezero/product/util/productFirebaseApi.dart';
+import 'package:onestep_rezero/product/utils/productFirebaseApi.dart';
 
 class ProductMainService extends StateNotifier<List<Product>> {
   final _productsSnapshot = <DocumentSnapshot>[];

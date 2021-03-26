@@ -4,9 +4,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:flutter/material.dart';
 import 'package:onestep_rezero/animation/favoriteAnimation.dart';
+import 'package:onestep_rezero/favorite/utils/favoriteFirebaseApi.dart';
 import 'package:onestep_rezero/product/models/product.dart';
 import 'package:onestep_rezero/product/pages/productDetail.dart';
-import 'package:onestep_rezero/product/util/favoriteFirebaseApi.dart';
 import 'package:onestep_rezero/timeUtil.dart';
 
 class ProductItem extends StatefulWidget {
@@ -60,8 +60,9 @@ class _ProductItemState extends State<ProductItem> {
                     onTap: () {
                       if (_isRunning == false) {
                         _isRunning = true;
+
                         if (snapshot.data) {
-                          FavoriteFirbaseApi.insertFavorite(
+                          FavoriteFirebaseApi.insertFavorite(
                               widget.product.firestoreid);
                           _streamController.sink.add(false);
                           FavoriteAnimation().showFavoriteDialog(context);
@@ -69,7 +70,7 @@ class _ProductItemState extends State<ProductItem> {
                               (int.parse(_favoriteTextController.text) + 1)
                                   .toString();
                         } else {
-                          FavoriteFirbaseApi.deleteFavorite(
+                          FavoriteFirebaseApi.deleteFavorite(
                               widget.product.firestoreid);
                           _streamController.sink.add(true);
                           _favoriteTextController.text =
