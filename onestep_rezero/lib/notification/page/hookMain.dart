@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:onestep_rezero/login/controllers/auth_controller.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 //import 'package:firebase_core/firebase_core.dart';
 
 class Test extends StatelessWidget {
@@ -37,8 +36,6 @@ class LoginScreenState extends State<LoginScreen> {
 }
 
 class HomeScreen extends StatefulWidget {
-  final authControllerState = useProvider(authControllerProvider.state);
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

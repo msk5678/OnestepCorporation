@@ -52,11 +52,14 @@ dependencies:
   pattern_formatter: ^2.0.0         # 숫자, 날짜 format 라이브러리
   random_string: ^2.2.0-nullsafety  # fireStoreage image random name
   timeago: ^3.0.2 # 몇분전, 몇일전 표시
+  auto_size_text: ^2.1.0 # 글씨 크기 자동 변환
+
   ###########
 
   #provider
   flutter_riverpod: ^0.13.1
   state_notifier: ^0.7.0
+  provider: ^4.3.2+2           # Provider 임시
 
   #uis
   badges: ^1.2.0  
@@ -74,12 +77,17 @@ dependencies:
   json_serializable: ^4.0.1
   ##########
 
+  #toast
+  fluttertoast: ^7.1.1
+  
+
   #Chat Test
-  # stream_chat_flutter: ^1.5.1
+  #stream_chat_flutter: ^1.5.1
 
 # dependency_overrides:
-#   image_picker: ">=0.7.3"
-#   stream_chat_flutter: ">=1.5.1"
+#   image_picker: "0.7.3"
+#   stream_chat_flutter: "1.5.1"
+#   pattern_formatter: "2.0.0"
 
 dev_dependencies:
   flutter_test:

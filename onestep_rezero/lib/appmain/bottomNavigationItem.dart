@@ -3,12 +3,13 @@ import 'package:onestep_rezero/board/boardMain.dart';
 import 'package:onestep_rezero/home/homeMain.dart';
 import 'package:onestep_rezero/myinfo/myinfoMain.dart';
 import 'package:onestep_rezero/notification/page/chatMain.dart';
+import 'package:onestep_rezero/notification/realtime/realtimeProductChatController.dart';
 import 'package:onestep_rezero/product/pages/productMain.dart';
 
 class BottomNavigationItem {
   final Widget page;
   final Widget title;
-  final Icon icon;
+  final Widget icon;
 
   BottomNavigationItem({
     this.page,
@@ -36,7 +37,7 @@ class BottomNavigationItem {
           page:
               //NotificationMain(),
               ChatMainPage(),
-          icon: Icon(Icons.notifications_none),
+          icon: RealtimeProductChatController().getTotalChatCountInBottomBar(),
           title: Text("알림"),
         ),
         BottomNavigationItem(

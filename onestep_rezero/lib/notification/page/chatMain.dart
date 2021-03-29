@@ -1,6 +1,9 @@
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:onestep_rezero/notification/page/realtimePage.dart';
+import 'package:onestep_rezero/notification/realtime/chatCount.dart';
+import 'package:onestep_rezero/notification/realtime/realtimeProductChatController.dart';
+import 'package:provider/provider.dart';
 
 import 'hookMain.dart';
 
@@ -42,7 +45,6 @@ class ChatMainPageState extends State<ChatMainPage>
 
   @override
   Widget build(BuildContext context) {
-    //final chatCount = Provider.of<ChatCount>(context); //카운트 프로바이더
     print("chat main");
     //chatCount.initChatCount();
     return Scaffold(
@@ -84,7 +86,9 @@ class ChatMainPageState extends State<ChatMainPage>
                       toAnimate: true,
                       borderRadius: BorderRadius.circular(80),
                       badgeColor: Colors.red,
-                      badgeContent: Text("0"),
+                      badgeContent:
+                          RealtimeProductChatController().getProductCountText(),
+                      //Text("d"),
                       child: Icon(page.icon,
                           color: Color.fromRGBO(248, 247, 77, 1)),
                     )
@@ -124,8 +128,9 @@ class ChatMainPageState extends State<ChatMainPage>
               itemBuilder: (context, position) {
                 return Container(
                     child: (position == 0 && page.text == '장터게시판')
-                        ? Text("ㄱㄷ")
-                        //RealTimePage()
+                        ?
+                        //Text("ㄱㄷ")
+                        RealTimePage()
                         :
                         //BoardChatPage()
                         Test()
