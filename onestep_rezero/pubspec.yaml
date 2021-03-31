@@ -35,7 +35,7 @@ dependencies:
   #firebase
   firebase_core: ^1.0.1
   cloud_firestore: ^1.0.1
-  firebase_storage: ^8.0.0
+  firebase_storage: ^8.0.1
   firebase_messaging: ^9.0.0
   firebase_auth: ^1.0.1
   firebase_dynamic_links: ^0.8.0
@@ -78,11 +78,22 @@ dependencies:
   
   #toast
   fluttertoast: ^8.0.3
+
+  #moor
+  moor: ^4.2.1
+  moor_flutter: ^4.0.0
+
+  #mail
+  mailer: ^4.0.0
+
   ###########
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  #moor
+  moor_generator: ^4.2.1
+  build_runner: ^1.12.2
   ############
 
 

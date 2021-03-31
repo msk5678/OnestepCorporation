@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:onestep_rezero/home/pages/homeNotificationPage.dart';
+import 'package:onestep_rezero/moor/moor_database.dart';
+import 'package:provider/provider.dart';
 
 class HomeMain extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    NotificationChksDao p =
+        Provider.of<AppDatabase>(context).notificationChksDao;
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -31,9 +36,9 @@ class HomeMain extends StatelessWidget {
                     color: Colors.black,
                     onPressed: () {
                       // 알림으로 넘어가는 부분
-                      // Navigator.of(context).push(MaterialPageRoute(
-                      //   builder: (context) => HomeNotificationPage(),
-                      // ));
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => HomeNotificationPage(),
+                      ));
                       // 쪽지 form 보려고 test
                       // Navigator.of(context).push(MaterialPageRoute(
                       //   builder: (context) => MessagePage(),
@@ -41,37 +46,37 @@ class HomeMain extends StatelessWidget {
                     },
                   ),
                   StreamBuilder(
-                      // stream: p.watchNotificationAll(),
+                      stream: p.watchNotificationAll(),
                       builder: (context, snapshot) {
-                    switch (snapshot.connectionState) {
-                      case ConnectionState.waiting:
-                        return Positioned(
-                          top: 8,
-                          right: 10,
-                          child: Icon(
-                              // check 다 했으면 아이콘이 없는 쪽으로 코드 변경
-                              null),
-                        );
+                        switch (snapshot.connectionState) {
+                          case ConnectionState.waiting:
+                            return Positioned(
+                              top: 8,
+                              right: 10,
+                              child: Icon(
+                                  // check 다 했으면 아이콘이 없는 쪽으로 코드 변경
+                                  null),
+                            );
 
-                      default:
-                        bool chk = true;
-                        if (snapshot.data != null) {
-                          // List<NotificationChk> notiList = snapshot.data;
-                          // chk = notiList.isEmpty;
+                          default:
+                            bool chk = true;
+                            if (snapshot.data != null) {
+                              List<NotificationChk> notiList = snapshot.data;
+                              chk = notiList.isEmpty;
+                            }
+                            return Positioned(
+                              top: 8,
+                              right: 10,
+                              child: chk
+                                  ? Container()
+                                  : Icon(
+                                      Icons.brightness_1,
+                                      color: Colors.red,
+                                      size: 15,
+                                    ),
+                            );
                         }
-                        return Positioned(
-                          top: 8,
-                          right: 10,
-                          child: chk
-                              ? Container()
-                              : Icon(
-                                  Icons.brightness_1,
-                                  color: Colors.red,
-                                  size: 15,
-                                ),
-                        );
-                    }
-                  }),
+                      }),
                 ]),
               ),
             ],

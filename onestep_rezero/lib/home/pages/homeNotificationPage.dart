@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:onestep_rezero/home/widgets/notificationBody.dart';
 
 class HomeNotificationPage extends StatelessWidget {
   @override
@@ -8,11 +9,7 @@ class HomeNotificationPage extends StatelessWidget {
         title: Text("알림", style: TextStyle(color: Colors.black)),
         backgroundColor: Colors.white,
       ),
-      body: Center(
-        child: Container(
-          child: Text("알림"),
-        ),
-      ),
+      body: NotificationBody(),
     );
   }
 }

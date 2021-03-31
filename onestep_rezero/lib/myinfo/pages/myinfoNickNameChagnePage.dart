@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:onestep_rezero/myinfo/providers/myinfoProvider.dart';
 import 'package:onestep_rezero/myinfo/widgets/nickNameChangeBody.dart';
 
 String _tempNickName = "";

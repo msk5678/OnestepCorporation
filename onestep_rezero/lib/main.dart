@@ -1,8 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:onestep_rezero/moor/moor_database.dart';
 import 'package:onestep_rezero/timeUtil.dart';
-
+import 'package:provider/provider.dart' as provider;
 import 'appmain/mainPage.dart';
 
 void main() async {
@@ -10,7 +11,9 @@ void main() async {
   await Firebase.initializeApp();
   TimeUtil.setLocalMessages();
   runApp(
-    ProviderScope(child: MyApp()),
+    provider.MultiProvider(providers: [
+      provider.Provider<AppDatabase>.value(value: new AppDatabase()),
+    ], child: ProviderScope(child: MyApp())),
   );
 }
 

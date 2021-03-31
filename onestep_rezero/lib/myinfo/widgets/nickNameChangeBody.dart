@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/all.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onestep_rezero/myinfo/providers/providers.dart';
 
-void flutterDialog(BuildContext context) {
+void nickNameNowCheckDialog(BuildContext context) {
   showDialog(
       context: context,
       barrierDismissible: false,
@@ -141,7 +141,7 @@ class NickNameChangeBody extends ConsumerWidget {
                 ),
                 onPressed: () {
                   _isNickNameCheck == false
-                      ? flutterDialog(context)
+                      ? nickNameNowCheckDialog(context)
                       :
                       // FirebaseFirestore.instance
                       //     .collection("users")
