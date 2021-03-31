@@ -423,6 +423,30 @@ class _ProductDetailBodyState extends State<ProductDetailBody> {
       //     });
     }
 
+    Widget bottomChatWidget() {
+      return Padding(
+        padding: EdgeInsets.only(right: 10.0),
+        child: SizedBox(
+          width: 150,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              primary: Colors.pink,
+              textStyle: TextStyle(color: Colors.white),
+            ),
+            onPressed: () {
+              // NotificationManager.navigateToChattingRoom(
+              //   context,
+              //   FirebaseApi.getId(),
+              //   this._product.uid!,
+              //   this._product.firestoreid,
+              // );
+            },
+            child: Text('채팅'),
+          ),
+        ),
+      );
+    }
+
     Widget bottomNavigator() {
       return SizedBox(
         height: 70,
@@ -463,7 +487,8 @@ class _ProductDetailBodyState extends State<ProductDetailBody> {
                 ),
               ),
               Expanded(child: Container()),
-              // if (this._product.uid != FirebaseApi.getId()) bottomChatWidget(),
+              if (widget.product.uid != "EQ0UIt2ujMd642TxMzrZ0zJZTzB3")
+                bottomChatWidget(),
             ],
           ),
         ),

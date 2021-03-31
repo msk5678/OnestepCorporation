@@ -3,19 +3,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onestep_rezero/product/models/product.dart';
 import 'package:onestep_rezero/product/utils/productFirebaseApi.dart';
 
-class ProductMainService extends StateNotifier<List<Product>> {
+class ProductMainProvider extends StateNotifier<List<Product>> {
   final _productsSnapshot = <DocumentSnapshot>[];
   final int documentLimit = 12;
   bool _hasNext = true;
   bool _isFetching = false;
   List<Product> product = [];
 
-  ProductMainService() : super(const []);
+  ProductMainProvider() : super(const []);
 
   Future fetchProducts() async {
     if (_isFetching) return;
     _isFetching = true;
     _hasNext = true;
+
     _productsSnapshot.clear();
     try {
       final snap = await ProductFirebaseApi.getAllProducts(

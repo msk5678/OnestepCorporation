@@ -17,6 +17,7 @@ class _SearchProductState extends State<SearchProduct> {
   final StreamController<bool> _streamController = StreamController<bool>();
   String _searchText;
   bool _isSearchMode;
+  bool _isVisibility;
 
   @override
   void initState() {
@@ -25,6 +26,7 @@ class _SearchProductState extends State<SearchProduct> {
         TextPosition(offset: _textController.text.length));
     _scrollController.addListener(scrollListener);
     _searchText = "";
+    _isVisibility = false;
     _isSearchMode = true;
 
     super.initState();
@@ -43,17 +45,17 @@ class _SearchProductState extends State<SearchProduct> {
       context.read(searchProductProvider).searchNextProducts(_searchText);
     }
 
-    // if (_scrollController.offset >= 600) {
-    //   if (!_isVisibility) {
-    //     _isVisibility = true;
-    //     _streamController.sink.add(true);
-    //   }
-    // } else if (_scrollController.offset < 600) {
-    //   if (_isVisibility) {
-    //     _isVisibility = false;
-    //     _streamController.sink.add(false);
-    //   }
-    // }
+    if (_scrollController.offset >= 600) {
+      if (!_isVisibility) {
+        _isVisibility = true;
+        _streamController.sink.add(true);
+      }
+    } else if (_scrollController.offset < 600) {
+      if (_isVisibility) {
+        _isVisibility = false;
+        _streamController.sink.add(false);
+      }
+    }
   }
 
   Widget appBar() {

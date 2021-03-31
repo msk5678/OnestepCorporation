@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:onestep_rezero/product/widgets/main/productMainBody.dart';
 import 'package:onestep_rezero/product/widgets/public/productItem.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ProductGridView extends StatelessWidget {
+class ProductGridView extends ConsumerWidget {
   final List itemList;
   const ProductGridView({Key key, this.itemList}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ScopedReader watch) {
     var _size = MediaQuery.of(context).size;
     final double _itemHeight = (_size.height - kToolbarHeight - 24) / 2.28;
     final double _itemWidth = _size.width / 2;

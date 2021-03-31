@@ -14,6 +14,14 @@ class ClothDetail extends StatefulWidget {
 class _ClothDetailState extends State<ClothDetail> {
   Product _product;
 
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    print("");
+    // Navigator.pop(context);
+    super.dispose();
+  }
+
   void incProductViews() {
     // 조회수 증가
 

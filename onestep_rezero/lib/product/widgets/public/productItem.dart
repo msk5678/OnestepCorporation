@@ -7,7 +7,9 @@ import 'package:onestep_rezero/animation/favoriteAnimation.dart';
 import 'package:onestep_rezero/favorite/utils/favoriteFirebaseApi.dart';
 import 'package:onestep_rezero/product/models/product.dart';
 import 'package:onestep_rezero/product/pages/productDetail.dart';
+import 'package:onestep_rezero/product/widgets/main/productMainBody.dart';
 import 'package:onestep_rezero/timeUtil.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ProductItem extends StatefulWidget {
   final Product product;
@@ -34,6 +36,9 @@ class _ProductItemState extends State<ProductItem> {
 
   @override
   Widget build(BuildContext context) {
+    print(
+        "title : ${widget.product.title}, list : ${widget.product.favoriteuserlist}");
+
     TextEditingController _favoriteTextController = TextEditingController(
         text: widget.product.favoriteuserlist == null
             ? "0"
@@ -48,6 +53,8 @@ class _ProductItemState extends State<ProductItem> {
         stream: _streamController.stream,
         initialData: chk,
         builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+          print("data = ${snapshot.data}");
+
           return Positioned(
             right: 0,
             bottom: 0,
