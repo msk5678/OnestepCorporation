@@ -1,11 +1,7 @@
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:onestep_rezero/notification/page/realtimePage.dart';
-import 'package:onestep_rezero/notification/realtime/chatCount.dart';
 import 'package:onestep_rezero/notification/realtime/realtimeProductChatController.dart';
-import 'package:provider/provider.dart';
-
-import 'hookMain.dart';
 
 class ChatMainPage extends StatefulWidget {
   static const String routeName = '/material/scrollable-tabs';
@@ -133,8 +129,7 @@ class ChatMainPageState extends State<ChatMainPage>
                         RealTimePage()
                         :
                         //BoardChatPage()
-                        Test()
-                    //Text("ㄱㄷ")
+                        Text("ㄱㄷ")
                     //RealTimePage()
                     );
               },

@@ -59,7 +59,6 @@ dependencies:
   #provider
   flutter_riverpod: ^0.13.1
   state_notifier: ^0.7.0
-  provider: ^4.3.2+2           # Provider 임시
 
   #uis
   badges: ^1.2.0  
