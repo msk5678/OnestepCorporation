@@ -8,7 +8,6 @@ class Product {
   final Map<String, dynamic> views;
 
   final Map<String, dynamic> favoriteuserlist;
-
   final DateTime uploadtime;
   final DateTime updatetime;
   final DateTime bumptime;
