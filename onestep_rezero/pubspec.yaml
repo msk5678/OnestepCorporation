@@ -40,18 +40,23 @@ dependencies:
   firebase_auth: ^1.0.1
   firebase_dynamic_links: ^0.8.0
   google_sign_in: ^5.0.0
+  firebase_database: ^6.1.0
+  ###########
 
   #image
-  cached_network_image: ^2.5.1
-  image_picker: ^0.7.2+1
-  multi_image_picker: ^4.8.0  # 이미지 피커
+  cached_network_image: ^2.5.1 
+  image_picker: ^0.7.2+1       # 이미지 피커
+  multi_image_picker: ^4.8.0   # 멀티 이미지 피커
   photo_view: ^0.11.1          # image fullViewer
   flutter_swiper: ^1.1.6       # image slider
   ###########
 
   #formatter
-  pattern_formatter: ^2.0.0    # 숫자, 날짜 format 라이브러리
+  pattern_formatter: ^2.0.0         # 숫자, 날짜 format 라이브러리
   random_string: ^2.2.0-nullsafety  # fireStoreage image random name
+  timeago: ^3.0.2 # 몇분전, 몇일전 표시
+  auto_size_text: ^2.1.0 # 글씨 크기 자동 변환
+
   ###########
 
   #provider
@@ -59,8 +64,9 @@ dependencies:
   state_notifier: ^0.7.0
   provider: ^4.3.2+2
 
-  #ui
-  badges: ^1.1.3
+  #uis
+  badges: ^1.2.0  
+  ##########
   
   #permission
   permission_handler: ^6.1.0   # 권한 요청
@@ -69,6 +75,13 @@ dependencies:
   #floatingButton
   unicorndial: "^1.1.5"        # multi floatingActionButton 
   ############
+
+  #json
+  json_serializable: ^4.0.1
+  ##########
+
+  #toast
+  fluttertoast: ^7.1.1
   
   #time
   timeago: ^3.0.2 # 몇분전, 몇일전 표시
@@ -88,6 +101,14 @@ dependencies:
 
   ###########
 
+  #Chat Test
+  #stream_chat_flutter: ^1.5.1
+
+# dependency_overrides:
+#   image_picker: "0.7.3"
+#   stream_chat_flutter: "1.5.1"
+#   pattern_formatter: "2.0.0"
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -95,6 +116,8 @@ dev_dependencies:
   moor_generator: ^4.2.1
   build_runner: ^1.12.2
   ############
+
+
 
 
 # For information on the generic Dart part of this file, see the
