@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:onestep_rezero/animation/favoriteAnimation.dart';
 import 'package:onestep_rezero/favorite/utils/favoriteFirebaseApi.dart';
+import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/product/models/product.dart';
 import 'package:onestep_rezero/product/widgets/public/productItem.dart';
 import 'package:onestep_rezero/timeUtil.dart';
@@ -348,7 +349,8 @@ class _ProductDetailBodyState extends State<ProductDetailBody> {
 
     Widget setFavorite() {
       bool chk = widget.product.favoriteuserlist == null ||
-          widget.product.favoriteuserlist["EQ0UIt2ujMd642TxMzrZ0zJZTzB3"] ==
+          widget.product
+                  .favoriteuserlist[googleSignIn.currentUser.id.toString()] ==
               null;
 
       return StreamBuilder<bool>(
@@ -487,7 +489,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody> {
                 ),
               ),
               Expanded(child: Container()),
-              if (widget.product.uid != "EQ0UIt2ujMd642TxMzrZ0zJZTzB3")
+              if (widget.product.uid != googleSignIn.currentUser.id.toString())
                 bottomChatWidget(),
             ],
           ),

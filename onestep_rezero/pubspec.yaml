@@ -74,6 +74,11 @@ dependencies:
   json_serializable: ^4.0.1
   ##########
 
+  #algolia
+  algolia: ^1.0.1 # 검색
+  ##########
+
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
