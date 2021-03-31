@@ -7,7 +7,7 @@ import 'package:onestep_rezero/notification/realtime/firebase_api.dart';
 import 'package:onestep_rezero/notification/realtime/realtimeNavigationManager.dart';
 import 'package:onestep_rezero/notification/realtime/realtimeProductChatController.dart';
 import 'package:onestep_rezero/notification/widget/chatBadge.dart';
-import 'package:onestep_rezero/notification/widget/chat_realtime.dart';
+import 'package:onestep_rezero/notification/widget/chat_list_time.dart';
 
 class RealTimePage extends StatefulWidget {
   @override
@@ -159,7 +159,7 @@ class _RealTimePageState extends State<RealTimePage>
                     print(
                         "stream values else1 message ForEach: MyUid : ${FirebaseApi.getId()}");
 
-                    if (mIvalue == false && mIkey != FirebaseApi.getId()) {
+                    if (mIvalue == false && mIkey == FirebaseApi.getId()) {
                       len++;
                       print(
                           "stream values else1 message ForEach: 읽지 않은 메세지 있음. len : $len");
@@ -215,7 +215,8 @@ class _RealTimePageState extends State<RealTimePage>
                                 SizedBox(width: 10, height: 10),
                                 Spacer(),
                                 //시간
-                                GetRealTime(listProductChat[index].timeStamp),
+                                getChatListTime(
+                                    listProductChat[index].timeStamp),
                               ],
                             ),
                           ),

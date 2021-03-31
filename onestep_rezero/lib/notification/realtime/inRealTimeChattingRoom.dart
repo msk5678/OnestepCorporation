@@ -8,6 +8,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:onestep_rezero/notification/model/productMessage.dart';
 import 'package:onestep_rezero/notification/model/productSendMessage.dart';
+import 'package:onestep_rezero/notification/widget/message_list_time.dart';
 
 import 'FullmageWidget.dart';
 import 'firebase_api.dart';
@@ -586,6 +587,7 @@ class _LastChatState extends State<ChatScreen> {
       return Column(
         //요기
         children: <Widget>[
+          Text("time test"),
           // if (index == size - 1) Text(chatTime),
           // if (chatTime != nextchatTime) Text(chatTime),
           Row(
@@ -597,7 +599,8 @@ class _LastChatState extends State<ChatScreen> {
                   productMessage.isRead == false ? Text("1") : Container(),
                   //Text(document["isRead"].toString()),
                   //GetTime(document),
-                  Text("time"),
+                  //Text("time"),
+                  getMessageTime(productMessage.timestamp),
                 ],
               ),
 
@@ -811,6 +814,7 @@ class _LastChatState extends State<ChatScreen> {
                                 right: 10.0),
                           ),
                 //GetTime(document),
+                getMessageTime(productMessage.timestamp),
               ],
             ),
 
