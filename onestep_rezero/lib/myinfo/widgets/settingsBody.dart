@@ -18,7 +18,8 @@ class SettingsBody extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 20, 0, 0),
+            padding: EdgeInsets.fromLTRB(MediaQuery.of(context).size.width / 20,
+                MediaQuery.of(context).size.width / 20, 0, 0),
             child: Container(
               child: Text(
                 "알림 설정",
@@ -29,7 +30,11 @@ class SettingsBody extends ConsumerWidget {
           InkWell(
             onTap: () {},
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 10, 0, 0),
+              padding: EdgeInsets.fromLTRB(
+                  MediaQuery.of(context).size.width / 20,
+                  MediaQuery.of(context).size.width / 30,
+                  0,
+                  0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -55,7 +60,8 @@ class SettingsBody extends ConsumerWidget {
           InkWell(
             onTap: () {},
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
+              padding: EdgeInsets.fromLTRB(
+                  MediaQuery.of(context).size.width / 20, 0, 0, 0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -82,7 +88,8 @@ class SettingsBody extends ConsumerWidget {
             thickness: 2,
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 20, 0, 0),
+            padding: EdgeInsets.fromLTRB(MediaQuery.of(context).size.width / 20,
+                MediaQuery.of(context).size.width / 20, 0, 0),
             child: Container(
               child: Text(
                 "사용자 설정",
@@ -98,7 +105,11 @@ class SettingsBody extends ConsumerWidget {
               );
             },
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 10, 0, 0),
+              padding: EdgeInsets.fromLTRB(
+                  MediaQuery.of(context).size.width / 20,
+                  MediaQuery.of(context).size.width / 30,
+                  0,
+                  0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -125,7 +136,8 @@ class SettingsBody extends ConsumerWidget {
             thickness: 2,
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 20, 0, 0),
+            padding: EdgeInsets.fromLTRB(MediaQuery.of(context).size.width / 20,
+                MediaQuery.of(context).size.width / 20, 0, 0),
             child: Container(
               child: Text(
                 "기타",
@@ -136,7 +148,11 @@ class SettingsBody extends ConsumerWidget {
           InkWell(
             onTap: () {},
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 10, 0, 0),
+              padding: EdgeInsets.fromLTRB(
+                  MediaQuery.of(context).size.width / 20,
+                  MediaQuery.of(context).size.width / 30,
+                  0,
+                  0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -157,7 +173,8 @@ class SettingsBody extends ConsumerWidget {
           InkWell(
             onTap: () {},
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
+              padding: EdgeInsets.fromLTRB(
+                  MediaQuery.of(context).size.width / 20, 0, 0, 0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [

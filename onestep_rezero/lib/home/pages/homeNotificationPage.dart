@@ -8,6 +8,7 @@ class HomeNotificationPage extends StatelessWidget {
       appBar: AppBar(
         title: Text("알림", style: TextStyle(color: Colors.black)),
         backgroundColor: Colors.white,
+        iconTheme: IconThemeData(color: Colors.black),
       ),
       body: NotificationBody(),
     );

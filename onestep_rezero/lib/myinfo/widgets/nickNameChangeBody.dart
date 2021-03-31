@@ -56,7 +56,8 @@ class NickNameChangeBody extends ConsumerWidget {
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+            padding: EdgeInsets.fromLTRB(
+                0, MediaQuery.of(context).size.width / 20, 0, 0),
             child: Center(
               child: Container(
                 child: Text(
@@ -67,7 +68,8 @@ class NickNameChangeBody extends ConsumerWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
+            padding: EdgeInsets.fromLTRB(
+                0, MediaQuery.of(context).size.width / 30, 0, 0),
             child: Container(
               width: MediaQuery.of(context).size.width / 1.2,
               child: TextField(
@@ -130,7 +132,8 @@ class NickNameChangeBody extends ConsumerWidget {
                 _firstEnter == true || _isNickNameCheck == true ? true : false,
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+            padding: EdgeInsets.fromLTRB(
+                0, MediaQuery.of(context).size.width / 30, 0, 0),
             child: Container(
               width: MediaQuery.of(context).size.width / 1.2,
               child: ElevatedButton(

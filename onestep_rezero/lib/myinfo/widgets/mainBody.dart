@@ -1,7 +1,9 @@
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:onestep_rezero/myinfo/widgets/userProfile.dart';
+import 'package:onestep_rezero/myinfo/pages/myinfoProfilePage.dart';
+import 'dart:async';
+import 'package:onestep_rezero/myinfo/widgets/myProfileImage.dart';
 
 // final _storage = FirebaseStorage.instanceFor(
 //     bucket: 'gs://onestep-project.appspot.com/user images');
@@ -26,9 +28,13 @@ class MyinfoMainBody extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          UserProfile(),
+          MyProfileImage(),
           Padding(
-            padding: const EdgeInsets.fromLTRB(0, 25, 0, 25),
+            padding: EdgeInsets.fromLTRB(
+                0,
+                MediaQuery.of(context).size.width / 20,
+                0,
+                MediaQuery.of(context).size.width / 20),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -36,15 +42,8 @@ class MyinfoMainBody extends ConsumerWidget {
                   children: [
                     IconButton(
                       onPressed: () {
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //       builder: (context) =>
-                        //           ProfileWidget(
-                        //             uid: FirebaseApi
-                        //                 .getId(),
-                        //           )),
-                        // );
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => MyinfoProfilePage()));
                       },
                       icon: Icon(Icons.error_outline),
                     ),
@@ -54,21 +53,7 @@ class MyinfoMainBody extends ConsumerWidget {
                 Column(
                   children: [
                     IconButton(
-                      onPressed: () {
-                        // Navigator.of(context)
-                        //     .push(MaterialPageRoute(
-                        //   builder: (context) =>
-                        //       Consumer<MyProductProvider>(
-                        //     builder: (context,
-                        //             myProductProvider,
-                        //             _) =>
-                        //         MyinfoMyWrite(
-                        //       myProductProvider:
-                        //           myProductProvider,
-                        //     ),
-                        //   ),
-                        // ));
-                      },
+                      onPressed: () {},
                       icon: Icon(Icons.error_outline),
                     ),
                     Text("내가쓴글"),
@@ -106,7 +91,8 @@ class MyinfoMainBody extends ConsumerWidget {
             thickness: 2,
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 10, 0, 0),
+            padding: EdgeInsets.fromLTRB(MediaQuery.of(context).size.width / 20,
+                MediaQuery.of(context).size.width / 30, 0, 0),
             child: Container(
               child: Text(
                 "인증",
@@ -117,7 +103,11 @@ class MyinfoMainBody extends ConsumerWidget {
           InkWell(
             onTap: () {},
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 10, 0, 0),
+              padding: EdgeInsets.fromLTRB(
+                  MediaQuery.of(context).size.width / 20,
+                  MediaQuery.of(context).size.width / 40,
+                  0,
+                  0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -141,7 +131,8 @@ class MyinfoMainBody extends ConsumerWidget {
             thickness: 2,
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 10, 0, 0),
+            padding: EdgeInsets.fromLTRB(MediaQuery.of(context).size.width / 20,
+                MediaQuery.of(context).size.width / 30, 0, 0),
             child: Container(
               child: Text(
                 "정보",
@@ -158,7 +149,11 @@ class MyinfoMainBody extends ConsumerWidget {
               //             NotificationPage()));
             },
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 10, 0, 0),
+              padding: EdgeInsets.fromLTRB(
+                  MediaQuery.of(context).size.width / 20,
+                  MediaQuery.of(context).size.width / 40,
+                  0,
+                  0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -177,7 +172,8 @@ class MyinfoMainBody extends ConsumerWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
+            padding: EdgeInsets.fromLTRB(
+                MediaQuery.of(context).size.width / 20, 0, 0, 0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -195,7 +191,8 @@ class MyinfoMainBody extends ConsumerWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
+            padding: EdgeInsets.fromLTRB(
+                MediaQuery.of(context).size.width / 20, 0, 0, 0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -213,7 +210,8 @@ class MyinfoMainBody extends ConsumerWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
+            padding: EdgeInsets.fromLTRB(
+                MediaQuery.of(context).size.width / 20, 0, 0, 0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -231,7 +229,8 @@ class MyinfoMainBody extends ConsumerWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
+            padding: EdgeInsets.fromLTRB(
+                MediaQuery.of(context).size.width / 20, 0, 0, 0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -249,7 +248,8 @@ class MyinfoMainBody extends ConsumerWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
+            padding: EdgeInsets.fromLTRB(
+                MediaQuery.of(context).size.width / 20, 0, 0, 0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [

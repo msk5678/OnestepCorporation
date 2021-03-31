@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onestep_rezero/login/providers/providers.dart';
+import 'package:onestep_rezero/sendMail.dart';
 
 String _tempEmail = "";
 bool _firstEmailEnter = true;
@@ -255,7 +256,8 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                           .changedAuthTimeOverChecked(true);
                                       _isEmailCheck.changedAuthSendClick(true);
 
-                                      // sendMail(1,checkPassword,emailController.text);
+                                      sendMail(1, checkPassword,
+                                          _emailController.text);
 
                                       _controller.forward();
                                     } else {

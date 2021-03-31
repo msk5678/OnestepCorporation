@@ -3,8 +3,6 @@ import 'package:onestep_rezero/board/boardMain.dart';
 import 'package:onestep_rezero/home/pages/homeMain.dart';
 import 'package:onestep_rezero/login/pages/loginJoinPage.dart';
 import 'package:onestep_rezero/myinfo/pages/myinfoMain.dart';
-import 'package:onestep_rezero/notification/notificationMain.dart';
-
 import 'package:onestep_rezero/notification/page/chatMain.dart';
 import 'package:onestep_rezero/notification/realtime/realtimeProductChatController.dart';
 import 'package:onestep_rezero/product/pages/productMain.dart';
