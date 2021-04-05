@@ -60,7 +60,7 @@ String _getChatListTime(String timestamp) {
   if (nowtimelist[0] == gettimelist[0]) {
     print(nowtimelist[0] + gettimelist[0]);
     //오늘날짜일 경우 시간 보여준다.
-    meridiem = _getMeridiem((gettimelist[2]));
+    meridiem = _getChatListMeridiem((gettimelist[2]));
     time = gettimelist[3]; //오전 오후 12시 기준
     //dayoftheweek = _getDayOfTheWeek((gettimelist[1]));
 
@@ -69,16 +69,16 @@ String _getChatListTime(String timestamp) {
     //오늘 날짜 아닐 경우
     var nowtime = DateFormat("yyyy-MM-dd-")
         .format(DateTime.fromMillisecondsSinceEpoch(int.parse(timestamp)));
-    dayoftheweek = _getDayOfTheWeek((gettimelist[1]));
+    dayoftheweek = _getChatListDayOfTheWeek((gettimelist[1]));
     return nowtime + dayoftheweek;
   }
 }
 
-String _getMeridiem(String meridiem) {
+String _getChatListMeridiem(String meridiem) {
   return meridiem == "PM" ? "오후" : "오전";
 }
 
-String _getDayOfTheWeek(String dayoftheweek) {
+String _getChatListDayOfTheWeek(String dayoftheweek) {
   //String dayoftheweek;
   switch (dayoftheweek) {
     case 'Monday':

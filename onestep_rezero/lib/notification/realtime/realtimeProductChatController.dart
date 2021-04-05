@@ -95,8 +95,6 @@ class RealtimeProductChatController {
     //type = 1 its imageFile
     //type = 2 its sticker image
     if (contentMsg != "") {
-      print("누가먼저돌까요3 메세지 낫 널 $contentMsg");
-
       textEditingController.clear();
       String messageId = DateTime.now().millisecondsSinceEpoch.toString();
 
@@ -348,5 +346,37 @@ class RealtimeProductChatController {
           }
           return Container();
         });
+  }
+
+  Future<void> updateReadMessage(
+      String chattingRoomId, String messageId) async {
+    DatabaseReference productChatMessageReference = FirebaseDatabase.instance
+        .reference()
+        .child("chattingroom")
+        .child("productchat")
+        .child(chattingRoomId)
+        .child("message")
+        .child(messageId)
+        .child("idTo");
+    productChatMessageReference.update({
+      FirebaseApi.getId(): true,
+    });
+    // print(
+    //     "##updateReadMessage hasData value : ${snapshot.data.snapshot.value}");
+    // print("##updateReadMessage hasData key: ${snapshot.data.snapshot.key}");
+    // print("##updateReadMessage hasData chatId: ${chattingRoomId}");
+    // databaseReference
+    //     .child("chattingroom")
+    //     .child("productchat")
+    //     .child(chattingRoomId)
+    //     .child("message")
+    //     .once()
+    //     .then((value) {
+    //   // value.value.foreach(key, value)(
+
+    //   // );
+    //   print("##updateReadMessage message value : ${value.value}");
+    // });
+    // //if (data['idTo'] == FirebaseApi.getId() && data['isRead'] == false) {}
   }
 }

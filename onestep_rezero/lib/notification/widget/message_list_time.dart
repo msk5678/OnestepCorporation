@@ -1,15 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:onestep_rezero/notification/model/productMessage.dart';
 
 Widget getMessageTime(String timestamp) {
-  // var t2 = DateFormat("yy년 MM월 dd일 kk:mm:a").format(
-  //     DateTime.fromMillisecondsSinceEpoch(int.parse(document["timestamp"])));
-
-  // print("datetime " + t);
-  // print("datetime " + t2);
-  // print("datetime원문 " + document["timestamp"]);
-  // print("datetime스플릿 " + tsp.toString());
-
   return Text(
     _getMessageTime(timestamp),
     style: TextStyle(
@@ -20,11 +13,55 @@ Widget getMessageTime(String timestamp) {
   );
 }
 
-//String _translateTime(String time) {}
+Widget getMessageDate(String timestamp) {
+  var nowtime = DateFormat("yyyy년 MM월 dd일 /EEEE")
+      .format(DateTime.fromMillisecondsSinceEpoch(int.parse(timestamp)));
+  var nowTimeList = nowtime.split('/');
+  var dayoftheweek = _getMessageDayOfTheWeek((nowTimeList[1]));
+  ; //chattingRoom
+
+  var resultTime = nowTimeList[0] + dayoftheweek;
+  return Text(
+    resultTime,
+    style: TextStyle(
+      color: Colors.grey,
+      fontSize: 12.0,
+      //  fontStyle: FontStyle.italic,
+    ),
+  );
+}
+
+Widget compareToMessageDate(
+    ProductMessage productMessage, ProductMessage nextProductMessage) {
+  // xxxx년 2월 1일 월요일
+
+  var pastTime = DateFormat("yyyy년 MM월 dd일 /EEEE").format(
+      DateTime.fromMillisecondsSinceEpoch(int.parse(productMessage.timestamp)));
+  var pastTimeList = pastTime.split('/');
+
+  var nextTime = DateFormat("yyyy년 MM월 dd일 /EEEE").format(
+      DateTime.fromMillisecondsSinceEpoch(
+          int.parse(nextProductMessage.timestamp)));
+  var nextTimeList = nextTime.split('/');
+
+  var resultTime = pastTimeList[0] + _getMessageDayOfTheWeek((pastTimeList[1]));
+  print("##messaage pastTime $pastTimeList // nextTime $nextTimeList");
+
+  if (pastTimeList[0] == nextTimeList[0]) {
+    return Container();
+  } else
+    return Text(
+      resultTime,
+      style: TextStyle(
+        color: Colors.grey,
+        fontSize: 12.0,
+        //  fontStyle: FontStyle.italic,
+      ),
+    );
+}
 
 String _getMessageTime(String timestamp) {
   var time;
-  var dayoftheweek; //chattingRoom
   var meridiem;
 
   var nowtime = DateFormat("yyyy년 MM월 dd일/EEEE/a/kk:mm").format(
@@ -39,48 +76,40 @@ String _getMessageTime(String timestamp) {
   //if (nowtimelist[0] == gettimelist[0]) {
   print(nowtimelist[0] + gettimelist[0]);
   //오늘날짜일 경우 시간 보여준다.
-  meridiem = _getMeridiem((gettimelist[2]));
+  meridiem = _getMessageMeridiem((gettimelist[2]));
   time = gettimelist[3]; //오전 오후 12시 기준
   //dayoftheweek = _getDayOfTheWeek((gettimelist[1]));
 
   return meridiem + " " + time;
-//  }
-  // else {
-  //   //오늘 날짜 아닐 경우
-  //   var nowtime = DateFormat("yyyy-MM-dd-")
-  //       .format(DateTime.fromMillisecondsSinceEpoch(int.parse(timestamp)));
-  //   dayoftheweek = _getDayOfTheWeek((gettimelist[1]));
-  //   return nowtime + dayoftheweek;
-  // }
 }
 
-String _getMeridiem(String meridiem) {
+String _getMessageMeridiem(String meridiem) {
   return meridiem == "PM" ? "오후" : "오전";
 }
 
-String _getDayOfTheWeek(String dayoftheweek) {
+String _getMessageDayOfTheWeek(String dayoftheweek) {
   //String dayoftheweek;
   switch (dayoftheweek) {
     case 'Monday':
-      dayoftheweek = "월";
+      dayoftheweek = "월요일";
       break;
     case 'Tuesday':
-      dayoftheweek = "화";
+      dayoftheweek = "화요일";
       break;
     case 'Wednesday':
-      dayoftheweek = "수";
+      dayoftheweek = "수요일";
       break;
     case 'Thursday':
-      dayoftheweek = "목";
+      dayoftheweek = "목요일";
       break;
     case 'Friday':
-      dayoftheweek = "금";
+      dayoftheweek = "금요일";
       break;
     case 'Saturday':
-      dayoftheweek = "토";
+      dayoftheweek = "토요일";
       break;
     case 'Sunday':
-      dayoftheweek = "일";
+      dayoftheweek = "일요일";
       break;
     default:
       dayoftheweek = "요일 오류";
