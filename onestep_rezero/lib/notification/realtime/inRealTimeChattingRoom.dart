@@ -1080,6 +1080,7 @@ class _LastChatState extends State<ChatScreen> {
     print('업로드 호출');
 
     String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+    print('업로드 호출 $fileName');
     Reference storageReference =
         FirebaseStorage.instance.ref().child("chat Images").child(fileName);
     UploadTask storageUploadTask = storageReference.putFile(imageFile);
