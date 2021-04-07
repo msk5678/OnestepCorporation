@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moor_flutter/moor_flutter.dart' as mf;
+import 'package:onestep_rezero/home/pages/noticeDetailView.dart';
 import 'package:onestep_rezero/moor/moor_database.dart';
 import 'package:provider/provider.dart';
 
@@ -27,9 +28,9 @@ class NotificationCard extends StatelessWidget {
               onTap: () {
                 if (!snapshot.hasData) {
                   // 상세뷰 이동
-                  // Navigator.of(context).push(MaterialPageRoute(
-                  //     builder: (context) =>
-                  //         NoticeDetailView("Notification", id)));
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) =>
+                          NoticeDetailView("Notification", id)));
                   p.updateNotification(NotificationChk(
                       readChecked: 'true',
                       firestoreid: id,
@@ -38,9 +39,9 @@ class NotificationCard extends StatelessWidget {
                           mappedData['time'].toDate().toString())));
                 } else {
                   // 상세뷰 이동
-                  // Navigator.of(context).push(MaterialPageRoute(
-                  //     builder: (context) =>
-                  //         NoticeDetailView("Notification", id)));
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) =>
+                          NoticeDetailView("Notification", id)));
                   // 추후에 삭제해야함
                   p.updateNotification(NotificationChk(
                       readChecked: 'false',

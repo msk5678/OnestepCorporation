@@ -256,8 +256,8 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                           .changedAuthTimeOverChecked(true);
                                       _isEmailCheck.changedAuthSendClick(true);
 
-                                      sendMail(1, checkPassword,
-                                          _emailController.text);
+                                      // sendMail(1, checkPassword,
+                                      //     _emailController.text);
 
                                       _controller.forward();
                                     } else {
@@ -374,7 +374,8 @@ class _LoginAuthPageState extends State<LoginAuthPage>
 
                                     _controller.forward();
 
-                                    // sendMail(1,checkPassword,emailController.text);
+                                    // sendMail(1, checkPassword,
+                                    //     _emailController.text);
                                   },
                                   child: Text("재전송"),
                                 ),

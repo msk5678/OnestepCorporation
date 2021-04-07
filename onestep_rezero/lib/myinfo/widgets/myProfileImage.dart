@@ -12,13 +12,29 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 String downloadURL = "";
 
+// final _storage = FirebaseStorage.instanceFor(
+//     bucket: 'gs://onestep-project.appspot.com/user images');
+//
 class MyProfileImage extends ConsumerWidget {
+  // stroage 삭제 보류
+  // Future<void> deleteImageFromDB(String imageUrl) async {
+  //   var photo = _storage.refFromURL(imageUrl);
+  //   await photo.delete();
+  // }
+  // Future<void> deleteFile(String url) async {
+  //   try {
+  //     await FirebaseStorage.instance.refFromURL(url).delete();
+  //   } catch (e) {
+  //     print("Error deleting db from cloud: $e");
+  //   }
+  // }
+  //
   @override
   Widget build(BuildContext context, ScopedReader watch) {
     return StreamBuilder(
       stream: FirebaseFirestore.instance
           .collection("users")
-          .doc('ciih53tTaJa1Q3wB1xjqxeJavEC3')
+          .doc('109372672912726502056')
           .snapshots(),
       builder:
           (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {

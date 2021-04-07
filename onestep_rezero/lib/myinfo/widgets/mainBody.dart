@@ -1,27 +1,14 @@
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:onestep_rezero/myinfo/pages/infomation/noticePage.dart';
+import 'package:onestep_rezero/myinfo/pages/infomation/questionsPage.dart';
 import 'package:onestep_rezero/myinfo/pages/myinfoProfilePage.dart';
 import 'dart:async';
 import 'package:onestep_rezero/myinfo/widgets/myProfileImage.dart';
-
-// final _storage = FirebaseStorage.instanceFor(
-//     bucket: 'gs://onestep-project.appspot.com/user images');
+import 'package:onestep_rezero/reportController.dart';
 
 class MyinfoMainBody extends ConsumerWidget {
-  // stroage 삭제 보류
-  // Future<void> deleteImageFromDB(String imageUrl) async {
-  //   var photo = _storage.refFromURL(imageUrl);
-  //   await photo.delete();
-  // }
-  // Future<void> deleteFile(String url) async {
-  //   try {
-  //     await FirebaseStorage.instance.refFromURL(url).delete();
-  //   } catch (e) {
-  //     print("Error deleting db from cloud: $e");
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context, ScopedReader watch) {
     return SingleChildScrollView(
@@ -142,11 +129,8 @@ class MyinfoMainBody extends ConsumerWidget {
           ),
           InkWell(
             onTap: () {
-              print("click");
-              // Navigator.of(context).push(
-              //     MaterialPageRoute(
-              //         builder: (context) =>
-              //             NotificationPage()));
+              Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (context) => NoticePage()));
             },
             child: Padding(
               padding: EdgeInsets.fromLTRB(
@@ -165,7 +149,10 @@ class MyinfoMainBody extends ConsumerWidget {
                   ),
                   IconButton(
                     icon: Icon(Icons.keyboard_arrow_right),
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => NoticePage()));
+                    },
                   )
                 ],
               ),

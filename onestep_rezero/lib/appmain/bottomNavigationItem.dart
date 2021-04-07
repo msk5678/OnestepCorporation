@@ -36,10 +36,11 @@ class BottomNavigationItem {
           title: Text("게시판"),
         ),
         BottomNavigationItem(
-          page:
-              //NotificationMain(),
-              ChatMainPage(),
-          icon: RealtimeProductChatController().getTotalChatCountInBottomBar(),
+          page: LoginJoinPage(),
+          // NotificationMain(),
+          // ChatMainPage(),
+          icon: Icon(Icons.list),
+          // icon: RealtimeProductChatController().getTotalChatCountInBottomBar(),
           title: Text("알림"),
         ),
         BottomNavigationItem(
