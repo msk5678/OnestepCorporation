@@ -24,6 +24,15 @@ class ProductMessage {
     type = snapshot["type"];
   }
 
+  ProductMessage.forReadMapSnapshot(dynamic snapshot) {
+    content = snapshot["content"];
+    idFrom = snapshot["idFrom"];
+    idTo = snapshot["idTo"].keys.toList()[0];
+    isRead = true;
+    timestamp = snapshot["timestamp"];
+    type = snapshot["type"];
+  }
+
   toJson() {
     return {
       "content": content,

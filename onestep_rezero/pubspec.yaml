@@ -52,6 +52,8 @@ dependencies:
   pattern_formatter: ^2.0.0         # 숫자, 날짜 format 라이브러리
   random_string: ^2.2.0-nullsafety  # fireStoreage image random name
   timeago: ^3.0.2 # 몇분전, 몇일전 표시
+  auto_size_text: ^2.1.0 # 글씨 크기 자동 변환
+
   ###########
 
   #provider
@@ -78,6 +80,17 @@ dependencies:
   algolia: ^1.0.1 # 검색
   ##########
 
+  #toast
+  fluttertoast: ^7.1.1
+  
+
+  #Chat Test
+  #stream_chat_flutter: ^1.5.1
+
+# dependency_overrides:
+#   image_picker: "0.7.3"
+#   stream_chat_flutter: "1.5.1"
+#   pattern_formatter: "2.0.0"
 
 dev_dependencies:
   flutter_test:
@@ -86,6 +99,8 @@ dev_dependencies:
   build_runner: ^1.11.5
   moor_generator: ^4.1.0  
   ############
+
+
 
 
 # For information on the generic Dart part of this file, see the
@@ -102,7 +117,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - icons/category/
-
+    - images/   
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 
