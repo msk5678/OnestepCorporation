@@ -16,9 +16,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:onestep_rezero/login/user.dart';
 import 'package:onestep_rezero/timeUtil.dart';
-
 import 'appmain/bottomNavigationItem.dart';
-import 'appmain/mainPage.dart';
 
 final auth = FBA.FirebaseAuth.instance;
 final googleSignIn = GoogleSignIn();

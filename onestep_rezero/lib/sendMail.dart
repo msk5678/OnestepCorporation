@@ -3,32 +3,36 @@ import 'package:mailer/smtp_server.dart';
 
 sendMail(int schollAuthFlag,
     [String checkPassword = "", String universityEmail = ""]) async {
-  String smtpServerName = 'smtp.gmail.com';
-  int smtpPort = 465;
+  // String smtpServerName = 'smtp.gmail.com';
+  // int smtpPort = 465;
   String smtpUserName = 'leedool3003@gmail.com';
   String smtpPassword = 'alstjsdl421!';
 
-  final smtpServer = SmtpServer(
-    smtpServerName,
-    port: smtpPort,
-    ssl: true,
-    ignoreBadCertificate: false,
-    allowInsecure: false,
-    username: smtpUserName,
-    password: smtpPassword,
-  );
+  // final smtpServer = SmtpServer(
+  //   smtpServerName,
+  //   port: smtpPort,
+  //   ssl: true,
+  //   ignoreBadCertificate: false,
+  //   allowInsecure: false,
+  //   username: smtpUserName,
+  //   password: smtpPassword,
+  // );
+  //
+  final _smtpServer = gmail(smtpUserName, smtpPassword);
 
   final message = Message()
-    ..from = Address('leedool3003@gmail.com', 'leedool3003@gmail.com')
+    ..from = Address(smtpUserName)
     ..recipients.add('5414030@stu.kmu.ac.kr')
     ..subject =
         'Test Dart Mailer library :: 😀 :: ${DateTime.now().add(Duration(hours: 9))}' // title
     ..html =
         "<h1>Test</h1>\n<p>Hey! Here's some $checkPassword</p>\n본 인증 코드는 5분동안 유효합니다. "; // body of the email
   try {
-    final sendReport = await send(message, smtpServer);
+    final sendReport = await send(message, _smtpServer);
+    print("cex 성공");
     print('Message sent: ' + sendReport.toString());
   } on MailerException catch (e) {
+    print("cex 실패");
     print('Message not sent.');
     for (var p in e.problems) {
       print('Problem: ${p.code}: ${p.msg}');

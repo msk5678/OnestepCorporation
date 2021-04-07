@@ -93,6 +93,8 @@ dependencies:
   #mail
   mailer:
   flutter_email_sender: ^5.0.0
+
+  http:
   
   #kakao
   # kakao_flutter_sdk: ^0.6.0-beta.2

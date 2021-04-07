@@ -256,8 +256,8 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                           .changedAuthTimeOverChecked(true);
                                       _isEmailCheck.changedAuthSendClick(true);
 
-                                      // sendMail(1, checkPassword,
-                                      //     _emailController.text);
+                                      sendMail(1, checkPassword,
+                                          _emailController.text);
 
                                       _controller.forward();
                                     } else {
