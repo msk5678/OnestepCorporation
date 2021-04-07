@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/product/models/product.dart';
 import 'package:onestep_rezero/product/widgets/detail/productDetailBody.dart';
 
@@ -14,17 +15,22 @@ class ClothDetail extends StatefulWidget {
 class _ClothDetailState extends State<ClothDetail> {
   Product _product;
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   void incProductViews() {
     // 조회수 증가
 
     if (_product.views == null ||
-        _product.views["EQ0UIt2ujMd642TxMzrZ0zJZTzB3"] != true) {
+        _product.views[googleSignIn.currentUser.id.toString()] != true) {
       FirebaseFirestore.instance
           .collection("products")
           .doc(widget.docId)
           .update(
         {
-          "views.EQ0UIt2ujMd642TxMzrZ0zJZTzB3": true,
+          "views." + googleSignIn.currentUser.id.toString(): true,
         },
       );
     }

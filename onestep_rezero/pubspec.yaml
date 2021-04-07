@@ -111,6 +111,10 @@ dependencies:
 #   image_picker: "0.7.3"
 #   stream_chat_flutter: "1.5.1"
 #   pattern_formatter: "2.0.0"
+  #algolia
+  algolia: ^1.0.1 # 검색
+  ##########
+
 
 dev_dependencies:
   flutter_test:

@@ -1,12 +1,12 @@
-import 'dart:async';
-
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:flutter/material.dart';
 import 'package:onestep_rezero/animation/favoriteAnimation.dart';
+import 'package:onestep_rezero/favorite/utils/favoriteFirebaseApi.dart';
+import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/product/models/product.dart';
 import 'package:onestep_rezero/product/pages/productDetail.dart';
-import 'package:onestep_rezero/product/util/favoriteFirebaseApi.dart';
 import 'package:onestep_rezero/timeUtil.dart';
 
 class ProductItem extends StatefulWidget {
@@ -18,8 +18,7 @@ class ProductItem extends StatefulWidget {
 }
 
 class _ProductItemState extends State<ProductItem> {
-  final StreamController<bool> _streamController = StreamController<bool>();
-  bool _isRunning = false;
+  bool _fChk = true;
 
   @override
   void initState() {
@@ -28,65 +27,75 @@ class _ProductItemState extends State<ProductItem> {
 
   @override
   void dispose() {
-    _streamController.close();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController _favoriteTextController = TextEditingController(
-        text: widget.product.favoriteuserlist == null
-            ? "0"
-            : "${widget.product.favoriteuserlist.length}");
-
     Widget setFavorite() {
-      bool chk = widget.product.favoriteuserlist == null ||
-          widget.product.favoriteuserlist["EQ0UIt2ujMd642TxMzrZ0zJZTzB3"] ==
-              null;
-
-      return StreamBuilder<bool>(
-        stream: _streamController.stream,
-        initialData: chk,
-        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-          return Positioned(
-            right: 0,
-            bottom: 0,
-            child: Padding(
-              padding: EdgeInsets.all(5),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  GestureDetector(
-                    onTap: () {
-                      if (_isRunning == false) {
-                        _isRunning = true;
-                        if (snapshot.data) {
-                          FavoriteFirbaseApi.insertFavorite(
-                              widget.product.firestoreid);
-                          _streamController.sink.add(false);
-                          FavoriteAnimation().showFavoriteDialog(context);
-                          _favoriteTextController.text =
-                              (int.parse(_favoriteTextController.text) + 1)
-                                  .toString();
-                        } else {
-                          FavoriteFirbaseApi.deleteFavorite(
-                              widget.product.firestoreid);
-                          _streamController.sink.add(true);
-                          _favoriteTextController.text =
-                              (int.parse(_favoriteTextController.text) - 1)
-                                  .toString();
-                        }
-                      }
-                      _isRunning = false;
-                    },
-                    child: Icon(
-                        snapshot.data ? Icons.favorite_border : Icons.favorite,
-                        color: snapshot.data ? Colors.white : Colors.pink),
+      return StreamBuilder<DocumentSnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('products')
+            .doc(widget.product.firestoreid)
+            .snapshots(),
+        builder:
+            (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+              return Positioned(
+                right: 0,
+                bottom: 0,
+                child: Padding(
+                  padding: EdgeInsets.all(5),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      Icon(
+                        _fChk ? Icons.favorite_border : Icons.favorite,
+                        color: Colors.pink,
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
-          );
+                ),
+              );
+            default:
+              Product p =
+                  Product.fromJson(snapshot.data.data(), snapshot.data.id);
+
+              bool chk = p.favoriteuserlist == null ||
+                  p.favoriteuserlist[googleSignIn.currentUser.id.toString()] ==
+                      null;
+
+              _fChk = chk;
+              return Positioned(
+                right: 0,
+                bottom: 0,
+                child: Padding(
+                  padding: EdgeInsets.all(5),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      GestureDetector(
+                        onTap: () {
+                          if (chk) {
+                            FavoriteFirebaseApi.insertFavorite(
+                                widget.product.firestoreid);
+                            FavoriteAnimation().showFavoriteDialog(context);
+                          } else {
+                            FavoriteFirebaseApi.deleteFavorite(
+                                widget.product.firestoreid);
+                          }
+                        },
+                        child: Icon(
+                          chk ? Icons.favorite_border : Icons.favorite,
+                          color: Colors.pink,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+          }
         },
       );
     }
@@ -108,12 +117,6 @@ class _ProductItemState extends State<ProductItem> {
         Navigator.of(context).push(MaterialPageRoute(
             builder: (context) =>
                 ClothDetail(docId: widget.product.firestoreid)));
-        // Navigator.of(context).pushNamed(
-        //   '/DetailProduct',
-        //   arguments: {"PRODUCTID": product.firestoreid},
-        // ).then((value) {
-        //   print("clothitem");
-        // });
       },
       child: Container(
         child: Column(
@@ -194,32 +197,32 @@ class _ProductItemState extends State<ProductItem> {
             SizedBox(height: 4),
             Row(
               children: <Widget>[
-                Flexible(
-                  child: SizedBox(
-                    height: 14,
-                    child: TextField(
-                      controller: _favoriteTextController,
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.favorite_border_rounded,
-                            size: 12, color: Colors.grey),
-                        prefixIconConstraints:
-                            BoxConstraints(minWidth: 12, minHeight: 12),
-                        border: InputBorder.none,
-                        isCollapsed: true,
-                      ),
-                      maxLines: 1,
-                      textAlignVertical: TextAlignVertical.bottom,
-                      enableInteractiveSelection: false,
-                      readOnly: true,
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ),
-                ),
+                // Flexible(
+                //   child: SizedBox(
+                //     height: 14,
+                //     child: TextField(
+                //       controller: _favoriteTextController,
+                //       decoration: InputDecoration(
+                //         prefixIcon: Icon(Icons.favorite_border_rounded,
+                //             size: 12, color: Colors.grey),
+                //         prefixIconConstraints:
+                //             BoxConstraints(minWidth: 12, minHeight: 12),
+                //         border: InputBorder.none,
+                //         isCollapsed: true,
+                //       ),
+                //       maxLines: 1,
+                //       textAlignVertical: TextAlignVertical.bottom,
+                //       enableInteractiveSelection: false,
+                //       readOnly: true,
+                //       textAlign: TextAlign.left,
+                //       style: TextStyle(
+                //         fontSize: 12,
+                //         fontWeight: FontWeight.w400,
+                //         color: Colors.grey,
+                //       ),
+                //     ),
+                //   ),
+                // ),
                 Spacer(),
                 Text(
                   TimeUtil.timeAgo(date: widget.product.bumptime),

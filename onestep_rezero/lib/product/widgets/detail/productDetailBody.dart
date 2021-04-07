@@ -4,8 +4,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:onestep_rezero/animation/favoriteAnimation.dart';
+import 'package:onestep_rezero/favorite/utils/favoriteFirebaseApi.dart';
+import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/product/models/product.dart';
-import 'package:onestep_rezero/product/util/favoriteFirebaseApi.dart';
 import 'package:onestep_rezero/product/widgets/public/productItem.dart';
 import 'package:onestep_rezero/product/widgets/public/productKakaoShareManager.dart';
 import 'package:onestep_rezero/timeUtil.dart';
@@ -483,7 +484,8 @@ class _ProductDetailBodyState extends State<ProductDetailBody> {
 
     Widget setFavorite() {
       bool chk = widget.product.favoriteuserlist == null ||
-          widget.product.favoriteuserlist["EQ0UIt2ujMd642TxMzrZ0zJZTzB3"] ==
+          widget.product
+                  .favoriteuserlist[googleSignIn.currentUser.id.toString()] ==
               null;
 
       return StreamBuilder<bool>(
@@ -495,13 +497,15 @@ class _ProductDetailBodyState extends State<ProductDetailBody> {
               if (_isRunning == false) {
                 _isRunning = true;
                 if (snapshot.data) {
-                  FavoriteFirbaseApi.insertFavorite(widget.product.firestoreid);
+                  FavoriteFirebaseApi.insertFavorite(
+                      widget.product.firestoreid);
                   _streamController.sink.add(false);
                   FavoriteAnimation().showFavoriteDialog(context);
                   _favoriteTextController.text =
                       (int.parse(_favoriteTextController.text) + 1).toString();
                 } else {
-                  FavoriteFirbaseApi.deleteFavorite(widget.product.firestoreid);
+                  FavoriteFirebaseApi.deleteFavorite(
+                      widget.product.firestoreid);
                   _streamController.sink.add(true);
                   _favoriteTextController.text =
                       (int.parse(_favoriteTextController.text) - 1).toString();
@@ -556,6 +560,30 @@ class _ProductDetailBodyState extends State<ProductDetailBody> {
       //     });
     }
 
+    Widget bottomChatWidget() {
+      return Padding(
+        padding: EdgeInsets.only(right: 10.0),
+        child: SizedBox(
+          width: 150,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              primary: Colors.pink,
+              textStyle: TextStyle(color: Colors.white),
+            ),
+            onPressed: () {
+              // NotificationManager.navigateToChattingRoom(
+              //   context,
+              //   FirebaseApi.getId(),
+              //   this._product.uid!,
+              //   this._product.firestoreid,
+              // );
+            },
+            child: Text('채팅'),
+          ),
+        ),
+      );
+    }
+
     Widget bottomNavigator() {
       return SizedBox(
         height: 70,
@@ -596,7 +624,8 @@ class _ProductDetailBodyState extends State<ProductDetailBody> {
                 ),
               ),
               Expanded(child: Container()),
-              // if (this._product.uid != FirebaseApi.getId()) bottomChatWidget(),
+              if (widget.product.uid != googleSignIn.currentUser.id.toString())
+                bottomChatWidget(),
             ],
           ),
         ),
