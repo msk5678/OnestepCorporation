@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'firebase_api.dart';
+import 'package:onestep_rezero/main.dart';
 import 'inRealTimeChattingRoom.dart';
 
 class RealTimeChatNavigationManager {
@@ -10,8 +10,12 @@ class RealTimeChatNavigationManager {
         context,
         MaterialPageRoute(
             builder: (context) => InRealTimeChattingRoomPage(
-                  myUid: FirebaseApi.getId() == myUid ? myUid : friendUid,
-                  friendId: FirebaseApi.getId() != myUid ? myUid : friendUid,
+                  myUid: googleSignIn.currentUser.id.toString() == myUid
+                      ? myUid
+                      : friendUid,
+                  friendId: googleSignIn.currentUser.id.toString() != myUid
+                      ? myUid
+                      : friendUid,
                   postId: postId,
                 )));
   }
@@ -23,8 +27,8 @@ class RealTimeChatNavigationManager {
   //       context,
   //       MaterialPageRoute(
   //           builder: (context) => InBoardChattingRoomPage(
-  //                 myUid: FirebaseApi.getId() == myUid ? myUid : friendUid,
-  //                 friendId: FirebaseApi.getId() != myUid ? myUid : friendUid,
+  //                 myUid: googleSignIn.currentUser.id.toString() == myUid ? myUid : friendUid,
+  //                 friendId: googleSignIn.currentUser.id.toString() != myUid ? myUid : friendUid,
   //                 postId: postId,
   //                 boardId: boardId,
   //               )));

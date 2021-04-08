@@ -17,8 +17,6 @@ class ProductChatCount {
   }
 
   toJson() {
-    print("리얼타임 투제이슨 실행");
-    //print("리얼타임내부:" + boardType);
     return {
       "chatId": chatId,
       "chatCount": chatCount,

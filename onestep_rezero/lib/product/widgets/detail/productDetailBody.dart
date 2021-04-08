@@ -389,7 +389,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody> {
       // return StreamBuilder<QuerySnapshot>(
       //     stream: FirebaseFirestore.instance
       //         .collection("users")
-      //         .doc(FirebaseApi.getId())
+      //         .doc(googleSignIn.currentUser.id.toString())
       //         .collection("favorites")
       //         .where("productid", isEqualTo: this.widget.docId)
       //         .snapshots(),
@@ -438,7 +438,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody> {
             onPressed: () {
               // NotificationManager.navigateToChattingRoom(
               //   context,
-              //   FirebaseApi.getId(),
+              //   googleSignIn.currentUser.id.toString(),
               //   this._product.uid!,
               //   this._product.firestoreid,
               // );

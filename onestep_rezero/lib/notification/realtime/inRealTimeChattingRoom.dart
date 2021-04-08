@@ -2,16 +2,16 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/notification/model/productMessage.dart';
 import 'package:onestep_rezero/notification/model/productSendMessage.dart';
 import 'package:onestep_rezero/notification/widget/message_list_time.dart';
 
 import 'FullmageWidget.dart';
-import 'firebase_api.dart';
 import 'realtimeProductChatController.dart';
 
 class InRealTimeChattingRoomPage extends StatelessWidget {
@@ -204,7 +204,7 @@ class _LastChatState extends State<ChatScreen> {
         .child("productchat");
 
     productchatdatabasereference
-        .orderByChild("users/${FirebaseApi.getId()}")
+        .orderByChild("users/${googleSignIn.currentUser.id.toString()}")
         .equalTo(true)
         .once()
         .then((DataSnapshot snapshot) {
@@ -505,11 +505,12 @@ class _LastChatState extends State<ChatScreen> {
                       values.forEach((key, values) {
                         print(
                             "#realpro Strmsg message id : ${values["idTo"].keys.toList()[0]}");
-                        String s = values["idTo/${FirebaseApi.getId()}"];
+                        String s = values[
+                            "idTo/${googleSignIn.currentUser.id.toString()}"];
                         print(
-                            "#realpro Strmsg message read : ${FirebaseApi.getId()} ${values["idTo/${FirebaseApi.getId()}"]} $s");
+                            "#realpro Strmsg message read : ${googleSignIn.currentUser.id.toString()} ${values["idTo/${googleSignIn.currentUser.id.toString()}"]} $s");
                         print(
-                            "#realpro Strmsg message read : ${FirebaseApi.getId()} ${values["idTo/TLtvLka2sHTPQE3q6U2WPxfgJ8j2"].toString()} ");
+                            "#realpro Strmsg message read : ${googleSignIn.currentUser.id.toString()} ${values["idTo/TLtvLka2sHTPQE3q6U2WPxfgJ8j2"].toString()} ");
 
                         print(
                             "#realpro Strmsg message key : ${key.toString()}");
@@ -522,7 +523,7 @@ class _LastChatState extends State<ChatScreen> {
 
                         //Message Read update
                         if (values["idTo"].keys.toList()[0] ==
-                                FirebaseApi.getId() &&
+                                googleSignIn.currentUser.id.toString() &&
                             values['idTo'].values.toList()[0] == false) {
                           print(
                               "안읽은 메세지, idTo : ${values["idTo"].keys.toList()[0]} // bool : ${values['idTo'].values.toList()[0]} // vals : $values");
@@ -540,7 +541,7 @@ class _LastChatState extends State<ChatScreen> {
                           //         .child(key)
                           //         .child("idTo");
                           // productChatMessageReference.update({
-                          //   FirebaseApi.getId(): true,
+                          //   googleSignIn.currentUser.id.toString(): true,
                           // });
                           listProductMessage
                               .add(ProductMessage.forReadMapSnapshot(values));
@@ -1059,11 +1060,14 @@ class _LastChatState extends State<ChatScreen> {
     }
   }
 
+  var metadata;
   Future getImage() async {
-    // ignore: deprecated_member_use
-    final picker = ImagePicker();
-    var pickFile = await picker.getImage(source: ImageSource.gallery);
+    PickedFile pickFile =
+        await ImagePicker().getImage(source: ImageSource.gallery);
     if (pickFile != null) {
+      metadata = firebase_storage.SettableMetadata(
+          contentType: 'createImage/jpeg',
+          customMetadata: {'picked-file-path': pickFile.path});
       isLoading = true;
     }
 
@@ -1076,17 +1080,55 @@ class _LastChatState extends State<ChatScreen> {
     print('업로드 실행');
   }
 
+  // /// The user selects a file, and the task is added to the list.
+  // Future<firebase_storage.UploadTask> uploadFile(PickedFile file) async {
+  //   if (file == null) {
+  //     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+  //       content: Text('No file was selected'),
+  //     ));
+  //     return null;
+  //   }
+
+  //   firebase_storage.UploadTask uploadTask;
+
+  //   // Create a Reference to the file
+  //   firebase_storage.Reference ref = firebase_storage.FirebaseStorage.instance
+  //       .ref()
+  //       .child('playground')
+  //       .child('/some-image.jpg');
+
+  //   final metadata = firebase_storage.SettableMetadata(
+  //       contentType: 'image/jpeg',
+  //       customMetadata: {'picked-file-path': file.path});
+
+  //   if (kIsWeb) {
+  //     uploadTask = ref.putData(await file.readAsBytes(), metadata);
+  //   } else {
+  //     uploadTask = ref.putFile(io.File(file.path), metadata);
+  //   }
+
+  //   return Future.value(uploadTask);
+  // }
+
   Future uploadImageFile() async {
     print('업로드 호출');
+    List<firebase_storage.UploadTask> _uploadTasks = [];
 
     String fileName = DateTime.now().millisecondsSinceEpoch.toString();
     print('업로드 호출 $fileName');
-    Reference storageReference =
-        FirebaseStorage.instance.ref().child("chat Images").child(fileName);
-    UploadTask storageUploadTask = storageReference.putFile(imageFile);
-    TaskSnapshot storageTaskSnapshot = await storageUploadTask;
-    //.onComplete;
+    firebase_storage.Reference storageReference = firebase_storage
+        .FirebaseStorage.instance
+        .ref()
+        .child("chat Images")
+        .child(fileName);
+    //1. 레퍼런스 똑같음
+    //
 
+    firebase_storage.UploadTask storageUploadTask =
+        storageReference.putFile(imageFile, metadata);
+    firebase_storage.TaskSnapshot storageTaskSnapshot = await storageUploadTask;
+
+    //.onComplete;
     // StorageReference storageReference =
     //     FirebaseStorage.instance.ref().child("chat Images").child(fileName);
     // StorageUploadTask storageUploadTask = storageReference.putFile(imageFile);

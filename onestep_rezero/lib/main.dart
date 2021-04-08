@@ -122,6 +122,11 @@ class _MainPageState extends State<MainPage> {
           "userUniversity": "", // 학교이름
           "userUniversityEmail": "", // 학교이메일
           "timeStamp": DateTime.now(),
+        }).whenComplete(() {
+          ref.doc(user.id).collection("chatcount").doc(user.id).set({
+            "productchatcount": 0,
+            "boardchatcount": 0,
+          });
         });
       }
       userRecord = await ref.doc(user.id).get();
