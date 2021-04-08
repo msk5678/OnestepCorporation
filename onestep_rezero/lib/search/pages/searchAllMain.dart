@@ -23,10 +23,7 @@ class _SearchAllMainState extends State<SearchAllMain> {
 
   @override
   void initState() {
-    if (context.read(searchProductProvider.state).isNotEmpty)
-      context
-          .read(searchProductProvider.state)
-          .clear(); // product provider list 초기화
+    context.read(searchProductProvider).clearList();
 
     // if (context.read(searchProductProvider.state).isNotEmpty)
     //   context
@@ -54,15 +51,15 @@ class _SearchAllMainState extends State<SearchAllMain> {
   }
 
   void productScrollListener() {
-    if (_productScrollController.position.pixels >=
-        _productScrollController.position.maxScrollExtent - 300) {
+    if ((_productScrollController.position.maxScrollExtent * 0.7) <
+        _productScrollController.position.pixels) {
       context.read(searchProductProvider).searchNextProducts(_searchText);
     }
   }
 
   void boardScrollListener() {
-    if (_boardScrollController.position.pixels >=
-        _boardScrollController.position.maxScrollExtent - 300) {
+    if ((_boardScrollController.position.maxScrollExtent * 0.7) <
+        _boardScrollController.position.pixels) {
       // context.read(searchProductProvider).searchNextProducts(_searchText);
       //board provider 글 더불러오기
     }
@@ -165,10 +162,12 @@ class _SearchAllMainState extends State<SearchAllMain> {
     return TabBarView(
       children: [
         SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
           controller: _productScrollController,
           child: SearchProductBody(),
         ),
         SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
           controller: _boardScrollController,
           child: Container(
             child: Center(
@@ -184,6 +183,7 @@ class _SearchAllMainState extends State<SearchAllMain> {
 
   Widget singleBody() {
     return SingleChildScrollView(
+      physics: AlwaysScrollableScrollPhysics(),
       controller: widget.searchKey == 1
           ? _productScrollController
           : _boardScrollController,
@@ -211,6 +211,7 @@ class _SearchAllMainState extends State<SearchAllMain> {
             width: 40.0,
             child: FittedBox(
               child: FloatingActionButton(
+                heroTag: "searchFloatActionButton",
                 onPressed: () {
                   if (this.widget.searchKey == 0) {
                     if (DefaultTabController.of(context).index == 0)
@@ -280,6 +281,7 @@ class _SearchAllMainState extends State<SearchAllMain> {
     return DefaultTabController(
       length: chk ? 2 : 0,
       child: Scaffold(
+        backgroundColor: Colors.white,
         appBar: appBar(),
         body: chk ? allBody() : singleBody(),
         floatingActionButton: floatingButton(),

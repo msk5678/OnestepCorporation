@@ -1,16 +1,31 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:onestep_rezero/product/models/product.dart';
 import 'package:onestep_rezero/product/utils/productFirebaseApi.dart';
 
-class ProductMainProvider extends StateNotifier<List<Product>> {
+class ProductMainProvider extends ChangeNotifier {
   final _productsSnapshot = <DocumentSnapshot>[];
   final int documentLimit = 12;
   bool _hasNext = true;
   bool _isFetching = false;
   List<Product> product = [];
 
-  ProductMainProvider() : super(const []);
+  List<Product> get products => _productsSnapshot.map((snap) {
+        final _product = snap.data();
+
+        return Product(
+          firestoreid: snap.id,
+          uid: _product['uid'],
+          title: _product['title'],
+          category: _product['category'],
+          favoriteuserlist: _product['favoriteuserlist'],
+          price: _product['price'],
+          hide: _product['hide'],
+          deleted: _product['deleted'],
+          images: _product['images'],
+          bumptime: DateTime.fromMicrosecondsSinceEpoch(_product['bumptime']),
+        );
+      }).toList();
 
   Future fetchProducts() async {
     if (_isFetching) return;
@@ -25,26 +40,10 @@ class ProductMainProvider extends StateNotifier<List<Product>> {
       );
       _productsSnapshot.addAll(snap.docs);
 
-      state = _productsSnapshot.map((snap) {
-        final _product = snap.data();
-
-        return Product(
-          firestoreid: snap.id,
-          uid: _product['uid'],
-          title: _product['title'],
-          category: _product['category'],
-          favoriteuserlist: _product['favoriteuserlist'],
-          price: _product['price'],
-          hide: _product['hide'],
-          deleted: _product['deleted'],
-          images: _product['images'],
-          bumptime: _product['bumptime'].toDate(),
-        );
-      }).toList();
-
       if (snap.docs.length < documentLimit) _hasNext = false;
     } catch (error) {}
     _isFetching = false;
+    notifyListeners();
   }
 
   Future fetchNextProducts() async {
@@ -59,25 +58,9 @@ class ProductMainProvider extends StateNotifier<List<Product>> {
       );
       _productsSnapshot.addAll(snap.docs);
 
-      state = _productsSnapshot.map((snap) {
-        final _product = snap.data();
-
-        return Product(
-          firestoreid: snap.id,
-          uid: _product['uid'],
-          title: _product['title'],
-          category: _product['category'],
-          favoriteuserlist: _product['favoriteuserlist'],
-          price: _product['price'],
-          hide: _product['hide'],
-          deleted: _product['deleted'],
-          images: _product['images'],
-          bumptime: _product['bumptime'].toDate(),
-        );
-      }).toList();
-
       if (snap.docs.length < documentLimit) _hasNext = false;
     } catch (error) {}
     _isFetching = false;
+    notifyListeners();
   }
 }

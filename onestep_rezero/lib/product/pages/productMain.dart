@@ -9,7 +9,6 @@ import 'package:onestep_rezero/favorite/pages/favoriteMain.dart';
 import 'package:onestep_rezero/product/widgets/main/productMainBody.dart';
 import 'package:onestep_rezero/product/widgets/main/productMainHeader.dart';
 import 'package:onestep_rezero/search/pages/searchAllMain.dart';
-import 'package:onestep_rezero/search/pages/searchProduct.dart';
 
 class ProductMain extends StatefulWidget {
   @override
@@ -36,8 +35,8 @@ class _ProductMainState extends State<ProductMain> {
   }
 
   void scrollListener() {
-    if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent - 300) {
+    if ((_scrollController.position.maxScrollExtent * 0.7) <
+        _scrollController.position.pixels) {
       context.read(productMainService).fetchNextProducts();
     }
 
@@ -121,6 +120,7 @@ class _ProductMainState extends State<ProductMain> {
             width: 40.0,
             child: FittedBox(
               child: FloatingActionButton(
+                heroTag: "productMainFloatActionButton",
                 onPressed: () {
                   _scrollController.position
                       .moveTo(0.5, duration: Duration(milliseconds: 200));
@@ -141,10 +141,12 @@ class _ProductMainState extends State<ProductMain> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: appBar(),
       body: RefreshIndicator(
         onRefresh: _refreshPage,
         child: SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
           controller: _scrollController,
           child: Container(
             color: Colors.white,

@@ -11,7 +11,6 @@ import 'package:onestep_rezero/login/user.dart';
 import 'package:onestep_rezero/timeUtil.dart';
 
 import 'appmain/bottomNavigationItem.dart';
-import 'appmain/mainPage.dart';
 
 final auth = FBA.FirebaseAuth.instance;
 final googleSignIn = GoogleSignIn();
