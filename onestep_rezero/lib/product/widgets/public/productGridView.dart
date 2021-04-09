@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:onestep_rezero/product/widgets/main/productMainBody.dart';
 import 'package:onestep_rezero/product/widgets/public/productItem.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
