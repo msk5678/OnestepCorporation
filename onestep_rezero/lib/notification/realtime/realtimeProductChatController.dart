@@ -160,7 +160,7 @@ class RealtimeProductChatController {
               return CircularProgressIndicator();
             }
 
-            if (snapshot.data['nickname'] == "") {
+            if (snapshot.data['nickName'] == "") {
               return Text("닉네임 오류");
             } else if (snapshot.hasError) {
               return Text(
@@ -169,7 +169,7 @@ class RealtimeProductChatController {
               );
             } else {
               return AutoSizeText(
-                snapshot.data['nickname'],
+                snapshot.data['nickName'],
                 style: TextStyle(fontSize: 15),
                 minFontSize: 10,
                 stepGranularity: 10,

@@ -1063,8 +1063,8 @@ class _LastChatState extends State<ChatScreen> {
 
   // var metadata;
   Future getImage() async {
-    PickedFile pickFile =
-        await ImagePicker().getImage(source: ImageSource.gallery);
+    print("1. 이미지 선택");
+    pickFile = await ImagePicker().getImage(source: ImageSource.gallery);
     if (pickFile != null) {
       isLoading = true;
       //$이미지 메타데이터 넣고싶으면 추가
@@ -1078,15 +1078,16 @@ class _LastChatState extends State<ChatScreen> {
     // if (imageFile != null) {
     //   isLoading = true;
     // }
+    print("2. 이미지 선택 완료");
 
     uploadImageFile();
-    print('업로드 실행');
+    print("0. 이미지 업로드 완료");
   }
 
   Future uploadImageFile() async {
-    print('업로드 호출');
+    print("3. 이미지 업로드 호출");
     String fileName = DateTime.now().millisecondsSinceEpoch.toString();
-    print('업로드 호출 $fileName');
+    print('4. 이미지 파일명 : $fileName');
     firebase_storage.Reference storageReference = firebase_storage
         .FirebaseStorage.instance
         .ref()

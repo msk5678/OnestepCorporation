@@ -28,12 +28,23 @@ void main() async {
   );
 }
 
+class MyBehavior extends ScrollBehavior {
+  @override
+  Widget buildViewportChrome(
+      BuildContext context, Widget child, AxisDirection axisDirection) {
+    return child;
+  }
+}
+
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Onestep',
+      // builder: (context, child) {
+      //   return ScrollConfiguration(behavior: MyBehavior(), child: child);
+      // }, //스크롤 영역 제거
       home: MainPage(),
     );
   }
