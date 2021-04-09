@@ -497,6 +497,28 @@ class _ProductDetailBodyState extends State<ProductDetailBody> {
       );
     }
 
+    Widget popupMenuButton() {
+      return PopupMenuButton<String>(
+        // onSelected: handleClick,
+        itemBuilder: (BuildContext context) {
+          var menuItem = <String>[];
+
+          if (googleSignIn.currentUser.id == widget.product.uid)
+            menuItem.addAll({'끌올하기', '수정하기', '숨김', '삭제'});
+          else {
+            menuItem.addAll({'새로고침', '신고하기'});
+          }
+
+          return menuItem.map((String choice) {
+            return PopupMenuItem<String>(
+              value: choice,
+              child: Text(choice),
+            );
+          }).toList();
+        },
+      );
+    }
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -510,7 +532,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody> {
         backgroundColor: Colors.white,
         actions: <Widget>[
           // shareButton(snapshot),
-          // popupMenuButton(),
+          popupMenuButton(),
         ],
       ),
       body: renderBody(),
