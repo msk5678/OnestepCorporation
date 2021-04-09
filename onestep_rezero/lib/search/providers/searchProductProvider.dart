@@ -1,37 +1,20 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:algolia/algolia.dart';
+import 'package:flutter/material.dart';
 import 'package:onestep_rezero/product/models/product.dart';
 import 'package:onestep_rezero/search/utils/searchFirebaseApi.dart';
 
-class SearchProductProvider extends StateNotifier<List<Product>> {
-  final _productsSnapshot = <DocumentSnapshot>[];
-  final int documentLimit = 12;
+class SearchProductProvider extends ChangeNotifier {
+  final _algoliaSnapshot = <AlgoliaObjectSnapshot>[];
+  final int limit = 12;
+  int page = 0;
   bool _hasNext = true;
   bool _isFetching = false;
-  List<Product> product = [];
 
-  SearchProductProvider() : super(const []);
-
-  Future searchProducts(String search) async {
-    if (_isFetching) return;
-    _isFetching = true;
-    _hasNext = true;
-    _productsSnapshot.clear();
-
-    try {
-      final snap = await SearchFirebaseApi.getSearchProducts(
-        documentLimit,
-        search,
-        startAfter:
-            _productsSnapshot.isNotEmpty ? _productsSnapshot.last : null,
-      );
-      _productsSnapshot.addAll(snap.docs);
-
-      state = _productsSnapshot.map((snap) {
-        final _product = snap.data();
+  List<Product> get products => _algoliaSnapshot.map((snap) {
+        final _product = snap.data;
 
         return Product(
-          firestoreid: snap.id,
+          firestoreid: snap.objectID,
           uid: _product['uid'],
           title: _product['title'],
           category: _product['category'],
@@ -40,50 +23,47 @@ class SearchProductProvider extends StateNotifier<List<Product>> {
           hide: _product['hide'],
           deleted: _product['deleted'],
           images: _product['images'],
-          bumptime: _product['bumptime'].toDate(),
+          bumptime: DateTime.fromMicrosecondsSinceEpoch(_product['bumptime']),
         );
       }).toList();
 
-      if (snap.docs.length < documentLimit) _hasNext = false;
-    } catch (error) {}
+  Future searchProducts(String search) async {
+    if (_isFetching) return;
+    _algoliaSnapshot.clear();
+    _isFetching = true;
+    _hasNext = true;
+    page = 0;
+
+    final snap = await SearchFirebaseApi.getSearchProducts(page, limit, search,
+        startAfter: 0);
+    _algoliaSnapshot.addAll(snap);
+
+    if (snap.length < limit) _hasNext = false;
 
     _isFetching = false;
+    notifyListeners();
   }
 
   Future searchNextProducts(String search) async {
     if (_isFetching || !_hasNext) return;
     _isFetching = true;
-    _productsSnapshot.clear();
 
     try {
       final snap = await SearchFirebaseApi.getSearchProducts(
-        documentLimit,
-        search,
-        startAfter:
-            _productsSnapshot.isNotEmpty ? _productsSnapshot.last : null,
-      );
-      _productsSnapshot.addAll(snap.docs);
+          ++page, limit, search,
+          startAfter: _algoliaSnapshot.isEmpty
+              ? 0
+              : _algoliaSnapshot.last.data['bumptime']);
+      _algoliaSnapshot.addAll(snap);
 
-      state = _productsSnapshot.map((snap) {
-        final _product = snap.data();
-
-        return Product(
-          firestoreid: snap.id,
-          uid: _product['uid'],
-          title: _product['title'],
-          category: _product['category'],
-          favoriteuserlist: _product['favoriteuserlist'],
-          price: _product['price'],
-          hide: _product['hide'],
-          deleted: _product['deleted'],
-          images: _product['images'],
-          bumptime: _product['bumptime'].toDate(),
-        );
-      }).toList();
-
-      if (snap.docs.length < documentLimit) _hasNext = false;
+      if (snap.length < limit) _hasNext = false;
     } catch (error) {}
 
     _isFetching = false;
+    notifyListeners();
+  }
+
+  void clearList() {
+    _algoliaSnapshot.clear();
   }
 }

@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onestep_rezero/product/providers/productMainProvider.dart';
 import 'package:onestep_rezero/product/widgets/public/productGridView.dart';
 
-final productMainService = StateNotifierProvider<ProductMainProvider>((ref) {
+final productMainService = ChangeNotifierProvider<ProductMainProvider>((ref) {
   return ProductMainProvider();
 });
 
@@ -12,7 +12,7 @@ class ProductMainBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
-    final productList = watch(productMainService.state);
+    final productList = watch(productMainService).products;
     return ProductGridView(itemList: productList);
   }
 }

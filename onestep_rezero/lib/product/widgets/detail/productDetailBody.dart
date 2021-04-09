@@ -498,6 +498,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody> {
     }
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         iconTheme: IconThemeData(
           color: Colors.black,

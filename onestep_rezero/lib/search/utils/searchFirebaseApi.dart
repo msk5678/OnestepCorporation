@@ -1,25 +1,25 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:algolia/algolia.dart';
+
+Algolia algolia = Algolia.init(
+  applicationId: 'SM0LVJM1EL',
+  apiKey: '67bfc3f1aa7f241789e0a88b2c90a3b9',
+);
 
 class SearchFirebaseApi {
-  static Future<QuerySnapshot> getSearchProducts(
-    // 장터 상품 검색
+  static Future<List<AlgoliaObjectSnapshot>> getSearchProducts(
+      int page, int limit, String search,
+      {int startAfter}) async {
+    AlgoliaQuery query =
+        algolia.instance.index('products').query(search).setHitsPerPage(limit);
 
-    int limit,
-    String search, {
-    DocumentSnapshot startAfter,
-  }) async {
-    var refProducts;
-    refProducts = FirebaseFirestore.instance
-        .collection('products')
-        .where("deleted", isEqualTo: false)
-        .where("hide", isEqualTo: false)
-        .orderBy('title')
-        .startAt([search]).endAt([search + '\uf8ff']).limit(limit);
-
-    if (startAfter == null) {
-      return refProducts.get();
+    AlgoliaQuerySnapshot querySnap;
+    if (startAfter == 0) {
+      querySnap = await query.getObjects();
     } else {
-      return refProducts.startAfterDocument(startAfter).get();
+      querySnap = await query.filters('bumptime < $startAfter').getObjects();
     }
+
+    List<AlgoliaObjectSnapshot> results = querySnap.hits;
+    return results;
   }
 }
