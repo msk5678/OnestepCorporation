@@ -347,9 +347,9 @@ class _LastChatState extends State<ChatScreen> {
                   fit: BoxFit.cover,
                 ),
               ),
-              FlatButton(
+              TextButton(
                 onPressed: () => onSendToProductMessage("st", 2),
-                padding: EdgeInsets.all(0.0),
+                //padding: EdgeInsets.all(0.0),
                 child: Image.asset(
                   "images/st.png",
                   width: 50.0,
@@ -357,7 +357,7 @@ class _LastChatState extends State<ChatScreen> {
                   fit: BoxFit.cover,
                 ),
               ),
-              FlatButton(
+              TextButton(
                 onPressed: () => onSendToProductMessage("mimi3", 2),
                 child: Image.asset(
                   "images/mimi3.gif",
