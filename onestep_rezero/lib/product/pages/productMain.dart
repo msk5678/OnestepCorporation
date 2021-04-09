@@ -5,6 +5,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onestep_rezero/favorite/pages/favoriteMain.dart';
+import 'package:onestep_rezero/product/pages/productAdd.dart';
 
 import 'package:onestep_rezero/product/widgets/main/productMainBody.dart';
 import 'package:onestep_rezero/product/widgets/main/productMainHeader.dart';
@@ -17,7 +18,10 @@ class ProductMain extends StatefulWidget {
 
 class _ProductMainState extends State<ProductMain> {
   final ScrollController _scrollController = ScrollController();
-  final StreamController<bool> _streamController = StreamController<bool>();
+  final StreamController<bool> _scrollToTopstreamController =
+      StreamController<bool>();
+  final StreamController<bool> _productAddstreamController =
+      StreamController<bool>();
   bool _isVisibility = false;
 
   @override
@@ -30,11 +34,20 @@ class _ProductMainState extends State<ProductMain> {
   @override
   void dispose() {
     _scrollController.dispose();
-    _streamController.close();
+    _scrollToTopstreamController.close();
+    _productAddstreamController.close();
     super.dispose();
   }
 
   void scrollListener() {
+    if (_scrollController.position.userScrollDirection ==
+        ScrollDirection.forward) {
+      _productAddstreamController.sink.add(true);
+    } else if (_scrollController.position.userScrollDirection ==
+        ScrollDirection.reverse) {
+      _productAddstreamController.sink.add(false);
+    }
+
     if ((_scrollController.position.maxScrollExtent * 0.7) <
         _scrollController.position.pixels) {
       context.read(productMainService).fetchNextProducts();
@@ -43,12 +56,12 @@ class _ProductMainState extends State<ProductMain> {
     if (_scrollController.offset >= 600) {
       if (!_isVisibility) {
         _isVisibility = true;
-        _streamController.sink.add(true);
+        _scrollToTopstreamController.sink.add(true);
       }
     } else if (_scrollController.offset < 600) {
       if (_isVisibility) {
         _isVisibility = false;
-        _streamController.sink.add(false);
+        _scrollToTopstreamController.sink.add(false);
       }
     }
   }
@@ -108,9 +121,41 @@ class _ProductMainState extends State<ProductMain> {
     context.read(productMainService).fetchProducts();
   }
 
-  Widget floatingButton() {
+  Widget productAddFLoatingActionButton() {
     return StreamBuilder<bool>(
-      stream: _streamController.stream,
+        stream: _productAddstreamController.stream,
+        initialData: false,
+        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+          return Visibility(
+            visible: snapshot.data,
+            child: Container(
+              height: 40,
+              child: FloatingActionButton.extended(
+                heroTag: null,
+                onPressed: () {
+                  Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => ProductAdd()));
+                },
+                backgroundColor: Colors.white,
+                // icon: Icon(
+                //   Icons.save,
+                //   color: Colors.black,
+                // ),
+                label: Text(
+                  "물품 등록",
+                  style: TextStyle(
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+            ),
+          );
+        });
+  }
+
+  Widget scrollToTopFloatingActionButton() {
+    return StreamBuilder<bool>(
+      stream: _scrollToTopstreamController.stream,
       initialData: false,
       builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
         return Visibility(
@@ -120,7 +165,7 @@ class _ProductMainState extends State<ProductMain> {
             width: 40.0,
             child: FittedBox(
               child: FloatingActionButton(
-                heroTag: "productMainFloatActionButton",
+                heroTag: null,
                 onPressed: () {
                   _scrollController.position
                       .moveTo(0.5, duration: Duration(milliseconds: 200));
@@ -171,7 +216,18 @@ class _ProductMainState extends State<ProductMain> {
           ),
         ),
       ),
-      floatingActionButton: floatingButton(),
+      floatingActionButton: Stack(
+        children: <Widget>[
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: productAddFLoatingActionButton(),
+          ),
+          Align(
+            alignment: Alignment.bottomRight,
+            child: scrollToTopFloatingActionButton(),
+          ),
+        ],
+      ),
     );
   }
 }
