@@ -13,6 +13,7 @@ import 'package:onestep_rezero/notification/widget/message_list_time.dart';
 
 import 'FullmageWidget.dart';
 import 'realtimeProductChatController.dart';
+import 'dart:io' as io;
 
 class InRealTimeChattingRoomPage extends StatelessWidget {
   final String myUid;
@@ -132,7 +133,7 @@ class _LastChatState extends State<ChatScreen> {
   bool isDisplaySticker;
   bool isLoading;
   //add image
-  File imageFile;
+  PickedFile pickFile;
   String imageUrl;
 
   //메시지 보내기
@@ -1060,15 +1061,17 @@ class _LastChatState extends State<ChatScreen> {
     }
   }
 
-  var metadata;
+  // var metadata;
   Future getImage() async {
     PickedFile pickFile =
         await ImagePicker().getImage(source: ImageSource.gallery);
     if (pickFile != null) {
-      metadata = firebase_storage.SettableMetadata(
-          contentType: 'createImage/jpeg',
-          customMetadata: {'picked-file-path': pickFile.path});
       isLoading = true;
+      //$이미지 메타데이터 넣고싶으면 추가
+      // metadata = firebase_storage.SettableMetadata(
+      //     contentType: 'createImage/jpeg',
+      //     customMetadata: {'picked-file-path': pickFile.path});
+
     }
 
     //imageFile = await ImagePicker().getImage(source: ImageSource.gallery);
@@ -1080,40 +1083,8 @@ class _LastChatState extends State<ChatScreen> {
     print('업로드 실행');
   }
 
-  // /// The user selects a file, and the task is added to the list.
-  // Future<firebase_storage.UploadTask> uploadFile(PickedFile file) async {
-  //   if (file == null) {
-  //     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-  //       content: Text('No file was selected'),
-  //     ));
-  //     return null;
-  //   }
-
-  //   firebase_storage.UploadTask uploadTask;
-
-  //   // Create a Reference to the file
-  //   firebase_storage.Reference ref = firebase_storage.FirebaseStorage.instance
-  //       .ref()
-  //       .child('playground')
-  //       .child('/some-image.jpg');
-
-  //   final metadata = firebase_storage.SettableMetadata(
-  //       contentType: 'image/jpeg',
-  //       customMetadata: {'picked-file-path': file.path});
-
-  //   if (kIsWeb) {
-  //     uploadTask = ref.putData(await file.readAsBytes(), metadata);
-  //   } else {
-  //     uploadTask = ref.putFile(io.File(file.path), metadata);
-  //   }
-
-  //   return Future.value(uploadTask);
-  // }
-
   Future uploadImageFile() async {
     print('업로드 호출');
-    List<firebase_storage.UploadTask> _uploadTasks = [];
-
     String fileName = DateTime.now().millisecondsSinceEpoch.toString();
     print('업로드 호출 $fileName');
     firebase_storage.Reference storageReference = firebase_storage
@@ -1121,11 +1092,10 @@ class _LastChatState extends State<ChatScreen> {
         .ref()
         .child("chat Images")
         .child(fileName);
-    //1. 레퍼런스 똑같음
-    //
 
     firebase_storage.UploadTask storageUploadTask =
-        storageReference.putFile(imageFile, metadata);
+        storageReference.putFile(io.File(pickFile.path));
+    //storageReference.putFile(io.File(pickFile.path), metadata); //이미지 메타데이터 추가 시
     firebase_storage.TaskSnapshot storageTaskSnapshot = await storageUploadTask;
 
     //.onComplete;

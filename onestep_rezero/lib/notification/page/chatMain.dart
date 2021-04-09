@@ -1,8 +1,11 @@
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:onestep_rezero/notification/page/realtimePage.dart';
 import 'package:onestep_rezero/notification/realtime/realtimeProductChatController.dart';
 import 'package:onestep_rezero/notification/uploadImage/uploadImage.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'dart:io' as io;
 
 class ChatMainPage extends StatefulWidget {
   static const String routeName = '/material/scrollable-tabs';
@@ -140,9 +143,76 @@ class ChatMainPageState extends State<ChatMainPage>
           );
         }).toList(),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => print("gd"),
-      ),
+      floatingActionButton: FloatingActionButton(onPressed: () {
+        print("플로팅 클릭");
+        getImage();
+      }),
     );
+  }
+
+  var metadata;
+  PickedFile pickFile;
+  Future getImage() async {
+    pickFile = await ImagePicker().getImage(source: ImageSource.gallery);
+    if (pickFile != null) {
+      print("1이미지 선택 완료");
+      metadata = firebase_storage.SettableMetadata(
+          contentType: 'Image/jpeg',
+          customMetadata: {'fuckPickImage': pickFile.path});
+      //isLoading = true;
+    }
+
+    //imageFile = await ImagePicker().getImage(source: ImageSource.gallery);
+    // if (imageFile != null) {
+    //   isLoading = true;
+    // }
+
+    uploadImageFile();
+    print('99이미지 업로드 완료');
+  }
+
+  Future uploadImageFile() async {
+    print('3이미지 업로드 호출');
+    List<firebase_storage.UploadTask> _uploadTasks = [];
+
+    String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+    print('4이미지 이름 $fileName');
+    firebase_storage.Reference storageReference = firebase_storage
+        .FirebaseStorage.instance
+        .ref()
+        .child("chat Images")
+        .child(fileName);
+    //1. 레퍼런스 똑같음
+    //
+
+    firebase_storage.UploadTask storageUploadTask;
+    storageUploadTask =
+        storageReference.putFile(io.File(pickFile.path), metadata);
+    //storageReference.putFile(io.File(pickFile.path));
+    print("5이미지 경로 ${pickFile.path}");
+    firebase_storage.TaskSnapshot storageTaskSnapshot = await storageUploadTask;
+
+    //.onComplete;
+    // StorageReference storageReference =
+    //     FirebaseStorage.instance.ref().child("chat Images").child(fileName);
+    // StorageUploadTask storageUploadTask = storageReference.putFile(imageFile);
+    // StorageTaskSnapshot storageTaskSnapshot =
+    //     await storageUploadTask.onComplete;
+
+    storageTaskSnapshot.ref.getDownloadURL().then((downloadUrl) {
+      print("6이미지 스토리지 URL : $downloadUrl");
+//      imageUrl = downloadUrl;
+      setState(() {
+        // isLoading = false;
+        // onSendToProductMessage(imageUrl, 1);
+      });
+    }, onError: (error) {
+      setState(() {
+        // isLoading = false;
+      });
+      print('에러' + error);
+      //Fluttertoast.showToast(msg: "Error: ", error);
+    });
+    return Future.value(storageUploadTask);
   }
 }

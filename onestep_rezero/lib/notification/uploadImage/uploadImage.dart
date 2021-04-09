@@ -76,8 +76,10 @@ class _TaskManager extends State<TaskManager> {
 
     if (kIsWeb) {
       uploadTask = ref.putData(await file.readAsBytes(), metadata);
+      print("이미지 파일저장 1이프");
     } else {
       uploadTask = ref.putFile(io.File(file.path), metadata);
+      print("이미지 파일저장 2 완료 $file");
     }
 
     return Future.value(uploadTask);
