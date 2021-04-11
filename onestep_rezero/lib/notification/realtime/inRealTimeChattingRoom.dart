@@ -972,7 +972,7 @@ class _LastChatState extends State<ChatScreen> {
                               listScrollController);
 
                       RealtimeProductChatController()
-                          .createProductChatingRoomToRealtimeFirebaseStorage2(
+                          .createProductChatingRoomToRealtimeFirebase(
                               productSendMessage);
                       existChattingRoom = true;
                       // RealtimeProductChatController()

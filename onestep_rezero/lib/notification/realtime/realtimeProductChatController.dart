@@ -18,7 +18,7 @@ class RealtimeProductChatController {
   DatabaseReference productChatMessageReference2;
   int productChatcount = 0;
 
-  Future<void> createProductChatingRoomToRealtimeFirebaseStorage2(
+  Future<void> createProductChatingRoomToRealtimeFirebase(
       ProductSendMessage productSendMessage) async {
     String myUid = googleSignIn.currentUser.id.toString();
     String title;
@@ -28,52 +28,62 @@ class RealtimeProductChatController {
 
     try {
       FirebaseFirestore.instance
-          .collection("products")
-          .doc(productSendMessage.postId)
+          .collection("users")
+          .doc(myUid)
           .get()
-          .then((value) {
-        title = value["title"];
-        friendUid = value["uid"];
-        productImageUrl = value["images"][0];
-      }).whenComplete(
-        () {
-          var nowTime = DateTime.now().millisecondsSinceEpoch.toString();
+          .then((uvalue) {
+        print("UsersNickname test");
+        print("UsersNickname : ${uvalue["nickName"].toString()}");
+        print("UsersNickImage : ${uvalue["photoUrl"].toString()}");
+      }).whenComplete(() {
+        FirebaseFirestore.instance
+            .collection("products")
+            .doc(productSendMessage.postId)
+            .get()
+            .then((value) {
+          title = value["title"];
+          friendUid = value["uid"];
+          productImageUrl = value["images"][0];
+        }).whenComplete(
+          () {
+            var nowTime = DateTime.now().millisecondsSinceEpoch.toString();
 //Realtime data base
-          databaseReference
-              .child("chattingroom")
-              .child("productchat")
-              .child(productSendMessage.chattingRoomId)
-              //.child("roominfo")
-              .set({
-            "boardtype": "장터게시판",
-            "title": title,
-            "chatId": productSendMessage.chattingRoomId,
-            "postId": productSendMessage.postId,
-            "users": {
-              myUid: true,
-              friendUid: true,
-            },
-            "productImage": productImageUrl,
-            "recentText": "채팅방이 생성되었습니다!",
-            "timestamp": nowTime,
-          }).whenComplete(() {
             databaseReference
                 .child("chattingroom")
                 .child("productchat")
                 .child(productSendMessage.chattingRoomId)
                 //.child("roominfo")
-                .once()
-                .then((DataSnapshot snapshot) {
-              print('Data : ${snapshot.value}');
+                .set({
+              "boardtype": "장터게시판",
+              "title": title,
+              "chatId": productSendMessage.chattingRoomId,
+              "postId": productSendMessage.postId,
+              "users": {
+                myUid: true,
+                friendUid: true,
+              },
+              "productImage": productImageUrl,
+              "recentText": "채팅방이 생성되었습니다.",
+              "timestamp": nowTime,
+            }).whenComplete(() {
+              databaseReference
+                  .child("chattingroom")
+                  .child("productchat")
+                  .child(productSendMessage.chattingRoomId)
+                  //.child("roominfo")
+                  .once()
+                  .then((DataSnapshot snapshot) {
+                print('Data : ${snapshot.value}');
+              });
 
-//                      notificationLogger("i", "누가먼저돌까요2 else 방생성안함");
-            });
-
-            onSendToProductMessage(productSendMessage);
-          }); //채팅방 생성 whenComplete
-        },
-      );
-    } catch (e) {
+              onSendToProductMessage(productSendMessage);
+            }); //채팅방 생성 whenComplete
+          },
+        ); //product whencomplete
+      } //product whencomplete
+              ); //users whencomplete
+    } //users whencomplete
+    catch (e) {
       print(e.message);
     }
   }
@@ -212,20 +222,24 @@ class RealtimeProductChatController {
                 ),
               );
             } else {
-              return Expanded(
-                child: CachedNetworkImage(
-                  imageUrl: snapshot.data['photoUrl'],
-                  fit: BoxFit.cover,
-                  height: 50,
-                  width: 50,
-                ),
-                // child: ExtendedImage.network(
-                //   snapshot.data['photoUrl'],
-                //   fit: BoxFit.cover,
-                //   height: 50,
-                //   width: 50,
-                //   cache: true,
-                // ),
+              return Column(
+                children: [
+                  Expanded(
+                    child: CachedNetworkImage(
+                      imageUrl: snapshot.data['photoUrl'],
+                      fit: BoxFit.cover,
+                      height: 50,
+                      width: 50,
+                    ),
+                    // child: ExtendedImage.network(
+                    //   snapshot.data['photoUrl'],
+                    //   fit: BoxFit.cover,
+                    //   height: 50,
+                    //   width: 50,
+                    //   cache: true,
+                    // ),
+                  ),
+                ],
               );
             }
         }
