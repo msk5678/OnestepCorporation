@@ -1,14 +1,12 @@
+import 'dart:io';
+
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:onestep_rezero/notification/page/realtimePage.dart';
 import 'package:onestep_rezero/notification/realtime/realtimeProductChatController.dart';
-import 'package:onestep_rezero/notification/uploadImage/uploadImage.dart';
-import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
-import 'dart:io' as io;
 
 class ChatMainPage extends StatefulWidget {
-  static const String routeName = '/material/scrollable-tabs';
   @override
   ChatMainPageState createState() => ChatMainPageState();
 }
@@ -31,10 +29,42 @@ const List<_Page> _allPages = <_Page>[
 class ChatMainPageState extends State<ChatMainPage>
     with SingleTickerProviderStateMixin {
   TabController _controller;
+  final String iOsTestUnitid = "ca-app-pub-3940256099942544/2934735716";
+  final String androidTestUnitid =
+      "ca-app-pub-3940256099942544/6300978111"; //testId
+  BannerAd banner;
+  InterstitialAd interstitialAd;
+  RewardedAd rewardedAd;
   @override
   void initState() {
     super.initState();
     _controller = TabController(vsync: this, length: _allPages.length);
+
+    banner = BannerAd(
+      listener: AdListener(),
+      size: AdSize.banner,
+      adUnitId: Platform.isIOS ? iOsTestUnitid : androidTestUnitid,
+//      adUnitId: androidTestUnitid,
+      request: AdRequest(),
+    )..load();
+
+    interstitialAd = InterstitialAd(
+      listener: AdListener(onAdClosed: (ad) {
+        print("Interstitial Ad 종료.");
+      }),
+      adUnitId: InterstitialAd.testAdUnitId,
+      request: AdRequest(),
+    )..load();
+
+    rewardedAd = RewardedAd(
+      listener: AdListener(onAdClosed: (ad) {
+        print("Rewarded Ad 종료");
+      }, onRewardedAdUserEarnedReward: (ad, item) {
+        print("Rewarded Ad 보상 획득");
+      }),
+      adUnitId: RewardedAd.testAdUnitId,
+      request: AdRequest(),
+    )..load();
   }
 
   @override
@@ -46,24 +76,17 @@ class ChatMainPageState extends State<ChatMainPage>
   @override
   Widget build(BuildContext context) {
     print("chat main");
-    //chatCount.initChatCount();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color.fromRGBO(150, 150, 150, 1),
         title: Text(
-          'Scrollable tabs ' + "chat main"
-          // +
-          // chatCount.getProductChatCount().toString() +
-          // chatCount.getBoardChatCount().toString()
-          ,
+          'Scrollable tabs ' + "chat main",
           style: TextStyle(
             color: Color.fromRGBO(0, 0, 0, 1),
           ),
         ),
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(80),
-
-          ///Note: Here I assigned 40 according to me. You can adjust this size acoording to your purpose.
           child: Align(
             alignment: Alignment.centerLeft,
             child: TabBar(
@@ -88,31 +111,9 @@ class ChatMainPageState extends State<ChatMainPage>
                       badgeColor: Colors.red,
                       badgeContent:
                           RealtimeProductChatController().getProductCountText(),
-                      //Text("d"),
                       child: Icon(page.icon,
                           color: Color.fromRGBO(248, 247, 77, 1)),
-                    )
-
-                    // page.text == "장터게시판"
-                    //     ? Badge(
-                    //         toAnimate: true,
-                    //         borderRadius: BorderRadius.circular(80),
-                    //         badgeColor: Colors.red,
-                    //         badgeContent:
-                    //             ProductChatController().getProductCountText(),
-                    //         child: Icon(page.icon,
-                    //             color: Color.fromRGBO(248, 247, 77, 1)),
-                    //       )
-                    //     : Badge(
-                    //         toAnimate: true,
-                    //         borderRadius: BorderRadius.circular(80),
-                    //         badgeColor: Colors.red,
-                    //         badgeContent:
-                    //             BoardChatController().getBoardCountText(),
-                    //         child: Icon(page.icon,
-                    //             color: Color.fromRGBO(169, 215, 254, 1)),
-                    //       ),
-                    );
+                    ));
               }).toList(),
             ),
           ),
@@ -133,7 +134,44 @@ class ChatMainPageState extends State<ChatMainPage>
                         RealTimePage()
                         :
                         //BoardChatPage()
-                        StorageExampleApp()
+                        //StorageExampleApp()
+                        Column(
+                            children: [
+                              Expanded(
+                                child: ListView.separated(
+                                  itemBuilder: (_, index) {
+                                    return Padding(
+                                      padding: EdgeInsets.all(9),
+                                      child: Container(
+                                        child: Center(
+                                          child: Text(index.toString()),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  separatorBuilder: (_, index) {
+                                    return Divider();
+                                  },
+                                  itemCount: 5,
+                                ),
+                              ),
+                              Container(
+                                  height: 50,
+                                  color: Colors.red,
+                                  child: this.banner == null
+                                      ? Text("err")
+                                      : AdWidget(
+                                          ad: this.banner,
+                                        )),
+                            ],
+                          )
+                    // Container(
+                    //     height: 50,
+                    //     child: this.banner == null
+                    //         ? AdWidget(
+                    //             ad: this.banner,
+                    //           )
+                    //         : Text("err"))
                     //Text("ㄱㄷ")
                     //RealTimePage()
                     );
@@ -145,6 +183,8 @@ class ChatMainPageState extends State<ChatMainPage>
       ),
       floatingActionButton: FloatingActionButton(onPressed: () {
         print("플로팅 클릭");
+        //rewardedAd.show();
+        interstitialAd.show();
       }),
     );
   }
