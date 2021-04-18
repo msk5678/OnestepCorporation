@@ -212,21 +212,23 @@ class RealtimeProductChatController {
                 ),
               );
             } else {
-              return Expanded(
-                child: CachedNetworkImage(
-                  imageUrl: snapshot.data['photoUrl'],
-                  fit: BoxFit.cover,
-                  height: 50,
-                  width: 50,
-                ),
-                // child: ExtendedImage.network(
-                //   snapshot.data['photoUrl'],
-                //   fit: BoxFit.cover,
-                //   height: 50,
-                //   width: 50,
-                //   cache: true,
-                // ),
-              );
+              return Column(children: <Widget>[
+                Expanded(
+                  child: CachedNetworkImage(
+                    imageUrl: snapshot.data['photoUrl'],
+                    fit: BoxFit.cover,
+                    height: 50,
+                    width: 50,
+                  ),
+                  // child: ExtendedImage.network(
+                  //   snapshot.data['photoUrl'],
+                  //   fit: BoxFit.cover,
+                  //   height: 50,
+                  //   width: 50,
+                  //   cache: true,
+                  // ),
+                )
+              ]);
             }
         }
       },

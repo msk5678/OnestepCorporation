@@ -9,6 +9,7 @@ import 'package:onestep_rezero/favorite/utils/favoriteFirebaseApi.dart';
 import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/notification/realtime/realtimeNavigationManager.dart';
 import 'package:onestep_rezero/product/models/product.dart';
+import 'package:onestep_rezero/product/pages/productBump.dart';
 import 'package:onestep_rezero/product/widgets/public/productItem.dart';
 import 'package:onestep_rezero/timeUtil.dart';
 
@@ -47,6 +48,48 @@ class _ProductDetailBodyState extends State<ProductDetailBody> {
 
   @override
   Widget build(BuildContext context) {
+    Widget getUserProfile() {
+      return FutureBuilder(
+        future: FirebaseFirestore.instance
+            .collection("users")
+            .doc(widget.product.uid)
+            .get(),
+        builder:
+            (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+              return Text("");
+            default:
+              return Row(
+                children: <Widget>[
+                  CachedNetworkImage(
+                    imageUrl: snapshot.data['photoUrl'],
+                    imageBuilder: (context, imageProvider) => Container(
+                      width: 50.0,
+                      height: 50.0,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                            image: imageProvider, fit: BoxFit.cover),
+                      ),
+                    ),
+                    placeholder: (context, url) => CircularProgressIndicator(),
+                    errorWidget: (context, url, error) => Icon(Icons.error),
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    snapshot.data['nickName'],
+                    style: TextStyle(fontWeight: FontWeight.w500),
+                  ),
+                ],
+              );
+          }
+        },
+      );
+    }
+
     Widget getUserProducts() {
       var _size = MediaQuery.of(context).size;
       final double _itemHeight = (_size.height - kToolbarHeight - 24) / 3.0;
@@ -86,18 +129,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          // Navigator.of(context).push(
-                          //   MaterialPageRoute(
-                          //     builder: (context) =>
-                          //         Consumer<UserProductProvider>(
-                          //       builder: (context, userProductProvider, _) =>
-                          //           UserProductWidget(
-                          //         userProductProvider: userProductProvider,
-                          //         uid: _product.uid!,
-                          //       ),
-                          //     ),
-                          //   ),
-                          // );
+                          // 해당 사용자 판매상품 넘어가기
                         },
                         child: Row(
                           children: <Widget>[
@@ -135,22 +167,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody> {
                       return ProductItem(
                           product: Product.fromJson(
                               snapshot.data.docs[index].data(),
-                              snapshot.data.docs[index].id)
-                          // Product(
-                          //   firestoreid: snapshot.data!.docs[index].id,
-                          //   uid: snapshot.data!.docs[index].data()!['uid'],
-                          //   title: snapshot.data!.docs[index].data()!['title'],
-                          //   category:
-                          //       snapshot.data!.docs[index].data()!['category'],
-                          //   price: snapshot.data!.docs[index].data()!['price'],
-                          //   images: snapshot.data!.docs[index].data()!['images'],
-                          //   bumptime: snapshot.data!.docs[index]
-                          //       .data()!['bumptime']
-                          //       .toDate(),
-                          //   favoriteuserlist: snapshot.data!.docs[index]
-                          //       .data()!['favoriteuserlist'],
-                          // ),
-                          );
+                              snapshot.data.docs[index].id));
                     },
                   ),
                 ],
@@ -318,24 +335,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody> {
                         //           )),
                         // );
                       },
-                      child: Row(
-                        children: <Widget>[
-                          // Container(
-                          //   height: 50,
-                          //   width: 50,
-                          //   decoration: BoxDecoration(
-                          //     image: DecorationImage(
-                          //         image: AssetImage('images/profile.png'),
-                          //         fit: BoxFit.cover),
-                          //     shape: BoxShape.circle,
-                          //   ),
-                          // ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          // getUserName(),
-                        ],
-                      ),
+                      child: getUserProfile(),
                     ),
                   ),
                   SizedBox(height: 20),
@@ -503,9 +503,58 @@ class _ProductDetailBodyState extends State<ProductDetailBody> {
       );
     }
 
+    void handleClick(String value) {
+      switch (value) {
+        case '새로고침':
+          break;
+        case '신고하기':
+          break;
+        case '수정하기':
+          // Navigator.of(context)
+          //     .push(
+          //   MaterialPageRoute(
+          //     builder: (context) => ClothModifyWidget(product: this._product),
+          //   ),
+          // )
+          //     .then((value) {
+          //   if (value == "OK") {
+          //     setState(() {});
+          //   }
+          // });
+          break;
+        case '끌올하기':
+          if (DateTime.now().difference(widget.product.bumptime).inHours >= 1) {
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => ProductBump(product: widget.product),
+            ));
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              duration: Duration(seconds: 2),
+              content: Text("물품을 등록하고 1시간 뒤에 끌올할 수 있어요."),
+            ));
+          }
+
+          break;
+        case '숨김':
+          // 확인 취소 다이얼로그 띄우기
+          FirebaseFirestore.instance
+              .collection("products")
+              .doc(googleSignIn.currentUser.id)
+              .update({'hide': true});
+          break;
+        case '삭제':
+          // 확인 취소 다이얼로그 띄우기
+          FirebaseFirestore.instance
+              .collection("products")
+              .doc(googleSignIn.currentUser.id)
+              .update({'deleted': true});
+          break;
+      }
+    }
+
     Widget popupMenuButton() {
       return PopupMenuButton<String>(
-        // onSelected: handleClick,
+        onSelected: handleClick,
         itemBuilder: (BuildContext context) {
           var menuItem = <String>[];
 

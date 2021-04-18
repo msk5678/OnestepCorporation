@@ -8,7 +8,7 @@ import 'package:onestep_rezero/product/pages/productMain.dart';
 
 class BottomNavigationItem {
   final Widget page;
-  final Widget title;
+  final String title;
   final Widget icon;
 
   BottomNavigationItem({
@@ -21,27 +21,27 @@ class BottomNavigationItem {
         BottomNavigationItem(
           page: HomeMain(),
           icon: Icon(Icons.home),
-          title: Text("홈"),
+          title: "홈",
         ),
         BottomNavigationItem(
           page: ProductMain(),
           icon: Icon(Icons.shopping_cart),
-          title: Text("장터"),
+          title: "장터",
         ),
         BottomNavigationItem(
           page: BoardMain(),
           icon: Icon(Icons.list),
-          title: Text("게시판"),
+          title: "게시판",
         ),
         BottomNavigationItem(
           page: ChatMainPage(),
           icon: RealtimeProductChatController().getTotalChatCountInBottomBar(),
-          title: Text("알림"),
+          title: "알림",
         ),
         BottomNavigationItem(
           page: MyInfoMain(),
           icon: Icon(Icons.person_outline),
-          title: Text("내정보"),
+          title: "내정보",
         ),
       ];
 }

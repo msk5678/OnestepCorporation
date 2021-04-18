@@ -290,7 +290,7 @@ class _MainPageState extends State<MainPage> {
                       for (final tabItem in BottomNavigationItem.items)
                         BottomNavigationBarItem(
                           icon: tabItem.icon,
-                          title: tabItem.title,
+                          label: tabItem.title,
                         )
                     ],
                   ),

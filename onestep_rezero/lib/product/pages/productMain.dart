@@ -124,7 +124,7 @@ class _ProductMainState extends State<ProductMain> {
   Widget productAddFLoatingActionButton() {
     return StreamBuilder<bool>(
         stream: _productAddstreamController.stream,
-        initialData: false,
+        initialData: true,
         builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
           return Visibility(
             visible: snapshot.data,
