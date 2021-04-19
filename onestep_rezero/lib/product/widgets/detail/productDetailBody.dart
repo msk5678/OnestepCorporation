@@ -23,6 +23,10 @@ class ProductDetailBody extends StatefulWidget {
 
 class _ProductDetailBodyState extends State<ProductDetailBody> {
   bool _isRunning;
+  bool _appbarColor = false;
+  final ScrollController _customScrollViewScrollController = ScrollController();
+  final StreamController<bool> _customScrollViewStreamController =
+      StreamController<bool>();
   final StreamController<bool> _streamController = StreamController<bool>();
 
   TextEditingController _favoriteTextController;
@@ -30,6 +34,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody> {
 
   @override
   void initState() {
+    _customScrollViewScrollController.addListener(scrollListener);
     _favoriteTextController = new TextEditingController(
         text: widget.product.favoriteuserlist == null
             ? "0"
@@ -42,8 +47,25 @@ class _ProductDetailBodyState extends State<ProductDetailBody> {
 
   @override
   void dispose() {
+    _customScrollViewStreamController.close();
+    _customScrollViewScrollController.dispose();
     _streamController.close();
     super.dispose();
+  }
+
+  void scrollListener() {
+    if (_customScrollViewScrollController.position.pixels <
+        MediaQuery.of(context).size.width - 60) {
+      if (_appbarColor) {
+        _appbarColor = false;
+        _customScrollViewStreamController.sink.add(false);
+      }
+    } else {
+      if (!_appbarColor) {
+        _appbarColor = true;
+        _customScrollViewStreamController.sink.add(true);
+      }
+    }
   }
 
   @override
@@ -99,7 +121,8 @@ class _ProductDetailBodyState extends State<ProductDetailBody> {
         future: FirebaseFirestore.instance
             .collection('products')
             .where('uid', isEqualTo: widget.product.uid)
-            .where('bumptime', isNotEqualTo: widget.product.bumptime)
+            .where('bumptime',
+                isNotEqualTo: widget.product.bumptime.microsecondsSinceEpoch)
             .where('deleted', isEqualTo: false)
             .where('hide', isEqualTo: false)
             .orderBy('bumptime', descending: true)
@@ -114,6 +137,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody> {
               if (snapshot.data.docs.isEmpty) {
                 return Container();
               }
+
               return Column(
                 children: <Widget>[
                   Row(
@@ -178,173 +202,135 @@ class _ProductDetailBodyState extends State<ProductDetailBody> {
     }
 
     Widget renderBody() {
-      return SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height / 2.5,
-              child: Swiper(
-                onTap: (index) {
-                  // Navigator.push(
-                  //     context,
-                  //     MaterialPageRoute(
-                  //       builder: (context) => ImageFullViewerWidget(
-                  //         galleryItems: _imageItem,
-                  //         index: index,
-                  //       ),
-                  //     ));
-                },
-                loop: widget.product.images.length == 1 ? false : true,
-                pagination: SwiperPagination(
-                  alignment: Alignment.bottomCenter,
-                  builder: DotSwiperPaginationBuilder(
-                    activeColor: Colors.pink,
-                    color: Colors.grey,
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(5.0),
+            child: Column(
+              children: <Widget>[
+                TextField(
+                  controller: _priceEditingController,
+                  enableInteractiveSelection: false,
+                  readOnly: true,
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                  ),
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xFF333333),
                   ),
                 ),
-                itemCount: widget.product.images.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return CachedNetworkImage(
-                    imageUrl: widget.product.images[index],
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height,
-                    errorWidget: (context, url, error) =>
-                        Icon(Icons.error), // 로딩 오류 시 이미지
-                    fit: BoxFit.cover,
-                  );
-                },
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: Column(
-                children: <Widget>[
-                  TextField(
-                    controller: _priceEditingController,
-                    enableInteractiveSelection: false,
-                    readOnly: true,
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                    ),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "${widget.product.title}",
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       fontSize: 20,
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.w400,
                       color: Color(0xFF333333),
                     ),
                   ),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "${widget.product.title}",
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w400,
-                        color: Color(0xFF333333),
-                      ),
+                ),
+                SizedBox(height: 10),
+                Row(
+                  children: <Widget>[
+                    Icon(
+                      Icons.local_offer,
+                      color: Colors.grey,
+                      size: 17,
                     ),
-                  ),
-                  SizedBox(height: 10),
-                  Row(
-                    children: <Widget>[
-                      Icon(
-                        Icons.local_offer,
-                        color: Colors.grey,
-                        size: 17,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 2.0),
-                      ),
-                      Text("${widget.product.category}"),
-                    ],
-                  ),
-                  Row(
-                    children: <Widget>[
-                      Icon(
-                        Icons.access_time,
-                        color: Colors.grey,
-                        size: 15,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 2.0),
-                      ),
-                      Text(
-                          "${TimeUtil.timeAgo(date: widget.product.bumptime)}"),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                      ),
-                      Icon(
-                        Icons.remove_red_eye,
-                        color: Colors.grey,
-                        size: 15,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 2.0),
-                      ),
-                      Text(
-                          "${widget.product.views == null ? 0 : widget.product.views.length}"),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                      ),
-                      Icon(
-                        Icons.favorite,
-                        color: Colors.grey,
-                        size: 15,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 2.0),
-                      ),
-                      Container(
-                        width: 30,
-                        child: TextField(
-                          controller: _favoriteTextController,
-                          enableInteractiveSelection: false,
-                          readOnly: true,
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                          ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 2.0),
+                    ),
+                    Text("${widget.product.category}"),
+                  ],
+                ),
+                Row(
+                  children: <Widget>[
+                    Icon(
+                      Icons.access_time,
+                      color: Colors.grey,
+                      size: 15,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 2.0),
+                    ),
+                    Text("${TimeUtil.timeAgo(date: widget.product.bumptime)}"),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                    ),
+                    Icon(
+                      Icons.remove_red_eye,
+                      color: Colors.grey,
+                      size: 15,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 2.0),
+                    ),
+                    Text(
+                        "${widget.product.views == null ? 0 : widget.product.views.length}"),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                    ),
+                    Icon(
+                      Icons.favorite,
+                      color: Colors.grey,
+                      size: 15,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 2.0),
+                    ),
+                    Container(
+                      width: 30,
+                      child: TextField(
+                        controller: _favoriteTextController,
+                        enableInteractiveSelection: false,
+                        readOnly: true,
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
                         ),
                       ),
-                    ],
-                  ),
-                  Divider(),
-                  SizedBox(height: 10),
-                  Container(
-                    constraints: BoxConstraints(minHeight: 100),
-                    child: Align(
-                      alignment: Alignment.topLeft,
-                      child: Text(
-                        "${widget.product.explain}",
-                      ),
+                    ),
+                  ],
+                ),
+                Divider(),
+                SizedBox(height: 10),
+                Container(
+                  constraints: BoxConstraints(minHeight: 100),
+                  child: Align(
+                    alignment: Alignment.topLeft,
+                    child: Text(
+                      "${widget.product.explain}",
                     ),
                   ),
-                  SizedBox(height: 10),
-                  Divider(),
-                  SizedBox(
-                    height: 80,
-                    child: GestureDetector(
-                      onTap: () {
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //       builder: (context) => ProfileWidget(
-                        //             uid: _product.uid!,
-                        //           )),
-                        // );
-                      },
-                      child: getUserProfile(),
-                    ),
+                ),
+                SizedBox(height: 10),
+                Divider(),
+                SizedBox(
+                  height: 80,
+                  child: GestureDetector(
+                    onTap: () {
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //       builder: (context) => ProfileWidget(
+                      //             uid: _product.uid!,
+                      //           )),
+                      // );
+                    },
+                    child: getUserProfile(),
                   ),
-                  SizedBox(height: 20),
-                  getUserProducts(),
-                ],
-              ),
+                ),
+                SizedBox(height: 20),
+                getUserProducts(),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       );
     }
 
@@ -386,44 +372,6 @@ class _ProductDetailBodyState extends State<ProductDetailBody> {
           );
         },
       );
-
-      // return StreamBuilder<QuerySnapshot>(
-      //     stream: FirebaseFirestore.instance
-      //         .collection("users")
-      //         .doc(googleSignIn.currentUser.id.toString())
-      //         .collection("favorites")
-      //         .where("productid", isEqualTo: this.widget.docId)
-      //         .snapshots(),
-      //     builder:
-      //         (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-      //       switch (snapshot.connectionState) {
-      //         case ConnectionState.waiting:
-      //           return Container();
-      //         default:
-      //           bool chk = snapshot.data!.docs.length == 0 ? false : true;
-      //           return GestureDetector(
-      //             onTap: () {
-      //               int favorites =
-      //                   int.tryParse(_favoriteTextController!.text)!;
-
-      //               if (!chk) {
-      //                 FavoriteApi.insertFavorite(this.widget.docId);
-      //                 FavoriteAnimation().showFavoriteDialog(context);
-      //                 favorites++;
-      //               } else {
-      //                 FavoriteApi.deleteFavorite(
-      //                     snapshot.data!.docs[0].id, this.widget.docId);
-      //                 favorites--;
-      //               }
-      //               _favoriteTextController!.text = (favorites).toString();
-      //             },
-      //             child: Icon(
-      //               !chk ? Icons.favorite_border : Icons.favorite,
-      //               color: Colors.pink,
-      //             ),
-      //           );
-      //       }
-      //     });
     }
 
     Widget bottomChatWidget() {
@@ -442,12 +390,6 @@ class _ProductDetailBodyState extends State<ProductDetailBody> {
                   googleSignIn.currentUser.id.toString(),
                   widget.product.uid,
                   widget.product.firestoreid);
-              // NotificationManager.navigateToChattingRoom(
-              //   context,
-              //   googleSignIn.currentUser.id.toString(),
-              //   this._product.uid!,
-              //   this._product.firestoreid,
-              // );
             },
             child: Text('채팅'),
           ),
@@ -552,8 +494,9 @@ class _ProductDetailBodyState extends State<ProductDetailBody> {
       }
     }
 
-    Widget popupMenuButton() {
+    Widget popupMenuButton(bool color) {
       return PopupMenuButton<String>(
+        color: color ? Colors.black : Colors.white,
         onSelected: handleClick,
         itemBuilder: (BuildContext context) {
           var menuItem = <String>[];
@@ -574,24 +517,108 @@ class _ProductDetailBodyState extends State<ProductDetailBody> {
       );
     }
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        iconTheme: IconThemeData(
-          color: Colors.black,
-        ),
-        title: Text(
-          '상세보기',
-          style: TextStyle(color: Colors.black),
-        ),
-        backgroundColor: Colors.white,
-        actions: <Widget>[
-          // shareButton(snapshot),
-          popupMenuButton(),
-        ],
-      ),
-      body: renderBody(),
-      bottomNavigationBar: bottomNavigator(),
+    return LayoutBuilder(
+      builder: (context, constraint) {
+        Size _size = MediaQuery.of(context).size;
+        return Scaffold(
+          body: SafeArea(
+            bottom: false,
+            child: CustomScrollView(
+              controller: _customScrollViewScrollController,
+              slivers: [
+                StreamBuilder(
+                    initialData: false,
+                    stream: _customScrollViewStreamController.stream,
+                    builder: (context, snapshot) {
+                      return SliverAppBar(
+                        iconTheme: IconThemeData(
+                          color: snapshot.data
+                              ? Colors.black
+                              : Colors.white, //change your color here
+                        ),
+                        title: Text(
+                          widget.product.title,
+                          style: TextStyle(
+                              color: snapshot.data
+                                  ? Colors.black
+                                  : Colors.transparent),
+                        ),
+                        backgroundColor: Colors.white,
+                        primary: true,
+                        pinned: true,
+                        expandedHeight: _size.width,
+                        actions: [
+                          //     // shareButton(snapshot),
+                          popupMenuButton(snapshot.data),
+                        ],
+                        flexibleSpace: Stack(
+                          children: [
+                            FlexibleSpaceBar(
+                              background: SizedBox(
+                                height: _size.width,
+                                width: _size.width,
+                                child: Swiper(
+                                  onTap: (index) {
+                                    // image full viewer
+                                  },
+                                  loop: widget.product.images.length == 1
+                                      ? false
+                                      : true,
+                                  pagination: SwiperPagination(
+                                    alignment: Alignment.bottomCenter,
+                                    builder: DotSwiperPaginationBuilder(
+                                      activeColor: Colors.pink,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  itemCount: widget.product.images.length,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return CachedNetworkImage(
+                                      imageUrl: widget.product.images[index],
+                                      width: MediaQuery.of(context).size.width,
+                                      height:
+                                          MediaQuery.of(context).size.height,
+                                      errorWidget: (context, url, error) =>
+                                          Icon(Icons.error), // 로딩 오류 시 이미지
+                                      fit: BoxFit.cover,
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 70,
+                              child: FlexibleSpaceBar(
+                                collapseMode: CollapseMode.none,
+                                background: Container(
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                      colors: [
+                                        Colors.black38,
+                                        Colors.transparent
+                                      ],
+                                      stops: [0.0, 0.15],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }),
+                SliverToBoxAdapter(
+                  child: renderBody(),
+                ),
+              ],
+            ),
+          ),
+          bottomNavigationBar: bottomNavigator(),
+        );
+      },
     );
   }
 }

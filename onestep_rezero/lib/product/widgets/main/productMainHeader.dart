@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onestep_rezero/product/models/categoryItem.dart';
+import 'package:onestep_rezero/product/pages/categoryDetail.dart';
 
 final categoryStateProvider = StateProvider<bool>((ref) {
   return false;
@@ -24,17 +25,13 @@ class ProductMainHeader extends ConsumerWidget {
               (item) => InkWell(
                 splashColor: Colors.red,
                 onTap: () {
-                  // Navigator.of(context).push(
-                  //   MaterialPageRoute(
-                  //     builder: (context) => Consumer<CategoryProuductProvider>(
-                  //       builder: (context, prouductProvider, _) =>
-                  //           ClothCategoryWidget(
-                  //         productProvider: prouductProvider,
-                  //         category: item.name,
-                  //       ),
-                  //     ),
-                  //   ),
-                  // );
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => CategoryDetail(
+                        category: item.name,
+                      ),
+                    ),
+                  );
                 },
                 child: Column(
                   children: <Widget>[
@@ -80,17 +77,13 @@ class ProductMainHeader extends ConsumerWidget {
               (item) => InkWell(
                 splashColor: Colors.red,
                 onTap: () {
-                  // Navigator.of(context).push(
-                  //   MaterialPageRoute(
-                  //     builder: (context) => Consumer<CategoryProuductProvider>(
-                  //       builder: (context, prouductProvider, _) =>
-                  //           ClothCategoryWidget(
-                  //         productProvider: prouductProvider,
-                  //         category: item.name,
-                  //       ),
-                  //     ),
-                  //   ),
-                  // );
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => CategoryDetail(
+                        category: item.name,
+                      ),
+                    ),
+                  );
                 },
                 child: Column(
                   children: <Widget>[
