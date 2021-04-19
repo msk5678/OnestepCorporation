@@ -5,13 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'StateManage/FutureProvider/boardCategoryProvider.dart';
 
-class CategoryException implements Exception {
-  String cause;
-  CategoryException(this.cause) {
-    print(cause);
-  }
-}
-
 class BoardMain extends StatefulWidget {
   BoardMain({
     Key key,

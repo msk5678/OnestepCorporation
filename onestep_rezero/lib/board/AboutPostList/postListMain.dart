@@ -1,35 +1,83 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'declareData/postData.dart';
+import 'package:onestep_rezero/board/AboutPostList/postList.dart';
+import '../declareData/contentCategory.dart';
 
-import 'StateManage/Provider/postListProvider.dart';
+import '../StateManage/Provider/postListProvider.dart';
 
-final postListProvider =
-    ChangeNotifierProvider<PostListProvider>((ref) => PostListProvider());
-final FETCH_ROW = 15;
-
-class CategoryException implements Exception {
-  String cause;
-  CategoryException(this.cause) {
-    print(cause);
-  }
-}
-
-class PostListRiverpod extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, watch) {
-    final postlistProvider = watch(postListProvider).boards;
-    return PostListWidget(postList: postlistProvider);
-  }
-}
-
-class PostListWidget extends StatelessWidget {
-  final List postList;
-  const PostListWidget({Key key, this.postList}) : super(key: key);
+class PostListMain extends StatefulWidget {
+  final boardName;
+  const PostListMain({Key key, this.boardName}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {}
+  _PostListWidget createState() => _PostListWidget();
+}
+
+class _PostListWidget extends State<PostListMain> {
+  ScrollController _scrollController = ScrollController();
+  String boardName;
+  @override
+  void initState() {
+    boardName = widget.boardName;
+    _scrollController.addListener(scrollListenerInfiniteScroll);
+    print("boardname " + boardName);
+    context.read(postListProvider).fetchPosts(boardName);
+    // context.read(postListProvider).fetchNextProducts(widget.boardName);
+    super.initState();
+  }
+
+  void scrollListenerInfiniteScroll() {
+    if ((_scrollController.position.maxScrollExtent * 0.7) <
+        _scrollController.position.pixels) {
+      context.read(postListProvider).fetchNextProducts(boardName);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+          appBar: PreferredSize(
+            preferredSize: Size.fromHeight(50.0),
+            child: AppBar(
+              backgroundColor: Colors.white,
+            ),
+          ),
+          body: RefreshIndicator(
+            onRefresh: _refreshPage,
+            child: SingleChildScrollView(
+              child: Column(children: [
+                PostListRiverpod(
+                  boardName: boardName,
+                ),
+              ]),
+              controller: _scrollController,
+            ),
+          )),
+    );
+  }
+
+  Future<void> _refreshPage() async {
+    context.read(postListProvider).fetchPosts(boardName);
+  }
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   return Scaffold(
+  //     body: Center(
+  //       child: Text("hi"),
+  //     ),
+  //     floatingActionButton: FloatingActionButton(
+  //       child: Icon(Icons.terrain),
+  //       onPressed: () {
+  //         context.read(postListProvider).fetchNextProducts(widget.boardName);
+  //         print("context.read(postListProvider).boards.length" +
+  //             context.read(postListProvider).boards.length.toString());
+  //       },
+  //     ),
+  //   );
+  // }
 }
 
 // class PostList extends ConsumerWidget {

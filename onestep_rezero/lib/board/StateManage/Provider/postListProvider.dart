@@ -4,8 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:onestep_rezero/board/declareData/postData.dart';
 
 class PostListProvider with ChangeNotifier {
-  PostListProvider(this.boardName);
-  final boardName;
+  // final boardName;
   final _productsSnapshot = <DocumentSnapshot>[];
   String _errorMessage = "Board Provider RuntimeError";
   int documentLimit = 15;
@@ -26,9 +25,9 @@ class PostListProvider with ChangeNotifier {
     _isFetching = true;
 
     try {
-      final snap = await getBoard(
+      final snap = await PostFirebaseApi.getAllPost(
         documentLimit,
-        boardName,
+        boardName: boardName,
         startAfter:
             _productsSnapshot.isNotEmpty ? _productsSnapshot.last : null,
       );
@@ -37,6 +36,7 @@ class PostListProvider with ChangeNotifier {
       if (snap.docs.length < documentLimit) _hasNext = false;
       notifyListeners();
     } catch (error) {
+      print("error is " + error.toString());
       _errorMessage = error.toString();
       notifyListeners();
     }
@@ -44,13 +44,14 @@ class PostListProvider with ChangeNotifier {
     _isFetching = false;
   }
 
-  Future fetchProducts() async {
+  Future fetchPosts(String boardName) async {
     if (_isFetching) return;
     _isFetching = true;
     _hasNext = true;
 
     _productsSnapshot.clear();
     try {
+      print("In try ");
       final snap = await PostFirebaseApi.getAllPost(documentLimit,
           startAfter: null, boardName: boardName);
       _productsSnapshot.addAll(snap.docs);
@@ -59,30 +60,6 @@ class PostListProvider with ChangeNotifier {
     } catch (error) {}
     _isFetching = false;
     notifyListeners();
-  }
-
-  Future<QuerySnapshot> getBoard(
-    // Get Board List
-    int limit,
-    String boardName, {
-    DocumentSnapshot startAfter,
-  }) async {
-    print("getboard");
-    var refProducts;
-
-    refProducts = FirebaseFirestore.instance
-        .collection('Board')
-        .doc(boardName)
-        .collection(boardName)
-        .orderBy("createDate", descending: true)
-        .get();
-    // .limit(limit);
-
-    if (startAfter == null) {
-      return refProducts.get();
-    } else {
-      return refProducts.startAfterDocument(startAfter).get();
-    }
   }
 
   static Future<QuerySnapshot> getBoardCategory(
