@@ -97,7 +97,7 @@ dependencies:
   http:
   
   #kakao
-  # kakao_flutter_sdk: ^0.6.0-beta.2
+  kakao_flutter_sdk: ^0.6.1
   share: ^2.0.1
   no_context_navigation: ^1.0.7
   dio: ^4.0.0

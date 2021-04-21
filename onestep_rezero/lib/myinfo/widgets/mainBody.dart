@@ -1,6 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:onestep_rezero/login/pages/choiceAuthWayPage.dart';
+import 'package:onestep_rezero/login/pages/loginAuthPage.dart';
 import 'package:onestep_rezero/myinfo/pages/infomation/noticePage.dart';
 import 'package:onestep_rezero/myinfo/pages/infomation/questionsPage.dart';
 import 'package:onestep_rezero/myinfo/pages/myinfoProfilePage.dart';
@@ -8,6 +11,7 @@ import 'package:onestep_rezero/myinfo/pages/myinfoSettingsPage.dart';
 import 'package:onestep_rezero/myinfo/providers/providers.dart';
 import 'dart:async';
 import 'package:onestep_rezero/myinfo/widgets/myProfileImage.dart';
+import 'package:onestep_rezero/notification/realtime/firebase_api.dart';
 import 'package:onestep_rezero/reportController.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -144,7 +148,12 @@ class MyinfoMainBody extends ConsumerWidget {
             ),
           ),
           InkWell(
-            onTap: () {},
+            onTap: () {
+              // 여기 작업 마무리해야함 (finish ? 면 증명서 학교 인증 완료했다고 alert 박스 띄우기)
+
+              Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => ChoiceAuthWayPage()));
+            },
             child: Padding(
               padding: EdgeInsets.fromLTRB(
                   MediaQuery.of(context).size.width / 20,
@@ -163,7 +172,8 @@ class MyinfoMainBody extends ConsumerWidget {
                   IconButton(
                     icon: Icon(Icons.keyboard_arrow_right),
                     onPressed: () {
-                      // p.deleteAllPushNotice();
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => ChoiceAuthWayPage()));
                     },
                   )
                 ],

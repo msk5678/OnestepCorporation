@@ -1,18 +1,19 @@
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:onestep_rezero/login/models/authFlag.dart';
 import 'package:onestep_rezero/login/providers/providers.dart';
 import 'package:onestep_rezero/sendMail.dart';
 
-String _tempEmail = "";
-bool _firstEmailEnter = true;
+String _tempEmail;
+bool _firstEmailEnter;
 String checkPassword;
-String tempEmail = "";
-int levelClock = 10;
+int levelClock;
 AnimationController _controller;
-bool timeOver = false;
+bool timeOver;
 
 Future getRandomNumber() async {
   var _random = Random();
@@ -59,6 +60,14 @@ class Countdown extends AnimatedWidget {
   }
 }
 
+void init() {
+  levelClock = 300;
+  _tempEmail = "";
+  checkPassword = "";
+  timeOver = false;
+  _firstEmailEnter = true;
+}
+
 class LoginAuthPage extends StatefulWidget {
   @override
   _LoginAuthPageState createState() => _LoginAuthPageState();
@@ -69,21 +78,20 @@ class _LoginAuthPageState extends State<LoginAuthPage>
   @override
   void initState() {
     super.initState();
-    levelClock = 10;
+    init();
     _controller = AnimationController(
         duration: Duration(seconds: levelClock),
         vsync:
             this // gameData.levelClock is a user entered number elsewhere in the applciation
         );
-    timeOver = false;
   }
 
   @override
   Widget build(BuildContext context) {
     final TextEditingController _emailController =
         TextEditingController(text: _tempEmail);
-    _emailController.selection = TextSelection.fromPosition(
-        TextPosition(offset: _emailController.text.length));
+    // _emailController.selection = TextSelection.fromPosition(
+    //     TextPosition(offset: _emailController.text.length));
     final _authNumberController = TextEditingController();
 
     // StatefulWidget 쓰면서 riverpod (consumer) 쓰기
@@ -93,7 +101,27 @@ class _LoginAuthPageState extends State<LoginAuthPage>
         return Scaffold(
           appBar: AppBar(
             backgroundColor: Colors.white,
-            title: Text("학교인증"),
+            title: Text(
+              "이메일인증",
+              style: TextStyle(color: Colors.black),
+            ),
+            leading: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+                setState(() {
+                  _isEmailCheck.changedAuthEmailChecked(false);
+                  _isEmailCheck.changedAuthEmailErrorUnderLine(true);
+                  _isEmailCheck.changedAuthEmailDupliCheckUnderLine(true);
+                  _isEmailCheck.changedAuthSendUnderLine(true);
+                  _isEmailCheck.changedAuthNumber(true);
+                  _isEmailCheck.changedAuthTimeOverChecked(true);
+                  _isEmailCheck.changedAuthTimerChecked(false);
+                  _isEmailCheck.changedAuthSendClick(false);
+                });
+              },
+              icon: Icon(Icons.arrow_back),
+              color: Colors.black,
+            ),
           ),
           body: SingleChildScrollView(
             child: Column(
@@ -151,12 +179,19 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                         child: Container(
                           width: 300,
                           child: TextField(
+                            style: TextStyle(
+                                color: _isEmailCheck.authFlag.isEmailChecked
+                                    ? Colors.grey
+                                    : Colors.black),
+                            enabled: _isEmailCheck.authFlag.isEmailChecked
+                                ? false
+                                : true,
                             controller: _emailController,
                             onChanged: (text) {
                               _tempEmail = text;
                             },
                             decoration: InputDecoration(
-                              hintText: "이메일",
+                              hintText: "학교 이메일",
                               enabledBorder: UnderlineInputBorder(
                                   borderSide: BorderSide(
                                       color: _firstEmailEnter == true ||
@@ -256,8 +291,8 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                           .changedAuthTimeOverChecked(true);
                                       _isEmailCheck.changedAuthSendClick(true);
 
-                                      sendMail(1, checkPassword,
-                                          _emailController.text);
+                                      // sendEmailAuth(
+                                      //     checkPassword, _emailController.text);
 
                                       _controller.forward();
                                     } else {
@@ -365,7 +400,7 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                     _isEmailCheck.changedAuthNumber(true);
 
                                     timeOver = false;
-                                    levelClock = 10;
+                                    levelClock = 300;
                                     _controller = AnimationController(
                                         duration: Duration(seconds: levelClock),
                                         vsync:
@@ -374,8 +409,8 @@ class _LoginAuthPageState extends State<LoginAuthPage>
 
                                     _controller.forward();
 
-                                    // sendMail(1, checkPassword,
-                                    //     _emailController.text);
+                                    // sendEmailAuth(
+                                    //     checkPassword, _emailController.text);
                                   },
                                   child: Text("재전송"),
                                 ),
@@ -393,7 +428,8 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                         toastLength: Toast.LENGTH_SHORT,
                                         gravity: ToastGravity.BOTTOM);
 
-                                    // sendMail(1,checkPassword,emailController.text);
+                                    // sendEmailAuth(
+                                    //     checkPassword, _emailController.text);
                                   },
                                   child: Text("재전송"),
                                 ),
@@ -407,8 +443,12 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                             if (timeOver == false &&
                                 checkPassword == _authNumberController.text) {
                               print("성공");
-                              // checkAuth.successAuth();
-                              // updateAuth();
+                              // update 할때 학교 인증한 시간도 업데이트 해줘야함 (DateTime.now();) 나중에 추가하기
+                              // FirebaseFirestore.instance
+                              //     .collection('users')
+                              //     .doc(FirebaseApi.getId())
+                              //     .update({"userUniversityEmail": true});
+
                               // Navigator.of(context).pop();
                             } else if (timeOver == true) {
                               print("time over 실패");

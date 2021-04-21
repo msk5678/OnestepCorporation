@@ -36,6 +36,11 @@ class SchoolEmailCheckProvider extends ChangeNotifier {
     }
   }
 
+  void changedAuthEmailChecked(bool value) {
+    authFlag.isEmailChecked = value;
+    notifyListeners();
+  }
+
   void changedAuthSendUnderLine(bool value) {
     authFlag.isSendUnderLine = value;
     notifyListeners();

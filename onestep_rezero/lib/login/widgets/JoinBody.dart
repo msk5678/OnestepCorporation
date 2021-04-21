@@ -14,10 +14,21 @@ class JoinBody extends ConsumerWidget {
     final TextEditingController _emailController =
         TextEditingController(text: _tempEmail);
     final _isEmailCheck = watch(emailCheckProvider.state);
+    _emailController.selection = TextSelection.fromPosition(
+        TextPosition(offset: _emailController.text.length));
 
     final TextEditingController _nicknameController =
         TextEditingController(text: _tempNickName);
     final _isNickNameCheck = watch(nickNameProvider.state);
+    _nicknameController.selection = TextSelection.fromPosition(
+        TextPosition(offset: _nicknameController.text.length));
+
+    final _isStatusCheck = watch(statusProvider.state);
+
+    // dropdown btn 주는게 나은지 없는게 나은지 물어보기
+    // final _emailTest = watch(emailValueProvider);
+    // final _emailList = ['naver.com', 'gmail.com', 'hanmail.net'];
+    // final _emailFirstValue = 'naver.com';
 
     return SingleChildScrollView(
       child: Column(
@@ -115,6 +126,35 @@ class JoinBody extends ConsumerWidget {
                     ? true
                     : false,
               ),
+              // Padding(
+              //   padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+              //   child: Row(
+              //     mainAxisAlignment: MainAxisAlignment.center,
+              //     children: [
+              //       Padding(
+              //         padding: EdgeInsets.fromLTRB(
+              //             0, 0, (MediaQuery.of(context).size.width / 40), 0),
+              //         child: Container(
+              //           child: Text("@"),
+              //         ),
+              //       ),
+              //       DropdownButton(
+              //         value: _emailTest.state,
+              //         items: _emailList.map(
+              //           (value) {
+              //             return DropdownMenuItem(
+              //               child: Text(value),
+              //               value: value,
+              //             );
+              //           },
+              //         ).toList(),
+              //         onChanged: (value) {
+              //           _emailTest.state = value;
+              //         },
+              //       )
+              //     ],
+              //   ),
+              // ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
                 child: Container(
@@ -177,26 +217,42 @@ class JoinBody extends ConsumerWidget {
                         : false,
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+                padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Container(
-                      child: Text("학교인증 (선택사항)"),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 2),
+                      child: ElevatedButton(
+                          style: ButtonStyle(
+                              backgroundColor: _isStatusCheck == true
+                                  ? MaterialStateProperty.all<Color>(Colors.red)
+                                  : MaterialStateProperty.all<Color>(
+                                      Colors.black)),
+                          onPressed: () {
+                            context.read(statusProvider).changeStatus("재학생");
+                          },
+                          child: Container(
+                            width: MediaQuery.of(context).size.width / 4,
+                            child: Center(child: Text("재학생")),
+                          )),
                     ),
-                    Container(
-                        width: 100,
-                        child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                primary: Colors.white70),
-                            onPressed: () async {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => LoginAuthPage()));
-                            },
-                            child: Text(
-                              "하러가기",
-                              style: TextStyle(color: Colors.black),
-                            ))),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 2),
+                      child: ElevatedButton(
+                          style: ButtonStyle(
+                              backgroundColor: _isStatusCheck == false
+                                  ? MaterialStateProperty.all<Color>(Colors.red)
+                                  : MaterialStateProperty.all<Color>(
+                                      Colors.black)),
+                          onPressed: () {
+                            context.read(statusProvider).changeStatus("졸업생");
+                          },
+                          child: Container(
+                            width: MediaQuery.of(context).size.width / 4,
+                            child: Center(child: Text("졸업생")),
+                          )),
+                    ),
                   ],
                 ),
               ),
@@ -212,6 +268,7 @@ class JoinBody extends ConsumerWidget {
                       // if (_isEmailChecked == true &&
                       //     _isNickNameChecked == true) {
                       //   print("성공");
+                      //  졸업생, 재학생 value 도 추가해서 db에 update 하기
                       //   updateUser(
                       //       emailController.text, nicknameController.text);
                       //   Navigator.of(context).pushReplacementNamed(

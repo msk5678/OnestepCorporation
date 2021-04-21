@@ -1,7 +1,10 @@
 import 'package:algolia/algolia.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:onestep_rezero/home/pages/homeNotificationPage.dart';
 import 'package:onestep_rezero/moor/moor_database.dart';
+import 'package:onestep_rezero/notification/realtime/firebase_api.dart';
 import 'package:onestep_rezero/search/pages/searchAllMain.dart';
 import 'package:provider/provider.dart';
 
@@ -42,7 +45,8 @@ class _HomeMainState extends State<HomeMain> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Text("홈", style: TextStyle(color: Colors.black)),
+        // title: Text("홈", style: TextStyle(color: Colors.black)),
+        title: Text(FirebaseApi.getId(), style: TextStyle(color: Colors.black)),
         actions: <Widget>[
           Row(
             children: <Widget>[
@@ -67,6 +71,11 @@ class _HomeMainState extends State<HomeMain> {
                       Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => HomeNotificationPage(),
                       ));
+                      // 신고 test
+                      // showModalBottomSheet(
+                      //     context: context,
+                      //     builder: buildBottomSheet,
+                      //     isScrollControlled: false);
                       // 쪽지 form 보려고 test
                       // Navigator.of(context).push(MaterialPageRoute(
                       //   builder: (context) => MessagePage(),

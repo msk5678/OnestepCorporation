@@ -39,11 +39,12 @@ class NotificationBody extends StatelessWidget {
                 return Container();
               default:
                 // // 알림 내부 DB에 아무것도 없으면
-                if (snapshot2.data.length == 0)
-                  return Center(
-                      child: Container(
-                    child: Text("알림이 없습니다"),
-                  ));
+                //
+                // if (snapshot2.data.length == 0)
+                //   return Center(
+                //       child: Container(
+                //     child: Text("알림이 없습니다"),
+                //   ));
                 print("snapshot data = ${snapshot1.data}");
                 List<DocumentSnapshot> documentSnapshot = [];
 

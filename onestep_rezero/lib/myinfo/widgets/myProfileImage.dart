@@ -7,6 +7,7 @@ import 'dart:io' as io;
 import 'package:image_picker/image_picker.dart';
 import 'package:onestep_rezero/myinfo/pages/myinfoSettingsPage.dart';
 import 'package:onestep_rezero/myinfo/providers/providers.dart';
+import 'package:onestep_rezero/notification/realtime/firebase_api.dart';
 import 'package:random_string/random_string.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -34,7 +35,7 @@ class MyProfileImage extends ConsumerWidget {
     return StreamBuilder(
       stream: FirebaseFirestore.instance
           .collection("users")
-          .doc('109372672912726502056')
+          .doc(FirebaseApi.getId())
           .snapshots(),
       builder:
           (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
@@ -72,7 +73,7 @@ class MyProfileImage extends ConsumerWidget {
                             )
                           : Icon(Icons.account_circle),
                       color: Colors.black,
-                      iconSize: 100,
+                      iconSize: MediaQuery.of(context).size.width / 5,
                       onPressed: () async {
                         // // storage 삭제 보류
                         // Reference ref = FirebaseStorage.instance
@@ -92,27 +93,27 @@ class MyProfileImage extends ConsumerWidget {
                             await picker.getImage(source: ImageSource.gallery);
                         if (pickedFile != null) {
                           _image = io.File(pickedFile.path);
+                          firebase_storage.Reference ref = firebase_storage
+                              .FirebaseStorage.instance
+                              .ref()
+                              .child("user images/${randomAlphaNumeric(15)}");
+                          ref.putFile(io.File(_image.path));
+                          firebase_storage.UploadTask storageUploadTask =
+                              ref.putFile(io.File(_image.path));
+
+                          await storageUploadTask.whenComplete(() async => {
+                                downloadURL = await ref.getDownloadURL(),
+                                FirebaseFirestore.instance
+                                    .collection("users")
+                                    .doc(FirebaseApi.getId())
+                                    .update({
+                                  "photoUrl": downloadURL,
+                                }),
+                              });
                           print("_image = $_image");
                         } else {
                           print('No image selected.');
                         }
-                        firebase_storage.Reference ref = firebase_storage
-                            .FirebaseStorage.instance
-                            .ref()
-                            .child("user images/${randomAlphaNumeric(15)}");
-                        ref.putFile(io.File(_image.path));
-                        firebase_storage.UploadTask storageUploadTask =
-                            ref.putFile(io.File(_image.path));
-
-                        await storageUploadTask.whenComplete(() async => {
-                              downloadURL = await ref.getDownloadURL(),
-                              FirebaseFirestore.instance
-                                  .collection("users")
-                                  .doc("ciih53tTaJa1Q3wB1xjqxeJavEC3")
-                                  .update({
-                                "photoUrl": downloadURL,
-                              }),
-                            });
                       }),
                 ],
               ),
