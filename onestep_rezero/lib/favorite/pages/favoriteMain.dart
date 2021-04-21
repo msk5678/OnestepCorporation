@@ -32,8 +32,8 @@ class _FavoriteMainState extends State<FavoriteMain> {
   }
 
   void scrollListener() {
-    if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent - 300) {
+    if ((_scrollController.position.maxScrollExtent * 0.7) <
+        _scrollController.position.pixels) {
       context.read(favoriteMainProvider).fetchNextProducts();
     }
 
@@ -62,6 +62,7 @@ class _FavoriteMainState extends State<FavoriteMain> {
             width: 40.0,
             child: FittedBox(
               child: FloatingActionButton(
+                heroTag: "favoriteMainFloatActionButton",
                 onPressed: () {
                   _scrollController.position
                       .moveTo(0.5, duration: Duration(milliseconds: 200));
@@ -116,6 +117,7 @@ class _FavoriteMainState extends State<FavoriteMain> {
         ],
       ),
       body: SingleChildScrollView(
+        physics: AlwaysScrollableScrollPhysics(),
         controller: _scrollController,
         child: Container(
             color: Colors.white,

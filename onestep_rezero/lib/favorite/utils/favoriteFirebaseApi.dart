@@ -32,7 +32,7 @@ class FavoriteFirebaseApi {
 
   static void deleteFavorite(String docId) {
     FirebaseFirestore.instance.collection("products").doc(docId).update({
-      "favoriteuserlist" + googleSignIn.currentUser.id.toString():
+      "favoriteuserlist." + googleSignIn.currentUser.id.toString():
           FieldValue.delete()
     });
   }

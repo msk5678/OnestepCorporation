@@ -1,14 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/notification/model/productChat.dart';
 import 'package:onestep_rezero/notification/model/productChatCount.dart';
-import 'package:onestep_rezero/notification/realtime/chatBadge.dart';
-import 'package:onestep_rezero/notification/realtime/chatCount.dart';
-import 'package:onestep_rezero/notification/realtime/chat_realtime.dart';
-import 'package:onestep_rezero/notification/realtime/firebase_api.dart';
 import 'package:onestep_rezero/notification/realtime/realtimeNavigationManager.dart';
 import 'package:onestep_rezero/notification/realtime/realtimeProductChatController.dart';
+import 'package:onestep_rezero/notification/widget/chatBadge.dart';
+import 'package:onestep_rezero/notification/widget/chat_list_time.dart';
 
 class RealTimePage extends StatefulWidget {
   @override
@@ -42,7 +41,7 @@ class _RealTimePageState extends State<RealTimePage>
   void initState() {
     super.initState();
     productChat = ProductChat();
-    uId = FirebaseApi.getId();
+    uId = googleSignIn.currentUser.id.toString();
   }
 
   @override
@@ -79,7 +78,7 @@ class _RealTimePageState extends State<RealTimePage>
           productchatdatabasereference
               // .child("roominfo")
               // .orderByChild("users/1")
-              .orderByChild("users/${FirebaseApi.getId()}")
+              .orderByChild("users/${googleSignIn.currentUser.id.toString()}")
               .equalTo(true)
               .onValue, //조건1.  타임스탬프 기준
       builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -158,9 +157,10 @@ class _RealTimePageState extends State<RealTimePage>
                   mesageInValues.forEach((mIkey, mIvalue) {
                     //보낸 사람 분해.
                     print(
-                        "stream values else1 message ForEach: MyUid : ${FirebaseApi.getId()}");
+                        "stream values else1 message ForEach: MyUid : ${googleSignIn.currentUser.id.toString()}");
 
-                    if (mIvalue == false && mIkey != FirebaseApi.getId()) {
+                    if (mIvalue == false &&
+                        mIkey == googleSignIn.currentUser.id.toString()) {
                       len++;
                       print(
                           "stream values else1 message ForEach: 읽지 않은 메세지 있음. len : $len");
@@ -171,9 +171,8 @@ class _RealTimePageState extends State<RealTimePage>
                 }); //메시지 내부 분해 종료
                 listProductChatCount
                     .add(ProductChatCount.forMapSnapshot(key, len, values));
-                print(
-                    ":#####################stream values else1 message for length 최종 안읽은 메세지 수 Key : $key /// len: $len :#####################");
               }); //채팅방 반복 종료
+
               //1. 챗 리스트 정렬
               listProductChat.sort((b, a) =>
                   a.timeStamp.compareTo(b.timeStamp)); //정렬3. 시간 순 정렬 가능.
@@ -193,15 +192,20 @@ class _RealTimePageState extends State<RealTimePage>
                       itemCount: listProductChat.length,
                       itemBuilder: (context, index) {
                         String productsUserId; //장터 상대방 Id
-                        listProductChat[index].user1 == FirebaseApi.getId()
+                        listProductChat[index].user1 ==
+                                googleSignIn.currentUser.id.toString()
                             ? productsUserId = listProductChat[index].user2
                             : productsUserId = listProductChat[index].user1;
                         print(
                             "##dd'${listProductChat[index].chatId.toString()}/message'");
-                        print("#printFuture# TOP ");
                         return ListTile(
-                          leading: RealtimeProductChatController()
-                              .getUserImage(productsUserId),
+                          leading: Material(
+                            child: RealtimeProductChatController()
+                                .getUserImage(productsUserId),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(6.0)),
+                            clipBehavior: Clip.hardEdge,
+                          ),
                           //leading end
                           title: Padding(
                             padding: const EdgeInsets.fromLTRB(0, 0, 0, 3),
@@ -212,10 +216,9 @@ class _RealTimePageState extends State<RealTimePage>
                                     .getProductUserNickname(productsUserId),
                                 SizedBox(width: 10, height: 10),
                                 Spacer(),
-
-                                //Text(listProductChat[index].timeStamp.toString()),
-                                GetRealTime(listProductChat[index].timeStamp),
-                                //GetTime(chatroomData),
+                                //시간
+                                getChatListTime(
+                                    listProductChat[index].timeStamp),
                               ],
                             ),
                           ),
@@ -227,20 +230,8 @@ class _RealTimePageState extends State<RealTimePage>
                                   listProductChat[index].recentText.toString()),
                               SizedBox(width: 10, height: 10),
                               Spacer(),
-                              // readCount
-
-                              // ProductChatController().getProductChatReadCounts(
-                              //     chatroomData.id, snapshot.data.size),
-                              //Text(listProductChat[index].chatId.toString()),
-                              //Text(chatKey),
                               chatCountBadge(
                                   listProductChatCount[index].chatCount),
-                              // Text(listProductChatCount[index]
-                              //     .chatCount
-                              //     .toString()),
-                              // RealtimeProductChatController()
-                              //     .getRealtimeFutureProductChatReadCounts(
-                              //         listProductChat[index].chatId.toString()),
                             ],
                           ),
                           trailing: Padding(
@@ -293,7 +284,7 @@ class _RealTimePageState extends State<RealTimePage>
 
   // RealTimeChatNavigationManager.navigateToChattingRoom(
   //   context,
-  //   FirebaseApi.getId(),
+  //   googleSignIn.currentUser.id.toString(),
   //   widget.product.uid,
   //   widget.product.firestoreid,
   // );

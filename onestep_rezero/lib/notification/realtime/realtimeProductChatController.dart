@@ -5,7 +5,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onestep_rezero/notification/model/productSendMessage.dart';
-import 'firebase_api.dart';
+import 'package:onestep_rezero/main.dart';
 
 class RealtimeProductChatController {
   final databaseReference = FirebaseDatabase.instance.reference();
@@ -20,7 +20,7 @@ class RealtimeProductChatController {
 
   Future<void> createProductChatingRoomToRealtimeFirebaseStorage2(
       ProductSendMessage productSendMessage) async {
-    String myUid = FirebaseApi.getId();
+    String myUid = googleSignIn.currentUser.id.toString();
     String title;
     String friendUid;
     String productImageUrl;
@@ -83,7 +83,7 @@ class RealtimeProductChatController {
   ) {
     String contentMsg = productSendMessage.contentMsg;
     int type = productSendMessage.type;
-    String myId = FirebaseApi.getId();
+    String myId = googleSignIn.currentUser.id.toString();
     String friendId = productSendMessage.friendId;
     String chattingRoomId = productSendMessage.chattingRoomId;
     TextEditingController textEditingController =
@@ -95,8 +95,6 @@ class RealtimeProductChatController {
     //type = 1 its imageFile
     //type = 2 its sticker image
     if (contentMsg != "") {
-      print("누가먼저돌까요3 메세지 낫 널 $contentMsg");
-
       textEditingController.clear();
       String messageId = DateTime.now().millisecondsSinceEpoch.toString();
 
@@ -162,7 +160,7 @@ class RealtimeProductChatController {
               return CircularProgressIndicator();
             }
 
-            if (snapshot.data['nickname'] == "") {
+            if (snapshot.data['nickName'] == "") {
               return Text("닉네임 오류");
             } else if (snapshot.hasError) {
               return Text(
@@ -171,7 +169,7 @@ class RealtimeProductChatController {
               );
             } else {
               return AutoSizeText(
-                snapshot.data['nickname'],
+                snapshot.data['nickName'],
                 style: TextStyle(fontSize: 15),
                 minFontSize: 10,
                 stepGranularity: 10,
@@ -214,21 +212,23 @@ class RealtimeProductChatController {
                 ),
               );
             } else {
-              return Expanded(
-                child: CachedNetworkImage(
-                  imageUrl: snapshot.data['photoUrl'],
-                  fit: BoxFit.cover,
-                  height: 50,
-                  width: 50,
-                ),
-                // child: ExtendedImage.network(
-                //   snapshot.data['photoUrl'],
-                //   fit: BoxFit.cover,
-                //   height: 50,
-                //   width: 50,
-                //   cache: true,
-                // ),
-              );
+              return Column(children: <Widget>[
+                Expanded(
+                  child: CachedNetworkImage(
+                    imageUrl: snapshot.data['photoUrl'],
+                    fit: BoxFit.cover,
+                    height: 50,
+                    width: 50,
+                  ),
+                  // child: ExtendedImage.network(
+                  //   snapshot.data['photoUrl'],
+                  //   fit: BoxFit.cover,
+                  //   height: 50,
+                  //   width: 50,
+                  //   cache: true,
+                  // ),
+                )
+              ]);
             }
         }
       },
@@ -238,9 +238,9 @@ class RealtimeProductChatController {
   Future<void> setToFirebaseProductChatCount(int chatCount) async {
     await FirebaseFirestore.instance
         .collection("users")
-        .doc(FirebaseApi.getId())
+        .doc(googleSignIn.currentUser.id.toString())
         .collection("chatcount")
-        .doc(FirebaseApi.getId())
+        .doc(googleSignIn.currentUser.id.toString())
         .update({
       "productchatcount": chatCount,
     }).whenComplete(() {
@@ -257,9 +257,9 @@ class RealtimeProductChatController {
     return StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
             .collection('users')
-            .doc(FirebaseApi.getId())
+            .doc(googleSignIn.currentUser.id.toString())
             .collection("chatcount")
-            .doc(FirebaseApi.getId())
+            .doc(googleSignIn.currentUser.id.toString())
             .snapshots(),
         builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
           if (snapshot.hasData) {
@@ -280,11 +280,15 @@ class RealtimeProductChatController {
     return StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
             .collection('users')
-            .doc(FirebaseApi.getId())
+            .doc(googleSignIn.currentUser.id.toString())
             .collection("chatcount")
-            .doc(FirebaseApi.getId())
+            .doc(googleSignIn.currentUser.id.toString())
             .snapshots(),
         builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          //return Text("dd");
+          // if (snapshot == null) {
+          //   return Text("d");
+          // } else
           if (snapshot.hasData) {
             print(snapshot.data.toString());
           } else
@@ -348,5 +352,37 @@ class RealtimeProductChatController {
           }
           return Container();
         });
+  }
+
+  Future<void> updateReadMessage(
+      String chattingRoomId, String messageId) async {
+    DatabaseReference productChatMessageReference = FirebaseDatabase.instance
+        .reference()
+        .child("chattingroom")
+        .child("productchat")
+        .child(chattingRoomId)
+        .child("message")
+        .child(messageId)
+        .child("idTo");
+    productChatMessageReference.update({
+      googleSignIn.currentUser.id.toString(): true,
+    });
+    // print(
+    //     "##updateReadMessage hasData value : ${snapshot.data.snapshot.value}");
+    // print("##updateReadMessage hasData key: ${snapshot.data.snapshot.key}");
+    // print("##updateReadMessage hasData chatId: ${chattingRoomId}");
+    // databaseReference
+    //     .child("chattingroom")
+    //     .child("productchat")
+    //     .child(chattingRoomId)
+    //     .child("message")
+    //     .once()
+    //     .then((value) {
+    //   // value.value.foreach(key, value)(
+
+    //   // );
+    //   print("##updateReadMessage message value : ${value.value}");
+    // });
+    // //if (data['idTo'] == googleSignIn.currentUser.id.toString() && data['isRead'] == false) {}
   }
 }

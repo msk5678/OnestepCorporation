@@ -2,16 +2,18 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/notification/model/productMessage.dart';
 import 'package:onestep_rezero/notification/model/productSendMessage.dart';
+import 'package:onestep_rezero/notification/widget/message_list_time.dart';
 
 import 'FullmageWidget.dart';
-import 'firebase_api.dart';
 import 'realtimeProductChatController.dart';
+import 'dart:io' as io;
 
 class InRealTimeChattingRoomPage extends StatelessWidget {
   final String myUid;
@@ -131,7 +133,7 @@ class _LastChatState extends State<ChatScreen> {
   bool isDisplaySticker;
   bool isLoading;
   //add image
-  File imageFile;
+  PickedFile pickFile;
   String imageUrl;
 
   //메시지 보내기
@@ -146,7 +148,7 @@ class _LastChatState extends State<ChatScreen> {
   bool existChattingRoom; //채팅방
 
   //RealTime
-  List<ProductMessage> listProductMessage = List(); //Realtime List
+  List<ProductMessage> listProductMessage = []; //Realtime List
   DatabaseReference productChatMessageReference = FirebaseDatabase.instance
       .reference()
       .child("chattingroom")
@@ -203,7 +205,7 @@ class _LastChatState extends State<ChatScreen> {
         .child("productchat");
 
     productchatdatabasereference
-        .orderByChild("users/${FirebaseApi.getId()}")
+        .orderByChild("users/${googleSignIn.currentUser.id.toString()}")
         .equalTo(true)
         .once()
         .then((DataSnapshot snapshot) {
@@ -335,7 +337,7 @@ class _LastChatState extends State<ChatScreen> {
         children: <Widget>[
           Row(
             children: <Widget>[
-              FlatButton(
+              TextButton(
                 onPressed: () => print("test@"),
                 //onSendMessage("mimi1", 2),
                 child: Image.asset(
@@ -502,16 +504,14 @@ class _LastChatState extends State<ChatScreen> {
                           values['content'].toString());
 
                       values.forEach((key, values) {
-                        listProductMessage
-                            .add(ProductMessage.forMapSnapshot(values));
-
                         print(
                             "#realpro Strmsg message id : ${values["idTo"].keys.toList()[0]}");
-                        String s = values["idTo/${FirebaseApi.getId()}"];
+                        String s = values[
+                            "idTo/${googleSignIn.currentUser.id.toString()}"];
                         print(
-                            "#realpro Strmsg message read : ${FirebaseApi.getId()} ${values["idTo/${FirebaseApi.getId()}"]} $s");
+                            "#realpro Strmsg message read : ${googleSignIn.currentUser.id.toString()} ${values["idTo/${googleSignIn.currentUser.id.toString()}"]} $s");
                         print(
-                            "#realpro Strmsg message read : ${FirebaseApi.getId()} ${values["idTo/TLtvLka2sHTPQE3q6U2WPxfgJ8j2"].toString()} ");
+                            "#realpro Strmsg message read : ${googleSignIn.currentUser.id.toString()} ${values["idTo/TLtvLka2sHTPQE3q6U2WPxfgJ8j2"].toString()} ");
 
                         print(
                             "#realpro Strmsg message key : ${key.toString()}");
@@ -521,8 +521,36 @@ class _LastChatState extends State<ChatScreen> {
                             "#realpro Strmsg message idTo : ${values['idTo']}");
                         print(
                             "#realpro Strmsg message idTo : ${values['idTo'].values.toList()[0]}");
-                      });
 
+                        //Message Read update
+                        if (values["idTo"].keys.toList()[0] ==
+                                googleSignIn.currentUser.id.toString() &&
+                            values['idTo'].values.toList()[0] == false) {
+                          print(
+                              "안읽은 메세지, idTo : ${values["idTo"].keys.toList()[0]} // bool : ${values['idTo'].values.toList()[0]} // vals : $values");
+                          //listProductMessage[0].
+                          //
+                          RealtimeProductChatController()
+                              .updateReadMessage(chattingRoomId, key);
+                          // DatabaseReference productChatMessageReference =
+                          //     FirebaseDatabase.instance
+                          //         .reference()
+                          //         .child("chattingroom")
+                          //         .child("productchat")
+                          //         .child(chattingRoomId)
+                          //         .child("message")
+                          //         .child(key)
+                          //         .child("idTo");
+                          // productChatMessageReference.update({
+                          //   googleSignIn.currentUser.id.toString(): true,
+                          // });
+                          listProductMessage
+                              .add(ProductMessage.forReadMapSnapshot(values));
+                        } //업데이트 종료
+                        else
+                          listProductMessage
+                              .add(ProductMessage.forMapSnapshot(values));
+                      });
                       listProductMessage.sort((b, a) =>
                           a.timestamp.compareTo(b.timestamp)); //정렬3. 시간 순 정렬
                       print("#realpro Strmsg top list index : " +
@@ -535,8 +563,26 @@ class _LastChatState extends State<ChatScreen> {
                               controller: listScrollController,
                               itemCount: listProductMessage.length,
                               itemBuilder: (context, index) {
-                                return createItem(
-                                    index, listProductMessage[index]);
+                                return Column(
+                                  children: [
+                                    //Text("jo"),
+                                    if (index == listProductMessage.length - 1)
+                                      createMessageDate(
+                                          index,
+                                          listProductMessage.length,
+                                          listProductMessage[index],
+                                          listProductMessage[index])
+                                    else
+                                      createMessageDate(
+                                          index,
+                                          listProductMessage.length,
+                                          listProductMessage[index],
+                                          listProductMessage[index + 1]),
+
+                                    createMessage(
+                                        index, listProductMessage[index]),
+                                  ],
+                                );
                               },
                             )
                           : Text("생성된 채팅방이 없습니다. . !");
@@ -572,7 +618,24 @@ class _LastChatState extends State<ChatScreen> {
     }
   }
 
-  Widget createItem(int index, ProductMessage productMessage) {
+  Widget createMessageDate(int index, int maxIndex,
+      ProductMessage productMessage, ProductMessage nextProductMessage) {
+    var maxindex = maxIndex - 1;
+    print(
+        "##message index $index / m Index $maxIndex / proMsg ${productMessage.timestamp}");
+    if (index == maxindex && productMessage != null) //메세지 시작일 경우 이거 출력
+      return getMessageDate(productMessage.timestamp);
+    else if (index < maxindex && productMessage != null) {
+      return compareToMessageDate(productMessage, nextProductMessage);
+      // if (productMessage.timestamp == nextProductMessage.timestamp)
+      //   print("전과 같으면 ");
+      //첫 메세지 제외일 경우
+
+    } else
+      return Text("err");
+  }
+
+  Widget createMessage(int index, ProductMessage productMessage) {
     //My messages - Right Side
     // var chatTime = DateFormat("yyyy-MM-dd").format(
     //     DateTime.fromMillisecondsSinceEpoch(int.parse(document["timestamp"])));
@@ -586,6 +649,7 @@ class _LastChatState extends State<ChatScreen> {
       return Column(
         //요기
         children: <Widget>[
+          //Text("time test"),
           // if (index == size - 1) Text(chatTime),
           // if (chatTime != nextchatTime) Text(chatTime),
           Row(
@@ -594,10 +658,14 @@ class _LastChatState extends State<ChatScreen> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
-                  productMessage.isRead == false ? Text("1") : Container(),
+                  productMessage.isRead == false ? Text("1") : Text(""),
+//                        ? Text("${productMessage.isRead} 상대방 안읽음")
+//                       : Text("${productMessage.isRead} 상대방 읽음"),
+
                   //Text(document["isRead"].toString()),
                   //GetTime(document),
-                  Text("time"),
+                  //Text("time"),
+                  getMessageTime(productMessage.timestamp),
                 ],
               ),
 
@@ -627,7 +695,7 @@ class _LastChatState extends State<ChatScreen> {
                   //Image Msg
                   : productMessage.type == 1
                       ? Container(
-                          child: FlatButton(
+                          child: TextButton(
                             child: Material(
                               child: CachedNetworkImage(
                                 placeholder: (context, url) => Container(
@@ -752,7 +820,7 @@ class _LastChatState extends State<ChatScreen> {
                       )
                     : productMessage.type == 1
                         ? Container(
-                            child: FlatButton(
+                            child: TextButton(
                               child: Material(
                                 child: CachedNetworkImage(
                                   placeholder: (context, url) => Container(
@@ -811,6 +879,7 @@ class _LastChatState extends State<ChatScreen> {
                                 right: 10.0),
                           ),
                 //GetTime(document),
+                getMessageTime(productMessage.timestamp),
               ],
             ),
 
@@ -992,33 +1061,45 @@ class _LastChatState extends State<ChatScreen> {
     }
   }
 
+  // var metadata;
   Future getImage() async {
-    // ignore: deprecated_member_use
-    final picker = ImagePicker();
-    var pickFile = await picker.getImage(source: ImageSource.gallery);
+    print("1. 이미지 선택");
+    pickFile = await ImagePicker().getImage(source: ImageSource.gallery);
     if (pickFile != null) {
       isLoading = true;
+      //$이미지 메타데이터 넣고싶으면 추가
+      // metadata = firebase_storage.SettableMetadata(
+      //     contentType: 'createImage/jpeg',
+      //     customMetadata: {'picked-file-path': pickFile.path});
+
     }
 
     //imageFile = await ImagePicker().getImage(source: ImageSource.gallery);
     // if (imageFile != null) {
     //   isLoading = true;
     // }
+    print("2. 이미지 선택 완료");
 
     uploadImageFile();
-    print('업로드 실행');
+    print("0. 이미지 업로드 완료");
   }
 
   Future uploadImageFile() async {
-    print('업로드 호출');
-
+    print("3. 이미지 업로드 호출");
     String fileName = DateTime.now().millisecondsSinceEpoch.toString();
-    Reference storageReference =
-        FirebaseStorage.instance.ref().child("chat Images").child(fileName);
-    UploadTask storageUploadTask = storageReference.putFile(imageFile);
-    TaskSnapshot storageTaskSnapshot = await storageUploadTask;
-    //.onComplete;
+    print('4. 이미지 파일명 : $fileName');
+    firebase_storage.Reference storageReference = firebase_storage
+        .FirebaseStorage.instance
+        .ref()
+        .child("chat Images")
+        .child(fileName);
 
+    firebase_storage.UploadTask storageUploadTask =
+        storageReference.putFile(io.File(pickFile.path));
+    //storageReference.putFile(io.File(pickFile.path), metadata); //이미지 메타데이터 추가 시
+    firebase_storage.TaskSnapshot storageTaskSnapshot = await storageUploadTask;
+
+    //.onComplete;
     // StorageReference storageReference =
     //     FirebaseStorage.instance.ref().child("chat Images").child(fileName);
     // StorageUploadTask storageUploadTask = storageReference.putFile(imageFile);

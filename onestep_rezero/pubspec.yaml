@@ -95,6 +95,14 @@ dependencies:
   flutter_email_sender: ^5.0.0
 
   http:
+  #algolia
+  algolia: ^1.0.1 # 검색
+  ##########
+
+  #toast
+  fluttertoast: ^7.1.1
+  ##########
+
   
   #kakao
   kakao_flutter_sdk: ^0.6.1
@@ -113,10 +121,6 @@ dependencies:
 #   image_picker: "0.7.3"
 #   stream_chat_flutter: "1.5.1"
 #   pattern_formatter: "2.0.0"
-  #algolia
-  algolia: ^1.0.1 # 검색
-  ##########
-
 
 dev_dependencies:
   flutter_test:
@@ -143,8 +147,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - icons/category/
-    - images/ 
-
+    - images/   
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 

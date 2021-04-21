@@ -36,66 +36,24 @@ void main() async {
   );
 }
 
-class MyApp extends StatefulWidget {
+class MyBehavior extends ScrollBehavior {
   @override
-  _MyAppState createState() => _MyAppState();
+  Widget buildViewportChrome(
+      BuildContext context, Widget child, AxisDirection axisDirection) {
+    return child;
+  }
 }
 
-class _MyAppState extends State<MyApp> {
-  @override
-  void initState() {
-    super.initState();
-    // String kakaoAppKey = "38cc3c08e0c39fa8f9422cc4b871a82f";
-    // KakaoContext.clientId = kakaoAppKey;
-    // initDynamicLinks();
-  }
-
-  // void initDynamicLinks() async {
-  //   // 앱이 active이거나 background 상태일때 들어온 링크를 알 수 있는 링크 콜백에 대한 리스너 onLink()
-  //   FirebaseDynamicLinks.instance.onLink(
-  //       onSuccess: (PendingDynamicLinkData dynamicLink) async {
-  //     final NavigationService navService = NavigationService();
-  //     final Uri deepLink = dynamicLink?.link;
-
-  //     print(deepLink.path);
-
-  //     if (deepLink != null) {
-  //       var code = deepLink.queryParameters['code'];
-  //       navService.pushNamed('/DetailProduct', args: {"PRODUCTID": code}).then(
-  //           (value) {
-  //         print("clothitem");
-  //       });
-  //       // _handleDynamicLink(deepLink);
-  //     }
-  //   }, onError: (OnLinkErrorException e) async {
-  //     print('onLinkError');
-  //     print(e.message);
-  //   });
-
-  //   // 앱을 새로 런치한 링크를 알 수 있는 getInitialLink()
-  //   final PendingDynamicLinkData data =
-  //       await FirebaseDynamicLinks.instance.getInitialLink();
-  //   final Uri deepLink = data?.link;
-
-  //   print(deepLink);
-  //   if (deepLink != null) {
-  //     var code = deepLink.queryParameters['code'];
-  //     navService
-  //         .pushNamed('/DetailProduct', args: {"PRODUCTID": code}).then((value) {
-  //       print("clothitem");
-  //     });
-
-  //     // navService.pushNamed('/helloOnestep', args: deepLink);
-  //     // _handleDynamicLink(deepLink);
-  //   }
-  // }
-
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       navigatorKey: NavigationService.navigationKey,
       debugShowCheckedModeBanner: false,
       title: 'Onestep',
+      // builder: (context, child) {
+      //   return ScrollConfiguration(behavior: MyBehavior(), child: child);
+      // }, //스크롤 영역 제거
       home: MainPage(),
     );
   }
@@ -183,6 +141,11 @@ class _MainPageState extends State<MainPage> {
           "userUniversity": "", // 학교이름
           "userUniversityEmail": "", // 학교이메일
           "timeStamp": DateTime.now(),
+        }).whenComplete(() {
+          ref.doc(user.id).collection("chatcount").doc(user.id).set({
+            "productchatcount": 0,
+            "boardchatcount": 0,
+          });
         });
       }
       userRecord = await ref.doc(user.id).get();
@@ -336,7 +299,7 @@ class _MainPageState extends State<MainPage> {
                       for (final tabItem in BottomNavigationItem.items)
                         BottomNavigationBarItem(
                           icon: tabItem.icon,
-                          title: tabItem.title,
+                          label: tabItem.title,
                         )
                     ],
                   ),
