@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:onestep_rezero/notification/model/productMessage.dart';
+import 'package:onestep_rezero/chat/boardchat/model/productMessage.dart';
 
 Widget getMessageTime(String timestamp) {
   return Text(

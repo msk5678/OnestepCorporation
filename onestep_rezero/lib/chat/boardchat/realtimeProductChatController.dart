@@ -4,8 +4,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:onestep_rezero/notification/model/productSendMessage.dart';
 import 'package:onestep_rezero/main.dart';
+
+import 'model/productSendMessage.dart';
 
 class RealtimeProductChatController {
   final databaseReference = FirebaseDatabase.instance.reference();

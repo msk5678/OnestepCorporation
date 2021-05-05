@@ -3,8 +3,10 @@ import 'dart:io';
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:onestep_rezero/notification/page/realtimePage.dart';
-import 'package:onestep_rezero/notification/realtime/realtimeProductChatController.dart';
+import 'package:onestep_rezero/chat/boardchat/realtimeProductChatController.dart';
+import 'package:onestep_rezero/chat/page/productCHatList.dart';
+import 'package:onestep_rezero/chat/page/realtimePage.dart';
+import 'package:onestep_rezero/chat/productchat/controller/productChatController.dart';
 
 class ChatMainPage extends StatefulWidget {
   @override
@@ -128,53 +130,10 @@ class ChatMainPageState extends State<ChatMainPage>
             child: PageView.builder(
               itemBuilder: (context, position) {
                 return Container(
-                    child: (position == 0 && page.text == '장터게시판')
-                        ?
-                        //Text("ㄱㄷ")
-                        RealTimePage()
-                        :
-                        //BoardChatPage()
-                        //StorageExampleApp()
-                        Column(
-                            children: [
-                              Expanded(
-                                child: ListView.separated(
-                                  itemBuilder: (_, index) {
-                                    return Padding(
-                                      padding: EdgeInsets.all(9),
-                                      child: Container(
-                                        child: Center(
-                                          child: Text(index.toString()),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  separatorBuilder: (_, index) {
-                                    return Divider();
-                                  },
-                                  itemCount: 5,
-                                ),
-                              ),
-                              Container(
-                                  height: 50,
-                                  color: Colors.red,
-                                  child: this.banner == null
-                                      ? Text("err")
-                                      : AdWidget(
-                                          ad: this.banner,
-                                        )),
-                            ],
-                          )
-                    // Container(
-                    //     height: 50,
-                    //     child: this.banner == null
-                    //         ? AdWidget(
-                    //             ad: this.banner,
-                    //           )
-                    //         : Text("err"))
-                    //Text("ㄱㄷ")
-                    //RealTimePage()
-                    );
+                  child: (position == 0 && page.text == '장터게시판')
+                      ? RealTimePage()
+                      : ProductChatListPage(),
+                );
               },
               itemCount: 1,
             ),
@@ -183,8 +142,14 @@ class ChatMainPageState extends State<ChatMainPage>
       ),
       floatingActionButton: FloatingActionButton(onPressed: () {
         print("플로팅 클릭");
+        //1. Create Product Chat
+        //friendUid, String postId, String chattingRoomId
+        ProductChatController().createProductChattingRoomToRealtimeDatabase(
+            "111357489031227818227", "1617992413066022", "1618662154936");
+
+        //2. AdMob
         //rewardedAd.show();
-        interstitialAd.show();
+        //interstitialAd.show();
       }),
     );
   }

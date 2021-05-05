@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -6,20 +5,20 @@ import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:onestep_rezero/chat/boardchat/realtimeProductChatController.dart';
+import 'package:onestep_rezero/chat/widget/FullmageWidget.dart';
+import 'package:onestep_rezero/chat/widget/message_list_time.dart';
 import 'package:onestep_rezero/main.dart';
-import 'package:onestep_rezero/notification/model/productMessage.dart';
-import 'package:onestep_rezero/notification/model/productSendMessage.dart';
-import 'package:onestep_rezero/notification/widget/message_list_time.dart';
 
-import 'FullmageWidget.dart';
-import 'realtimeProductChatController.dart';
 import 'dart:io' as io;
+
+import 'model/productMessage.dart';
+import 'model/productSendMessage.dart';
 
 class InRealTimeChattingRoomPage extends StatelessWidget {
   final String myUid;
   final String friendId;
   final String postId;
-
   // InRealTimeChattingRoomPage(
   //     {@required this.myUid, @required this.friendId, @required this.postId});
 

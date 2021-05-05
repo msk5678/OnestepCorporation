@@ -1,13 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:onestep_rezero/chat/boardchat/model/productChat.dart';
+import 'package:onestep_rezero/chat/boardchat/model/productChatCount.dart';
+import 'package:onestep_rezero/chat/boardchat/realtimeProductChatController.dart';
+import 'package:onestep_rezero/chat/controller/realtimeNavigationManager.dart';
+import 'package:onestep_rezero/chat/widget/chatBadge.dart';
+import 'package:onestep_rezero/chat/widget/chat_list_time.dart';
 import 'package:onestep_rezero/main.dart';
-import 'package:onestep_rezero/notification/model/productChat.dart';
-import 'package:onestep_rezero/notification/model/productChatCount.dart';
-import 'package:onestep_rezero/notification/realtime/realtimeNavigationManager.dart';
-import 'package:onestep_rezero/notification/realtime/realtimeProductChatController.dart';
-import 'package:onestep_rezero/notification/widget/chatBadge.dart';
-import 'package:onestep_rezero/notification/widget/chat_list_time.dart';
 
 class RealTimePage extends StatefulWidget {
   @override
