@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onestep_rezero/board/AboutPostList/postListMain.dart';
@@ -50,7 +51,9 @@ class PostListView extends ConsumerWidget {
                   return _buildListCard(context, index, postList[index]);
                 }));
       } else
-        scaffoldBody = Center(child: Text("새 게시글로 시작해보세요!"));
+        //This part setting
+        // scaffoldBody = Center(child: Text("새 게시글로 시작해보세요!"));
+        scaffoldBody = Center(child: CupertinoActivityIndicator());
     } else {
       scaffoldBody = Center(child: Text(PostListProvider().errorMessage));
     }
@@ -75,13 +78,6 @@ class PostListView extends ConsumerWidget {
                   firstColumnLine(boardData),
                   secondColumnLine(boardData),
                   thirdColumnLine(boardData)
-
-                  // Container:() => show_icon_favorite(a);
-
-                  // Expanded(child: Text('dd')),
-                  // Expanded(
-                  //   child: Text('data'),
-                  // )
                 ],
               ))),
     );

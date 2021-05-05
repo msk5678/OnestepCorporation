@@ -1,10 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onestep_rezero/board/AboutPostList/postList.dart';
-import '../declareData/contentCategory.dart';
-
-import '../StateManage/Provider/postListProvider.dart';
 
 class PostListMain extends StatefulWidget {
   final boardName;
@@ -15,22 +14,53 @@ class PostListMain extends StatefulWidget {
 }
 
 class _PostListWidget extends State<PostListMain> {
-  ScrollController _scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
+  final StreamController<bool> _scrollToTopstreamController =
+      StreamController<bool>();
+  final StreamController<bool> _productAddstreamController =
+      StreamController<bool>()..add(true);
+  bool _isVisibility = false;
   String boardName;
   @override
   void initState() {
     boardName = widget.boardName;
-    _scrollController.addListener(scrollListenerInfiniteScroll);
+    _scrollController.addListener(scrollListenerScroll);
     print("boardname " + boardName);
     context.read(postListProvider).fetchPosts(boardName);
     // context.read(postListProvider).fetchNextProducts(widget.boardName);
     super.initState();
   }
 
-  void scrollListenerInfiniteScroll() {
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _scrollToTopstreamController.close();
+    _productAddstreamController.close();
+    super.dispose();
+  }
+
+  void scrollListenerScroll() {
+    if (_scrollController.position.userScrollDirection ==
+        ScrollDirection.forward) {
+      _productAddstreamController.sink.add(true);
+    } else if (_scrollController.position.userScrollDirection ==
+        ScrollDirection.reverse) {
+      _productAddstreamController.sink.add(false);
+    }
     if ((_scrollController.position.maxScrollExtent * 0.7) <
         _scrollController.position.pixels) {
       context.read(postListProvider).fetchNextProducts(boardName);
+    }
+    if (_scrollController.offset >= 600) {
+      if (!_isVisibility) {
+        _isVisibility = true;
+        _scrollToTopstreamController.sink.add(true);
+      }
+    } else if (_scrollController.offset < 600) {
+      if (_isVisibility) {
+        _isVisibility = false;
+        _scrollToTopstreamController.sink.add(false);
+      }
     }
   }
 
@@ -38,23 +68,99 @@ class _PostListWidget extends State<PostListMain> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-          appBar: PreferredSize(
-            preferredSize: Size.fromHeight(50.0),
-            child: AppBar(
-              backgroundColor: Colors.white,
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(50.0),
+          child: AppBar(
+            backgroundColor: Colors.white,
+          ),
+        ),
+        body: RefreshIndicator(
+          onRefresh: _refreshPage,
+          child: SingleChildScrollView(
+            child: Column(children: [
+              PostListRiverpod(
+                boardName: boardName,
+              ),
+            ]),
+            controller: _scrollController,
+          ),
+        ),
+        floatingActionButton: Stack(
+          children: <Widget>[
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: productAddFLoatingActionButton(),
+            ),
+            Align(
+              alignment: Alignment.bottomRight,
+              child: scrollToTopFloatingActionButton(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget productAddFLoatingActionButton() {
+    return StreamBuilder<bool>(
+        stream: _productAddstreamController.stream,
+        initialData: false,
+        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+          return Visibility(
+            visible: snapshot.data,
+            child: Container(
+              height: 40,
+              child: FloatingActionButton.extended(
+                  heroTag: null,
+                  onPressed: () {},
+                  backgroundColor: Colors.white,
+                  // icon: Icon(
+                  //   Icons.save,
+                  //   color: Colors.black,
+                  // ),
+                  label: Icon(
+                    Icons.edit_outlined,
+                    color: Colors.black,
+                  )
+                  // Text(
+                  //   "게시글 등록",
+                  //   style: TextStyle(
+                  //     color: Colors.black,
+                  //   ),
+                  // ),
+                  ),
+            ),
+          );
+        });
+  }
+
+  Widget scrollToTopFloatingActionButton() {
+    return StreamBuilder<bool>(
+      stream: _scrollToTopstreamController.stream,
+      initialData: false,
+      builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+        return Visibility(
+          visible: snapshot.data,
+          child: Container(
+            height: 40.0,
+            width: 40.0,
+            child: FittedBox(
+              child: FloatingActionButton(
+                heroTag: null,
+                onPressed: () {
+                  _scrollController.position
+                      .moveTo(0.5, duration: Duration(milliseconds: 200));
+                },
+                child:
+                    Icon(Icons.keyboard_arrow_up_rounded, color: Colors.black),
+                backgroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(100.0))),
+              ),
             ),
           ),
-          body: RefreshIndicator(
-            onRefresh: _refreshPage,
-            child: SingleChildScrollView(
-              child: Column(children: [
-                PostListRiverpod(
-                  boardName: boardName,
-                ),
-              ]),
-              controller: _scrollController,
-            ),
-          )),
+        );
+      },
     );
   }
 

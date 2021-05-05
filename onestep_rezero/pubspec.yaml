@@ -62,6 +62,7 @@ dependencies:
 
   #uis
   badges: ^1.2.0  
+  like_button: ^1.0.3 #Click 시 Like Animation실행
   ##########
   
   #permission
@@ -70,6 +71,7 @@ dependencies:
   
   #floatingButton
   unicorndial: "^1.1.5"        # multi floatingActionButton 
+  sliding_up_panel: ^2.0.0+1 #Slide up Widget
   ############
 
   #json

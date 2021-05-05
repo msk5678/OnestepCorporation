@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' as foundation;
+import 'package:onestep_rezero/board/AboutPost/postContent.dart';
 import 'package:onestep_rezero/board/AboutPostList/postListMain.dart';
 import 'package:path/path.dart' as p;
 
@@ -45,12 +46,12 @@ class RouteGenerator {
       //   _pageWidget = ClothWidget();
       //   break;
 
-      // case 'BoardContent':
-      //   // Navigator.of(context).pushNamed('/BoardContent?INDEX=$index&BOARD_NAME="current"') -> arguments['INDEX'] = index, arguments['BOARD_NAME'] = "current"
-      //   _pageWidget = BoardContent(
-      //     boardData: arguments["BOARD_DATA"],
-      //   );
-      //   break;
+      case 'BoardContent':
+        // Navigator.of(context).pushNamed('/BoardContent?INDEX=$index&BOARD_NAME="current"') -> arguments['INDEX'] = index, arguments['BOARD_NAME'] = "current"
+        _pageWidget = PostContent(
+          boardData: arguments["BOARD_DATA"],
+        );
+        break;
       // case 'CreateBoard':
       //   _pageWidget = CreateBoard(
       //     currentBoard: arguments['CURRENTBOARD'],
