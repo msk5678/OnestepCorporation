@@ -10,23 +10,22 @@ final postListProvider =
 final FETCH_ROW = 15;
 
 class PostListRiverpod extends ConsumerWidget {
-  final boardName;
-  PostListRiverpod({this.boardName});
+  final boardId;
+  PostListRiverpod({this.boardId});
   @override
   Widget build(BuildContext context, watch) {
     final postlistProvider = watch(postListProvider).boards;
     return PostListView(
       postList: postlistProvider,
-      boardName: boardName,
+      boardId: boardId,
     );
   }
 }
 
 class PostListView extends ConsumerWidget {
   final List postList;
-  final boardName;
-  const PostListView({Key key, this.postList, this.boardName})
-      : super(key: key);
+  final boardId;
+  const PostListView({Key key, this.postList, this.boardId}) : super(key: key);
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {

@@ -6,35 +6,36 @@ import 'package:onestep_rezero/board/StateManage/firebase_GetUID.dart';
 import 'package:onestep_rezero/board/declareData/postData.dart';
 import 'package:onestep_rezero/board/permissionLib.dart';
 import 'package:onestep_rezero/board/TipDialog/tip_dialog.dart';
-import 'package:onestep/BoardLib/CustomException/customThrow.dart';
 
 enum ContentCategory { SMALLTALK, QUESTION }
 
-extension ContentCategoryExtension on ContentCategory {
-  String get category {
-    switch (this) {
-      case ContentCategory.QUESTION:
-        return "질문";
-      case ContentCategory.SMALLTALK:
-        return "일상";
-      default:
-        return throw CategoryException(
-            "Enum Category Error, Please Update Enum ContentCategory in parentState.dart");
-    }
-  }
-}
+// extension ContentCategoryExtension on ContentCategory {
+//   String get category {
+//     switch (this) {
+//       case ContentCategory.QUESTION:
+//         return "질문";
+//       case ContentCategory.SMALLTALK:
+//         return "일상";
+//       default:
+//         return throw CategoryException(
+//             "Enum Category Error, Please Update Enum ContentCategory in parentState.dart");
+//     }
+//   }
+// }
 
 const int MAX_IMAGE_COUNT = 5;
 
-class CreateBoard extends StatefulWidget {
-  final BoardCategory currentBoard;
-  CreateBoard({Key key, this.currentBoard}) : super(key: key);
+class CreatePost extends StatefulWidget {
+  final String currentBoardName;
+  final String currentBoardId;
+  CreatePost({Key key, this.currentBoardName, this.currentBoardId})
+      : super(key: key);
 
   @override
   _CreateBoardState createState() => _CreateBoardState();
 }
 
-class _CreateBoardState extends _CreatePageParent<CreateBoard> {
+class _CreateBoardState extends _CreatePageParent<CreatePost> {
   @override
   void dispose() {
     super.dispose();
@@ -42,7 +43,8 @@ class _CreateBoardState extends _CreatePageParent<CreateBoard> {
 
   @override
   setBoardData() {
-    boardCategory = widget.currentBoard;
+    boardName = widget.currentBoardName;
+    boardId = widget.currentBoardId;
   }
 }
 
@@ -63,7 +65,8 @@ abstract class _CreatePageParent<T extends StatefulWidget> extends State<T>
 
   ScrollController _scrollController;
   BoardData boardData;
-  BoardCategory boardCategory;
+  String boardName;
+  String boardId;
   setBoardData();
   List<String> _initCommentList = ['', '', '', '', ''];
   Map<String, List<dynamic>> imageCommentMap = {"IMAGE": [], "COMMENT": []};
@@ -139,8 +142,7 @@ abstract class _CreatePageParent<T extends StatefulWidget> extends State<T>
                       child: Column(
                         children: <Widget>[
                           firstContainer(),
-                          displayCurrentBoard(
-                              boardName: boardCategory.categoryKR),
+                          displayCurrentBoard(boardName: boardName),
                           secondContainer(),
                           thirdContainer(),
                         ],
@@ -331,8 +333,8 @@ abstract class _CreatePageParent<T extends StatefulWidget> extends State<T>
         imageCommentList: imageCommentMap,
         textContent: textEditingControllerContent.text,
         contentCategory: _category.toString(),
-        boardCategory: boardCategory.categoryKR,
-        boardId: boardCategory.categoryEN);
+        boardName: boardName,
+        boardId: boardName);
     return await _boardData.toFireStore(context);
     // return Future.delayed(new Duration(seconds: 5));
   }

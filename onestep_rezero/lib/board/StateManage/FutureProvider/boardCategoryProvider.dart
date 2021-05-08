@@ -8,15 +8,12 @@ final futureBoardProvider = FutureProvider<Map<String, String>>((ref) async {
   QuerySnapshot querySnapshot =
       await FirebaseFirestore.instance.collection("Board").get();
   querySnapshot.docs.forEach((element) {
-    // print(element.id);
     boardList.addAll({element.id: element.data()["boardName"]});
   });
   return boardList;
 });
 
-class BoardCategoryProvider {
-  BoardCategoryProvider();
-
+class BoardNameProvider {
   Widget get futureConsumerWidget => Consumer(
         builder: (context, watch, child) {
           final future = watch(futureBoardProvider);
@@ -36,10 +33,12 @@ class BoardCategoryProvider {
                     ),
                     title: GestureDetector(
                         onTap: () {
-                          Navigator.pushNamed(context, '/PostList',
-                              arguments: {"BOARD_NAME": id});
+                          Navigator.pushNamed(context, '/PostList', arguments: {
+                            "BOARDNAME": boardName,
+                            "BOARDID": id
+                          });
                         },
-                        child: Container(child: Text(boardName))),
+                        child: Container(child: Text(boardName ?? "ERROR"))),
                   ));
                 });
 
@@ -49,5 +48,5 @@ class BoardCategoryProvider {
               error: (e, stack) => Center(child: Text("Error $e")));
         },
       );
-  get futureBoardCategoryList => futureBoardProvider;
+  get futureBoardNameList => futureBoardProvider;
 }

@@ -7,7 +7,8 @@ import 'package:onestep_rezero/board/AboutPostList/postList.dart';
 
 class PostListMain extends StatefulWidget {
   final boardName;
-  const PostListMain({Key key, this.boardName}) : super(key: key);
+  final boardId;
+  const PostListMain({Key key, this.boardName, this.boardId}) : super(key: key);
 
   @override
   _PostListWidget createState() => _PostListWidget();
@@ -21,11 +22,12 @@ class _PostListWidget extends State<PostListMain> {
       StreamController<bool>()..add(true);
   bool _isVisibility = false;
   String boardName;
+  String boardId;
   @override
   void initState() {
     boardName = widget.boardName;
+    boardId = widget.boardId;
     _scrollController.addListener(scrollListenerScroll);
-    print("boardname " + boardName);
     context.read(postListProvider).fetchPosts(boardName);
     // context.read(postListProvider).fetchNextProducts(widget.boardName);
     super.initState();
@@ -49,7 +51,7 @@ class _PostListWidget extends State<PostListMain> {
     }
     if ((_scrollController.position.maxScrollExtent * 0.7) <
         _scrollController.position.pixels) {
-      context.read(postListProvider).fetchNextProducts(boardName);
+      context.read(postListProvider).fetchNextProducts(boardId);
     }
     if (_scrollController.offset >= 600) {
       if (!_isVisibility) {
@@ -79,7 +81,7 @@ class _PostListWidget extends State<PostListMain> {
           child: SingleChildScrollView(
             child: Column(children: [
               PostListRiverpod(
-                boardName: boardName,
+                boardId: boardId,
               ),
             ]),
             controller: _scrollController,
@@ -112,7 +114,12 @@ class _PostListWidget extends State<PostListMain> {
               height: 40,
               child: FloatingActionButton.extended(
                   heroTag: null,
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushNamed(context, "/CreatePost", arguments: {
+                      "CURRENTBOARDNAME": boardName,
+                      "CURRENTBOARDID": boardId
+                    });
+                  },
                   backgroundColor: Colors.white,
                   // icon: Icon(
                   //   Icons.save,
@@ -165,7 +172,7 @@ class _PostListWidget extends State<PostListMain> {
   }
 
   Future<void> _refreshPage() async {
-    context.read(postListProvider).fetchPosts(boardName);
+    context.read(postListProvider).fetchPosts(boardId);
   }
 
   // @override

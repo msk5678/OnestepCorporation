@@ -18,7 +18,6 @@ class BoardData {
   final int scribeCount;
   final int watchCount;
   final int commentCount;
-  final String boardCategory;
   final String boardName;
   final String boardId;
   final List favoriteUserList;
@@ -59,7 +58,6 @@ class BoardData {
       this.documentId,
       this.commentCount,
       this.imgUriList,
-      this.boardCategory,
       this.boardId});
   Future toFireStore(BuildContext context) async {
     imgUriList = await convertImage(imageCommentList["IMAGE"]);
@@ -81,7 +79,7 @@ class BoardData {
           "imageCommentList": imageCommentList ?? {},
           "watchCount": watchCount ?? 0,
           "commentCount": commentCount ?? 0,
-          "boardCategory": boardCategory,
+          "boardName": boardName,
           "boardId": boardId,
           "scrabUserList": scrabUserList ?? [],
           "favoriteUserList": favoriteUserList ?? [],
@@ -111,7 +109,7 @@ class BoardData {
         createDate: _boardData["createDate"].toDate(),
         watchCount: _boardData["watchCount"],
         boardId: _boardData["boardId"],
-        boardCategory: _boardData["boardCategory"]);
+        boardName: _boardData["boardName"]);
   }
 }
 

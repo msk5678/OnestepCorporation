@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' as foundation;
+import 'package:onestep_rezero/board/AboutPost/createPost.dart';
 import 'package:onestep_rezero/board/AboutPost/postContent.dart';
 import 'package:onestep_rezero/board/AboutPostList/postListMain.dart';
 import 'package:path/path.dart' as p;
@@ -32,7 +33,8 @@ class RouteGenerator {
     switch (_pageName) {
       case 'PostList':
         _pageWidget = PostListMain(
-          boardName: arguments["BOARD_NAME"],
+          boardName: arguments["BOARDNAME"],
+          boardId: arguments["BOARDID"],
           // boardCategory: arguments["BOARD_NAME"],
         );
         break;
@@ -52,11 +54,12 @@ class RouteGenerator {
           boardData: arguments["BOARD_DATA"],
         );
         break;
-      // case 'CreateBoard':
-      //   _pageWidget = CreateBoard(
-      //     currentBoard: arguments['CURRENTBOARD'],
-      //   );
-      //   break;
+      case 'CreateBoard':
+        _pageWidget = CreatePost(
+          currentBoardName: arguments['CURRENTBOARDNAME'],
+          currentBoardId: arguments["CURRENTBOARDID"],
+        );
+        break;
       // case 'BoardList':
       //   _pageWidget = Consumer<BoardProvider>(
       //       builder: (context, productProvider, _) => BoardList(
