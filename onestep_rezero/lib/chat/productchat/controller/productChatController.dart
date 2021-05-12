@@ -7,52 +7,55 @@ class ProductChatController {
   //Product Chat Count
   DatabaseReference productChatMessageReference = FirebaseDatabase.instance
       .reference()
+      .child("university")
+      .child("계명대학교") //향후 대학교 id값 가져와서 추가
       .child("chat")
-      .child("productchat"); //Chat Message Ref
+      .child("productchat");
 
   DatabaseReference productChatMessageReference2;
   int productChatcount = 0;
 
+  //채팅방 생성 시 상대방 정보 내부 저장 / 채팅방 정보 fb 저장
   Future<void> createProductChattingRoomToRealtimeDatabase(
       String friendUid, String postId, String chattingRoomId) async {
-    String myUid = googleSignIn.currentUser.id.toString();
-    String title;
-    String friendNickName;
-    String friendImageUrl;
+    String myUid = googleSignIn.currentUser.id;
     try {
+      //1.
+
       //2. users 판매자 정보 가져오기 : 판매자 닉네임, 이미지 가져오기
       FirebaseFirestore.instance
-          .collection("users")
+          .collection("user")
           .doc(friendUid)
           .get()
           .then((uservalue) {
+        //읽어온 상대방 정보 내부db 저장
         print("FriendNickname test");
-        friendNickName = uservalue["nickName"];
-        friendImageUrl = uservalue["photoUrl"];
         print("FriendNickname : ${uservalue["nickName"].toString()}");
         print("FriendNickImage : ${uservalue["photoUrl"].toString()}");
       }).whenComplete(
         () {
           var nowTime = DateTime.now().millisecondsSinceEpoch.toString();
 //Realtime data base
-          databaseReference
-              .child("chat")
-              .child("productchat")
-              .child(chattingRoomId)
+          productChatMessageReference.child(chattingRoomId)
               //.child("roominfo")
               .set({
-            "boardtype": "장터게시판",
-            "title": title,
             "chatId": chattingRoomId,
             "postId": postId,
-            "users": {
-              myUid: true,
-              friendUid: true,
-            },
-            "friendNickname": friendNickName,
-            "friendImageUrl": friendImageUrl,
+            "createTime": nowTime,
+            "recentTime": nowTime,
             "recentText": "채팅방이 생성되었습니다.",
-            "timestamp": nowTime,
+            "chatUsers": {
+              "user1": {
+                "uid": myUid,
+                "connextTime": nowTime,
+                "hide": true,
+              },
+              "user2": {
+                "uid": myUid,
+                "connextTime": nowTime,
+                "hide": true,
+              },
+            },
           }).whenComplete(() {
             databaseReference
                 .child("chat")

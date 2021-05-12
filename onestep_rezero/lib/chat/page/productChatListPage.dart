@@ -215,7 +215,7 @@ class _ProductChatListPageState extends State<ProductChatListPage>
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: <Widget>[
-                                Text("nickname"),
+                                Text(listProductChat[index].friendNickName),
                                 SizedBox(width: 10, height: 10),
                                 Spacer(),
                                 //시간

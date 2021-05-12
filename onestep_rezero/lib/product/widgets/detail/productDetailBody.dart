@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:onestep_rezero/animation/favoriteAnimation.dart';
 import 'package:onestep_rezero/chat/controller/realtimeNavigationManager.dart';
+import 'package:onestep_rezero/chat/productchat/controller/productChatController.dart';
 import 'package:onestep_rezero/favorite/utils/favoriteFirebaseApi.dart';
 import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/product/models/product.dart';
@@ -437,11 +438,20 @@ class _ProductDetailBodyState extends State<ProductDetailBody> {
               textStyle: TextStyle(color: Colors.white),
             ),
             onPressed: () {
-              RealTimeChatNavigationManager.navigateToRealTimeChattingRoom(
+              // RealTimeChatNavigationManager.navigateToRealTimeChattingRoom(
+              //     context,
+              //     googleSignIn.currentUser.id.toString(),
+              //     widget.product.uid,
+              //     widget.product.firestoreid);
+              RealTimeChatNavigationManager.navigateToProductChattingRoom(
                   context,
                   googleSignIn.currentUser.id.toString(),
                   widget.product.uid,
                   widget.product.firestoreid);
+
+              //   ProductChatController().createProductChattingRoomToRealtimeDatabase(
+              // "111357489031227818227", "1617992413066022", "1618662154936");
+
               // NotificationManager.navigateToChattingRoom(
               //   context,
               //   googleSignIn.currentUser.id.toString(),

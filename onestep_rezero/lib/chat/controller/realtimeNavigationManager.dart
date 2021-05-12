@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:onestep_rezero/chat/boardchat/inRealTimeChattingRoom.dart';
+import 'package:onestep_rezero/chat/productchat/productchattingroom/productChattingRoom.dart';
 import 'package:onestep_rezero/main.dart';
 
 class RealTimeChatNavigationManager {
@@ -20,13 +21,13 @@ class RealTimeChatNavigationManager {
                 )));
   }
 
-  void navigateToRealTimeChattingRoom2(
-      var context, String myUid, String friendUid, String postId, String test) {
+  static void navigateToProductChattingRoom(
+      var context, String myUid, String friendUid, String postId) {
     print("#### 노티 $myUid $friendUid $postId");
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => InRealTimeChattingRoomPage(
+            builder: (context) => ProductChattingRoomPage(
                   myUid: googleSignIn.currentUser.id.toString() == myUid
                       ? myUid
                       : friendUid,

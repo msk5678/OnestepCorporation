@@ -88,7 +88,10 @@ dependencies:
   
 
   #Chat Test
+  shared_preferences: ^2.0.5
+
   #stream_chat_flutter: ^1.5.1
+  #multiple_stream_builder: ^1.1.0
 
 # dependency_overrides:
 #   image_picker: "0.7.3"
