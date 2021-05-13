@@ -6,6 +6,7 @@ import 'package:onestep_rezero/chat/productchat/model/productChatList.dart';
 import 'package:onestep_rezero/chat/productchat/model/productChatListCount.dart';
 import 'package:onestep_rezero/chat/widget/chat_list_time.dart';
 import 'package:onestep_rezero/main.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductChatListPage extends StatefulWidget {
   @override
@@ -59,7 +60,12 @@ class _ProductChatListPageState extends State<ProductChatListPage>
     );
   }
 
+  void aa() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+  }
+
   Widget _buildChatListListTileStream() {
+    aa();
     bool userExist = false;
     //final chatCount = Provider.of<ChatCount>(context); //카운트 프로바이더
 
@@ -171,8 +177,8 @@ class _ProductChatListPageState extends State<ProductChatListPage>
               }); //채팅방 반복 종료
 
               //1. 챗 리스트 정렬
-              listProductChat.sort((b, a) =>
-                  a.timeStamp.compareTo(b.timeStamp)); //정렬3. 시간 순 정렬 가능.
+              // listProductChat.sort((b, a) =>
+              //     a.timeStamp.compareTo(b.timeStamp)); //정렬3. 시간 순 정렬 가능.
               print("stream values else : 솔트완료");
               //2. 챗 카운트 정렬
               // listProductChatCount
@@ -188,23 +194,23 @@ class _ProductChatListPageState extends State<ProductChatListPage>
                       shrinkWrap: true,
                       itemCount: listProductChat.length,
                       itemBuilder: (context, index) {
-                        String productsUserId; //장터 상대방 Id
-                        listProductChat[index].user1 ==
-                                googleSignIn.currentUser.id.toString()
-                            ? productsUserId = listProductChat[index].user2
-                            : productsUserId = listProductChat[index].user1;
+                        // String productsUserId; //장터 상대방 Id
+                        // listProductChat[index].user1 ==
+                        //         googleSignIn.currentUser.id.toString()
+                        //     ? productsUserId = listProductChat[index].user2
+                        //     : productsUserId = listProductChat[index].user1;
                         print(
                             "##dd'${listProductChat[index].chatId.toString()}/message'");
                         return ListTile(
                           leading: Material(
-                            child: CachedNetworkImage(
-                              imageUrl: listProductChat[index]
-                                  .friendImageUrl
-                                  .toString(),
-                              width: 55,
-                              height: 55,
-                              fit: BoxFit.cover,
-                            ),
+                            // child: CachedNetworkImage(
+                            //   imageUrl: listProductChat[index]
+                            //       .friendImageUrl
+                            //       .toString(),
+                            //   width: 55,
+                            //   height: 55,
+                            //   fit: BoxFit.cover,
+                            // ),
                             borderRadius:
                                 BorderRadius.all(Radius.circular(6.0)),
                             clipBehavior: Clip.hardEdge,
@@ -215,12 +221,12 @@ class _ProductChatListPageState extends State<ProductChatListPage>
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: <Widget>[
-                                Text(listProductChat[index].friendNickName),
+                                // Text(listProductChat[index].friendNickName),
                                 SizedBox(width: 10, height: 10),
                                 Spacer(),
                                 //시간
-                                getChatListTime(
-                                    listProductChat[index].timeStamp),
+                                // getChatListTime(
+                                //     listProductChat[index].timeStamp),
                               ],
                             ),
                           ),
