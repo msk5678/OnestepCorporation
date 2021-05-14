@@ -74,6 +74,7 @@ class _ProductEditState extends State<ProductEdit> {
   }
 
   Widget imageMerge() {
+    return Container();
     List<Widget> result1 = _initImagesUrl
         .map(
           (data) => Padding(

@@ -117,30 +117,34 @@ class _ImagesFullViewerState extends State<ImagesFullViewer> {
     return Container(
       width: size.width,
       height: size.height,
-      child: PhotoViewGallery.builder(
-        onPageChanged: _onPageChanged,
-        pageController: _pageController,
-        itemCount: widget.imagesUrl.length,
-        builder: (context, index) {
-          return PhotoViewGalleryPageOptions(
-            imageProvider: CachedNetworkImageProvider(widget.imagesUrl[index]),
-            initialScale: PhotoViewComputedScale.contained,
-            minScale: PhotoViewComputedScale.contained * 1,
-            maxScale: PhotoViewComputedScale.covered * 2,
-            onTapUp: _onImagePointerUp,
-          );
-        },
-        backgroundDecoration: BoxDecoration(
-          color: Colors.black,
-        ),
-        loadingBuilder: (context, event) => Center(
-          child: Container(
-            width: 30.0,
-            height: 30.0,
-            child: CircularProgressIndicator(
-              value: event == null
-                  ? 0
-                  : event.cumulativeBytesLoaded / event.expectedTotalBytes,
+      child: Hero(
+        tag: widget.imagesUrl[widget.index],
+        child: PhotoViewGallery.builder(
+          onPageChanged: _onPageChanged,
+          pageController: _pageController,
+          itemCount: widget.imagesUrl.length,
+          builder: (context, index) {
+            return PhotoViewGalleryPageOptions(
+              imageProvider:
+                  CachedNetworkImageProvider(widget.imagesUrl[index]),
+              initialScale: PhotoViewComputedScale.contained,
+              minScale: PhotoViewComputedScale.contained * 1,
+              maxScale: PhotoViewComputedScale.covered * 2,
+              onTapUp: _onImagePointerUp,
+            );
+          },
+          backgroundDecoration: BoxDecoration(
+            color: Colors.black,
+          ),
+          loadingBuilder: (context, event) => Center(
+            child: Container(
+              width: 30.0,
+              height: 30.0,
+              child: CircularProgressIndicator(
+                value: event == null
+                    ? 0
+                    : event.cumulativeBytesLoaded / event.expectedTotalBytes,
+              ),
             ),
           ),
         ),

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/product/models/product.dart';
+import 'package:onestep_rezero/product/widgets/detail/TestproductDetailBody.dart';
 import 'package:onestep_rezero/product/widgets/detail/productDetailBody.dart';
 
 class ClothDetail extends StatefulWidget {
@@ -25,7 +26,12 @@ class _ClothDetailState extends State<ClothDetail> {
 
     if (_product.views == null ||
         _product.views[googleSignIn.currentUser.id] != true) {
-      FirebaseFirestore.instance.collection("product").doc(widget.docId).update(
+      FirebaseFirestore.instance
+          .collection("university")
+          .doc(currentUserModel.university)
+          .collection("product")
+          .doc(widget.docId)
+          .update(
         {
           "views." + googleSignIn.currentUser.id: true,
         },
@@ -60,6 +66,7 @@ class _ClothDetailState extends State<ClothDetail> {
                   Product.fromJson(snapshot.data.data(), snapshot.data.id);
               incProductViews();
               return ProductDetailBody(product: _product);
+              // return TestProductDetailBody(product: _product);
             }
         }
       },

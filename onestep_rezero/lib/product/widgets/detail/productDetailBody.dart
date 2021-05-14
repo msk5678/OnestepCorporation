@@ -353,77 +353,6 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
     );
   }
 
-  void handleClick(String value) {
-    switch (value) {
-      case '새로고침':
-        break;
-      case '신고하기':
-        break;
-      case '수정하기':
-        Navigator.of(context)
-            .push(
-          MaterialPageRoute(
-            builder: (context) => ProductEdit(product: widget.product),
-          ),
-        )
-            .then((value) {
-          if (value == "OK") {
-            setState(() {});
-          }
-        });
-        break;
-      case '끌올하기':
-        if (DateTime.now().difference(widget.product.bumpTime).inHours >= 1) {
-          Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => ProductBump(product: widget.product),
-          ));
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            duration: Duration(seconds: 2),
-            content: Text("물품을 등록하고 1시간 뒤에 끌올할 수 있어요."),
-          ));
-        }
-
-        break;
-      case '숨김':
-        // 확인 취소 다이얼로그 띄우기
-        FirebaseFirestore.instance
-            .collection("product")
-            .doc(googleSignIn.currentUser.id)
-            .update({'hide': true});
-        break;
-      case '삭제':
-        // 확인 취소 다이얼로그 띄우기
-        FirebaseFirestore.instance
-            .collection("product")
-            .doc(googleSignIn.currentUser.id)
-            .update({'deleted': true});
-        break;
-    }
-  }
-
-  Widget popupMenuButton(bool color) {
-    return PopupMenuButton<String>(
-      color: color ? Colors.black : Colors.white,
-      onSelected: handleClick,
-      itemBuilder: (BuildContext context) {
-        var menuItem = <String>[];
-
-        if (googleSignIn.currentUser.id == widget.product.uid)
-          menuItem.addAll({'끌올하기', '수정하기', '숨김', '삭제'});
-        else {
-          menuItem.addAll({'새로고침', '신고하기'});
-        }
-
-        return menuItem.map((String choice) {
-          return PopupMenuItem<String>(
-            value: choice,
-            child: Text(choice),
-          );
-        }).toList();
-      },
-    );
-  }
   // -----------------------------------------------
 
   double locationAlpha;
@@ -488,6 +417,82 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
         builder: (context, child) => Icon(icon, color: _colorTween.value));
   }
 
+  void handleClick(String value) {
+    switch (value) {
+      case '새로고침':
+        break;
+      case '신고하기':
+        break;
+      case '수정하기':
+        Navigator.of(context)
+            .push(
+          MaterialPageRoute(
+            builder: (context) => ProductEdit(product: widget.product),
+          ),
+        )
+            .then((value) {
+          if (value == "OK") {
+            setState(() {});
+          }
+        });
+        break;
+      case '끌올하기':
+        if (DateTime.now().difference(widget.product.bumpTime).inHours >= 1) {
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => ProductBump(product: widget.product),
+          ));
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            duration: Duration(seconds: 2),
+            content: Text("물품을 등록하고 1시간 뒤에 끌올할 수 있어요."),
+          ));
+        }
+
+        break;
+      case '숨김':
+        // 확인 취소 다이얼로그 띄우기
+        FirebaseFirestore.instance
+            .collection("product")
+            .doc(googleSignIn.currentUser.id)
+            .update({'hide': true});
+        break;
+      case '삭제':
+        // 확인 취소 다이얼로그 띄우기
+        FirebaseFirestore.instance
+            .collection("product")
+            .doc(googleSignIn.currentUser.id)
+            .update({'deleted': true});
+        break;
+    }
+  }
+
+  Widget popupMenuButton() {
+    return AnimatedBuilder(
+      animation: _colorTween,
+      builder: (context, child) => PopupMenuButton<String>(
+        icon: Icon(Icons.adaptive.more, color: _colorTween.value),
+        color: Colors.white,
+        onSelected: handleClick,
+        itemBuilder: (BuildContext context) {
+          var menuItem = <String>[];
+
+          if (googleSignIn.currentUser.id == widget.product.uid)
+            menuItem.addAll({'끌올하기', '수정하기', '숨김', '삭제'});
+          else {
+            menuItem.addAll({'새로고침', '신고하기'});
+          }
+
+          return menuItem.map((String choice) {
+            return PopupMenuItem<String>(
+              value: choice,
+              child: Text(choice),
+            );
+          }).toList();
+        },
+      ),
+    );
+  }
+
   PreferredSizeWidget _appbarWidget() {
     return PreferredSize(
       preferredSize: Size.fromHeight(kToolbarHeight),
@@ -496,7 +501,6 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
         initialData: 0,
         builder: (context, snapshot) {
           int alpha = snapshot.data;
-          print(alpha);
           return AppBar(
             title: Text(
               "${widget.product.title}",
@@ -510,7 +514,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
             elevation: 0,
             actions: [
               IconButton(onPressed: () {}, icon: _makeIcon(Icons.share)),
-              IconButton(onPressed: () {}, icon: _makeIcon(Icons.more_vert)),
+              popupMenuButton(),
             ],
           );
         },
@@ -525,29 +529,29 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
       height: _size.width * 0.8,
       child: Stack(
         children: [
-          Hero(
-            tag: widget.product.firestoreid,
-            child: Swiper(
-              onTap: (index) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ImagesFullViewer(
-                        imagesUrl: widget.product.imagesUrl, index: index),
-                  ),
-                );
-              },
-              loop: widget.product.imagesUrl.length == 1 ? false : true,
-              pagination: SwiperPagination(
-                alignment: Alignment.bottomCenter,
-                builder: DotSwiperPaginationBuilder(
-                  activeColor: Colors.pink,
-                  color: Colors.grey,
+          Swiper(
+            onTap: (index) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ImagesFullViewer(
+                      imagesUrl: widget.product.imagesUrl, index: index),
                 ),
+              );
+            },
+            loop: widget.product.imagesUrl.length == 1 ? false : true,
+            pagination: SwiperPagination(
+              alignment: Alignment.bottomCenter,
+              builder: DotSwiperPaginationBuilder(
+                activeColor: Colors.pink,
+                color: Colors.grey,
               ),
-              itemCount: widget.product.imagesUrl.length,
-              itemBuilder: (BuildContext context, int index) {
-                return Container(
+            ),
+            itemCount: widget.product.imagesUrl.length,
+            itemBuilder: (BuildContext context, int index) {
+              return Container(
+                child: Hero(
+                  tag: widget.product.imagesUrl[index],
                   child: CachedNetworkImage(
                     imageUrl: widget.product.imagesUrl[index],
                     width: MediaQuery.of(context).size.width,
@@ -556,9 +560,9 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
                         Icon(Icons.error), // 로딩 오류 시 이미지
                     fit: BoxFit.cover,
                   ),
-                );
-              },
-            ),
+                ),
+              );
+            },
           ),
         ],
       ),

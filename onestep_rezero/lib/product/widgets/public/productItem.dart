@@ -103,18 +103,12 @@ class _ProductItemState extends State<ProductItem> {
     }
 
     Widget getImage(BuildContext context) {
-      return Container(
-        child: Hero(
-          tag: widget.product.firestoreid,
-          child: CachedNetworkImage(
-            imageUrl: widget.product.imagesUrl[0],
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-            errorWidget: (context, url, error) =>
-                Icon(Icons.error), // 로딩 오류 시 이미지
-            fit: BoxFit.cover,
-          ),
-        ),
+      return CachedNetworkImage(
+        imageUrl: widget.product.imagesUrl[0],
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        errorWidget: (context, url, error) => Icon(Icons.error), // 로딩 오류 시 이미지
+        fit: BoxFit.cover,
       );
     }
 
