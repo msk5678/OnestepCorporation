@@ -18,12 +18,12 @@ class ProductMainProvider extends ChangeNotifier {
           uid: _product['uid'],
           title: _product['title'],
           category: _product['category'],
-          favoriteuserlist: _product['favoriteuserlist'],
+          favoriteUserList: _product['favoriteUserList'],
           price: _product['price'],
           hide: _product['hide'],
           deleted: _product['deleted'],
-          images: _product['images'],
-          bumptime: DateTime.fromMicrosecondsSinceEpoch(_product['bumptime']),
+          imagesUrl: _product['imagesUrl'],
+          bumpTime: DateTime.fromMicrosecondsSinceEpoch(_product['bumpTime']),
         );
       }).toList();
 

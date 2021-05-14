@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../main.dart';
+
 class ProductFirebaseApi {
   static Future<QuerySnapshot> getAllProducts(
     // 장터 메인 모든상품 불러오기
@@ -9,10 +11,12 @@ class ProductFirebaseApi {
     var refProducts;
 
     refProducts = FirebaseFirestore.instance
-        .collection('products')
+        .collection("university")
+        .doc(currentUserModel.university)
+        .collection('product')
         .where("deleted", isEqualTo: false)
         .where("hide", isEqualTo: false)
-        .orderBy("bumptime", descending: true)
+        .orderBy("bumpTime", descending: true)
         .limit(limit);
 
     if (startAfter == null) {

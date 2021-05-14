@@ -28,13 +28,13 @@ class RealtimeProductChatController {
 
     try {
       FirebaseFirestore.instance
-          .collection("products")
+          .collection("product")
           .doc(productSendMessage.postId)
           .get()
           .then((value) {
         title = value["title"];
         friendUid = value["uid"];
-        productImageUrl = value["images"][0];
+        productImageUrl = value["imagesUrl"][0];
       }).whenComplete(
         () {
           var nowTime = DateTime.now().millisecondsSinceEpoch.toString();
@@ -245,7 +245,7 @@ class RealtimeProductChatController {
       "productchatcount": chatCount,
     }).whenComplete(() {
       //Fluttertoast.showToast(msg: '채팅방카운트를 업데이트했습니다.');
-      print("##챗카운트 업데이트 성공");
+      // print("##챗카운트 업데이트 성공");
     }).catchError((onError) {
       Fluttertoast.showToast(msg: '채팅방카운트를 업데이트 실패.');
       print(onError);
@@ -263,7 +263,7 @@ class RealtimeProductChatController {
             .snapshots(),
         builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
           if (snapshot.hasData) {
-            print(snapshot.data.toString());
+            // print(snapshot.data.toString());
           } else
             return Text("error");
           if (snapshot.data.data()['productchatcount'] != null) {
@@ -290,7 +290,7 @@ class RealtimeProductChatController {
           //   return Text("d");
           // } else
           if (snapshot.hasData) {
-            print(snapshot.data.toString());
+            // print(snapshot.data.toString());
           } else
             return Text("error");
 

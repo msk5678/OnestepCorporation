@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/product/models/categoryItem.dart';
 import 'package:onestep_rezero/product/pages/categoryDetail.dart';
 
@@ -63,6 +64,8 @@ class ProductMainHeader extends ConsumerWidget {
   }
 
   Widget header(BuildContext context) {
+    categoryList.then((value) => print("@@@@@@#### ${value.docs.length}"));
+
     return GridView(
       physics: NeverScrollableScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

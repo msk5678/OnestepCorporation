@@ -89,84 +89,84 @@ class _RealTimePageState extends State<RealTimePage>
             if (snapshot == null ||
                 !snapshot.hasData ||
                 snapshot.data.snapshot.value == null) {
-              print("stream values if0 null : ${snapshot.data.snapshot.value}");
+              // print("stream values if0 null : ${snapshot.data.snapshot.value}");
               return Container(child: Center(child: Text("No data")));
             } else {
               //chatCount.initChatCount();
 
-              print("stream values else1 : ${snapshot.data.snapshot.value}");
-              print(
-                  "stream values else1 : ${snapshot.data.snapshot.value['message']}");
+              // print("stream values else1 : ${snapshot.data.snapshot.value}");
+              // print(
+              //     "stream values else1 : ${snapshot.data.snapshot.value['message']}");
               // print("stream values else1 : ${snapshot.data}");
               // print("stream values else1 : ${snapshot.toString()}");
 
-              print(
-                  "stream values else1 message@@ : ${snapshot.data.snapshot.value['message']}");
+              // print(
+              //     "stream values else1 message@@ : ${snapshot.data.snapshot.value['message']}");
               listProductChat.clear(); //리스트 챗리스트 클리어
               listProductChatCount.clear(); //리스트 챗리스트 카운트 클리어
               DataSnapshot dataValues = snapshot.data.snapshot;
               Map<dynamic, dynamic> values = dataValues.value;
               Map<dynamic, dynamic> mesageValues;
               Map<dynamic, dynamic> mesageInValues;
-              print("##걍StrTest" + values.toString());
+              // print("##걍StrTest" + values.toString());
               values.forEach((key, values) {
                 // print("걍프린트" + values['users'].toString());
-                print("stream values else1 message :" +
-                    values['message'].length.toString());
+                // print("stream values else1 message :" +
+                //     values['message'].length.toString());
                 mesageValues = values['message'];
 
-                print("stream values else2 bo :" +
-                    values['boardtype'].toString());
+                // print("stream values else2 bo :" +
+                //     values['boardtype'].toString());
 
-                print("stream values else3-1 :" + key.toString());
-                print("stream values else3-2 :" + values['users'].toString());
-                print("stream values else3-3 :" +
-                    values['users'][uId].toString());
-                print("stream values else3-3 :" + values['users'].toString());
+                // print("stream values else3-1 :" + key.toString());
+                // print("stream values else3-2 :" + values['users'].toString());
+                // print("stream values else3-3 :" +
+                //     values['users'][uId].toString());
+                // print("stream values else3-3 :" + values['users'].toString());
                 var obj = values['users'].keys.toString();
                 var obj3 = values['users'].keys.toList()[0];
                 var obj4 = values['users'].keys.toList()[1];
 
-                print("stream values else3-4 $obj :" +
-                    values['users'][0].toString());
-                print("stream values else3-5 $obj3 :");
-                print("stream values else3-6 $obj4 :");
+                // print("stream values else3-4 $obj :" +
+                //     values['users'][0].toString());
+                // print("stream values else3-5 $obj3 :");
+                // print("stream values else3-6 $obj4 :");
 
                 userExist = true;
                 listProductChat.add(
                     ProductChat.forMapSnapshot(values)); //조건2. 유저 포함된 것만 저장
 
-                print(
-                    "##stream values else length${listProductChat.length.toString()}");
-                print("##stream values else length${values.toString()}");
+                // print(
+                //     "##stream values else length${listProductChat.length.toString()}");
+                // print("##stream values else length${values.toString()}");
 
-                print("stream values else1 message Values :" +
-                    mesageValues.toString());
+                // print("stream values else1 message Values :" +
+                //     mesageValues.toString());
                 int len = 0;
                 mesageValues.forEach((mkey, mesageValues) {
                   //메시지 내부 분해,
-                  print("stream values else1 message ForEach: Origin Key : " +
-                      key.toString() +
-                      " / Length : " +
-                      mesageValues.length.toString() +
-                      " // M_Key : " +
-                      mkey.toString() +
-                      " / idTo : " +
-                      mesageValues['idTo'].toString());
+                  // print("stream values else1 message ForEach: Origin Key : " +
+                  //     key.toString() +
+                  //     " / Length : " +
+                  //     mesageValues.length.toString() +
+                  //     " // M_Key : " +
+                  //     mkey.toString() +
+                  //     " / idTo : " +
+                  //     mesageValues['idTo'].toString());
                   mesageInValues = mesageValues['idTo'];
                   mesageInValues.forEach((mIkey, mIvalue) {
                     //보낸 사람 분해.
-                    print(
-                        "stream values else1 message ForEach: MyUid : ${googleSignIn.currentUser.id.toString()}");
+                    // print(
+                    //     "stream values else1 message ForEach: MyUid : ${googleSignIn.currentUser.id.toString()}");
 
                     if (mIvalue == false &&
                         mIkey == googleSignIn.currentUser.id.toString()) {
                       len++;
-                      print(
-                          "stream values else1 message ForEach: 읽지 않은 메세지 있음. len : $len");
+                      // print(
+                      //     "stream values else1 message ForEach: 읽지 않은 메세지 있음. len : $len");
                     }
-                    print(
-                        "stream values else1 message ForEach: InMessageKey : ${mIkey} // InMessageValue : ${mIvalue}");
+                    // print(
+                    //     "stream values else1 message ForEach: InMessageKey : ${mIkey} // InMessageValue : ${mIvalue}");
                   });
                 }); //메시지 내부 분해 종료
                 listProductChatCount
@@ -176,7 +176,7 @@ class _RealTimePageState extends State<RealTimePage>
               //1. 챗 리스트 정렬
               listProductChat.sort((b, a) =>
                   a.timeStamp.compareTo(b.timeStamp)); //정렬3. 시간 순 정렬 가능.
-              print("stream values else : 솔트완료");
+              // print("stream values else : 솔트완료");
               //2. 챗 카운트 정렬
               listProductChatCount
                   .sort((b, a) => a.timeStamp.compareTo(b.timeStamp));
@@ -196,8 +196,8 @@ class _RealTimePageState extends State<RealTimePage>
                                 googleSignIn.currentUser.id.toString()
                             ? productsUserId = listProductChat[index].user2
                             : productsUserId = listProductChat[index].user1;
-                        print(
-                            "##dd'${listProductChat[index].chatId.toString()}/message'");
+                        // print(
+                        //     "##dd'${listProductChat[index].chatId.toString()}/message'");
                         return ListTile(
                           leading: Material(
                             child: RealtimeProductChatController()
@@ -309,9 +309,9 @@ class _RealTimePageState extends State<RealTimePage>
               listProductChat
                   .add(ProductChat.forMapSnapshot(values)); //조건2. 유저 포함된 것만 저장
             }
-            print("##stream length${listProductChat.length.toString()}");
-            print(values.runtimeType);
-            print("##stream length${values.toString()}");
+            // print("##stream length${listProductChat.length.toString()}");
+            // print(values.runtimeType);
+            // print("##stream length${values.toString()}");
 
             // print("##stream ${values.toString()}");
             // print("##stream value${values['boardtype'].toString()}");

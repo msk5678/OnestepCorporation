@@ -24,13 +24,10 @@ class _ClothDetailState extends State<ClothDetail> {
     // 조회수 증가
 
     if (_product.views == null ||
-        _product.views[googleSignIn.currentUser.id.toString()] != true) {
-      FirebaseFirestore.instance
-          .collection("products")
-          .doc(widget.docId)
-          .update(
+        _product.views[googleSignIn.currentUser.id] != true) {
+      FirebaseFirestore.instance.collection("product").doc(widget.docId).update(
         {
-          "views." + googleSignIn.currentUser.id.toString(): true,
+          "views." + googleSignIn.currentUser.id: true,
         },
       );
     }
@@ -40,7 +37,9 @@ class _ClothDetailState extends State<ClothDetail> {
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: FirebaseFirestore.instance
-          .collection("products")
+          .collection("university")
+          .doc(currentUserModel.university)
+          .collection("product")
           .doc(widget.docId)
           .get(),
       builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {

@@ -40,12 +40,12 @@ class _ProductBumpState extends State<ProductBump> {
 
   _saveDataInFirestore() async {
     FirebaseFirestore.instance
-        .collection("products")
+        .collection("product")
         .doc(widget.product.firestoreid)
         .update(
       {
         "price": _priceEditingController.text,
-        "bumptime": DateTime.now().microsecondsSinceEpoch,
+        "bumpTime": DateTime.now().microsecondsSinceEpoch,
       },
     ).whenComplete(
       () {
@@ -110,7 +110,7 @@ class _ProductBumpState extends State<ProductBump> {
                   child: ClipRRect(
                     borderRadius: BorderRadius.all(Radius.circular(5.0)),
                     child: CachedNetworkImage(
-                      imageUrl: widget.product.images[0],
+                      imageUrl: widget.product.imagesUrl[0],
                       width: 80,
                       height: 80,
                       errorWidget: (context, url, error) =>

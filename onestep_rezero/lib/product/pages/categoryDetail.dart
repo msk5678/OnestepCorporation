@@ -22,7 +22,7 @@ class _CategoryDetailState extends State<CategoryDetail> {
             physics: ClampingScrollPhysics(),
             // shrinkWrap: true,
             scrollDirection: Axis.horizontal,
-            itemCount: CategoryItem.items.length,
+            itemCount: CategoryItem.test[widget.category]["list"].length,
             itemBuilder: (BuildContext context, int index) {
               return Card(
                 color:
@@ -43,7 +43,7 @@ class _CategoryDetailState extends State<CategoryDetail> {
                     child: Align(
                       alignment: Alignment.center,
                       child: Text(
-                        CategoryItem.items[index].name,
+                        CategoryItem.test[widget.category]["list"][index],
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 12,

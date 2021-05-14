@@ -3,11 +3,24 @@ import 'package:flutter/material.dart';
 class CategoryItem {
   AssetImage image;
   String name;
+  Map<String, dynamic> aa;
 
   CategoryItem({
     this.image,
     this.name,
+    this.aa,
   });
+
+  static Map<String, dynamic> get test => {
+        "여성의류": {
+          "image": AssetImage('icons/category/dress.png'),
+          "list": ["원피스", "스커트/치마", "자켓", "니트/스웨터", "블라우스", "야상/점퍼/패딩"]
+        },
+        "남성의류": {
+          "image": AssetImage('icons/category/man.png'),
+          "list": ["트레이닝", "자켓", "니트/스웨터", "야상/점퍼/패딩", "셔츠/남방", "빅사이즈"]
+        },
+      };
 
   static List<CategoryItem> get headeritems => [
         CategoryItem(

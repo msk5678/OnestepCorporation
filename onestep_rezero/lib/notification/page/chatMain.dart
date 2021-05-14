@@ -45,7 +45,7 @@ class ChatMainPageState extends State<ChatMainPage>
 
   @override
   Widget build(BuildContext context) {
-    print("chat main");
+    // print("chat main");
     //chatCount.initChatCount();
     return Scaffold(
       appBar: AppBar(
@@ -77,7 +77,7 @@ class ChatMainPageState extends State<ChatMainPage>
               isScrollable: true,
               labelPadding: EdgeInsets.only(left: 8, right: 0),
               tabs: _allPages.map<Tab>((_Page page) {
-                print("####### ${page.text}");
+                // print("####### ${page.text}");
                 return Tab(
                     text: page.text,
                     icon:

@@ -46,6 +46,7 @@ dependencies:
   multi_image_picker: ^4.8.0   # 멀티 이미지 피커
   photo_view: ^0.11.1          # image fullViewer
   flutter_swiper: ^1.1.6       # image slider
+  carousel_slider: ^3.0.0      # new image slider
   ###########
 
   #formatter

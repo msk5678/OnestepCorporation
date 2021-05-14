@@ -20,6 +20,7 @@ class ProductAdd extends StatefulWidget {
 
 class _ProductAddState extends State<ProductAdd> {
   List<Asset> _imageList = <Asset>[];
+
   final _titleTextEditingController = TextEditingController();
   final _priceTextEditingController = TextEditingController();
   final _explainTextEditingController = TextEditingController();
@@ -122,6 +123,7 @@ class _ProductAddState extends State<ProductAdd> {
                     itemBuilder: (BuildContext context, int index) {
                       return Padding(
                         padding: EdgeInsets.only(left: 7),
+                        // child : Image.memory(Uint8List.fromList(_imageList[index].)),
                         child: FutureBuilder(
                           future: convertAssetToByteData(_imageList[index]),
                           builder: (context, snapshot) {
@@ -139,6 +141,8 @@ class _ProductAddState extends State<ProductAdd> {
                                 );
 
                               default:
+
+                                // Image.memory(bytes);
                                 return ClipRRect(
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(5.0)),
@@ -364,22 +368,29 @@ class _ProductAddState extends State<ProductAdd> {
 
         int time = DateTime.now().microsecondsSinceEpoch;
         FirebaseFirestore.instance
-            .collection("products")
+            .collection("university")
+            .doc(currentUserModel.university)
+            .collection("product")
             .doc(time.toString())
             .set({
           'uid': googleSignIn.currentUser.id,
-          'price': _priceTextEditingController.text,
+          'imagesUrl': _imgUriarr,
           'title': _titleTextEditingController.text,
           'category': _categoryTextEditingController.text,
+          'detailCategory': "",
+          'price': _priceTextEditingController.text,
           'explain': _explainTextEditingController.text,
-          'images': _imgUriarr,
-          'favorites': 0,
+          'favoriteUserList': {},
+          'chatUserList': [],
+          'trading': false,
+          'completed': false,
           'hide': false,
           'deleted': false,
+          'reported': false,
           'views': {},
-          'uploadtime': time,
-          'updatetime': time,
-          'bumptime': time,
+          'uploadTime': time,
+          'updateTime': time,
+          'bumpTime': time,
         }).whenComplete(() {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             duration: Duration(seconds: 2),

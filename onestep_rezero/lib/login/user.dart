@@ -1,45 +1,45 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class User {
-  final String authUniversity;
+  final int auth;
+  final int authTime;
 
   final String uid;
   final String nickName;
-  final String photoUrl;
+  final String imageUrl;
+  final String email;
+  final int reportPoint;
 
-  final String userEmail;
-  final int userLevel;
-  final int userScore;
-  final String userUniversity;
-  final String userUniversityEmail;
+  final String university;
+  final String universityEmail;
 
-  final DateTime timeStamp;
+  final int joinTime;
 
   const User({
-    this.authUniversity,
+    this.auth,
+    this.authTime,
     this.uid,
     this.nickName,
-    this.photoUrl,
-    this.userEmail,
-    this.userLevel,
-    this.userScore,
-    this.userUniversity,
-    this.userUniversityEmail,
-    this.timeStamp,
+    this.imageUrl,
+    this.email,
+    this.reportPoint,
+    this.university,
+    this.universityEmail,
+    this.joinTime,
   });
 
   factory User.fromDocument(DocumentSnapshot document) {
     return User(
-      authUniversity: document['authUniversity'],
+      auth: document['auth'],
+      authTime: document['authTime'],
       uid: document['uid'],
       nickName: document['nickName'],
-      photoUrl: document['photoUrl'],
-      userEmail: document['userEmail'],
-      userLevel: document['userLevel'],
-      userScore: document['userScore'],
-      userUniversity: document['userUniversity'],
-      userUniversityEmail: document['userUniversityEmail'],
-      timeStamp: document['timeStamp'].toDate(),
+      imageUrl: document['imageUrl'],
+      email: document['email'],
+      reportPoint: document['reportPoint'],
+      university: document['university'],
+      universityEmail: document['universityEmail'],
+      joinTime: document['joinTime'],
     );
   }
 }

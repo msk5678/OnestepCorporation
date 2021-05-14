@@ -7,6 +7,7 @@ import 'package:onestep_rezero/favorite/utils/favoriteFirebaseApi.dart';
 import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/product/models/product.dart';
 import 'package:onestep_rezero/product/pages/productDetail.dart';
+import 'package:onestep_rezero/product/widgets/detail/TestproductDetailBody.dart';
 import 'package:onestep_rezero/timeUtil.dart';
 
 class ProductItem extends StatefulWidget {
@@ -35,7 +36,9 @@ class _ProductItemState extends State<ProductItem> {
     Widget setFavorite() {
       return StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
-            .collection('products')
+            .collection("university")
+            .doc(currentUserModel.university)
+            .collection('product')
             .doc(widget.product.firestoreid)
             .snapshots(),
         builder:
@@ -62,9 +65,8 @@ class _ProductItemState extends State<ProductItem> {
               Product p =
                   Product.fromJson(snapshot.data.data(), snapshot.data.id);
 
-              bool chk = p.favoriteuserlist == null ||
-                  p.favoriteuserlist[googleSignIn.currentUser.id.toString()] ==
-                      null;
+              bool chk = p.favoriteUserList == null ||
+                  p.favoriteUserList[googleSignIn.currentUser.id] == null;
 
               _fChk = chk;
               return Positioned(
@@ -101,12 +103,18 @@ class _ProductItemState extends State<ProductItem> {
     }
 
     Widget getImage(BuildContext context) {
-      return CachedNetworkImage(
-        imageUrl: widget.product.images[0],
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        errorWidget: (context, url, error) => Icon(Icons.error), // 로딩 오류 시 이미지
-        fit: BoxFit.cover,
+      return Container(
+        child: Hero(
+          tag: widget.product.firestoreid,
+          child: CachedNetworkImage(
+            imageUrl: widget.product.imagesUrl[0],
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            errorWidget: (context, url, error) =>
+                Icon(Icons.error), // 로딩 오류 시 이미지
+            fit: BoxFit.cover,
+          ),
+        ),
       );
     }
 
@@ -114,9 +122,12 @@ class _ProductItemState extends State<ProductItem> {
 
     return GestureDetector(
       onTap: () {
-        Navigator.of(context).push(MaterialPageRoute(
+        Navigator.of(context).push(
+          MaterialPageRoute(
             builder: (context) =>
-                ClothDetail(docId: widget.product.firestoreid)));
+                ClothDetail(docId: widget.product.firestoreid),
+          ),
+        );
       },
       child: Container(
         child: Column(
@@ -225,7 +236,7 @@ class _ProductItemState extends State<ProductItem> {
                 // ),
                 Spacer(),
                 Text(
-                  TimeUtil.timeAgo(date: widget.product.bumptime),
+                  TimeUtil.timeAgo(date: widget.product.bumpTime),
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w400,

@@ -5,7 +5,7 @@ import 'inRealTimeChattingRoom.dart';
 class RealTimeChatNavigationManager {
   static void navigateToRealTimeChattingRoom(
       var context, String myUid, String friendUid, String postId) {
-    print("#### 노티 $myUid $friendUid $postId");
+    // print("#### 노티 $myUid $friendUid $postId");
     Navigator.push(
         context,
         MaterialPageRoute(

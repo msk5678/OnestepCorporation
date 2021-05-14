@@ -392,7 +392,7 @@ class _LastChatState extends State<ChatScreen> {
   }
 
   Future getProductInfo() async {
-    return FirebaseFirestore.instance.collection('products').doc(postId).get();
+    return FirebaseFirestore.instance.collection('product').doc(postId).get();
   }
 
   FutureBuilder createProductInfomation() {
@@ -486,41 +486,41 @@ class _LastChatState extends State<ChatScreen> {
                     return Container();
                   //CircularProgressIndicator();
                   default:
-                    print("#realpro Strmsg top $chattingRoomId");
+                    // print("#realpro Strmsg top $chattingRoomId");
                     if (snapshot == null ||
                         !snapshot.hasData ||
                         snapshot.data.snapshot.value == null) {
-                      print(
-                          "stream values if0 null : ${snapshot.data.snapshot.value}");
+                      // print(
+                      //     "stream values if0 null : ${snapshot.data.snapshot.value}");
                       return Container();
                     } else if (snapshot.hasData) {
-                      print("#realpro Strmsg top 값 있음");
+                      // print("#realpro Strmsg top 값 있음");
                       listProductMessage.clear(); //리스트 클리어
                       DataSnapshot dataValues = snapshot.data.snapshot;
                       Map<dynamic, dynamic> values = dataValues.value;
-                      print("#realpro Strmsg top value : " + values.toString());
-                      print("#realpro Strmsg keys : ${values.keys.toString()}");
-                      print("#realpro Strmsg top con : " +
-                          values['content'].toString());
+                      // print("#realpro Strmsg top value : " + values.toString());
+                      // print("#realpro Strmsg keys : ${values.keys.toString()}");
+                      // print("#realpro Strmsg top con : " +
+                      // values['content'].toString());
 
                       values.forEach((key, values) {
-                        print(
-                            "#realpro Strmsg message id : ${values["idTo"].keys.toList()[0]}");
+                        // print(
+                        //     "#realpro Strmsg message id : ${values["idTo"].keys.toList()[0]}");
                         String s = values[
                             "idTo/${googleSignIn.currentUser.id.toString()}"];
-                        print(
-                            "#realpro Strmsg message read : ${googleSignIn.currentUser.id.toString()} ${values["idTo/${googleSignIn.currentUser.id.toString()}"]} $s");
-                        print(
-                            "#realpro Strmsg message read : ${googleSignIn.currentUser.id.toString()} ${values["idTo/TLtvLka2sHTPQE3q6U2WPxfgJ8j2"].toString()} ");
+                        // print(
+                        //     "#realpro Strmsg message read : ${googleSignIn.currentUser.id.toString()} ${values["idTo/${googleSignIn.currentUser.id.toString()}"]} $s");
+                        // print(
+                        //     "#realpro Strmsg message read : ${googleSignIn.currentUser.id.toString()} ${values["idTo/TLtvLka2sHTPQE3q6U2WPxfgJ8j2"].toString()} ");
 
-                        print(
-                            "#realpro Strmsg message key : ${key.toString()}");
-                        print(
-                            "#realpro Strmsg message value : ${values['content']}");
-                        print(
-                            "#realpro Strmsg message idTo : ${values['idTo']}");
-                        print(
-                            "#realpro Strmsg message idTo : ${values['idTo'].values.toList()[0]}");
+                        // print(
+                        //     "#realpro Strmsg message key : ${key.toString()}");
+                        // print(
+                        //     "#realpro Strmsg message value : ${values['content']}");
+                        // print(
+                        //     "#realpro Strmsg message idTo : ${values['idTo']}");
+                        // print(
+                        //     "#realpro Strmsg message idTo : ${values['idTo'].values.toList()[0]}");
 
                         //Message Read update
                         if (values["idTo"].keys.toList()[0] ==

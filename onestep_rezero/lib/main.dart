@@ -14,8 +14,9 @@ import 'appmain/bottomNavigationItem.dart';
 
 final auth = FBA.FirebaseAuth.instance;
 final googleSignIn = GoogleSignIn();
-final ref = FirebaseFirestore.instance.collection('users');
+final ref = FirebaseFirestore.instance.collection('user');
 final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+Future<QuerySnapshot> categoryList;
 
 User currentUserModel;
 
@@ -90,6 +91,8 @@ class _MainPageState extends State<MainPage> {
       return null;
     }
     DocumentSnapshot userRecord = await ref.doc(user.id).get();
+    var time = DateTime.now().microsecondsSinceEpoch;
+
     if (userRecord.data() == null) {
       // no user record exists, time to create
 
@@ -122,26 +125,40 @@ class _MainPageState extends State<MainPage> {
 
       if (nickName != null || nickName.length != 0) {
         await ref.doc(user.id).set({
-          "authUniversity": "", // 대학인증여부
+          "auth": 0, // 대학인증여부 0 : 안됨, 1 : 인증대기중, 2 : 인증 완료
+          "authTime": 0, // 학교 인증시간
           "uid": user.id, // uid
           "nickName": nickName, // 닉네임
-          "photoUrl": user.photoUrl, // 사진
-          "userEmail": user.email, // 이메일
-          "userLevel": 1, // 레벨
-          "userScore": 0, // 점수
-          "userUniversity": "", // 학교이름
-          "userUniversityEmail": "", // 학교이메일
-          "timeStamp": DateTime.now(),
+          "imageUrl": user.photoUrl, // 사진
+          "email": user.email, // 이메일
+          "reportPoint": 0, // 신고 점수
+          "university": "", // 학교이름
+          "universityEmail": "", // 학교이메일
+          "joinTime": time, // 가입시간
         }).whenComplete(() {
-          ref.doc(user.id).collection("chatcount").doc(user.id).set({
-            "productchatcount": 0,
-            "boardchatcount": 0,
+          ref.doc(user.id).collection("chatCount").doc(user.id).set({
+            "productChatCount": 0,
+            "boardChatCount": 0,
           });
         });
+        // .whenComplete(() {
+        //   ref.doc(user.id).collection("grade").doc(time).set({
+        //     "grade": "", // 판매 등급
+        //     "gradePoint": 0, // 거래 게이지
+        //     "getPoint": 0, // 얻은 게이지
+        //     "time": time, // 시간
+        //     "type": 0, // 활동 유형
+        //   });
+        // });
       }
       userRecord = await ref.doc(user.id).get();
     }
     currentUserModel = User.fromDocument(userRecord);
+    ref.doc(currentUserModel.uid).collection("log").doc(time.toString()).set({
+      "loginTime": time,
+    });
+    categoryList = FirebaseFirestore.instance.collection('category').get();
+    print("@@@@ category 가져오기");
     return null;
   }
 
@@ -266,39 +283,75 @@ class _MainPageState extends State<MainPage> {
       setUpNotifications();
     }
 
-    return (googleSignIn.currentUser == null || currentUserModel == null)
-        ? buildLoginPage()
-        : SafeArea(
-            child: WillPopScope(
-                child: Scaffold(
-                  // key: _globalKey,
-                  body: IndexedStack(
-                    index: _currentIndex,
-                    children: [
-                      for (final tabItem in BottomNavigationItem.items)
-                        tabItem.page,
-                    ],
-                  ),
-                  bottomNavigationBar: BottomNavigationBar(
-                    fixedColor: Colors.black,
-                    currentIndex: _currentIndex,
-                    onTap: (int index) => setState(() => _currentIndex = index),
-                    type: BottomNavigationBarType.fixed,
-                    showSelectedLabels: false,
-                    showUnselectedLabels: false, // title 안보이게 설정
-                    items: [
-                      for (final tabItem in BottomNavigationItem.items)
-                        BottomNavigationBarItem(
-                          icon: tabItem.icon,
-                          label: tabItem.title,
-                        )
-                    ],
-                  ),
-                ),
-                onWillPop: () async {
-                  bool result = isEnd();
-                  return await Future.value(result);
-                }),
-          );
+    if (googleSignIn.currentUser == null || currentUserModel == null) {
+      return buildLoginPage();
+    } else {
+      return SafeArea(
+        child: WillPopScope(
+            child: Scaffold(
+              // key: _globalKey,
+              body: IndexedStack(
+                index: _currentIndex,
+                children: [
+                  for (final tabItem in BottomNavigationItem.items)
+                    tabItem.page,
+                ],
+              ),
+              bottomNavigationBar: BottomNavigationBar(
+                fixedColor: Colors.black,
+                currentIndex: _currentIndex,
+                onTap: (int index) => setState(() => _currentIndex = index),
+                type: BottomNavigationBarType.fixed,
+                showSelectedLabels: false,
+                showUnselectedLabels: false, // title 안보이게 설정
+                items: [
+                  for (final tabItem in BottomNavigationItem.items)
+                    BottomNavigationBarItem(
+                      icon: tabItem.icon,
+                      label: tabItem.title,
+                    )
+                ],
+              ),
+            ),
+            onWillPop: () async {
+              bool result = isEnd();
+              return await Future.value(result);
+            }),
+      );
+    }
+    // return (googleSignIn.currentUser == null || currentUserModel == null)
+    //     ? buildLoginPage()
+    // : SafeArea(
+    //     child: WillPopScope(
+    //         child: Scaffold(
+    //           // key: _globalKey,
+    //           body: IndexedStack(
+    //             index: _currentIndex,
+    //             children: [
+    //               for (final tabItem in BottomNavigationItem.items)
+    //                 tabItem.page,
+    //             ],
+    //           ),
+    //           bottomNavigationBar: BottomNavigationBar(
+    //             fixedColor: Colors.black,
+    //             currentIndex: _currentIndex,
+    //             onTap: (int index) => setState(() => _currentIndex = index),
+    //             type: BottomNavigationBarType.fixed,
+    //             showSelectedLabels: false,
+    //             showUnselectedLabels: false, // title 안보이게 설정
+    //             items: [
+    //               for (final tabItem in BottomNavigationItem.items)
+    //                 BottomNavigationBarItem(
+    //                   icon: tabItem.icon,
+    //                   label: tabItem.title,
+    //                 )
+    //             ],
+    //           ),
+    //         ),
+    //         onWillPop: () async {
+    //           bool result = isEnd();
+    //           return await Future.value(result);
+    //         }),
+    //   );
   }
 }
