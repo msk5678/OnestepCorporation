@@ -443,12 +443,22 @@ class _ProductDetailBodyState extends State<ProductDetailBody> {
               //     googleSignIn.currentUser.id.toString(),
               //     widget.product.uid,
               //     widget.product.firestoreid);
-              RealTimeChatNavigationManager.navigateToProductChattingRoom(
+
+              // RealTimeChatNavigationManager.navigateToProductChattingRoom(
+              //     context,
+              //     googleSignIn.currentUser.id.toString(),
+              //     widget.product.uid,
+              //     widget.product.firestoreid);
+
+              RealTimeChatNavigationManager.navigateProductToProductChat(
                   context,
                   googleSignIn.currentUser.id.toString(),
                   widget.product.uid,
-                  widget.product.firestoreid);
-
+                  widget.product.firestoreid,
+                  widget.product);
+              widget.product.title;
+              widget.product.images;
+              widget.product.price;
               //   ProductChatController().createProductChattingRoomToRealtimeDatabase(
               // "111357489031227818227", "1617992413066022", "1618662154936");
 

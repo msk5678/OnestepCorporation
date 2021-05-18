@@ -8,8 +8,7 @@ class ProductChatList {
   String recentTime;
   String recentText;
   //chatUsers
-  ProductChatUser user1;
-  ProductChatUser user2;
+  ProductChatUser chatUsers;
 
   //user1['nickName'] = 'dd'; //str
   //user1['imageUrl'] = 'dd'; //str
@@ -26,13 +25,14 @@ class ProductChatList {
   });
 
   ProductChatList.forMapSnapshot(dynamic snapshot) {
+    print("##@#채팅방 생성@#@# ${snapshot["chatId"]} ${snapshot["chatUsers"]}");
+    //print("##@#채팅방 생성@#@# ${snapshot["chatUsers"][0]}");
     //productChatInfo
     chatId = snapshot["chatId"];
     postId = snapshot["postId"];
     createTime = snapshot["createTime"];
     recentTime = snapshot["recentTime"];
     recentText = snapshot["recentText"];
-    user1 = ProductChatUser.forMapSnapshot(snapshot);
-    user2 = ProductChatUser.forMapSnapshot(snapshot);
+    chatUsers = ProductChatUser.forMapSnapshot(snapshot);
   }
 }

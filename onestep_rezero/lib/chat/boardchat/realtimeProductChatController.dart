@@ -160,6 +160,7 @@ class RealtimeProductChatController {
   }
 
   FutureBuilder getProductUserNickname(String proUserId) {
+    print("Future 연결");
     return FutureBuilder(
       future: getUserId(proUserId),
       builder: (context, snapshot) {

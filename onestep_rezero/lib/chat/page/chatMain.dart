@@ -3,10 +3,11 @@ import 'dart:io';
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:onestep_rezero/chat/boardchat/realtimeProductChatController.dart';
 import 'package:onestep_rezero/chat/page/productChatListPage.dart';
 import 'package:onestep_rezero/chat/page/realtimePage.dart';
-import 'package:onestep_rezero/chat/productchat/controller/productChatController.dart';
+import 'package:onestep_rezero/main.dart';
 
 class ChatMainPage extends StatefulWidget {
   @override
@@ -82,8 +83,9 @@ class ChatMainPageState extends State<ChatMainPage>
       appBar: AppBar(
         backgroundColor: Color.fromRGBO(150, 150, 150, 1),
         title: Text(
-          'Scrollable tabs ' + "chat main",
+          '장터 & 익명채팅 ${googleSignIn.currentUser.id}',
           style: TextStyle(
+            fontSize: 10,
             color: Color.fromRGBO(0, 0, 0, 1),
           ),
         ),
@@ -144,13 +146,28 @@ class ChatMainPageState extends State<ChatMainPage>
         print("플로팅 클릭");
         //1. Create Product Chat
         //friendUid, String postId, String chattingRoomId
-        ProductChatController().createProductChattingRoomToRealtimeDatabase(
-            "111357489031227818227", "1617992413066022", "1618662154936");
+        getImage();
 
+        //채팅방 생성
+        // ProductChatController().createProductChattingRoomToRealtimeDatabase(
+        //     "108438757310040285856", "1617992413066022", "1618662154938");
+
+        // //메세지 생성
+        // ProductChatController().onSendToProductMessage(
+        //     "1618662154938", "108438757310040285856", "개시발좆같은거", 0);
         //2. AdMob
         //rewardedAd.show();
         //interstitialAd.show();
       }),
     );
+  }
+
+  getImage() async {
+    List<Asset> resultList = List<Asset>();
+    resultList =
+        await MultiImagePicker.pickImages(maxImages: 10, enableCamera: true);
+    setState(() {
+      ProductChatListPage.imageList = resultList;
+    });
   }
 }

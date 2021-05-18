@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:onestep_rezero/chat/boardchat/model/productMessage.dart';
+import 'package:onestep_rezero/chat/productchat/model/productChatMessage.dart';
 
 Widget getMessageTime(String timestamp) {
   return Text(
@@ -42,6 +43,35 @@ Widget compareToMessageDate(
   var nextTime = DateFormat("yyyy년 MM월 dd일 /EEEE").format(
       DateTime.fromMillisecondsSinceEpoch(
           int.parse(nextProductMessage.timestamp)));
+  var nextTimeList = nextTime.split('/');
+
+  var resultTime = pastTimeList[0] + _getMessageDayOfTheWeek((pastTimeList[1]));
+  print("##messaage pastTime $pastTimeList // nextTime $nextTimeList");
+
+  if (pastTimeList[0] == nextTimeList[0]) {
+    return Container();
+  } else
+    return Text(
+      resultTime,
+      style: TextStyle(
+        color: Colors.grey,
+        fontSize: 12.0,
+        //  fontStyle: FontStyle.italic,
+      ),
+    );
+}
+
+Widget compareToProductMessageDate(
+    ProductChatMessage productMessage, ProductChatMessage nextProductMessage) {
+  // xxxx년 2월 1일 월요일
+
+  var pastTime = DateFormat("yyyy년 MM월 dd일 /EEEE").format(
+      DateTime.fromMillisecondsSinceEpoch(int.parse(productMessage.sendTime)));
+  var pastTimeList = pastTime.split('/');
+
+  var nextTime = DateFormat("yyyy년 MM월 dd일 /EEEE").format(
+      DateTime.fromMillisecondsSinceEpoch(
+          int.parse(nextProductMessage.sendTime)));
   var nextTimeList = nextTime.split('/');
 
   var resultTime = pastTimeList[0] + _getMessageDayOfTheWeek((pastTimeList[1]));

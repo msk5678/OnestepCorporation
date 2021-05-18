@@ -83,9 +83,17 @@ class _RealTimePageState extends State<RealTimePage>
               .onValue, //조건1.  타임스탬프 기준
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         switch (snapshot.connectionState) {
+          case ConnectionState.none:
           case ConnectionState.waiting:
+            print("연결상태 : " + snapshot.connectionState.toString());
             return CircularProgressIndicator();
+          // case ConnectionState.active:
+          //   Future.delayed(const Duration(seconds: 1));
+          //   print("연결되었지만 대기중! : " + snapshot.connectionState.toString());
+          //   return CircularProgressIndicator();
           default:
+            Future.delayed(const Duration(seconds: 1));
+            print("연결상태 : " + snapshot.connectionState.toString());
             if (snapshot == null ||
                 !snapshot.hasData ||
                 snapshot.data.snapshot.value == null) {
@@ -169,10 +177,12 @@ class _RealTimePageState extends State<RealTimePage>
                         "stream values else1 message ForEach: InMessageKey : ${mIkey} // InMessageValue : ${mIvalue}");
                   });
                 }); //메시지 내부 분해 종료
+                print("리얼타임 메세지 처리 1 : $key /// $len /// $values");
                 listProductChatCount
                     .add(ProductChatCount.forMapSnapshot(key, len, values));
+                print("리얼타임 메세지 처리 반복 진행중");
               }); //채팅방 반복 종료
-
+              print("리얼타임 메세지 처리 완료 ");
               //1. 챗 리스트 정렬
               listProductChat.sort((b, a) =>
                   a.timeStamp.compareTo(b.timeStamp)); //정렬3. 시간 순 정렬 가능.

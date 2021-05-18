@@ -8,23 +8,27 @@ import 'package:image_picker/image_picker.dart';
 import 'package:onestep_rezero/chat/boardchat/model/productMessage.dart';
 import 'package:onestep_rezero/chat/boardchat/model/productSendMessage.dart';
 import 'package:onestep_rezero/chat/boardchat/realtimeProductChatController.dart';
+import 'package:onestep_rezero/chat/productchat/controller/productChatController.dart';
+import 'package:onestep_rezero/chat/productchat/model/productChatMessage.dart';
 import 'package:onestep_rezero/chat/widget/FullmageWidget.dart';
 import 'package:onestep_rezero/chat/widget/message_list_time.dart';
 import 'package:onestep_rezero/main.dart';
 
 import 'dart:io' as io;
 
+import 'package:onestep_rezero/product/models/product.dart';
+
 class ProductChattingRoomPage extends StatelessWidget {
   final String myUid;
   final String friendId;
   final String postId;
-  // InRealTimeChattingRoomPage(
-  //     {@required this.myUid, @required this.friendId, @required this.postId});
-
-  ProductChattingRoomPage({this.myUid, this.friendId, this.postId});
+  final Product product;
+  ProductChattingRoomPage(
+      {this.myUid, this.friendId, this.postId, this.product});
 
   @override
   Widget build(BuildContext context) {
+    print("포커스 빌드 다시됨");
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.lightBlue,
@@ -51,9 +55,18 @@ class ProductChattingRoomPage extends StatelessWidget {
               style: TextStyle(fontSize: 9),
             ),
             Text(
-              "chatRoomUid : $postId",
+              "postId : $postId",
               style: TextStyle(fontSize: 9),
             ),
+            product == null
+                ? Text(
+                    "챗리스트에서 옴",
+                    style: TextStyle(fontSize: 9),
+                  )
+                : Text(
+                    "${product.title.toString()}",
+                    style: TextStyle(fontSize: 9),
+                  ),
           ],
         ),
       ),
@@ -61,6 +74,7 @@ class ProductChattingRoomPage extends StatelessWidget {
         myUid: myUid,
         friendId: friendId,
         postId: postId,
+        product: product,
       ),
     );
   }
@@ -103,26 +117,36 @@ class ChatScreen extends StatefulWidget {
   final String myUid;
   final String friendId;
   final String postId;
+  final Product product;
 
-  ChatScreen(
-      {Key key,
-      @required this.myUid,
-      @required this.friendId,
-      @required this.postId})
-      : super(key: key);
+  ChatScreen({
+    Key key,
+    @required this.myUid,
+    @required this.friendId,
+    @required this.postId,
+    @required this.product,
+  }) : super(key: key);
 
   @override
-  _LastChatState createState() =>
-      _LastChatState(myId: myUid, friendId: friendId, postId: postId);
+  _LastChatState createState() => _LastChatState(
+        myId: myUid,
+        friendId: friendId,
+        postId: postId,
+        product: product,
+      );
 }
 
 class _LastChatState extends State<ChatScreen> {
   final String myId; // uid 받음
   final String friendId;
   final String postId;
+  final Product product;
 
   _LastChatState(
-      {@required this.myId, @required this.friendId, @required this.postId});
+      {@required this.myId,
+      @required this.friendId,
+      @required this.postId,
+      @required this.product});
 
   final TextEditingController textEditingController = TextEditingController();
   final ScrollController listScrollController = ScrollController();
@@ -142,15 +166,13 @@ class _LastChatState extends State<ChatScreen> {
   //String id; //내아이디
   var listMessage;
   //채팅방 생성 판별
-  String chattingRoomId; //채팅방 있으면 새로만들고 없으면 기존 채팅아이디
+  String chatId; //채팅방 있으면 새로만들고 없으면 기존 채팅아이디
   bool existChattingRoom; //채팅방
 
   //RealTime
-  List<ProductMessage> listProductMessage = []; //Realtime List
-  DatabaseReference productChatMessageReference = FirebaseDatabase.instance
-      .reference()
-      .child("chat")
-      .child("productchat"); //Chat Message Ref
+  List<ProductChatMessage> listProductMessage = []; //Realtime List
+  DatabaseReference productChatReference =
+      ProductChatController.productChatReference; //Chat Message Ref
 
   //logger
   // var logger = Logger(
@@ -192,24 +214,20 @@ class _LastChatState extends State<ChatScreen> {
   }
 
   _createChatId() {
-    chattingRoomId = DateTime.now().millisecondsSinceEpoch.toString();
+    chatId = DateTime.now().millisecondsSinceEpoch.toString();
   }
 
   void checkExistChattingRoom() {
     //RealTime
-    DatabaseReference productchatdatabasereference = FirebaseDatabase.instance
-        .reference()
-        .child("chat")
-        .child("productchat");
 
-    productchatdatabasereference
-        .orderByChild("users/${googleSignIn.currentUser.id.toString()}")
-        .equalTo(true)
+    productChatReference
+        .orderByChild("chatUsers/${googleSignIn.currentUser.id}/hide")
+        .equalTo(false)
         .once()
         .then((DataSnapshot snapshot) {
       if (snapshot.value == null) {
         _createChatId();
-        print('#realpro check exist chat  : null $chattingRoomId');
+        print('#realpro check exist chat  : null $chatId');
       } else {
         print('#realpro check exist chat  : not null');
         print('#realpro Data strmsg : ${snapshot.value}');
@@ -221,34 +239,35 @@ class _LastChatState extends State<ChatScreen> {
           print('#realpro Data strmsg second value : ${values.toString()}');
           print('#realpro Data strmsg second key : ${key.toString()}');
           print(
-              "#realpro 생성 채팅방 가져온값 186 key ${key.toString()} / myid ${values['users'].keys.toList()[0]} / fid ${values['users'].keys.toList()[1]} / postId ${values['postId']}");
+              "#realpro 생성 채팅방 가져온값 186 key ${key.toString()} / myid ${values['chatUsers'].keys.toList()[0]} / fid ${values['chatUsers'].keys.toList()[1]} / postId ${values['postId']}");
 
           print(
               "#realpro Data strmsg second 1  myid $myId / fid $friendId / post $postId");
           print("#realpro 생성 채팅방 상단");
-          if ((myId == values['users'].keys.toList()[0] &&
-                  friendId == values['users'].keys.toList()[1] &&
+          if ((myId == values['chatUsers'].keys.toList()[0] &&
+                  friendId == values['chatUsers'].keys.toList()[1] &&
                   postId == values['postId']) ||
-              (myId == values['users'].keys.toList()[1] &&
-                  friendId == values['users'].keys.toList()[0] &&
+              (myId == values['chatUsers'].keys.toList()[1] &&
+                  friendId == values['chatUsers'].keys.toList()[0] &&
                   postId == values['postId'])) {
             existChattingRoom = true;
-            chattingRoomId = key.toString();
+            chatId = key.toString();
 
             print(
-                "#realpro Data strmsg second 채팅방 있음 22 myid $myId / fid $friendId / post $postId / chatId $chattingRoomId");
+                "#realpro Data strmsg second 채팅방 있음 22 myid $myId / fid $friendId / post $postId / chatId $chatId");
           }
         });
         print("#realpro 생성 채팅방 하단");
         if (existChattingRoom == true) {
           print(
-              "#realpro 생성 채팅방 있음 186 myid $myId / fid $friendId / chatId $chattingRoomId");
+              "#realpro 생성 채팅방 있음 186 myid $myId / fid $friendId / chatId $chatId");
           //만약 채팅방이 있으면
           setState(() {});
+          checkProductExist(chatId, friendId, product, 3);
         } else {
           _createChatId();
           print(
-              "#realpro 생성 채팅방 없음 $existChattingRoom 186 myid $myId / fid $friendId / chatId $chattingRoomId");
+              "#realpro 생성 채팅방 없음 $existChattingRoom 186 myid $myId / fid $friendId / chatId $chatId");
           print(
               "#realpro 생성 채팅방 찍기 $existChattingRoom 186 myid ${DateTime.now().millisecondsSinceEpoch.toString()}");
         }
@@ -260,6 +279,8 @@ class _LastChatState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
+    print("포커스 ㅇㅇ");
+    focusNode.hasFocus;
     focusNode.addListener(() {
       onFocusChange();
     });
@@ -271,15 +292,31 @@ class _LastChatState extends State<ChatScreen> {
     print("#### Data strmsg init");
 
     checkExistChattingRoom();
+    //chatId get, create Info
+  }
+
+  checkProductExist(String chatId, String friendId, var contentMsg, int type) {
+    //네비게이트 위치 확인,
+    String test = "dd";
+    if (product != null) {
+      print("maptest 진입전");
+      checkTheSendMessage(chatId, friendId, contentMsg, 3);
+      print("maptest 종료");
+      Fluttertoast.showToast(
+          msg:
+              "type ${product.runtimeType} / 프로덕트에서 넘어옴, 초기 채팅 저장 ${product.title}");
+    } else
+      Fluttertoast.showToast(
+          msg: "type ${test.runtimeType} / 챗리스트에서 넘어옴 product null");
   }
 
   onFocusChange() {
-    //print("^^^포커스체인지" + id.toString());
+    print("^^^포커스체인지");
     if (focusNode.hasFocus) {
       //hide stickers whenever keypad appears
-      setState(() {
-        isDisplaySticker = false;
-      });
+      //setState(() {
+      isDisplaySticker = false;
+      //});
     }
   }
 
@@ -293,7 +330,7 @@ class _LastChatState extends State<ChatScreen> {
 //            mainAxisSize: MainAxisSize.max,
             //mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              createProductInfomation(),
+              ProductChatController().createProductInfomation(postId),
               // Align(
               //  alignment: FractionalOffset(0.5, 0.5), // 수평 중간, 수직 하단에 위치하도록 설정
               //    child:
@@ -346,7 +383,7 @@ class _LastChatState extends State<ChatScreen> {
                 ),
               ),
               TextButton(
-                onPressed: () => onSendToProductMessage("st", 2),
+                onPressed: () => checkTheSendMessage(chatId, friendId, "st", 2),
                 //padding: EdgeInsets.all(0.0),
                 child: Image.asset(
                   "images/st.png",
@@ -356,7 +393,8 @@ class _LastChatState extends State<ChatScreen> {
                 ),
               ),
               TextButton(
-                onPressed: () => onSendToProductMessage("mimi3", 2),
+                onPressed: () =>
+                    checkTheSendMessage(chatId, friendId, "mini3", 2),
                 child: Image.asset(
                   "images/mimi3.gif",
                   width: 50.0,
@@ -389,82 +427,8 @@ class _LastChatState extends State<ChatScreen> {
     });
   }
 
-  Future getProductInfo() async {
-    return FirebaseFirestore.instance.collection('products').doc(postId).get();
-  }
-
-  FutureBuilder createProductInfomation() {
-    return FutureBuilder(
-      future: getProductInfo(),
-      builder: (context, snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.waiting:
-            return CircularProgressIndicator();
-          default:
-            if (snapshot.hasData == false) {
-              return CircularProgressIndicator();
-            } else if (snapshot.hasError) {
-              return Text(
-                'Error: ${snapshot.error}',
-                style: TextStyle(fontSize: 15),
-              );
-            } else {
-              return Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(8, 4, 0, 0),
-                    child: Row(
-                      children: <Widget>[
-                        // Material(
-                        //   child: ExtendedImage.network(
-                        //     snapshot.data['images'][0],
-                        //     width: 55,
-                        //     height: 55,
-                        //     fit: BoxFit.cover,
-                        //     cache: true,
-                        //   ),
-                        //   borderRadius: BorderRadius.all(Radius.circular(6.0)),
-                        //   clipBehavior: Clip.hardEdge,
-                        // ),
-                        Material(
-                          child: CachedNetworkImage(
-                            imageUrl: snapshot.data['images'][0],
-                            width: 55,
-                            height: 55,
-                            fit: BoxFit.cover,
-                          ),
-                          borderRadius: BorderRadius.all(Radius.circular(6.0)),
-                          clipBehavior: Clip.hardEdge,
-                        ),
-                        SizedBox(
-                          width: 10,
-                          height: 10,
-                        ),
-                        Column(
-                          children: <Widget>[
-                            Text(snapshot.data['title']),
-                            Text(snapshot.data['price']),
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-                  Divider(
-                    color: Colors.black,
-                    height: 10,
-                    thickness: 1,
-                  ),
-                ],
-              );
-            }
-        }
-      },
-    );
-  }
-
   _buildChatListListTileStream() {
     //Future.delayed(const Duration(seconds: 1));
-
     return Flexible(
       fit: FlexFit.tight,
       child: myId == ""
@@ -474,8 +438,8 @@ class _LastChatState extends State<ChatScreen> {
               // ),
               )
           : StreamBuilder(
-              stream: productChatMessageReference
-                  .child('$chattingRoomId/message')
+              stream: productChatReference
+                  .child('$chatId/message')
                   //.orderByChild("message")
                   .onValue, //조건1.  타임스탬프 기준
               builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -484,7 +448,7 @@ class _LastChatState extends State<ChatScreen> {
                     return Container();
                   //CircularProgressIndicator();
                   default:
-                    print("#realpro Strmsg top $chattingRoomId");
+                    print("#realpro Strmsg top $chatId");
                     if (snapshot == null ||
                         !snapshot.hasData ||
                         snapshot.data.snapshot.value == null) {
@@ -526,31 +490,19 @@ class _LastChatState extends State<ChatScreen> {
                             values['idTo'].values.toList()[0] == false) {
                           print(
                               "안읽은 메세지, idTo : ${values["idTo"].keys.toList()[0]} // bool : ${values['idTo'].values.toList()[0]} // vals : $values");
-                          //listProductMessage[0].
-                          //
-                          RealtimeProductChatController()
-                              .updateReadMessage(chattingRoomId, key);
-                          // DatabaseReference productChatMessageReference =
-                          //     FirebaseDatabase.instance
-                          //         .reference()
-                          //         .child("chat")
-                          //         .child("productchat")
-                          //         .child(chattingRoomId)
-                          //         .child("message")
-                          //         .child(key)
-                          //         .child("idTo");
-                          // productChatMessageReference.update({
-                          //   googleSignIn.currentUser.id.toString(): true,
-                          // });
-                          listProductMessage
-                              .add(ProductMessage.forReadMapSnapshot(values));
+
+                          ProductChatController()
+                              .updateReadMessage(chatId, key);
+
+                          listProductMessage.add(
+                              ProductChatMessage.forReadMapSnapshot(values));
                         } //업데이트 종료
                         else
                           listProductMessage
-                              .add(ProductMessage.forMapSnapshot(values));
+                              .add(ProductChatMessage.forMapSnapshot(values));
                       });
                       listProductMessage.sort((b, a) =>
-                          a.timestamp.compareTo(b.timestamp)); //정렬3. 시간 순 정렬
+                          a.sendTime.compareTo(b.sendTime)); //정렬3. 시간 순 정렬
                       print("#realpro Strmsg top list index : " +
                           listProductMessage.length.toString());
                       return listProductMessage.length > 0
@@ -616,15 +568,18 @@ class _LastChatState extends State<ChatScreen> {
     }
   }
 
-  Widget createMessageDate(int index, int maxIndex,
-      ProductMessage productMessage, ProductMessage nextProductMessage) {
+  Widget createMessageDate(
+      int index,
+      int maxIndex,
+      ProductChatMessage productMessage,
+      ProductChatMessage nextProductMessage) {
     var maxindex = maxIndex - 1;
     print(
-        "##message index $index / m Index $maxIndex / proMsg ${productMessage.timestamp}");
+        "##message index $index / m Index $maxIndex / proMsg ${productMessage.sendTime}");
     if (index == maxindex && productMessage != null) //메세지 시작일 경우 이거 출력
-      return getMessageDate(productMessage.timestamp);
+      return getMessageDate(productMessage.sendTime);
     else if (index < maxindex && productMessage != null) {
-      return compareToMessageDate(productMessage, nextProductMessage);
+      return compareToProductMessageDate(productMessage, nextProductMessage);
       // if (productMessage.timestamp == nextProductMessage.timestamp)
       //   print("전과 같으면 ");
       //첫 메세지 제외일 경우
@@ -633,7 +588,7 @@ class _LastChatState extends State<ChatScreen> {
       return Text("err");
   }
 
-  Widget createMessage(int index, ProductMessage productMessage) {
+  Widget createMessage(int index, ProductChatMessage productMessage) {
     //My messages - Right Side
     // var chatTime = DateFormat("yyyy-MM-dd").format(
     //     DateTime.fromMillisecondsSinceEpoch(int.parse(document["timestamp"])));
@@ -644,6 +599,14 @@ class _LastChatState extends State<ChatScreen> {
       senderId = myId;
       receiveId = friendId;
       //내가 보냈을 경우
+      productMessage.type == 0
+          ? Container()
+          : productMessage.type == 1
+              ? Container()
+              : productMessage.type == 2
+                  ? Container()
+                  : Container();
+
       return Column(
         //요기
         children: <Widget>[
@@ -657,16 +620,14 @@ class _LastChatState extends State<ChatScreen> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
                   productMessage.isRead == false ? Text("1") : Text(""),
-//                        ? Text("${productMessage.isRead} 상대방 안읽음")
-//                       : Text("${productMessage.isRead} 상대방 읽음"),
-
+                  // ? Text("${productMessage.isRead} 상대방 안읽음")
+                  // : Text("${productMessage.isRead} 상대방 읽음"),
                   //Text(document["isRead"].toString()),
                   //GetTime(document),
                   //Text("time"),
-                  getMessageTime(productMessage.timestamp),
+                  getMessageTime(productMessage.sendTime),
                 ],
               ),
-
               SizedBox(width: 5, height: 10),
               productMessage.type == 0
                   //Text Msg
@@ -689,7 +650,6 @@ class _LastChatState extends State<ChatScreen> {
                           bottom: isLastMsgRight(index) ? 0.0 : 10.0,
                           right: 10.0),
                     )
-
                   //Image Msg
                   : productMessage.type == 1
                       ? Container(
@@ -746,19 +706,71 @@ class _LastChatState extends State<ChatScreen> {
                               bottom: isLastMsgRight(index) ? 0.0 : 10.0,
                               right: 0.0),
                         )
-
                       //Sticker . gif Msg
-                      : Container(
-                          child: Image.asset(
-                            "images/${productMessage.content}.gif",
-                            width: 100.0,
-                            height: 100.0,
-                            fit: BoxFit.cover,
-                          ),
-                          margin: EdgeInsets.only(
-                              bottom: isLastMsgRight(index) ? 20.0 : 10.0,
-                              right: 10.0),
-                        ),
+                      : productMessage.type == 2
+                          ? Container(
+                              child: Image.asset(
+                                "images/${productMessage.content}.gif",
+                                width: 100.0,
+                                height: 100.0,
+                                fit: BoxFit.cover,
+                              ),
+                              margin: EdgeInsets.only(
+                                  bottom: isLastMsgRight(index) ? 20.0 : 10.0,
+                                  right: 10.0),
+                            )
+                          //inMessage
+                          : Container(
+                              padding:
+                                  EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
+                              // width: 150.0,
+                              //height: 150,
+                              decoration: BoxDecoration(
+                                  color: Colors.yellow,
+                                  borderRadius: BorderRadius.circular(8.0)),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      Column(
+                                        children: [
+                                          Text("PRODUCT - TITLE"),
+                                          Text("PRODUCT - PRICE"),
+                                        ],
+                                      ),
+                                      Text("PRODUCT - 사진"),
+                                    ],
+                                  ),
+                                  Text("구매하기"),
+                                ],
+                              ),
+                              // Row(
+                              //   children: [
+                              //     Column(
+                              //       children: [
+                              //         Text("product - title"),
+                              //         SizedBox(
+                              //           width: 10,
+                              //         ),
+                              //         Spacer(),
+                              //         Container(
+                              //           child: Text(
+                              //             "product - price",
+                              //             style: TextStyle(
+                              //               color: Colors.red,
+                              //               fontWeight: FontWeight.w500,
+                              //             ),
+                              //           ),
+                              //         ),
+                              //       ],
+                              //     ),
+                              //     SizedBox(
+                              //       width: 10,
+                              //     ),
+                              //     Text("product - 사진"),
+                              //   ],
+                              // ),
+                            )
               // GetTime(document), //채팅 우측 시간출력
             ],
             mainAxisAlignment: MainAxisAlignment.end,
@@ -877,7 +889,7 @@ class _LastChatState extends State<ChatScreen> {
                                 right: 10.0),
                           ),
                 //GetTime(document),
-                getMessageTime(productMessage.timestamp),
+                getMessageTime(productMessage.sendTime),
               ],
             ),
 
@@ -954,7 +966,7 @@ class _LastChatState extends State<ChatScreen> {
                   color: Colors.lightBlueAccent,
                   onPressed: () {
                     print(
-                        "#realpro myid $myId / fid $friendId / chatId $chattingRoomId");
+                        "#realpro myid $myId / fid $friendId / chatId $chatId");
                     if (existChattingRoom == false) {
                       //방 만들어진 적이 없으면
                       print("#realpro 채팅방 없음, 방생성ㅇ.");
@@ -965,7 +977,7 @@ class _LastChatState extends State<ChatScreen> {
                               0,
                               friendId,
                               postId,
-                              chattingRoomId,
+                              chatId,
                               textEditingController,
                               listScrollController);
 
@@ -985,7 +997,9 @@ class _LastChatState extends State<ChatScreen> {
 
 //                      print("누가먼저돌까요1-3 if 방생성함");
                     } else {
-                      onSendToProductMessage(textEditingController.text, 0);
+                      checkTheSendMessage(
+                          chatId, friendId, textEditingController.text, 0);
+                      //onSendToProductMessage(textEditingController.text, 0);
                     }
                   }),
               color: Colors.white,
@@ -1006,57 +1020,27 @@ class _LastChatState extends State<ChatScreen> {
     );
   }
 
-  void onSendToProductMessage(String contentMsg, int type) {
-    //type = 0 its text msg
-    //type = 1 its imageFile
-    //type = 2 its sticker image
-    if (contentMsg != "") {
-      textEditingController.clear();
-      String messageId = DateTime.now().millisecondsSinceEpoch.toString();
-
-//RealTime
-      DatabaseReference productChatMessageReference = FirebaseDatabase.instance
-          .reference()
-          .child("chat")
-          .child("productchat")
-          .child(chattingRoomId)
-          .child("message")
-          .child(messageId);
-
-      DatabaseReference productChatReference = FirebaseDatabase.instance
-          .reference()
-          .child("chat")
-          .child("productchat")
-          .child(chattingRoomId);
-
-      productChatMessageReference.set({
-        "idFrom": myId,
-        "idTo": {friendId: false},
-        "timestamp": messageId,
-        "content": contentMsg,
-        "type": type,
-        //"isRead": false,
-      }).whenComplete(() {
-        switch (type) {
-          case 1:
-            contentMsg = "사진을 보냈습니다.";
-            break;
-          case 2:
-            contentMsg = "이모티콘을 보냈습니다.";
-            break;
-        }
-        productChatReference.update({
-          "recentText": contentMsg,
-          "timestamp": messageId,
-        });
-      });
-
-      listScrollController.animateTo(0.0,
-          duration: Duration(microseconds: 300), curve: Curves.easeOut);
-    } //if
-    else {
-      Fluttertoast.showToast(msg: 'Empty Message. Can not be send.');
+  void checkTheSendMessage(
+      String chatId, String friendId, var contentMsg, int type) {
+    if (ProductChatController()
+            .onSendToProductMessage(chatId, friendId, contentMsg, type) ==
+        true) {
+      initTextEditingController();
+      initListScrollController();
+    } else {
+      print("메세지 전송에 실패했습니다. . ");
     }
+  }
+
+  void initTextEditingController() {
+    //텍스트 컨트롤러 초기화
+    textEditingController.clear();
+  }
+
+  void initListScrollController() {
+    //리스트 스크롤 컨트롤러 초기화
+    listScrollController.animateTo(0.0,
+        duration: Duration(microseconds: 300), curve: Curves.easeOut);
   }
 
   // var metadata;
@@ -1106,10 +1090,10 @@ class _LastChatState extends State<ChatScreen> {
 
     storageTaskSnapshot.ref.getDownloadURL().then((downloadUrl) {
       imageUrl = downloadUrl;
-      setState(() {
-        isLoading = false;
-        onSendToProductMessage(imageUrl, 1);
-      });
+      // setState(() {
+      isLoading = false;
+      checkTheSendMessage(chatId, friendId, imageUrl, 1);
+      //  });
     }, onError: (error) {
       setState(() {
         isLoading = false;
