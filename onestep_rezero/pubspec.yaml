@@ -71,7 +71,7 @@ dependencies:
   
   #floatingButton
   unicorndial: "^1.1.5"        # multi floatingActionButton 
-  sliding_up_panel: ^2.0.0+1 #Slide up Widget
+  sliding_up_panel: ^1.0.2 #Slide up Widget
   ############
 
   #json
@@ -85,7 +85,6 @@ dependencies:
   #toast
   fluttertoast: ^7.1.1
   
-
   #Chat Test
   #stream_chat_flutter: ^1.5.1
 

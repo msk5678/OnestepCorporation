@@ -10,22 +10,19 @@ final postListProvider =
 final FETCH_ROW = 15;
 
 class PostListRiverpod extends ConsumerWidget {
-  final boardId;
-  PostListRiverpod({this.boardId});
+  PostListRiverpod();
   @override
   Widget build(BuildContext context, watch) {
     final postlistProvider = watch(postListProvider).boards;
     return PostListView(
       postList: postlistProvider,
-      boardId: boardId,
     );
   }
 }
 
 class PostListView extends ConsumerWidget {
   final List postList;
-  final boardId;
-  const PostListView({Key key, this.postList, this.boardId}) : super(key: key);
+  const PostListView({Key key, this.postList}) : super(key: key);
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
@@ -49,10 +46,11 @@ class PostListView extends ConsumerWidget {
                   // }
                   return _buildListCard(context, index, postList[index]);
                 }));
-      } else
-        //This part setting
-        // scaffoldBody = Center(child: Text("새 게시글로 시작해보세요!"));
-        scaffoldBody = Center(child: CupertinoActivityIndicator());
+      } else {
+        return Center(child: CupertinoActivityIndicator());
+      }
+      //This part setting
+      // scaffoldBody = Center(child: Text("새 게시글로 시작해보세요!"));
     } else {
       scaffoldBody = Center(child: Text(PostListProvider().errorMessage));
     }
@@ -68,9 +66,13 @@ class PostListView extends ConsumerWidget {
               // Set Click Color
               splashColor: Colors.grey,
               //Click Event
-              onTap: () {
-                Navigator.of(context).pushNamed('/BoardContent',
-                    arguments: {"BOARD_DATA": boardData});
+              onTap: () async {
+                await Navigator.of(context).pushNamed('/PostContent',
+                    arguments: {
+                      "BOARD_DATA": boardData
+                    }).then((value) => context
+                    .read(postListProvider)
+                    .fetchPosts(boardData.boardId));
               },
               child: Column(
                 children: <Widget>[
@@ -162,7 +164,7 @@ class PostListView extends ConsumerWidget {
                 color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold),
           ),
           Container(
-            child: _setDateTimeText(boardData.createDate, boardData),
+            child: _setDateTimeText(boardData.uploadTime, boardData),
           ),
           Spacer(),
           Container(
@@ -174,7 +176,7 @@ class PostListView extends ConsumerWidget {
           Container(
             padding: EdgeInsets.only(left: 3),
             margin: EdgeInsets.only(right: 3),
-            child: Text(boardData.watchCount.toString()),
+            child: Text(boardData.views.length.toString()),
           )
         ],
         // Icon(Icons.favorite), child: Text('Date')

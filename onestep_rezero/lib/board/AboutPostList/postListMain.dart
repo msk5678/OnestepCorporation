@@ -28,7 +28,7 @@ class _PostListWidget extends State<PostListMain> {
     boardName = widget.boardName;
     boardId = widget.boardId;
     _scrollController.addListener(scrollListenerScroll);
-    context.read(postListProvider).fetchPosts(boardName);
+    context.read(postListProvider).fetchPosts(boardId);
     // context.read(postListProvider).fetchNextProducts(widget.boardName);
     super.initState();
   }
@@ -80,9 +80,7 @@ class _PostListWidget extends State<PostListMain> {
           onRefresh: _refreshPage,
           child: SingleChildScrollView(
             child: Column(children: [
-              PostListRiverpod(
-                boardId: boardId,
-              ),
+              PostListRiverpod(),
             ]),
             controller: _scrollController,
           ),
@@ -114,10 +112,13 @@ class _PostListWidget extends State<PostListMain> {
               height: 40,
               child: FloatingActionButton.extended(
                   heroTag: null,
-                  onPressed: () {
-                    Navigator.pushNamed(context, "/CreatePost", arguments: {
-                      "CURRENTBOARDNAME": boardName,
-                      "CURRENTBOARDID": boardId
+                  onPressed: () async {
+                    await Navigator.pushNamed(context, "/CreatePost",
+                        arguments: {
+                          "CURRENTBOARDNAME": boardName,
+                          "CURRENTBOARDID": boardId
+                        }).then((value) {
+                      context.read(postListProvider).fetchPosts(boardId);
                     });
                   },
                   backgroundColor: Colors.white,

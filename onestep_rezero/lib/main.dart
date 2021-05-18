@@ -43,6 +43,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       onGenerateRoute: RouteGenerator.generateRoute,
+      initialRoute: '/',
       title: 'Onestep',
       // builder: (context, child) {
       //   return ScrollConfiguration(behavior: MyBehavior(), child: child);

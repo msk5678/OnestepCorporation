@@ -16,20 +16,31 @@ class TipDialogIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     switch (type) {
       case TipDialogType.SUCCESS:
-        return new ImageIcon(
-          AssetImage("packages/tip_dialog/images/icon_notify_done.png"),
+        return new Icon(
+          Icons.check_circle_outline,
+          // AssetImage("packages/tip_dialog/images/icon_notify_done.png"),
           size: 35.0,
           color: color,
         );
       case TipDialogType.FAIL:
-        return new ImageIcon(
-          AssetImage("packages/tip_dialog/images/icon_notify_error.png"),
+        // return new ImageIcon(
+        //   AssetImage("packages/tip_dialog/images/icon_notify_error.png"),
+        //   size: 35.0,
+        //   color: color,
+        // );
+        return new Icon(
+          Icons.cancel_outlined,
           size: 35.0,
           color: color,
         );
       case TipDialogType.INFO:
-        return new ImageIcon(
-          AssetImage("packages/tip_dialog/images/icon_notify_info.png"),
+        // return new ImageIcon(
+        //   AssetImage("packages/tip_dialog/images/icon_notify_info.png"),
+        //   size: 35.0,
+        //   color: color,
+        // );
+        return new Icon(
+          Icons.info_outline_rounded,
           size: 35.0,
           color: color,
         );

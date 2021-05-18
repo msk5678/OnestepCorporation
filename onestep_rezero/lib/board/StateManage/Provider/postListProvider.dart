@@ -9,7 +9,6 @@ class PostListProvider with ChangeNotifier {
   String _errorMessage = "Board Provider RuntimeError";
   int documentLimit = 15;
   bool _hasNext = true;
-
   bool _isFetching = false;
   List<BoardData> boardData = [];
 
@@ -27,7 +26,7 @@ class PostListProvider with ChangeNotifier {
     try {
       final snap = await PostFirebaseApi.getAllPost(
         documentLimit,
-        boardName: boardName,
+        boardId: boardName,
         startAfter:
             _productsSnapshot.isNotEmpty ? _productsSnapshot.last : null,
       );
@@ -44,7 +43,7 @@ class PostListProvider with ChangeNotifier {
     _isFetching = false;
   }
 
-  Future fetchPosts(String boardName) async {
+  Future fetchPosts(String boardId) async {
     if (_isFetching) return;
     _isFetching = true;
     _hasNext = true;
@@ -53,7 +52,7 @@ class PostListProvider with ChangeNotifier {
     try {
       print("In try ");
       final snap = await PostFirebaseApi.getAllPost(documentLimit,
-          startAfter: null, boardName: boardName);
+          startAfter: null, boardId: boardId);
       _productsSnapshot.addAll(snap.docs);
 
       if (snap.docs.length < documentLimit) _hasNext = false;
@@ -70,18 +69,14 @@ class PostListProvider with ChangeNotifier {
 }
 
 class PostFirebaseApi {
-  static Future<QuerySnapshot> getAllPost(
-      // 장터 메인 모든상품 불러오기
-      int limit,
-      {DocumentSnapshot startAfter,
-      String boardName}) async {
+  static Future<QuerySnapshot> getAllPost(int limit,
+      {DocumentSnapshot startAfter, String boardId}) async {
     var refProducts;
-
     refProducts = FirebaseFirestore.instance
         .collection('Board')
-        .doc(boardName)
-        .collection(boardName)
-        .orderBy("createDate", descending: true)
+        .doc(boardId)
+        .collection(boardId)
+        .orderBy("uploadTime", descending: true)
         .limit(limit);
 
     if (startAfter == null) {

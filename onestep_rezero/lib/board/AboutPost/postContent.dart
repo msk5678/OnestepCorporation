@@ -14,14 +14,22 @@ import 'package:onestep_rezero/board/StateManage/firebase_GetUID.dart';
 import 'dart:io' show Platform;
 
 class PostContent extends StatefulWidget {
-  final BoardData boardData;
-  PostContent({this.boardData});
+  final BoardData postData;
+  PostContent({this.postData});
 
   @override
-  _Board createState() => new _Board();
+  _Post createState() => new _Post();
 }
 
-class _Board extends State<PostContent> with SingleTickerProviderStateMixin
+class _Post extends _PostParent<PostContent> {
+  @override
+  setPostData() {
+    postData = widget.postData;
+  }
+}
+
+abstract class _PostParent<T extends StatefulWidget> extends State<T>
+    with SingleTickerProviderStateMixin
 // with TickerProviderStateMixin
 {
   final String REFRESH_COMMENT = "COMMENT";
@@ -32,7 +40,7 @@ class _Board extends State<PostContent> with SingleTickerProviderStateMixin
   final _scrollController = ScrollController(keepScrollOffset: true);
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   var boardContentSnapshot;
-
+  setPostData();
   AnimationController _animationController;
 
   AsyncMemoizer _imageMemoizer = AsyncMemoizer();
@@ -43,7 +51,7 @@ class _Board extends State<PostContent> with SingleTickerProviderStateMixin
   double device_width;
   double device_height;
 
-  BoardData boardData;
+  BoardData postData;
   var _onFavoriteClicked;
   Map favorite_data;
   //If clicked favorite button, activate this animation
@@ -55,6 +63,7 @@ class _Board extends State<PostContent> with SingleTickerProviderStateMixin
   bool isLikeButtonRefresh;
   bool isCommentRefresh;
   bool isUnderCommentRefresh;
+  bool isWritter;
 
   ClickedCommentData _clickedCommentData;
   Map<String, dynamic> _imageMap = {};
@@ -69,18 +78,17 @@ class _Board extends State<PostContent> with SingleTickerProviderStateMixin
         commentDocumentId: null, isCommentClicked: false);
     _textEditingControllerComment = TextEditingController();
     currentUID = UserUID.getId();
-    boardData = widget.boardData;
+    setPostData();
     isCommentBoxVisible = false;
     isImageRefresh =
         isLikeButtonRefresh = isCommentRefresh = isUnderCommentRefresh = true;
     _commentMemoizerMapping = {};
     _onFavoriteClicked = false;
-
+    isWritter = UserUID.getId() == postData.uid;
     watchCountUpdate();
   }
 
   setPopupMenuButton(bool isItself) {
-    print("isItself" + isItself.toString());
     return isItself
         ? [
             PopupMenuItem(child: Text("수정하기"), value: "Alter"),
@@ -93,20 +101,28 @@ class _Board extends State<PostContent> with SingleTickerProviderStateMixin
           ]
         : [
             PopupMenuItem(
-                child: Text(
-                  "신고하기",
-                  style: TextStyle(color: Colors.redAccent),
+                child: GestureDetector(
+                  child: Text(
+                    "신고하기",
+                    style: TextStyle(color: Colors.redAccent),
+                  ),
                 ),
-                value: "Report")
+                value: "Report"),
+            PopupMenuItem(
+                child: GestureDetector(
+                  child: Text(
+                    "공유하기",
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+                value: "Share")
           ];
   }
 
   @override
   Widget build(BuildContext context) {
-    print("UserUID.getId() " + UserUID.getId().toString());
-    print("boardData.uid " + boardData.uid.toString());
-    print("UserUID.getId() == boardData.uid" +
-        (UserUID.getId() == boardData.uid).toString());
+    String boardId = postData.boardId;
+    String currentPostId = postData.documentId;
     device_width = MediaQuery.of(context).size.width;
     device_height = MediaQuery.of(context).size.height;
     return Scaffold(
@@ -116,14 +132,32 @@ class _Board extends State<PostContent> with SingleTickerProviderStateMixin
             iconTheme: IconThemeData(color: Colors.black),
             backgroundColor: Colors.white,
             brightness: Brightness.dark,
-            title: setTitle(boardData.title),
+            title: setTitle(postData.title),
             actions: [
               PopupMenuButton(
-                  onSelected: (route) {
-                    print(route);
+                  onSelected: (route) async {
+                    if (route == "Delete") {
+                      TipDialogHelper.loading("삭제중입니다.");
+                      await Future.delayed(Duration(seconds: 1))
+                          // await FirebaseFirestore.instance
+                          //     .collection("Board")
+                          //     .doc(boardId)
+                          //     .collection(boardId)
+                          //     .doc(currentPostId)
+                          //     .delete()
+                          .then((value) {
+                        TipDialogHelper.dismiss();
+                        TipDialogHelper.success("삭제 완료!");
+                        Future.delayed(Duration(seconds: 2))
+                            //   Navigator.popUntil(context, ModalRoute.withName('/login'));
+                            .then((value) => Navigator.popUntil(
+                                context, ModalRoute.withName('/PostList')))
+                            .whenComplete(() {});
+                      });
+                    } else {}
                   },
                   itemBuilder: (BuildContext bc) =>
-                      setPopupMenuButton(boardData.uid == currentUID))
+                      setPopupMenuButton(isWritter))
             ],
           ),
         ),
@@ -143,10 +177,9 @@ class _Board extends State<PostContent> with SingleTickerProviderStateMixin
                     // Title Container
                     // setTitle(boardData.title),
                     //Date Container
-                    setDateNVisitor(boardData.createDate, boardData.watchCount),
-                    // FutureBuilder(future:,builder: builder,AsyncSnapshot snapshot){}
+                    setDateNVisitor(postData.uploadTime, postData.views),
                     setBoardContent(),
-                    imageContent(),
+                    // imageContent(),
                     buttonContent(),
                     createCommentListMethod(),
 
@@ -164,15 +197,21 @@ class _Board extends State<PostContent> with SingleTickerProviderStateMixin
   }
 
   Future<void> watchCountUpdate() async {
-    final FirebaseFirestore _db = FirebaseFirestore.instance;
-    String _boardID = boardData.boardId.toString();
-    String _documentID = boardData.documentId.toString();
-    _db
-        .collection("Board")
-        .doc(_boardID)
-        .collection(_boardID)
-        .doc(_documentID)
-        .update({"watchCount": boardData.watchCount + 1});
+    if (!isWritter) {
+      if (!postData.views.containsKey(currentUID)) {
+        final FirebaseFirestore _db = FirebaseFirestore.instance;
+        String _boardID = postData.boardId.toString();
+        String _documentID = postData.documentId.toString();
+        _db
+            .collection("Board")
+            .doc(_boardID)
+            .collection(_boardID)
+            .doc(_documentID)
+            .update({
+          "view": postData.views..addAll({currentUID: true})
+        });
+      }
+    }
   }
 
   futureBuilderFetchRefreshMethod(
@@ -220,8 +259,8 @@ class _Board extends State<PostContent> with SingleTickerProviderStateMixin
 
   _fetchDataUnderComment(String commentId) {
     final FirebaseFirestore _db = FirebaseFirestore.instance;
-    String _boardID = boardData.boardId.toString();
-    String _documentID = boardData.documentId.toString();
+    String _boardID = postData.boardId.toString();
+    String _documentID = postData.documentId.toString();
 
     return _db
         .collection("Board")
@@ -237,8 +276,9 @@ class _Board extends State<PostContent> with SingleTickerProviderStateMixin
 
   _fetchData() {
     final FirebaseFirestore _db = FirebaseFirestore.instance;
-    String _boardID = boardData.boardId.toString();
-    String _documentID = boardData.documentId.toString();
+
+    String _boardID = postData.boardId.toString();
+    String _documentID = postData.documentId.toString();
     return _db
         .collection("Board")
         .doc(_boardID)
@@ -249,8 +289,8 @@ class _Board extends State<PostContent> with SingleTickerProviderStateMixin
 
   _commentFetchDataMethod() {
     final FirebaseFirestore _db = FirebaseFirestore.instance;
-    String _boardID = boardData.boardId.toString();
-    String _documentID = boardData.documentId.toString();
+    String _boardID = postData.boardId.toString();
+    String _documentID = postData.documentId.toString();
     return _db
         .collection("Board")
         .doc(_boardID)
@@ -375,7 +415,7 @@ class _Board extends State<PostContent> with SingleTickerProviderStateMixin
 
   _setImageContent(DocumentSnapshot snapshot) {
     boardContentSnapshot = snapshot.data();
-    _imageMap = snapshot.data()["imageCommentList"];
+    _imageMap = boardContentSnapshot["imageCommentList"];
     List<dynamic> _commentList = _imageMap["COMMENT"];
     List<dynamic> _imageURi = _imageMap["IMAGE"];
     // _imageURi.forEach((element) {})
@@ -450,9 +490,9 @@ class _Board extends State<PostContent> with SingleTickerProviderStateMixin
     );
   }
 
-  Widget setDateNVisitor(DateTime createTime, int watch) {
+  Widget setDateNVisitor(DateTime uploadTime, Map<String, dynamic> watch) {
     String _dateTime =
-        createTime.add(Duration(hours: 9)).toString().split('.')[0];
+        uploadTime.add(Duration(hours: 9)).toString().split('.')[0];
     return Container(
       child: Container(
           margin: EdgeInsets.only(top: 5, right: 5),
@@ -486,7 +526,7 @@ class _Board extends State<PostContent> with SingleTickerProviderStateMixin
                 data: new IconThemeData(color: Colors.grey),
               ),
               Text(
-                watch.toString(),
+                watch.length.toString(),
                 style: new TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
@@ -518,8 +558,8 @@ class _Board extends State<PostContent> with SingleTickerProviderStateMixin
           ),
         ],
       ),
-      child: Text(boardData.textContent.toString(),
-          style: TextStyle(fontSize: 15)),
+      child:
+          Text(postData.textContent.toString(), style: TextStyle(fontSize: 15)),
     );
   }
 
@@ -531,7 +571,6 @@ class _Board extends State<PostContent> with SingleTickerProviderStateMixin
 
   Widget setScrapAndFavoriteButton(DocumentSnapshot snapshot) {
     favorite_data = snapshot.data();
-
     // AnimationController _favoriteAnimationController =
     //     AnimationController(vsync: this, duration: Duration(milliseconds: 300));
     return favorite_data.runtimeType != null
@@ -552,9 +591,10 @@ class _Board extends State<PostContent> with SingleTickerProviderStateMixin
                 Positioned(
                   left: device_width / 40,
                   child: LikeButton(
-                    isLiked:
-                        favorite_data["favoriteUserList"].contains(currentUID),
-                    onTap: _clickFavoriteButton,
+                    isLiked: favorite_data["favoriteUserList"]
+                            .containsKey(currentUID) ||
+                        isWritter,
+                    onTap: _clickedFavoriteButton,
                     size: 30,
                     circleColor:
                         CircleColor(start: Colors.grey, end: Colors.red),
@@ -565,11 +605,16 @@ class _Board extends State<PostContent> with SingleTickerProviderStateMixin
                     likeBuilder: (bool isLiked) {
                       return Icon(
                         Icons.favorite,
-                        color: isLiked ? Colors.red : Colors.grey,
+                        color: isWritter
+                            ? Colors.green[100]
+                            : favorite_data["favoriteUserList"]
+                                    .containsKey(currentUID)
+                                ? Colors.red
+                                : Colors.grey,
                         size: 30,
                       );
                     },
-                    likeCount: favorite_data["favoriteCount"],
+                    likeCount: favorite_data["favoriteUserList"].length,
                     countBuilder: (int count, bool isLiked, String text) {
                       var color = isLiked ? Colors.red[900] : Colors.grey;
                       Widget result;
@@ -588,25 +633,6 @@ class _Board extends State<PostContent> with SingleTickerProviderStateMixin
                   ),
                 ),
 
-                Positioned(
-                  left: device_width * (1 / 5),
-                  child: IconButton(
-                      padding: EdgeInsets.only(bottom: 0),
-                      alignment: Alignment.topCenter,
-                      icon: Icon(
-                        Icons.near_me_outlined,
-                        size: 30,
-                      ),
-                      onPressed: () {
-                        // NotificationManager.navigateToBoardChattingRoom(
-                        //   context,
-                        //   UserUID.getId(),
-                        //   boardData.uid,
-                        //   boardData.boardId, //게시판id
-                        //   boardData.documentId, //게시글id
-                        // );
-                      }),
-                ),
                 //CommentButton
                 Positioned(
                   left: device_width * (2 / 5),
@@ -632,21 +658,30 @@ class _Board extends State<PostContent> with SingleTickerProviderStateMixin
                 Positioned(
                   left: device_width * (3 / 5),
                   child: IconButton(
-                    padding: EdgeInsets.only(bottom: 0),
-                    alignment: Alignment.topCenter,
-                    icon: Icon(
-                      Icons.flag,
-                      size: 30,
-                    ),
-                    onPressed: () {},
-                  ),
+                      padding: EdgeInsets.only(bottom: 0),
+                      alignment: Alignment.topCenter,
+                      icon: Icon(
+                        Icons.near_me_outlined,
+                        size: 30,
+                      ),
+                      onPressed: () {
+                        // NotificationManager.navigateToBoardChattingRoom(
+                        //   context,
+                        //   UserUID.getId(),
+                        //   boardData.uid,
+                        //   boardData.boardId, //게시판id
+                        //   boardData.documentId, //게시글id
+                        // );
+                      }),
                 ),
-
                 //Set Scrap Button
                 Positioned(
-                  left: device_width * (14 / 17),
+                  left: device_width * (13 / 17),
                   child: LikeButton(
-                    // padding: EdgeInsets.only(left: 20),
+                    isLiked: favorite_data["scrabUserList"]
+                            .containsKey(currentUID) ||
+                        isWritter,
+                    onTap: _clickedScrabButton,
                     size: 30,
                     circleColor:
                         CircleColor(start: Colors.grey, end: Colors.yellow),
@@ -657,17 +692,25 @@ class _Board extends State<PostContent> with SingleTickerProviderStateMixin
                     likeBuilder: (bool isLiked) {
                       return Icon(
                         Icons.bookmark,
-                        color: isLiked ? Colors.yellow : Colors.grey,
+                        color: isWritter
+                            ? Colors.green[100]
+                            : isLiked
+                                ? Colors.yellow
+                                : Colors.grey,
                         size: 30,
                       );
                     },
-                    likeCount: 999,
+                    likeCount: favorite_data["scrabUserList"].length,
                     countBuilder: (int count, bool isLiked, String text) {
-                      var color = isLiked ? Colors.yellow[900] : Colors.grey;
+                      var color = isWritter
+                          ? Colors.green[900]
+                          : isLiked
+                              ? Colors.yellow[900]
+                              : Colors.grey;
                       Widget result;
                       if (count == 0) {
                         result = Text(
-                          "love",
+                          "저장",
                           style: TextStyle(color: color),
                         );
                       } else
@@ -688,37 +731,68 @@ class _Board extends State<PostContent> with SingleTickerProviderStateMixin
         : CupertinoActivityIndicator();
   }
 
-  Future<bool> _clickFavoriteButton(bool isLike) async {
-    final FirebaseFirestore _db = FirebaseFirestore.instance;
-    if (!isLike) {
-      // print("Like");
+  Future<bool> _clickedScrabButton(bool isLike) async {
+    if (!isWritter) {
+      final FirebaseFirestore _db = FirebaseFirestore.instance;
+      Map<String, dynamic> scrabList = favorite_data["scrabUserList"];
+      if (!isLike) {
+        // print("Like");
 
-      String _boardID = boardData.boardId.toString();
-      String _documentID = boardData.documentId.toString();
-      _db
-          .collection("Board")
-          .doc(_boardID)
-          .collection(_boardID)
-          .doc(_documentID)
-          .update({
-        "favoriteCount": favorite_data["favoriteUserList"].length + 1,
-        "favoriteUserList": favorite_data["favoriteUserList"]..add(currentUID)
-      });
-    } else {
-      String _boardID = boardData.boardId.toString();
-      String _documentID = boardData.documentId.toString();
-      _db
-          .collection("Board")
-          .doc(_boardID)
-          .collection(_boardID)
-          .doc(_documentID)
-          .update({
-        "favoriteCount": favorite_data["favoriteUserList"].length - 1,
-        "favoriteUserList": favorite_data["favoriteUserList"]
-          ..remove(currentUID)
-      });
+        String _boardID = postData.boardId.toString();
+        String _documentID = postData.documentId.toString();
+        _db
+            .collection("Board")
+            .doc(_boardID)
+            .collection(_boardID)
+            .doc(_documentID)
+            .update({
+          "favoriteUserList": scrabList..addAll({currentUID: true})
+        });
+      } else {
+        String _boardID = postData.boardId.toString();
+        String _documentID = postData.documentId.toString();
+        _db
+            .collection("Board")
+            .doc(_boardID)
+            .collection(_boardID)
+            .doc(_documentID)
+            .update({"favoriteUserList": scrabList..remove(currentUID)});
+      }
+      return !isLike;
     }
-    return !isLike;
+    return null;
+  }
+
+  Future<bool> _clickedFavoriteButton(bool isLike) async {
+    if (!isWritter) {
+      final FirebaseFirestore _db = FirebaseFirestore.instance;
+      Map<String, dynamic> favoriteList = favorite_data["favoriteUserList"];
+      if (!isLike) {
+        // print("Like");
+
+        String _boardID = postData.boardId.toString();
+        String _documentID = postData.documentId.toString();
+        _db
+            .collection("Board")
+            .doc(_boardID)
+            .collection(_boardID)
+            .doc(_documentID)
+            .update({
+          "favoriteUserList": favoriteList..addAll({currentUID: true})
+        });
+      } else {
+        String _boardID = postData.boardId.toString();
+        String _documentID = postData.documentId.toString();
+        _db
+            .collection("Board")
+            .doc(_boardID)
+            .collection(_boardID)
+            .doc(_documentID)
+            .update({"favoriteUserList": favoriteList..remove(currentUID)});
+      }
+      return !isLike;
+    }
+    return null;
   }
 
   commentBoxContainer() {
@@ -803,8 +877,8 @@ class _Board extends State<PostContent> with SingleTickerProviderStateMixin
 
   Widget createCommentListMethod() {
     final FirebaseFirestore _db = FirebaseFirestore.instance;
-    String _boardID = boardData.boardId.toString();
-    String _documentID = boardData.documentId.toString();
+    String _boardID = postData.boardId.toString();
+    String _documentID = postData.documentId.toString();
     print("documentId " + _documentID);
     print("boardId " + _boardID);
     return FutureBuilder(
@@ -891,8 +965,8 @@ class _Board extends State<PostContent> with SingleTickerProviderStateMixin
       if (boardContentSnapshot["uid"] != currentUID) if (!commentList
           .contains(currentUID)) {
         var _db = FirebaseFirestore.instance;
-        String _boardID = boardData.boardId.toString();
-        String _documentID = boardData.documentId.toString();
+        String _boardID = postData.boardId.toString();
+        String _documentID = postData.documentId.toString();
         _db
             .collection("Board")
             .doc(_boardID)
@@ -906,8 +980,8 @@ class _Board extends State<PostContent> with SingleTickerProviderStateMixin
     bool result;
 
     result = await Comment(
-            boardDocumentId: boardData.documentId,
-            boardId: boardData.boardId,
+            boardDocumentId: postData.documentId,
+            boardId: postData.boardId,
             text: commentText,
             name: "fix")
         .toFireStore(context,
@@ -1266,15 +1340,15 @@ class _Board extends State<PostContent> with SingleTickerProviderStateMixin
     underComment = underComment ?? false;
     isUndo = isUndo ?? false;
     isLiked = isLiked ?? false;
-    String _boardID = boardData.boardId.toString();
-    String _documentID = boardData.documentId.toString();
+    String _postId = postData.boardId.toString();
+    String _documentID = postData.documentId.toString();
     if (!isLiked) {
       if (!underComment) {
         //If NOT underComment
         FirebaseFirestore.instance
             .collection("Board")
-            .doc(_boardID)
-            .collection(_boardID)
+            .doc(_postId)
+            .collection(_postId)
             .doc(_documentID)
             .collection(COMMENT_COLLECTION_NAME)
             .doc(documentId)
@@ -1286,8 +1360,8 @@ class _Board extends State<PostContent> with SingleTickerProviderStateMixin
         //If underComment
         FirebaseFirestore.instance
             .collection("Board")
-            .doc(_boardID)
-            .collection(_boardID)
+            .doc(_postId)
+            .collection(_postId)
             .doc(_documentID)
             .collection(COMMENT_COLLECTION_NAME)
             .doc(parentCommentId)
@@ -1330,8 +1404,8 @@ class _Board extends State<PostContent> with SingleTickerProviderStateMixin
         //If NOT underComment
         FirebaseFirestore.instance
             .collection("Board")
-            .doc(_boardID)
-            .collection(_boardID)
+            .doc(_postId)
+            .collection(_postId)
             .doc(_documentID)
             .collection(COMMENT_COLLECTION_NAME)
             .doc(documentId)
@@ -1344,8 +1418,8 @@ class _Board extends State<PostContent> with SingleTickerProviderStateMixin
         //If underComment
         FirebaseFirestore.instance
             .collection("Board")
-            .doc(_boardID)
-            .collection(_boardID)
+            .doc(_postId)
+            .collection(_postId)
             .doc(_documentID)
             .collection(COMMENT_COLLECTION_NAME)
             .doc(parentCommentId)

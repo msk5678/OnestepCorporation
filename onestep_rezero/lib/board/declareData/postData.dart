@@ -6,8 +6,8 @@ import 'package:random_string/random_string.dart';
 import 'package:onestep_rezero/board/StateManage/firebase_GetUID.dart';
 
 class BoardData {
-  var createDate;
-  var alterDate;
+  var uploadTime;
+  var updateTime;
   String documentId;
   final int favoriteCount;
   final String title;
@@ -16,12 +16,12 @@ class BoardData {
   final String textContent;
   final String uid;
   final int scribeCount;
-  final int watchCount;
+  final Map<String, dynamic> views;
   final int commentCount;
   final String boardName;
   final String boardId;
-  final List favoriteUserList;
-  final List scrabUserList;
+  final Map<String, dynamic> favoriteUserList;
+  final Map<String, dynamic> scrabUserList;
   Function completeImageUploadCallback;
   List imgUriList;
   Map<String, dynamic> imageCommentList;
@@ -46,7 +46,7 @@ class BoardData {
       this.favoriteUserList,
       this.contentCategory,
       this.boardName,
-      this.createDate,
+      this.uploadTime,
       this.favoriteCount,
       this.title,
       this.reportCount,
@@ -54,22 +54,24 @@ class BoardData {
       this.uid,
       this.imageCommentList,
       this.scribeCount,
-      this.watchCount,
+      this.views,
       this.documentId,
       this.commentCount,
       this.imgUriList,
       this.boardId});
   Future toFireStore(BuildContext context) async {
+    String currentTimeStamp = DateTime.now().millisecondsSinceEpoch.toString();
     imgUriList = await convertImage(imageCommentList["IMAGE"]);
     imageCommentList.update("IMAGE", (value) => imgUriList);
     return await FirebaseFirestore.instance
         .collection("Board")
         .doc("Board_Free")
         .collection("Board_Free")
-        .add({
+        .doc(currentTimeStamp)
+        .set({
           "uid": UserUID.getId(),
-          "createDate": Timestamp.fromDate(DateTime.now()),
-          "alterDate": null,
+          "uploadTime": Timestamp.fromDate(DateTime.now()),
+          "updateTime": 0,
           "scribeCount": scribeCount ?? 0,
           "favoriteCount": favoriteCount ?? 0,
           "title": title,
@@ -77,12 +79,12 @@ class BoardData {
           "reportCount": reportCount ?? 0,
           "textContent": textContent ?? "",
           "imageCommentList": imageCommentList ?? {},
-          "watchCount": watchCount ?? 0,
+          "views": views ?? {},
           "commentCount": commentCount ?? 0,
           "boardName": boardName,
           "boardId": boardId,
-          "scrabUserList": scrabUserList ?? [],
-          "favoriteUserList": favoriteUserList ?? [],
+          "scrabUserList": scrabUserList ?? {},
+          "favoriteUserList": favoriteUserList ?? {},
           "commentUserUidList": []
         })
         .whenComplete(() => true)
@@ -106,8 +108,8 @@ class BoardData {
         uid: _boardData["uid"],
         documentId: snapshot.id,
         commentCount: _boardData["commentCount"],
-        createDate: _boardData["createDate"].toDate(),
-        watchCount: _boardData["watchCount"],
+        uploadTime: _boardData["uploadTime"].toDate(),
+        views: _boardData["views"],
         boardId: _boardData["boardId"],
         boardName: _boardData["boardName"]);
   }
@@ -128,19 +130,19 @@ class Comment {
   final String uid;
   final String text;
   final int reportCount;
-  var createDate;
-  var lastAlterDate;
+  var uploadTime;
+  var lastUpdateTime;
   final int favoriteCount;
-  final List favoriteUserList;
+  final Map<String, dynamic> favoriteUserList;
   final String name;
   final String boardId;
   final String boardDocumentId;
   Comment(
-      {this.createDate,
+      {this.uploadTime,
       this.uid,
       this.favoriteCount,
       this.favoriteUserList,
-      this.lastAlterDate,
+      this.lastUpdateTime,
       this.name,
       this.reportCount,
       this.text,
@@ -158,16 +160,16 @@ class Comment {
     Map<String, dynamic> _saveData = {
       "uid": UserUID.getId(),
       "text": text ?? "",
-      "createDate": Timestamp.fromDate(DateTime.now()),
-      "lastAlterDate": null,
+      "uploadTime": Timestamp.fromDate(DateTime.now()),
+      "lastUpdateTime": null,
       "name": name ?? "익명",
       "boardId": boardId ?? "",
       "boardDocumentId": boardDocumentId ?? "",
       "favoriteCount": 0,
-      "favoriteUserList": [],
+      "favoriteUserList": {},
       "reportCount": 0,
-      "isDelete": false,
-      "deleteDate": null,
+      "deleted": false,
+      "deleteTime": null,
     };
     return !isUnderCommentSave
         ? await _db.add(_saveData).then((value) {
