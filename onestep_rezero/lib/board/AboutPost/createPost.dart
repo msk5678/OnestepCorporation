@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+// import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:multi_image_picker2/multi_image_picker2.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'package:multi_image_picker/multi_image_picker.dart';
+
 import 'package:onestep_rezero/board/StateManage/firebase_GetUID.dart';
 import 'package:onestep_rezero/board/declareData/postData.dart';
 import 'package:onestep_rezero/board/permissionLib.dart';
@@ -65,7 +67,6 @@ abstract class _CreatePageParent<T extends StatefulWidget> extends State<T>
   PanelController panelController;
 
   ScrollController _scrollController;
-  BoardData boardData;
   String boardName;
   String boardId;
   setBoardData();
@@ -219,12 +220,6 @@ abstract class _CreatePageParent<T extends StatefulWidget> extends State<T>
                               displayCurrentBoard(boardName: boardName),
                               secondContainer(),
                               thirdContainer(),
-                              RaisedButton(
-                                onPressed: () {
-                                  setState(() {});
-                                },
-                                child: Text("hi"),
-                              ),
                               SizedBox(
                                 height: device_height / 15,
                               ),
@@ -343,14 +338,6 @@ abstract class _CreatePageParent<T extends StatefulWidget> extends State<T>
 
   _saveDataInFirestore() async {
     TipDialogHelper.loading("저장 중입니다.\n 잠시만 기다려주세요.");
-    // await saveData()
-    //     .onError((error, stackTrace) {
-    //       TipDialogHelper.fail("ERROR CODE : BOARD UPLOAD ERROR");
-    //     })
-    //     .then((value) => null)
-    //     .whenComplete(() => null);
-
-    // await saveData().whenComplete(() => null).then((value) => null);
 
     await saveData().then((value) {
       TipDialogHelper.dismiss();
@@ -362,14 +349,15 @@ abstract class _CreatePageParent<T extends StatefulWidget> extends State<T>
 
   Future saveData() async {
     _getterSetterImageComment(isMapSet: true, isSave: true);
-    BoardData _boardData = BoardData(
+
+    PostData _postData = PostData(
         title: textEditingControllerBottomSheet.text,
-        imageCommentList: imageCommentMap,
+        imageCommentMap: imageCommentMap,
         textContent: textEditingControllerContent.text,
         contentCategory: _category.toString(),
         boardName: boardName,
         boardId: boardId);
-    return await _boardData.toFireStore(context);
+    return await _postData.toFireStore(context);
   }
 
   showSnackBar(
@@ -693,7 +681,8 @@ abstract class _CreatePageParent<T extends StatefulWidget> extends State<T>
   thirdContainer({Widget popUpMenu}) {
     List<Widget> _imageWidget = [];
     List<Widget> _emptyWidget = [];
-    int containImageCount = imageCommentMap["IMAGE"].length;
+    int containImageCount =
+        imageCommentMap["IMAGE"] != null ? imageCommentMap["IMAGE"].length : 0;
 
     for (int i = 0; i < containImageCount; i++) {
       if (imageCommentMap["IMAGE"][i].runtimeType == String) {

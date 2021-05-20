@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' as foundation;
+import 'package:onestep_rezero/board/AboutPost/AboutPostList/postListMain.dart';
 import 'package:onestep_rezero/board/AboutPost/createPost.dart';
 import 'package:onestep_rezero/board/AboutPost/postContent.dart';
-import 'package:onestep_rezero/board/AboutPostList/postListMain.dart';
+import 'package:onestep_rezero/board/boardCreate.dart';
+
 import 'package:path/path.dart' as p;
 
 class RouteGenerator {
@@ -61,6 +63,10 @@ class RouteGenerator {
           currentBoardId: arguments["CURRENTBOARDID"],
         );
         break;
+      case 'BoardCreate':
+        _pageWidget = BoardCreate();
+        break;
+
       // case 'BoardList':
       //   _pageWidget = Consumer<BoardProvider>(
       //       builder: (context, productProvider, _) => BoardList(

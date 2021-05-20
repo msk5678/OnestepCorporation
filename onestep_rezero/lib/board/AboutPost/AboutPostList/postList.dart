@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:onestep_rezero/board/AboutPostList/postListMain.dart';
+
 import 'package:onestep_rezero/board/StateManage/Provider/postListProvider.dart';
-import 'package:onestep_rezero/board/declareData/contentCategory.dart';
+import 'package:onestep_rezero/board/declareData/categoryManageClass.dart';
 
 final postListProvider =
     ChangeNotifierProvider<PostListProvider>((ref) => PostListProvider());
@@ -58,30 +58,34 @@ class PostListView extends ConsumerWidget {
   }
 
   Widget _buildListCard(BuildContext context, int index, var boardData) {
-    return Card(
-      child: Padding(
-          padding: const EdgeInsets.all(1.0),
-          //Click Animation
-          child: InkWell(
-              // Set Click Color
-              splashColor: Colors.grey,
-              //Click Event
-              onTap: () async {
-                await Navigator.of(context).pushNamed('/PostContent',
-                    arguments: {
-                      "BOARD_DATA": boardData
-                    }).then((value) => context
-                    .read(postListProvider)
-                    .fetchPosts(boardData.boardId));
-              },
-              child: Column(
-                children: <Widget>[
-                  firstColumnLine(boardData),
-                  secondColumnLine(boardData),
-                  thirdColumnLine(boardData)
-                ],
-              ))),
-    );
+    bool isDeleted = boardData.deleted ?? false;
+    if (!isDeleted)
+      return Card(
+        child: Padding(
+            padding: const EdgeInsets.all(1.0),
+            //Click Animation
+            child: InkWell(
+                // Set Click Color
+                splashColor: Colors.grey,
+                //Click Event
+                onTap: () async {
+                  await Navigator.of(context).pushNamed('/PostContent',
+                      arguments: {
+                        "BOARD_DATA": boardData
+                      }).then((value) => context
+                      .read(postListProvider)
+                      .fetchPosts(boardData.boardId));
+                },
+                child: Column(
+                  children: <Widget>[
+                    firstColumnLine(boardData),
+                    secondColumnLine(boardData),
+                    thirdColumnLine(boardData)
+                  ],
+                ))),
+      );
+    else
+      return Container();
   }
 
   firstColumnLine(var boardData) {

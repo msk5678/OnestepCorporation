@@ -10,13 +10,13 @@ class PostListProvider with ChangeNotifier {
   int documentLimit = 15;
   bool _hasNext = true;
   bool _isFetching = false;
-  List<BoardData> boardData = [];
+  List<PostData> boardData = [];
 
   String get errorMessage => _errorMessage;
   bool get hasNext => _hasNext;
 
-  List<BoardData> get boards => _productsSnapshot.map((snap) {
-        return BoardData.fromFireStore(snap);
+  List<PostData> get boards => _productsSnapshot.map((snap) {
+        return PostData.fromFireStore(snap);
       }).toList();
 
   fetchNextProducts(String boardName) async {

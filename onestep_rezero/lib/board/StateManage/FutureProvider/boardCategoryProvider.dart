@@ -42,7 +42,16 @@ class BoardNameProvider {
                   ));
                 });
 
-                return Column(children: categoryListWidget);
+                return Column(
+                    children: categoryListWidget
+                      ..add(Center(
+                        child: IconButton(
+                          icon: Icon(Icons.add),
+                          onPressed: () {
+                            Navigator.of(context).pushNamed("/BoardCreate");
+                          },
+                        ),
+                      )));
               },
               loading: () => CupertinoActivityIndicator(),
               error: (e, stack) => Center(child: Text("Error $e")));

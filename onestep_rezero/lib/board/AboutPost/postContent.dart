@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -14,7 +15,7 @@ import 'package:onestep_rezero/board/StateManage/firebase_GetUID.dart';
 import 'dart:io' show Platform;
 
 class PostContent extends StatefulWidget {
-  final BoardData postData;
+  final PostData postData;
   PostContent({this.postData});
 
   @override
@@ -42,7 +43,7 @@ abstract class _PostParent<T extends StatefulWidget> extends State<T>
   var boardContentSnapshot;
   setPostData();
   AnimationController _animationController;
-
+  //Control FutureBuilder Cache Memory
   AsyncMemoizer _imageMemoizer = AsyncMemoizer();
   AsyncMemoizer _likeButtonMemoizer = AsyncMemoizer();
   AsyncMemoizer _commentMemoizer = AsyncMemoizer();
@@ -51,12 +52,16 @@ abstract class _PostParent<T extends StatefulWidget> extends State<T>
   double device_width;
   double device_height;
 
-  BoardData postData;
+  PostData postData;
   var _onFavoriteClicked;
   Map favorite_data;
   //If clicked favorite button, activate this animation
   AnimationController _favoriteAnimationController;
   TextEditingController _textEditingControllerComment;
+
+  String currentBoardId;
+  String currentBoardName;
+  String currentPostId;
   String currentUID;
 
   bool isImageRefresh;
@@ -77,15 +82,23 @@ abstract class _PostParent<T extends StatefulWidget> extends State<T>
     _clickedCommentData = new ClickedCommentData(
         commentDocumentId: null, isCommentClicked: false);
     _textEditingControllerComment = TextEditingController();
-    currentUID = UserUID.getId();
     setPostData();
+    setInitialPostData();
     isCommentBoxVisible = false;
     isImageRefresh =
         isLikeButtonRefresh = isCommentRefresh = isUnderCommentRefresh = true;
     _commentMemoizerMapping = {};
     _onFavoriteClicked = false;
     isWritter = UserUID.getId() == postData.uid;
+
     watchCountUpdate();
+  }
+
+  setInitialPostData() {
+    currentUID = UserUID.getId();
+    currentBoardId = postData.boardId;
+    currentBoardName = postData.boardName;
+    currentPostId = postData.documentId;
   }
 
   setPopupMenuButton(bool isItself) {
@@ -121,8 +134,6 @@ abstract class _PostParent<T extends StatefulWidget> extends State<T>
 
   @override
   Widget build(BuildContext context) {
-    String boardId = postData.boardId;
-    String currentPostId = postData.documentId;
     device_width = MediaQuery.of(context).size.width;
     device_height = MediaQuery.of(context).size.height;
     return Scaffold(
@@ -138,18 +149,19 @@ abstract class _PostParent<T extends StatefulWidget> extends State<T>
                   onSelected: (route) async {
                     if (route == "Delete") {
                       TipDialogHelper.loading("삭제중입니다.");
-                      await Future.delayed(Duration(seconds: 1))
-                          // await FirebaseFirestore.instance
-                          //     .collection("Board")
-                          //     .doc(boardId)
-                          //     .collection(boardId)
-                          //     .doc(currentPostId)
-                          //     .delete()
-                          .then((value) {
+                      await FirebaseFirestore.instance
+                          .collection("Board")
+                          .doc(currentBoardId)
+                          .collection(currentBoardId)
+                          .doc(currentPostId)
+                          .update({
+                        "deleted": true,
+                        "deletedTime":
+                            DateTime.now().millisecondsSinceEpoch.toString()
+                      }).then((value) {
                         TipDialogHelper.dismiss();
                         TipDialogHelper.success("삭제 완료!");
                         Future.delayed(Duration(seconds: 2))
-                            //   Navigator.popUntil(context, ModalRoute.withName('/login'));
                             .then((value) => Navigator.popUntil(
                                 context, ModalRoute.withName('/PostList')))
                             .whenComplete(() {});
@@ -179,11 +191,11 @@ abstract class _PostParent<T extends StatefulWidget> extends State<T>
                     //Date Container
                     setDateNVisitor(postData.uploadTime, postData.views),
                     setBoardContent(),
-                    // imageContent(),
+                    imageContent(),
                     buttonContent(),
-                    createCommentListMethod(),
+                    // createCommentListMethod(),
 
-                    commentBoxExpanded(isCommentBoxVisible),
+                    // commentBoxExpanded(isCommentBoxVisible),
                   ])),
             ),
 
@@ -204,9 +216,9 @@ abstract class _PostParent<T extends StatefulWidget> extends State<T>
         String _documentID = postData.documentId.toString();
         _db
             .collection("Board")
-            .doc(_boardID)
-            .collection(_boardID)
-            .doc(_documentID)
+            .doc(currentBoardId)
+            .collection(currentBoardId)
+            .doc(currentPostId)
             .update({
           "view": postData.views..addAll({currentUID: true})
         });
@@ -259,14 +271,12 @@ abstract class _PostParent<T extends StatefulWidget> extends State<T>
 
   _fetchDataUnderComment(String commentId) {
     final FirebaseFirestore _db = FirebaseFirestore.instance;
-    String _boardID = postData.boardId.toString();
-    String _documentID = postData.documentId.toString();
 
     return _db
         .collection("Board")
-        .doc(_boardID)
-        .collection(_boardID)
-        .doc(_documentID)
+        .doc(currentBoardId)
+        .collection(currentBoardId)
+        .doc(currentPostId)
         .collection(COMMENT_COLLECTION_NAME)
         .doc(commentId)
         .collection(COMMENT_COLLECTION_NAME)
@@ -277,25 +287,21 @@ abstract class _PostParent<T extends StatefulWidget> extends State<T>
   _fetchData() {
     final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-    String _boardID = postData.boardId.toString();
-    String _documentID = postData.documentId.toString();
     return _db
         .collection("Board")
-        .doc(_boardID)
-        .collection(_boardID)
-        .doc(_documentID)
+        .doc(currentBoardId)
+        .collection(currentBoardId)
+        .doc(currentPostId)
         .get();
   }
 
   _commentFetchDataMethod() {
     final FirebaseFirestore _db = FirebaseFirestore.instance;
-    String _boardID = postData.boardId.toString();
-    String _documentID = postData.documentId.toString();
     return _db
         .collection("Board")
-        .doc(_boardID)
-        .collection(_boardID)
-        .doc(_documentID)
+        .doc(currentBoardId)
+        .collection(currentBoardId)
+        .doc(currentPostId)
         .collection(COMMENT_COLLECTION_NAME)
         // .orderBy("createDate")
         .get();
@@ -737,25 +743,20 @@ abstract class _PostParent<T extends StatefulWidget> extends State<T>
       Map<String, dynamic> scrabList = favorite_data["scrabUserList"];
       if (!isLike) {
         // print("Like");
-
-        String _boardID = postData.boardId.toString();
-        String _documentID = postData.documentId.toString();
         _db
             .collection("Board")
-            .doc(_boardID)
-            .collection(_boardID)
-            .doc(_documentID)
+            .doc(currentBoardId)
+            .collection(currentBoardId)
+            .doc(currentPostId)
             .update({
           "favoriteUserList": scrabList..addAll({currentUID: true})
         });
       } else {
-        String _boardID = postData.boardId.toString();
-        String _documentID = postData.documentId.toString();
         _db
             .collection("Board")
-            .doc(_boardID)
-            .collection(_boardID)
-            .doc(_documentID)
+            .doc(currentBoardId)
+            .collection(currentBoardId)
+            .doc(currentPostId)
             .update({"favoriteUserList": scrabList..remove(currentUID)});
       }
       return !isLike;
@@ -769,25 +770,20 @@ abstract class _PostParent<T extends StatefulWidget> extends State<T>
       Map<String, dynamic> favoriteList = favorite_data["favoriteUserList"];
       if (!isLike) {
         // print("Like");
-
-        String _boardID = postData.boardId.toString();
-        String _documentID = postData.documentId.toString();
         _db
             .collection("Board")
-            .doc(_boardID)
-            .collection(_boardID)
-            .doc(_documentID)
+            .doc(currentBoardId)
+            .collection(currentBoardId)
+            .doc(currentPostId)
             .update({
           "favoriteUserList": favoriteList..addAll({currentUID: true})
         });
       } else {
-        String _boardID = postData.boardId.toString();
-        String _documentID = postData.documentId.toString();
         _db
             .collection("Board")
-            .doc(_boardID)
-            .collection(_boardID)
-            .doc(_documentID)
+            .doc(currentBoardId)
+            .collection(currentBoardId)
+            .doc(currentPostId)
             .update({"favoriteUserList": favoriteList..remove(currentUID)});
       }
       return !isLike;
@@ -836,12 +832,13 @@ abstract class _PostParent<T extends StatefulWidget> extends State<T>
                               duration: Duration(seconds: 1),
                             ));
                           } else {
-                            if (!_clickedCommentData.isCommentClicked) {
-                              commentSaveMethod();
-                            } else {
-                              _clickedCommentData.isCommentClicked = false;
-                              commentSaveMethod(isUnderCommentSave: true);
-                            }
+                            commentSaveMethod();
+                            // if (!_clickedCommentData.isCommentClicked) {
+                            //   commentSaveMethod();
+                            // } else {
+                            //   _clickedCommentData.isCommentClicked = false;
+                            //   commentSaveMethod(isUnderCommentSave: true);
+                            // }
                           }
                         },
                       ),
@@ -876,11 +873,6 @@ abstract class _PostParent<T extends StatefulWidget> extends State<T>
   }
 
   Widget createCommentListMethod() {
-    final FirebaseFirestore _db = FirebaseFirestore.instance;
-    String _boardID = postData.boardId.toString();
-    String _documentID = postData.documentId.toString();
-    print("documentId " + _documentID);
-    print("boardId " + _boardID);
     return FutureBuilder(
       future: futureBuilderFetchRefreshMethod(refreshType: REFRESH_COMMENT),
       builder: (context, snapshot) {
@@ -958,46 +950,28 @@ abstract class _PostParent<T extends StatefulWidget> extends State<T>
     return isUnderComment ? who + "의 댓글달기" : "이 글에 댓글달기";
   }
 
-  commentSaveMethod({bool isUnderCommentSave}) async {
-    isUnderCommentSave = isUnderCommentSave ?? false;
-    if (boardContentSnapshot != null) {
-      List commentList = boardContentSnapshot["commentUserUidList"] ?? [];
-      if (boardContentSnapshot["uid"] != currentUID) if (!commentList
-          .contains(currentUID)) {
-        var _db = FirebaseFirestore.instance;
-        String _boardID = postData.boardId.toString();
-        String _documentID = postData.documentId.toString();
-        _db
-            .collection("Board")
-            .doc(_boardID)
-            .collection(_boardID)
-            .doc(_documentID)
-            .update({"commentUserUidList": commentList..add(currentUID)});
-      }
-    }
-    TipDialogHelper.loading("저장 중입니다.\n 잠시만 기다려주세요.");
-    String commentText = _textEditingControllerComment.text.trimRight();
-    bool result;
-
-    result = await Comment(
-            boardDocumentId: postData.documentId,
-            boardId: postData.boardId,
-            text: commentText,
-            name: "fix")
-        .toFireStore(context,
-            isUnderCommentSave: isUnderCommentSave,
-            commentDocumentId: _clickedCommentData.commentDocumentId);
-
-    if (result ?? false) {
-      TipDialogHelper.dismiss();
-      TipDialogHelper.success("저장 완료!");
-
-      setState(() {
-        isCommentRefresh = true;
-        isCommentBoxVisible = false;
-        _textEditingControllerComment.clear();
-      });
-    }
+  commentSaveMethod() async {
+    // postData.comm
+    //////
+    ////
+    ////
+    ////
+    ////
+    ////
+    ////
+    ////
+    ////
+    ////
+    ////
+    ////
+    ///
+    // await Comment(
+    //     uid: currentUID,
+    //     boardId: currentBoardId,
+    //     boardName: currentBoardName,
+    //     postId: currentPostId,
+    //     textContent: _textEditingControllerComment.text.trimRight(),userName: );
+    // databaseRef.push().set({'name': 'hi', 'comment': 'A good season'});
   }
 
   commentBoxHideMethod() {
