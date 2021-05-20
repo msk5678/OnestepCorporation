@@ -75,4 +75,9 @@ class SchoolEmailCheckProvider extends ChangeNotifier {
     authFlag.isSendClick = value;
     notifyListeners();
   }
+
+  void changedShowBtn(bool value) {
+    authFlag.isShowBtn = value;
+    notifyListeners();
+  }
 }

@@ -32,6 +32,9 @@ dependencies:
   #shared_preferences
   shared_preferences: ^2.0.5
 
+  #radio_button
+  custom_radio_grouped_button: ^1.0.6+1
+
   #firebase
   firebase_core: ^1.0.1
   cloud_firestore: ^1.0.1
@@ -50,7 +53,10 @@ dependencies:
   photo_view: ^0.11.1          # image fullViewer
   flutter_swiper: ^1.1.6       # image slider
   ###########
-
+  
+  #email_validator
+  email_validator: ^2.0.1
+  
   #formatter
   pattern_formatter: ^2.0.0         # 숫자, 날짜 format 라이브러리
   random_string: ^2.2.0-nullsafety  # fireStoreage image random name
@@ -98,14 +104,12 @@ dependencies:
   #algolia
   algolia: ^1.0.1 # 검색
   ##########
-
-  #toast
-  fluttertoast: ^7.1.1
-  ##########
-
+  
+  #gauges
+  syncfusion_flutter_gauges: ^19.1.59
   
   #kakao
-  kakao_flutter_sdk: ^0.6.1
+  kakao_flutter_sdk: ^0.6.3
   share: ^2.0.1
   no_context_navigation: ^1.0.7
   dio: ^4.0.0

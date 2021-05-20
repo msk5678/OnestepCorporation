@@ -7,6 +7,7 @@ class AuthFlag {
   bool isTimeOverChecked;
   bool isTimerChecked;
   bool isSendClick;
+  bool isShowBtn;
 
   void initAuth() {
     this.isEmailChecked = false;
@@ -17,6 +18,7 @@ class AuthFlag {
     this.isTimeOverChecked = true;
     this.isTimerChecked = false;
     this.isSendClick = false;
+    this.isShowBtn = false;
   }
 
   AuthFlag({
@@ -28,5 +30,6 @@ class AuthFlag {
     this.isTimeOverChecked = true,
     this.isTimerChecked = false,
     this.isSendClick = false,
+    this.isShowBtn = false,
   });
 }

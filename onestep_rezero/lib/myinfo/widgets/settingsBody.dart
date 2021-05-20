@@ -1,8 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:onestep_rezero/myinfo/pages/myinfoNickNameChagnePage.dart';
 import 'package:onestep_rezero/myinfo/providers/providers.dart';
+import 'package:onestep_rezero/notification/realtime/firebase_api.dart';
+import 'package:random_string/random_string.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:io' as io;
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+
+String downloadURL = "";
 
 class SettingsBody extends ConsumerWidget {
   final SharedPreferences _prefsPush;
@@ -98,6 +106,111 @@ class SettingsBody extends ConsumerWidget {
             ),
           ),
           InkWell(
+            onTap: () async {
+              // // storage 삭제 보류
+              // Reference ref = FirebaseStorage.instance
+              //     .refFromURL(
+              //         snapshot.data.data()['photoUrl'].toString());
+              // await ref.delete();
+
+              // firebase_storage.FirebaseStorage.instance
+              //     .refFromURL(
+              //         snapshot.data.data()['photoUrl'].toString())
+              //     .delete();
+
+              // 프사 변경할때 image 가져오고 storage 저장 후 photoUrl 업데이트
+              io.File _image;
+              final picker = ImagePicker();
+              final pickedFile =
+                  await picker.getImage(source: ImageSource.gallery);
+              if (pickedFile != null) {
+                _image = io.File(pickedFile.path);
+                firebase_storage.Reference ref = firebase_storage
+                    .FirebaseStorage.instance
+                    .ref()
+                    .child("user images/${randomAlphaNumeric(15)}");
+                ref.putFile(io.File(_image.path));
+                firebase_storage.UploadTask storageUploadTask =
+                    ref.putFile(io.File(_image.path));
+
+                await storageUploadTask.whenComplete(() async => {
+                      downloadURL = await ref.getDownloadURL(),
+                      FirebaseFirestore.instance
+                          .collection("users")
+                          .doc(FirebaseApi.getId())
+                          .update({
+                        "photoUrl": downloadURL,
+                      }),
+                    });
+                print("_image = $_image");
+              } else {
+                print('No image selected.');
+              }
+            },
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(
+                  MediaQuery.of(context).size.width / 20,
+                  MediaQuery.of(context).size.width / 30,
+                  0,
+                  0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    child: Text(
+                      "프로필사진 변경",
+                      style: TextStyle(fontSize: 15),
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.keyboard_arrow_right),
+                    onPressed: () async {
+                      // // storage 삭제 보류
+                      // Reference ref = FirebaseStorage.instance
+                      //     .refFromURL(
+                      //         snapshot.data.data()['photoUrl'].toString());
+                      // await ref.delete();
+
+                      // firebase_storage.FirebaseStorage.instance
+                      //     .refFromURL(
+                      //         snapshot.data.data()['photoUrl'].toString())
+                      //     .delete();
+
+                      // 프사 변경할때 image 가져오고 storage 저장 후 photoUrl 업데이트
+                      io.File _image;
+                      final picker = ImagePicker();
+                      final pickedFile =
+                          await picker.getImage(source: ImageSource.gallery);
+                      if (pickedFile != null) {
+                        _image = io.File(pickedFile.path);
+                        firebase_storage.Reference ref = firebase_storage
+                            .FirebaseStorage.instance
+                            .ref()
+                            .child("user images/${randomAlphaNumeric(15)}");
+                        ref.putFile(io.File(_image.path));
+                        firebase_storage.UploadTask storageUploadTask =
+                            ref.putFile(io.File(_image.path));
+
+                        await storageUploadTask.whenComplete(() async => {
+                              downloadURL = await ref.getDownloadURL(),
+                              FirebaseFirestore.instance
+                                  .collection("users")
+                                  .doc(FirebaseApi.getId())
+                                  .update({
+                                "photoUrl": downloadURL,
+                              }),
+                            });
+                        print("_image = $_image");
+                      } else {
+                        print('No image selected.');
+                      }
+                    },
+                  )
+                ],
+              ),
+            ),
+          ),
+          InkWell(
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
@@ -106,10 +219,7 @@ class SettingsBody extends ConsumerWidget {
             },
             child: Padding(
               padding: EdgeInsets.fromLTRB(
-                  MediaQuery.of(context).size.width / 20,
-                  MediaQuery.of(context).size.width / 30,
-                  0,
-                  0),
+                  MediaQuery.of(context).size.width / 20, 0, 0, 0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [

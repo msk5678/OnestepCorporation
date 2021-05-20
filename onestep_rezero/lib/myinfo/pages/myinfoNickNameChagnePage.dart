@@ -13,6 +13,7 @@ class MyinfoNickNameChangePage extends ConsumerWidget {
         _tempNickName = "";
         _firstEnter = true;
         Navigator.pop(context, false);
+        return Future(() => false);
       },
       child: Scaffold(
           appBar: AppBar(

@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:async/async.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,6 +28,7 @@ class _ProductAddState extends State<ProductAdd> {
 
   @override
   Widget build(BuildContext context) {
+    print("@@@@@@@@ 11111");
     BoxDecoration myBoxDecoration() {
       return BoxDecoration(
         border: Border.all(width: 1.0, color: Colors.grey),
@@ -66,6 +68,7 @@ class _ProductAddState extends State<ProductAdd> {
       if (_resultList.isEmpty) return;
 
       setState(() {
+        print("@@@@@@@@ 22222");
         _imageList = _resultList;
       });
     }
@@ -158,6 +161,7 @@ class _ProductAddState extends State<ProductAdd> {
                                         child: GestureDetector(
                                           onTap: () {
                                             setState(() {
+                                              print("@@@@@@@@ 33333");
                                               _imageList.removeAt(index);
                                             });
                                           },

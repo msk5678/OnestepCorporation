@@ -2,42 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onestep_rezero/myinfo/providers/providers.dart';
 
-void nickNameNowCheckDialog(BuildContext context) {
-  showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-          title: Column(
-            children: <Widget>[
-              Text(""),
-            ],
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Center(
-                child: Text(
-                  "닉네임 중복확인을 해주세요",
-                ),
-              ),
-            ],
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text("확인"),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        );
-      });
-}
-
 // ignore: must_be_immutable
 class NickNameChangeBody extends ConsumerWidget {
   String _tempNickName;
@@ -142,18 +106,17 @@ class NickNameChangeBody extends ConsumerWidget {
                   "변경하기",
                   style: TextStyle(color: Colors.black),
                 ),
-                onPressed: () {
-                  _isNickNameCheck == false
-                      ? nickNameNowCheckDialog(context)
-                      :
-                      // FirebaseFirestore.instance
-                      //     .collection("users")
-                      //     .doc(FirebaseApi.getId())
-                      //     .update({"nickName": resultNickName});
-                      _tempNickName = "";
-                  _firstEnter = true;
-                  Navigator.of(context).pop();
-                },
+                onPressed: _isNickNameCheck == true
+                    ? () {
+                        // FirebaseFirestore.instance
+                        //     .collection("users")
+                        //     .doc(FirebaseApi.getId())
+                        //     .update({"nickName": resultNickName});
+                        _tempNickName = "";
+                        _firstEnter = true;
+                        Navigator.of(context).pop();
+                      }
+                    : null,
               ),
             ),
           ),

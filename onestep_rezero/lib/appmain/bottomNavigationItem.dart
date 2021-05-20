@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:onestep_rezero/board/boardMain.dart';
 import 'package:onestep_rezero/home/homeMain.dart';
 import 'package:onestep_rezero/home/pages/homeMain.dart';
+import 'package:onestep_rezero/login/pages/choiceAuthWayPage.dart';
 import 'package:onestep_rezero/login/pages/loginJoinPage.dart';
 import 'package:onestep_rezero/myinfo/pages/myinfoMain.dart';
 import 'package:onestep_rezero/notification/page/chatMain.dart';
@@ -37,7 +38,7 @@ class BottomNavigationItem {
           title: "게시판",
         ),
         BottomNavigationItem(
-          page: LoginJoinPage(),
+          page: ChoiceAuthWayPage(),
           icon: Icon(Icons.list),
           // page: ChatMainPage(),
           // icon: RealtimeProductChatController().getTotalChatCountInBottomBar(),

@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart';
 import 'package:onestep_rezero/myinfo/providers/providers.dart';
 import 'package:onestep_rezero/notification/realtime/firebase_api.dart';
+import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 class UserProfileBody extends ConsumerWidget {
   Widget getUserName() {
@@ -124,6 +125,10 @@ class UserProfileBody extends ConsumerWidget {
     final test = watch(testContaierPadding);
     final a = watch(progressValueProvider3);
 
+    String _image = 'images/person_walking.gif';
+    double _pointerValue = 0;
+    final Brightness _brightness = Theme.of(context).brightness;
+
     return Column(
       children: <Widget>[
         Stack(
@@ -160,73 +165,6 @@ class UserProfileBody extends ConsumerWidget {
               ),
             ),
           ],
-        ),
-        InkWell(
-          onTap: () {
-            // 이거 test -> 추후에 progressBar value db에 저장해서 세팅하고 거기에 맞춰서 다시 값 바꿔줘야함
-            // context.read(progressValueProvider).increment();
-            // test2.state += 0.1;
-            // test.state += 29;
-            a.increment();
-          },
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height / 5,
-            decoration: BoxDecoration(color: Colors.red),
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(
-                  MediaQuery.of(context).size.width / 50, 0, 0, 0),
-              child: Row(
-                // crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Icon(
-                    Icons.account_circle,
-                    size: 100,
-                  ),
-                  // progress bar
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding:
-                            EdgeInsets.fromLTRB((20 + test.state), 0, 0, 0),
-                        child: Stack(
-                          children: [
-                            Positioned(
-                                // bottom: 10,
-                                // left: 1.5,
-                                // right: 50,
-                                // top: 10,
-                                child: Container(
-                                    child: Text(
-                              "cex",
-                              // style: TextStyle(fontSize: 1),
-                            ))),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.symmetric(vertical: 5),
-                        width: 300,
-                        height: 20,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.all(Radius.circular(10)),
-                          child: LinearProgressIndicator(
-                            semanticsValue: "cex",
-                            // value: test2.state,
-                            // value: progressValue,
-                            value: a.a,
-                            backgroundColor: Colors.grey,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
         ),
         Expanded(
           child: Padding(

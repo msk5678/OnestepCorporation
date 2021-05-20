@@ -8,6 +8,7 @@ import 'package:onestep_rezero/myinfo/pages/infomation/noticePage.dart';
 import 'package:onestep_rezero/myinfo/pages/infomation/questionsPage.dart';
 import 'package:onestep_rezero/myinfo/pages/myinfoProfilePage.dart';
 import 'package:onestep_rezero/myinfo/pages/myinfoSettingsPage.dart';
+import 'package:onestep_rezero/myinfo/pages/myinfoTransaction.dart';
 import 'package:onestep_rezero/myinfo/providers/providers.dart';
 import 'dart:async';
 import 'package:onestep_rezero/myinfo/widgets/myProfileImage.dart';
@@ -18,309 +19,324 @@ import 'package:shared_preferences/shared_preferences.dart';
 class MyinfoMainBody extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ScopedReader watch) {
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              MyProfileImage(),
-              Padding(
-                padding: EdgeInsets.fromLTRB(
-                    MediaQuery.of(context).size.width / 60, 0, 0, 0),
-                child: Column(
-                  children: [
-                    Container(
-                      child: Text(
-                        "김성훈",
-                        style: TextStyle(fontSize: 20),
-                      ),
-                    ),
-                    Container(
-                      child: Text(
-                        "계명대학교",
-                        style: TextStyle(fontSize: 15),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.fromLTRB(
-                    MediaQuery.of(context).size.width / 2.8, 0, 0, 0),
-                child: IconButton(
-                  icon: Icon(Icons.settings),
-                  color: Colors.black,
-                  iconSize: 30,
-                  onPressed: () async {
-                    // SharedPreferences 내부 db
-                    SharedPreferences _prefsPush;
-                    SharedPreferences _prefsMarketing;
-                    _prefsPush = await SharedPreferences.getInstance();
-                    // set 부분은 추후에 회원가입할때 푸시 알림 받으시겠습니까? ok -> true, no -> false
-                    // 줘서 로그인할때 set 해주는 코드 넣기 지금은 임시
-                    _prefsPush.setBool('value', true);
-                    context
-                        .read(switchCheckPush)
-                        .changeSwitch(_prefsPush.getBool('value'));
-                    _prefsMarketing = await SharedPreferences.getInstance();
-                    _prefsMarketing.setBool('value', true);
-                    context
-                        .read(switchCheckMarketing)
-                        .changeSwitch(_prefsMarketing.getBool('value'));
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) =>
-                            MyinfoSettingsPage(_prefsPush, _prefsMarketing)));
-                  },
-                ),
-              )
-            ],
-          ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(
-                0,
-                MediaQuery.of(context).size.width / 20,
-                0,
-                MediaQuery.of(context).size.width / 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Column(
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => MyinfoProfilePage()));
-                      },
-                      icon: Icon(Icons.error_outline),
-                    ),
-                    Text("프로필보기"),
-                  ],
-                ),
-                Column(
-                  children: [
-                    IconButton(
-                      onPressed: () {},
-                      icon: Icon(Icons.error_outline),
-                    ),
-                    Text("내가쓴글"),
-                  ],
-                ),
-                Column(
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        // Navigator.of(context).push(
-                        //   MaterialPageRoute(
-                        //     builder: (context) =>
-                        //         Consumer<
-                        //             FavoriteProvider>(
-                        //       builder: (context,
-                        //               favoriteProvider,
-                        //               _) =>
-                        //           FavoriteWidget(
-                        //         favoriteProvider:
-                        //             favoriteProvider,
-                        //       ),
-                        //     ),
-                        //   ),
-                        // );
-                      },
-                      icon: Icon(Icons.error_outline),
-                    ),
-                    Text("찜목록"),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          Divider(
-            thickness: 2,
-          ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(MediaQuery.of(context).size.width / 20,
-                MediaQuery.of(context).size.width / 30, 0, 0),
-            child: Container(
-              child: Text(
-                "인증",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-              ),
-            ),
-          ),
-          InkWell(
-            onTap: () {
-              // 여기 작업 마무리해야함 (finish ? 면 증명서 학교 인증 완료했다고 alert 박스 띄우기)
-
-              Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => ChoiceAuthWayPage()));
-            },
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(
-                  MediaQuery.of(context).size.width / 20,
-                  MediaQuery.of(context).size.width / 40,
-                  0,
-                  0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return StreamBuilder(
+      stream: FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseApi.getId())
+          .snapshots(),
+      builder:
+          (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.waiting:
+            return Container();
+          default:
+            return SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    child: Text(
-                      "학교 인증",
-                      style: TextStyle(fontSize: 15),
+                  Row(
+                    children: [
+                      MyProfileImage(),
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(
+                            MediaQuery.of(context).size.width / 30, 0, 0, 0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              child: Text(
+                                // 닉네임
+                                snapshot.data.data()['nickName'].toString(),
+                                style: TextStyle(fontSize: 20),
+                              ),
+                            ),
+                            Container(
+                              child: Text(
+                                // 아이디
+                                snapshot.data.data()['userEmail'].toString(),
+                                style: TextStyle(fontSize: 15),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Flexible(
+                        child: Padding(
+                          padding: EdgeInsets.fromLTRB(
+                              MediaQuery.of(context).size.width / 7, 0, 0, 0),
+                          child: IconButton(
+                            icon: Icon(Icons.settings),
+                            color: Colors.black,
+                            iconSize: 30,
+                            onPressed: () async {
+                              // SharedPreferences 내부 db
+                              SharedPreferences _prefsPush;
+                              SharedPreferences _prefsMarketing;
+                              _prefsPush =
+                                  await SharedPreferences.getInstance();
+                              // set 부분은 추후에 회원가입할때 푸시 알림 받으시겠습니까? ok -> true, no -> false
+                              // 줘서 로그인할때 set 해주는 코드 넣기 지금은 임시
+                              _prefsPush.setBool('value', true);
+                              context
+                                  .read(switchCheckPush)
+                                  .changeSwitch(_prefsPush.getBool('value'));
+                              _prefsMarketing =
+                                  await SharedPreferences.getInstance();
+                              _prefsMarketing.setBool('value', true);
+                              context.read(switchCheckMarketing).changeSwitch(
+                                  _prefsMarketing.getBool('value'));
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => MyinfoSettingsPage(
+                                      _prefsPush, _prefsMarketing)));
+                            },
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(
+                        0,
+                        MediaQuery.of(context).size.width / 20,
+                        0,
+                        MediaQuery.of(context).size.width / 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Column(
+                          children: [
+                            IconButton(
+                              onPressed: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => MyinfoProfilePage()));
+                              },
+                              icon: Icon(Icons.error_outline),
+                            ),
+                            Text("프로필보기"),
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            IconButton(
+                              onPressed: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => MyinfoTransaction()));
+                              },
+                              icon: Icon(Icons.error_outline),
+                            ),
+                            Text("거래내역"),
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            IconButton(
+                              onPressed: () {},
+                              icon: Icon(Icons.error_outline),
+                            ),
+                            Text("찜목록"),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
-                  IconButton(
-                    icon: Icon(Icons.keyboard_arrow_right),
-                    onPressed: () {
+                  Divider(
+                    thickness: 2,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(
+                        MediaQuery.of(context).size.width / 20,
+                        MediaQuery.of(context).size.width / 30,
+                        0,
+                        0),
+                    child: Container(
+                      child: Text(
+                        "인증",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 15),
+                      ),
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      // 여기 작업 마무리해야함 (finish ? 면 증명서 학교 인증 완료했다고 alert 박스 띄우기)
+
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => ChoiceAuthWayPage()));
                     },
-                  )
-                ],
-              ),
-            ),
-          ),
-          Divider(
-            thickness: 2,
-          ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(MediaQuery.of(context).size.width / 20,
-                MediaQuery.of(context).size.width / 30, 0, 0),
-            child: Container(
-              child: Text(
-                "정보",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-              ),
-            ),
-          ),
-          InkWell(
-            onTap: () {
-              Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (context) => NoticePage()));
-            },
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(
-                  MediaQuery.of(context).size.width / 20,
-                  MediaQuery.of(context).size.width / 40,
-                  0,
-                  0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    child: Text(
-                      "공지사항",
-                      style: TextStyle(fontSize: 15),
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(
+                          MediaQuery.of(context).size.width / 20,
+                          MediaQuery.of(context).size.width / 40,
+                          0,
+                          0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            child: Text(
+                              "학교 인증",
+                              style: TextStyle(fontSize: 15),
+                            ),
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.keyboard_arrow_right),
+                            onPressed: () {
+                              // Navigator.of(context).push(MaterialPageRoute(
+                              //     builder: (context) => ChoiceAuthWayPage()));
+                            },
+                          )
+                        ],
+                      ),
                     ),
                   ),
-                  IconButton(
-                    icon: Icon(Icons.keyboard_arrow_right),
-                    onPressed: () {
+                  Divider(
+                    thickness: 2,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(
+                        MediaQuery.of(context).size.width / 20,
+                        MediaQuery.of(context).size.width / 30,
+                        0,
+                        0),
+                    child: Container(
+                      child: Text(
+                        "정보",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 15),
+                      ),
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => NoticePage()));
                     },
-                  )
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(
+                          MediaQuery.of(context).size.width / 20,
+                          MediaQuery.of(context).size.width / 40,
+                          0,
+                          0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            child: Text(
+                              "공지사항",
+                              style: TextStyle(fontSize: 15),
+                            ),
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.keyboard_arrow_right),
+                            onPressed: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => NoticePage()));
+                            },
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(
+                        MediaQuery.of(context).size.width / 20, 0, 0, 0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          child: Text(
+                            "문의사항",
+                            style: TextStyle(fontSize: 15),
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.keyboard_arrow_right),
+                          onPressed: () {},
+                        )
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(
+                        MediaQuery.of(context).size.width / 20, 0, 0, 0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          child: Text(
+                            "고객센터",
+                            style: TextStyle(fontSize: 15),
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.keyboard_arrow_right),
+                          onPressed: () {},
+                        )
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(
+                        MediaQuery.of(context).size.width / 20, 0, 0, 0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          child: Text(
+                            "개인정보 처리방침",
+                            style: TextStyle(fontSize: 15),
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.keyboard_arrow_right),
+                          onPressed: () {},
+                        )
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(
+                        MediaQuery.of(context).size.width / 20, 0, 0, 0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          child: Text(
+                            "서비스 이용약관",
+                            style: TextStyle(fontSize: 15),
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.keyboard_arrow_right),
+                          onPressed: () {},
+                        )
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(
+                        MediaQuery.of(context).size.width / 20, 0, 0, 0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          child: Text(
+                            "버전정보",
+                            style: TextStyle(fontSize: 15),
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.keyboard_arrow_right),
+                          onPressed: () {},
+                        )
+                      ],
+                    ),
+                  ),
                 ],
               ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(
-                MediaQuery.of(context).size.width / 20, 0, 0, 0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  child: Text(
-                    "문의사항",
-                    style: TextStyle(fontSize: 15),
-                  ),
-                ),
-                IconButton(
-                  icon: Icon(Icons.keyboard_arrow_right),
-                  onPressed: () {},
-                )
-              ],
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(
-                MediaQuery.of(context).size.width / 20, 0, 0, 0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  child: Text(
-                    "고객센터",
-                    style: TextStyle(fontSize: 15),
-                  ),
-                ),
-                IconButton(
-                  icon: Icon(Icons.keyboard_arrow_right),
-                  onPressed: () {},
-                )
-              ],
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(
-                MediaQuery.of(context).size.width / 20, 0, 0, 0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  child: Text(
-                    "개인정보 처리방침",
-                    style: TextStyle(fontSize: 15),
-                  ),
-                ),
-                IconButton(
-                  icon: Icon(Icons.keyboard_arrow_right),
-                  onPressed: () {},
-                )
-              ],
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(
-                MediaQuery.of(context).size.width / 20, 0, 0, 0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  child: Text(
-                    "서비스 이용약관",
-                    style: TextStyle(fontSize: 15),
-                  ),
-                ),
-                IconButton(
-                  icon: Icon(Icons.keyboard_arrow_right),
-                  onPressed: () {},
-                )
-              ],
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(
-                MediaQuery.of(context).size.width / 20, 0, 0, 0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  child: Text(
-                    "버전정보",
-                    style: TextStyle(fontSize: 15),
-                  ),
-                ),
-                IconButton(
-                  icon: Icon(Icons.keyboard_arrow_right),
-                  onPressed: () {},
-                )
-              ],
-            ),
-          ),
-        ],
-      ),
+            );
+        }
+      },
     );
   }
 }

@@ -9,7 +9,10 @@ class LoginJoinPage extends ConsumerWidget {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: Text("회원가입"),
+        title: Text(
+          "회원가입",
+          style: TextStyle(color: Colors.black),
+        ),
       ),
       body: JoinBody(),
     );

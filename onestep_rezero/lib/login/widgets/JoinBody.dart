@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:onestep_rezero/login/pages/loginAuthPage.dart';
+import 'package:onestep_rezero/login/pages/choiceAuthWayPage.dart';
 import 'package:onestep_rezero/login/providers/providers.dart';
 
 String _tempEmail = "";
@@ -67,7 +67,8 @@ class JoinBody extends ConsumerWidget {
           Column(
             children: [
               Padding(
-                padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
+                padding: EdgeInsets.fromLTRB(
+                    0, MediaQuery.of(context).size.height / 15, 0, 0),
                 child: Center(
                   child: Container(
                     width: 300,
@@ -116,7 +117,11 @@ class JoinBody extends ConsumerWidget {
               ),
               Offstage(
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 15, 50, 0),
+                  padding: EdgeInsets.fromLTRB(
+                      0,
+                      MediaQuery.of(context).size.width / 40,
+                      MediaQuery.of(context).size.width / 4,
+                      0),
                   child: Text(
                     "이메일 형식이 잘못되었거나 중복입니다.",
                     style: TextStyle(color: Colors.red),
@@ -156,7 +161,8 @@ class JoinBody extends ConsumerWidget {
               //   ),
               // ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
+                padding: EdgeInsets.fromLTRB(
+                    0, MediaQuery.of(context).size.height / 50, 0, 0),
                 child: Container(
                   width: 300,
                   child: TextField(
@@ -205,7 +211,11 @@ class JoinBody extends ConsumerWidget {
               ),
               Offstage(
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 15, 150, 0),
+                  padding: EdgeInsets.fromLTRB(
+                      0,
+                      MediaQuery.of(context).size.width / 40,
+                      MediaQuery.of(context).size.width / 2,
+                      0),
                   child: Text(
                     "닉네임이 중복입니다.",
                     style: TextStyle(color: Colors.red),
@@ -216,46 +226,46 @@ class JoinBody extends ConsumerWidget {
                         ? true
                         : false,
               ),
-              Padding(
-                padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(right: 2),
-                      child: ElevatedButton(
-                          style: ButtonStyle(
-                              backgroundColor: _isStatusCheck == true
-                                  ? MaterialStateProperty.all<Color>(Colors.red)
-                                  : MaterialStateProperty.all<Color>(
-                                      Colors.black)),
-                          onPressed: () {
-                            context.read(statusProvider).changeStatus("재학생");
-                          },
-                          child: Container(
-                            width: MediaQuery.of(context).size.width / 4,
-                            child: Center(child: Text("재학생")),
-                          )),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 2),
-                      child: ElevatedButton(
-                          style: ButtonStyle(
-                              backgroundColor: _isStatusCheck == false
-                                  ? MaterialStateProperty.all<Color>(Colors.red)
-                                  : MaterialStateProperty.all<Color>(
-                                      Colors.black)),
-                          onPressed: () {
-                            context.read(statusProvider).changeStatus("졸업생");
-                          },
-                          child: Container(
-                            width: MediaQuery.of(context).size.width / 4,
-                            child: Center(child: Text("졸업생")),
-                          )),
-                    ),
-                  ],
-                ),
-              ),
+              // Padding(
+              //   padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+              //   child: Row(
+              //     mainAxisAlignment: MainAxisAlignment.center,
+              //     children: [
+              //       Padding(
+              //         padding: const EdgeInsets.only(right: 2),
+              //         child: ElevatedButton(
+              //             style: ButtonStyle(
+              //                 backgroundColor: _isStatusCheck == true
+              //                     ? MaterialStateProperty.all<Color>(Colors.red)
+              //                     : MaterialStateProperty.all<Color>(
+              //                         Colors.black)),
+              //             onPressed: () {
+              //               context.read(statusProvider).changeStatus("재학생");
+              //             },
+              //             child: Container(
+              //               width: MediaQuery.of(context).size.width / 4,
+              //               child: Center(child: Text("재학생")),
+              //             )),
+              //       ),
+              //       Padding(
+              //         padding: const EdgeInsets.only(left: 2),
+              //         child: ElevatedButton(
+              //             style: ButtonStyle(
+              //                 backgroundColor: _isStatusCheck == false
+              //                     ? MaterialStateProperty.all<Color>(Colors.red)
+              //                     : MaterialStateProperty.all<Color>(
+              //                         Colors.black)),
+              //             onPressed: () {
+              //               context.read(statusProvider).changeStatus("졸업생");
+              //             },
+              //             child: Container(
+              //               width: MediaQuery.of(context).size.width / 4,
+              //               child: Center(child: Text("졸업생")),
+              //             )),
+              //       ),
+              //     ],
+              //   ),
+              // ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
                 child: Container(
@@ -264,22 +274,21 @@ class JoinBody extends ConsumerWidget {
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(primary: Colors.white70),
                     onPressed: () {
-                      // test : email text 공백 아니면 넘어감
-                      // if (_isEmailChecked == true &&
-                      //     _isNickNameChecked == true) {
-                      //   print("성공");
-                      //  졸업생, 재학생 value 도 추가해서 db에 update 하기
-                      //   updateUser(
-                      //       emailController.text, nicknameController.text);
-                      //   Navigator.of(context).pushReplacementNamed(
-                      //       '/MainPage?UID=${widget.currentUserId}');
-                      // } else {
-                      //   // 일단 넘어가게해놈
-                      //   print("실패");
-                      //   Navigator.of(context).pushReplacementNamed(
-                      //       '/MainPage?UID=${widget.currentUserId}');
-                      // }
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => ChoiceAuthWayPage()));
                     },
+                    // onPressed: _isEmailCheck == true && _isNickNameCheck == true
+                    //     ? () {
+                    //         if (_isEmailCheck == true &&
+                    //             _isNickNameCheck == true) {
+                    //           print("성공");
+                    //           // updateUser(
+                    //           //     emailController.text, nicknameController.text);
+                    //           // Navigator.of(context).push(MaterialPageRoute(
+                    //           //     builder: (context) => ChoiceAuthWayPage()));
+                    //         }
+                    //       }
+                    //     : null,
                     child: Text(
                       "가입완료",
                       style: TextStyle(color: Colors.black),

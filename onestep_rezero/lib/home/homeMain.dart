@@ -8,8 +8,11 @@ import 'package:onestep_rezero/notification/realtime/firebase_api.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:onestep_rezero/main.dart';
+import 'package:onestep_rezero/report/reportPageTest.dart';
 import 'package:onestep_rezero/search/pages/searchAllMain.dart';
 import 'package:provider/provider.dart';
+
+import '../reportController.dart';
 
 class HomeMain extends StatefulWidget {
   HomeMain({Key key}) : super(key: key);
@@ -136,18 +139,23 @@ class _HomeMainState extends State<HomeMain> {
                     color: Colors.black,
                     onPressed: () {
                       // 알림으로 넘어가는 부분
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => HomeNotificationPage(),
-                      ));
-                      // 신고 test
+                      // Navigator.of(context).push(MaterialPageRoute(
+                      //   builder: (context) => HomeNotificationPage(),
+                      // ));
+
+                      // 신고 modal version test
                       // showModalBottomSheet(
                       //     context: context,
                       //     builder: buildBottomSheet,
                       //     isScrollControlled: false);
-                      // 쪽지 form 보려고 test
+
+                      // 신고 page test
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => ReportPageTest()));
+
+                      // notification realTime test
                       // Navigator.of(context).push(MaterialPageRoute(
-                      //   builder: (context) => MessagePage(),
-                      // ));
+                      //     builder: (context) => SunghunTest()));
                     },
                   ),
                   StreamBuilder(
