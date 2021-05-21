@@ -28,15 +28,11 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
-
-
-  #radio_button
-  custom_radio_grouped_button: ^1.0.6+1
-
+  
   #firebase
   firebase_core: ^1.0.1
   cloud_firestore: ^1.0.1
-  firebase_storage: ^8.0.1
+  firebase_storage: ^8.0.0
   firebase_messaging: ^9.0.0
   firebase_auth: ^1.0.1
   firebase_dynamic_links: ^0.8.0
@@ -44,20 +40,14 @@ dependencies:
   firebase_database: ^6.1.0
   ###########
 
-  #admob
-  flutter_native_admob: ^2.1.0+3
-  google_mobile_ads: ^0.12.1
   #image
   cached_network_image: ^2.5.1 
   image_picker: ^0.7.2+1       # 이미지 피커
-  multi_image_picker: ^4.8.0   # 멀티 이미지 피커
+  multi_image_picker2: ^5.0.0
   photo_view: ^0.11.1          # image fullViewer
   flutter_swiper: ^1.1.6       # image slider
   ###########
-  
-  #email_validator
-  email_validator: ^2.0.1
-  
+
   #formatter
   pattern_formatter: ^2.0.0         # 숫자, 날짜 format 라이브러리
   random_string: ^2.2.0-nullsafety  # fireStoreage image random name
@@ -69,10 +59,10 @@ dependencies:
   #provider
   flutter_riverpod: ^0.13.1
   state_notifier: ^0.7.0
-  provider: ^4.3.2+2
 
   #uis
   badges: ^1.2.0  
+  like_button: ^1.0.3 #Click 시 Like Animation실행
   ##########
   
   #permission
@@ -81,49 +71,22 @@ dependencies:
   
   #floatingButton
   unicorndial: "^1.1.5"        # multi floatingActionButton 
+  sliding_up_panel: ^1.0.2 #Slide up Widget
   ############
 
   #json
   json_serializable: ^4.0.1
   ##########
 
-  #timer
-  flutter_countdown_timer: ^3.0.0
-  
-  #toast
-  fluttertoast: ^8.0.3
-
-  #moor
-  moor: ^4.2.1
-  moor_flutter: ^4.0.0
-
-  #mail
-  mailer:
-  flutter_email_sender: ^5.0.0
-
-  http:
   #algolia
   algolia: ^1.0.1 # 검색
   ##########
-  
-  #gauges
-  syncfusion_flutter_gauges: ^19.1.59
-  
-  #kakao
-  kakao_flutter_sdk: ^0.6.3
-  share: ^2.0.1
-  no_context_navigation: ^1.0.7
-  dio: ^4.0.0
-  json_annotation: ^4.0.1
-  platform: ^3.0.0
-  package_info: ^2.0.0
-  ###########
 
+  #toast
+  fluttertoast: ^7.1.1
+  
   #Chat Test
-  shared_preferences: ^2.0.5
-  async: ^2.3.0
   #stream_chat_flutter: ^1.5.1
-  #multiple_stream_builder: ^1.1.0
 
 # dependency_overrides:
 #   image_picker: "0.7.3"
@@ -134,8 +97,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   #moor
-  moor_generator: ^4.2.1
-  build_runner: ^1.12.2
+  build_runner: ^1.11.5
+  moor_generator: ^4.1.0  
   ############
 
 
