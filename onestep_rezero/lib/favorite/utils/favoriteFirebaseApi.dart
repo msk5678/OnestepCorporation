@@ -10,12 +10,12 @@ class FavoriteFirebaseApi {
     var refProducts;
 
     refProducts = FirebaseFirestore.instance
-      ..collection("university")
-          .doc(currentUserModel.university)
-          .collection("product")
-          .orderBy("favoriteUserList." + googleSignIn.currentUser.id.toString(),
-              descending: true)
-          .limit(limit);
+        .collection("university")
+        .doc(currentUserModel.university)
+        .collection("product")
+        .orderBy("favoriteUserList." + googleSignIn.currentUser.id,
+            descending: true)
+        .limit(limit);
 
     if (startAfter == null) {
       return refProducts.get();
@@ -33,7 +33,7 @@ class FavoriteFirebaseApi {
         .collection("product")
         .doc(docId)
         .update({
-      "favoriteUserList." + googleSignIn.currentUser.id.toString(): time,
+      "favoriteUserList." + googleSignIn.currentUser.id: time,
     });
   }
 
@@ -44,8 +44,7 @@ class FavoriteFirebaseApi {
         .collection("product")
         .doc(docId)
         .update({
-      "favoriteUserList." + googleSignIn.currentUser.id.toString():
-          FieldValue.delete()
+      "favoriteUserList." + googleSignIn.currentUser.id: FieldValue.delete()
     });
   }
 }
