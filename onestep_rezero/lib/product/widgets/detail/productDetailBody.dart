@@ -98,19 +98,19 @@ class _ProductDetailBodyState extends State<ProductDetailBody> {
                         children: [
                           RawMaterialButton(
                             onPressed: () {
-                              // print("kakao 1");
-                              KakaoShareManager()
-                                  .isKakaotalkInstalled()
-                                  .then((installed) {
-                                if (installed) {
-                                  print("kakao success");
-                                  KakaoShareManager()
-                                      .shareMyCode(widget.product);
-                                } else {
-                                  print("kakao error");
-                                  // show alert
-                                }
-                              });
+                              print("kakao 1");
+                              // KakaoShareManager()
+                              //     .isKakaotalkInstalled()
+                              //     .then((installed) {
+                              //   if (installed) {
+                              //     print("kakao success");
+                              //     KakaoShareManager()
+                              //         .shareMyCode(widget.product);
+                              //   } else {
+                              //     print("kakao error");
+                              //     // show alert
+                              //   }
+                              // });
                             },
                             constraints:
                                 BoxConstraints(minHeight: 80, minWidth: 80),
@@ -118,19 +118,19 @@ class _ProductDetailBodyState extends State<ProductDetailBody> {
                             child: IconButton(
                               icon: Image.asset('images/onestep icon.png'),
                               onPressed: () {
-                                // print("kakao 2");
-                                KakaoShareManager()
-                                    .isKakaotalkInstalled()
-                                    .then((installed) {
-                                  if (installed) {
-                                    print("kakao success");
-                                    KakaoShareManager()
-                                        .shareMyCode(widget.product);
-                                  } else {
-                                    print("kakao error");
-                                    // show alert
-                                  }
-                                });
+                                print("kakao 2");
+                                // KakaoShareManager()
+                                //     .isKakaotalkInstalled()
+                                //     .then((installed) {
+                                //   if (installed) {
+                                //     print("kakao success");
+                                //     KakaoShareManager()
+                                //         .shareMyCode(widget.product);
+                                //   } else {
+                                //     print("kakao error");
+                                //     // show alert
+                                //   }
+                                // });
                               },
                             ),
                             shape: CircleBorder(),
@@ -150,9 +150,9 @@ class _ProductDetailBodyState extends State<ProductDetailBody> {
                           RawMaterialButton(
                             onPressed: () {
                               print("URL");
-                              // URL
-                              KakaoShareManager()
-                                  .getDynamicLink(widget.product);
+                              // // URL
+                              // KakaoShareManager()
+                              //     .getDynamicLink(widget.product);
                             },
                             constraints:
                                 BoxConstraints(minHeight: 80, minWidth: 80),
@@ -160,8 +160,8 @@ class _ProductDetailBodyState extends State<ProductDetailBody> {
                             child: IconButton(
                               icon: Image.asset('images/onestep icon.png'),
                               onPressed: () {
-                                KakaoShareManager()
-                                    .getDynamicLink(widget.product);
+                                // KakaoShareManager()
+                                //     .getDynamicLink(widget.product);
                               },
                             ),
                             shape: CircleBorder(),
@@ -512,7 +512,38 @@ class _ProductDetailBodyState extends State<ProductDetailBody> {
               primary: Colors.pink,
               textStyle: TextStyle(color: Colors.white),
             ),
-            onPressed: () {},
+            onPressed: () {
+              // RealTimeChatNavigationManager.navigateToRealTimeChattingRoom(
+              //     context,
+              //     googleSignIn.currentUser.id.toString(),
+              //     widget.product.uid,
+              //     widget.product.firestoreid);
+
+              // RealTimeChatNavigationManager.navigateToProductChattingRoom(
+              //     context,
+              //     googleSignIn.currentUser.id.toString(),
+              //     widget.product.uid,
+              //     widget.product.firestoreid);
+
+              RealTimeChatNavigationManager.navigateProductToProductChat(
+                  context,
+                  googleSignIn.currentUser.id.toString(),
+                  widget.product.uid,
+                  widget.product.firestoreid,
+                  widget.product);
+              // widget.product.title;
+              // widget.product.images;
+              // widget.product.price;
+              //   ProductChatController().createProductChattingRoomToRealtimeDatabase(
+              // "111357489031227818227", "1617992413066022", "1618662154936");
+
+              // NotificationManager.navigateToChattingRoom(
+              //   context,
+              //   googleSignIn.currentUser.id.toString(),
+              //   this._product.uid!,
+              //   this._product.firestoreid,
+              // );
+            },
             child: Text('채팅'),
           ),
         ),

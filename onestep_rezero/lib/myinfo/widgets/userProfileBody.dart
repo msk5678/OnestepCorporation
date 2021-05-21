@@ -8,6 +8,8 @@ import 'package:http/http.dart';
 import 'package:onestep_rezero/myinfo/providers/providers.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
+// sunghun 전체 손봐야함
+
 class UserProfileBody extends ConsumerWidget {
   // sunghun
   Widget getUserName() {
@@ -25,7 +27,8 @@ class UserProfileBody extends ConsumerWidget {
             );
           default:
             return Text(
-              snapshot.data['nickName'],
+              'nickname',
+              // snapshot.data['nickName'],
               style: TextStyle(
                 fontSize: 20,
                 color: Colors.white,
@@ -57,21 +60,28 @@ class UserProfileBody extends ConsumerWidget {
               ),
             );
           default:
-            return snapshot.data.data()['photoUrl'] != ""
-                ? ClipOval(
-                    child: CachedNetworkImage(
-                      imageUrl: snapshot.data.data()['photoUrl'].toString(),
-                      width: MediaQuery.of(context).size.width / 4,
-                      height: MediaQuery.of(context).size.height / 7,
-                      errorWidget: (context, url, error) =>
-                          Icon(Icons.error), // 로딩 오류 시 이미지
-                      fit: BoxFit.cover,
-                    ),
-                  )
-                : Icon(
-                    Icons.account_circle,
-                    size: 100,
-                  );
+            Icon(
+              Icons.account_circle,
+              size: 100,
+            );
+          // return snapshot.data.data()['photoUrl'] != ""
+          //     ? ClipOval(
+          //         child: CachedNetworkImage(
+          //           // sunghun
+          //           imageUrl:
+          //               'https://firebasestorage.googleapis.com/v0/b/onestep-project.appspot.com/o/user%20images%2FekE14P2v3704mA4?alt=media&token=f473133c-41fa-4ad0-9bb6-7266c4438104',
+          //           // imageUrl: snapshot.data.data()['photoUrl'].toString(),
+          //           width: MediaQuery.of(context).size.width / 4,
+          //           height: MediaQuery.of(context).size.height / 7,
+          //           errorWidget: (context, url, error) =>
+          //               Icon(Icons.error), // 로딩 오류 시 이미지
+          //           fit: BoxFit.cover,
+          //         ),
+          //       )
+          //     : Icon(
+          //         Icons.account_circle,
+          //         size: 100,
+          //       );
         }
       },
     );

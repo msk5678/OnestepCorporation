@@ -6,6 +6,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:kakao_flutter_sdk/common.dart';
 import 'package:no_context_navigation/no_context_navigation.dart';
 import 'package:onestep_rezero/moor/moor_database.dart';
@@ -14,7 +15,6 @@ import 'package:provider/provider.dart' as provider;
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:onestep_rezero/login/user.dart';
 import 'package:onestep_rezero/timeUtil.dart';
@@ -76,12 +76,24 @@ class _MainPageState extends State<MainPage> {
   BannerAd banner;
   InterstitialAd interstitialAd;
   RewardedAd rewardedAd;
+
   final String iOsTestUnitid = "ca-app-pub-3940256099942544/2934735716";
   final String androidTestUnitid =
       "ca-app-pub-3940256099942544/6300978111"; //testId
   @override
   void initState() {
     super.initState();
+    // GoogleAdmob().initAdmob();
+    //GoogleAdmob().initBannerAd(banner);
+
+    banner = BannerAd(
+      listener: AdListener(),
+      size: AdSize.banner,
+      adUnitId: Platform.isIOS ? iOsTestUnitid : androidTestUnitid,
+//      adUnitId: androidTestUnitid,
+      request: AdRequest(),
+    )..load();
+
     _currentIndex = 0;
     String kakaoAppKey = "88b99cb950dc222f10f369161182d008";
     KakaoContext.clientId = kakaoAppKey;

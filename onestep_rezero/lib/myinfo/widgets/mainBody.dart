@@ -144,8 +144,8 @@ class MyinfoMainBody extends ConsumerWidget {
                           children: [
                             IconButton(
                               onPressed: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => MyinfoProfilePage()));
+                                // Navigator.of(context).push(MaterialPageRoute(
+                                //     builder: (context) => MyinfoProfilePage()));
                               },
                               icon: Icon(Icons.error_outline),
                             ),
