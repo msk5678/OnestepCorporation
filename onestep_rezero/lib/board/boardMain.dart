@@ -143,18 +143,15 @@ class _BoardMainState extends State<BoardMain> {
             GestureDetector(
               onTap: () {},
               child: Container(
-                  decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.all(Radius.circular(5))),
-                  margin: EdgeInsets.all(device_width / 50),
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).pushNamed('/BoardCreate');
-                    },
-                    child: Container(child: Text("1111111111111i")),
-                  )
-                  // BoardNameProvider().futureConsumerWidget
-                  ),
+                decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.all(Radius.circular(5))),
+                margin: EdgeInsets.all(device_width / 50),
+
+                child: Container(child: Text("1111111111111i")),
+
+                // BoardNameProvider().futureConsumerWidget
+              ),
             )
           ],
         ),
