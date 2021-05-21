@@ -877,8 +877,7 @@ class _LastChatState extends State<ChatScreen> {
                                             height: 15,
                                           ),
                                           Text(
-                                            productMessage.content.price +
-                                                "ㄴㄴㄴㄴ원",
+                                            productMessage.content.price + "원",
                                           ),
                                         ],
                                       ),
