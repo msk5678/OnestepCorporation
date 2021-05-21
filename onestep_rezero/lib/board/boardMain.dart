@@ -147,7 +147,9 @@ class _BoardMainState extends State<BoardMain> {
                       border: Border.all(color: Colors.grey),
                       borderRadius: BorderRadius.all(Radius.circular(5))),
                   margin: EdgeInsets.all(device_width / 50),
-                  child: BoardNameProvider().futureConsumerWidget),
+                  child: Container()
+                  // BoardNameProvider().futureConsumerWidget
+                  ),
             )
           ],
         ),
