@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:onestep_rezero/board/boardMain.dart';
 import 'package:onestep_rezero/home/homeMain.dart';
 import 'package:onestep_rezero/myinfo/myinfoMain.dart';
-import 'package:onestep_rezero/notification/page/chatMain.dart';
-import 'package:onestep_rezero/notification/realtime/realtimeProductChatController.dart';
+// import 'package:onestep_rezero/notification/page/chatMain.dart';
+// import 'package:onestep_rezero/notification/realtime/realtimeProductChatController.dart' aaaaa;
 import 'package:onestep_rezero/product/pages/productMain.dart';
 
 class BottomNavigationItem {
@@ -33,11 +33,11 @@ class BottomNavigationItem {
           icon: Icon(Icons.list),
           title: "게시판",
         ),
-        BottomNavigationItem(
-          page: ChatMainPage(),
-          icon: RealtimeProductChatController().getTotalChatCountInBottomBar(),
-          title: "알림",
-        ),
+        // BottomNavigationItem(
+        //   page: ChatMainPage(),
+        //   icon: RealtimeProductChatController().getTotalChatCountInBottomBar(), aaaaa
+        //   title: "알림",
+        // ),
         BottomNavigationItem(
           page: MyInfoMain(),
           icon: Icon(Icons.person_outline),

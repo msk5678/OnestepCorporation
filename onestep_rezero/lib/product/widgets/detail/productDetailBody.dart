@@ -7,7 +7,7 @@ import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:onestep_rezero/animation/favoriteAnimation.dart';
 import 'package:onestep_rezero/favorite/utils/favoriteFirebaseApi.dart';
 import 'package:onestep_rezero/main.dart';
-import 'package:onestep_rezero/notification/realtime/realtimeNavigationManager.dart';
+// import 'package:onestep_rezero/notification/realtime/realtimeNavigationManager.dart' aaaaa;
 import 'package:onestep_rezero/product/models/product.dart';
 import 'package:onestep_rezero/product/pages/productBump.dart';
 import 'package:onestep_rezero/product/pages/productEdit.dart';
@@ -712,11 +712,11 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
             textStyle: TextStyle(color: Colors.white),
           ),
           onPressed: () {
-            RealTimeChatNavigationManager.navigateToRealTimeChattingRoom(
-                context,
-                googleSignIn.currentUser.id.toString(),
-                widget.product.uid,
-                widget.product.firestoreid);
+            // RealTimeChatNavigationManager.navigateToRealTimeChattingRoom(
+            //     context,
+            //     googleSignIn.currentUser.id.toString(),
+            //     widget.product.uid,
+            //     widget.product.firestoreid); aaaaa
           },
           child: Text('채팅'),
         ),

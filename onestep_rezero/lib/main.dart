@@ -7,7 +7,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:onestep_rezero/login/user.dart';
+import 'package:onestep_rezero/login/model/user.dart';
 import 'package:onestep_rezero/timeUtil.dart';
 
 import 'appmain/bottomNavigationItem.dart';
@@ -98,7 +98,7 @@ class _MainPageState extends State<MainPage> {
 
       String nickName = "홍은표";
 
-      // ********* 회원가입 *************
+      // ********* 회원가입 ************* aaaaa
 
       // await Navigator.push(
       //   context,
