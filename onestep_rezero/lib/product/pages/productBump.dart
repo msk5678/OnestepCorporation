@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/product/models/product.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onestep_rezero/product/widgets/main/productMainBody.dart';
@@ -40,6 +41,8 @@ class _ProductBumpState extends State<ProductBump> {
 
   _saveDataInFirestore() async {
     FirebaseFirestore.instance
+        .collection("university")
+        .doc(currentUserModel.university)
         .collection("product")
         .doc(widget.product.firestoreid)
         .update(
@@ -58,7 +61,12 @@ class _ProductBumpState extends State<ProductBump> {
         int count = 0;
         Navigator.of(context).popUntil((_) => count++ >= 3);
       },
-    );
+    ).onError((error, stackTrace) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        duration: Duration(seconds: 2),
+        content: Text("물품을 끌어올리기에 실패했어요"),
+      ));
+    });
   }
 
   _navigatorPopAlertDialog() async {

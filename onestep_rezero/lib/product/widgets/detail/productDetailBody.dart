@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
@@ -26,340 +25,12 @@ class ProductDetailBody extends StatefulWidget {
 
 class _ProductDetailBodyState extends State<ProductDetailBody>
     with SingleTickerProviderStateMixin {
-  Widget getUserProfile() {
-    return FutureBuilder(
-      future: FirebaseFirestore.instance
-          .collection("user")
-          .doc(widget.product.uid)
-          .get(),
-      builder:
-          (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.waiting:
-            return Text("");
-          default:
-            return Row(
-              children: <Widget>[
-                CachedNetworkImage(
-                  imageUrl: snapshot.data['imageUrl'],
-                  imageBuilder: (context, imageProvider) => Container(
-                    width: 50.0,
-                    height: 50.0,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                          image: imageProvider, fit: BoxFit.cover),
-                    ),
-                  ),
-                  placeholder: (context, url) => CircularProgressIndicator(),
-                  errorWidget: (context, url, error) => Icon(Icons.error),
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                Text(
-                  snapshot.data['nickName'],
-                  style: TextStyle(fontWeight: FontWeight.w500),
-                ),
-              ],
-            );
-        }
-      },
-    );
-  }
-
-  Widget getUserProducts() {
-    var _size = MediaQuery.of(context).size;
-    final double _itemHeight = (_size.height - kToolbarHeight - 24) / 3.0;
-    final double _itemWidth = _size.width / 2;
-
-    return FutureBuilder<QuerySnapshot>(
-      future: FirebaseFirestore.instance
-          .collection("university")
-          .doc(currentUserModel.university)
-          .collection('product')
-          .where('uid', isEqualTo: widget.product.uid)
-          .where('bumpTime',
-              isNotEqualTo: widget.product.bumpTime.microsecondsSinceEpoch)
-          .where('deleted', isEqualTo: false)
-          .where('hide', isEqualTo: false)
-          .orderBy('bumpTime', descending: true)
-          .limit(4)
-          .get(),
-      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (snapshot.hasError) return new Text('상품을 불러오지 못했습니다.');
-        switch (snapshot.connectionState) {
-          case ConnectionState.waiting:
-            return Container();
-          default:
-            if (snapshot.data.docs.isEmpty) {
-              return Container();
-            }
-
-            return Column(
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Text(
-                      '판매자의 다른 상품',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF333333),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        // 해당 사용자 판매상품 넘어가기
-                      },
-                      child: Row(
-                        children: <Widget>[
-                          Text(
-                            '더보기',
-                            style: TextStyle(
-                              fontSize: 15,
-                              color: Color(0xFF666666),
-                            ),
-                          ),
-                          Icon(
-                            Icons.keyboard_arrow_right,
-                            size: 20,
-                            color: Color(0xFF999999),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 10),
-                GridView.builder(
-                  shrinkWrap: true,
-                  itemCount: snapshot.data.size,
-                  physics: NeverScrollableScrollPhysics(),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    childAspectRatio: _itemWidth > _itemHeight
-                        ? (_itemHeight / _itemWidth)
-                        : (_itemWidth / _itemHeight),
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 10,
-                    crossAxisSpacing: 10,
-                  ),
-                  itemBuilder: (context, index) {
-                    return ProductItem(
-                        product: Product.fromJson(
-                            snapshot.data.docs[index].data(),
-                            snapshot.data.docs[index].id));
-                  },
-                ),
-              ],
-            );
-        }
-      },
-    );
-  }
-
-  Widget renderBody() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.all(5.0),
-          child: Column(
-            children: <Widget>[
-              TextField(
-                controller: _priceEditingController,
-                enableInteractiveSelection: false,
-                readOnly: true,
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                ),
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w500,
-                  color: Color(0xFF333333),
-                ),
-              ),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "${widget.product.title}",
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w400,
-                    color: Color(0xFF333333),
-                  ),
-                ),
-              ),
-              SizedBox(height: 10),
-              Row(
-                children: <Widget>[
-                  Icon(
-                    Icons.local_offer,
-                    color: Colors.grey,
-                    size: 17,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 2.0),
-                  ),
-                  Text("${widget.product.category}"),
-                ],
-              ),
-              Row(
-                children: <Widget>[
-                  Icon(
-                    Icons.access_time,
-                    color: Colors.grey,
-                    size: 15,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 2.0),
-                  ),
-                  Text("${TimeUtil.timeAgo(date: widget.product.bumpTime)}"),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                  ),
-                  Icon(
-                    Icons.remove_red_eye,
-                    color: Colors.grey,
-                    size: 15,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 2.0),
-                  ),
-                  Text(
-                      "${widget.product.views == null ? 0 : widget.product.views.length}"),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                  ),
-                  Icon(
-                    Icons.favorite,
-                    color: Colors.grey,
-                    size: 15,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 2.0),
-                  ),
-                  Container(
-                    width: 30,
-                    child: TextField(
-                      controller: _favoriteTextController,
-                      enableInteractiveSelection: false,
-                      readOnly: true,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              Divider(),
-              SizedBox(height: 10),
-              Container(
-                constraints: BoxConstraints(minHeight: 100),
-                child: Align(
-                  alignment: Alignment.topLeft,
-                  child: Text(
-                    "${widget.product.explain}",
-                  ),
-                ),
-              ),
-              SizedBox(height: 10),
-              Divider(),
-              SizedBox(
-                height: 80,
-                child: GestureDetector(
-                  onTap: () {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //       builder: (context) => ProfileWidget(
-                    //             uid: _product.uid!,
-                    //           )),
-                    // );
-                  },
-                  child: getUserProfile(),
-                ),
-              ),
-              SizedBox(height: 20),
-              getUserProducts(),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget setFavorite() {
-    bool chk = widget.product.favoriteUserList == null ||
-        widget.product
-                .favoriteUserList[googleSignIn.currentUser.id.toString()] ==
-            null;
-
-    return StreamBuilder<bool>(
-      stream: _favoriteStreamController.stream,
-      initialData: chk,
-      builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-        return GestureDetector(
-          onTap: () {
-            if (_isRunning == false) {
-              _isRunning = true;
-              if (snapshot.data) {
-                FavoriteFirebaseApi.insertFavorite(widget.product.firestoreid);
-                _favoriteStreamController.sink.add(false);
-                FavoriteAnimation().showFavoriteDialog(context);
-                _favoriteTextController.text =
-                    (int.parse(_favoriteTextController.text) + 1).toString();
-              } else {
-                FavoriteFirebaseApi.deleteFavorite(widget.product.firestoreid);
-                _favoriteStreamController.sink.add(true);
-                _favoriteTextController.text =
-                    (int.parse(_favoriteTextController.text) - 1).toString();
-              }
-            }
-            _isRunning = false;
-          },
-          child: Icon(
-            snapshot.data ? Icons.favorite_border : Icons.favorite,
-            color: Colors.pink,
-          ),
-        );
-      },
-    );
-  }
-
-  Widget bottomChatWidget() {
-    return Padding(
-      padding: EdgeInsets.only(right: 10.0),
-      child: SizedBox(
-        width: 150,
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            primary: Colors.pink,
-            textStyle: TextStyle(color: Colors.white),
-          ),
-          onPressed: () {
-            RealTimeChatNavigationManager.navigateToRealTimeChattingRoom(
-                context,
-                googleSignIn.currentUser.id.toString(),
-                widget.product.uid,
-                widget.product.firestoreid);
-          },
-          child: Text('채팅'),
-        ),
-      ),
-    );
-  }
-
-  // -----------------------------------------------
-
   double locationAlpha;
   Animation _colorTween;
 
   bool _isRunning;
-  // bool _appbarColor = false;
+  StreamController<int> _imageStreamController =
+      StreamController<int>.broadcast();
 
   final ScrollController _customScrollViewScrollController = ScrollController();
   final StreamController<int> _customScrollViewStreamController =
@@ -374,6 +45,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
 
   @override
   void initState() {
+    _imageStreamInit();
     locationAlpha = 0;
     _animationController = AnimationController(vsync: this);
     _colorTween = ColorTween(begin: Colors.white, end: Colors.black)
@@ -385,9 +57,19 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
             ? "0"
             : widget.product.favoriteUserList.length.toString());
     _priceEditingController =
-        new TextEditingController(text: widget.product.price);
+        new TextEditingController(text: widget.product.price + "원");
     _isRunning = false;
     super.initState();
+  }
+
+  void _imageStreamInit() {
+    if (widget.product.trading) {
+      _imageStreamController.sink.add(1);
+    } else if (widget.product.completed) {
+      _imageStreamController.sink.add(2);
+    } else {
+      _imageStreamController.sink.add(0);
+    }
   }
 
   void scrollListener() {
@@ -407,6 +89,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
   void dispose() {
     _customScrollViewStreamController.close();
     _customScrollViewScrollController.dispose();
+    _imageStreamController.close();
     _favoriteStreamController.close();
     super.dispose();
   }
@@ -522,6 +205,43 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
     );
   }
 
+  Widget _productState() {
+    return StreamBuilder(
+      stream: _imageStreamController.stream,
+      initialData: 0,
+      builder: (context, snapshot) {
+        if (snapshot.data >= 1) {
+          return IgnorePointer(
+            ignoring: true,
+            child: Container(
+              color: Colors.black.withOpacity(0.4),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Icon(
+                        widget.product.trading
+                            ? Icons.watch_later_outlined
+                            : Icons.check_circle_outline_rounded,
+                        color: Colors.white,
+                        size: 50),
+                    SizedBox(height: 10),
+                    Text(
+                      snapshot.data == 1 ? "예약중" : "판매완료",
+                      style: TextStyle(color: Colors.white, fontSize: 28),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        } else {
+          return Container();
+        }
+      },
+    );
+  }
+
   Widget _makeSliderImage() {
     Size _size = MediaQuery.of(context).size;
 
@@ -558,12 +278,14 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
                     height: MediaQuery.of(context).size.height,
                     errorWidget: (context, url, error) =>
                         Icon(Icons.error), // 로딩 오류 시 이미지
+
                     fit: BoxFit.cover,
                   ),
                 ),
               );
             },
           ),
+          _productState(),
         ],
       ),
     );
@@ -574,22 +296,9 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.all(5.0),
+          padding: const EdgeInsets.all(15.0),
           child: Column(
             children: <Widget>[
-              TextField(
-                controller: _priceEditingController,
-                enableInteractiveSelection: false,
-                readOnly: true,
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                ),
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w500,
-                  color: Color(0xFF333333),
-                ),
-              ),
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
@@ -603,6 +312,20 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
                   ),
                 ),
               ),
+              TextField(
+                controller: _priceEditingController,
+                enableInteractiveSelection: false,
+                readOnly: true,
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                ),
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w500,
+                  color: Color(0xFF333333),
+                ),
+              ),
+
               SizedBox(height: 10),
               Row(
                 children: <Widget>[
@@ -673,6 +396,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
                   alignment: Alignment.topLeft,
                   child: Text(
                     "${widget.product.explain}",
+                    style: TextStyle(height: 1.5),
                   ),
                 ),
               ),
@@ -693,8 +417,6 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
               //     child: getUserProfile(),
               //   ),
               // ),
-              // SizedBox(height: 20),
-              // getUserProducts(),
             ],
           ),
         ),
@@ -754,7 +476,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
 
   Widget _sellerOtherProduct() {
     var _size = MediaQuery.of(context).size;
-    final double _itemHeight = (_size.height - kToolbarHeight - 24) / 3.0;
+    final double _itemHeight = (_size.height - kToolbarHeight - 24) / 2.7;
     final double _itemWidth = _size.width / 2;
 
     return FutureBuilder<QuerySnapshot>(
@@ -808,25 +530,28 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
                     ],
                   ),
                 ),
-                GridView.builder(
-                  shrinkWrap: true,
-                  itemCount: snapshot.data.size,
-                  padding: EdgeInsets.symmetric(horizontal: 15),
-                  physics: NeverScrollableScrollPhysics(),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    childAspectRatio: _itemWidth > _itemHeight
-                        ? (_itemHeight / _itemWidth)
-                        : (_itemWidth / _itemHeight),
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 15,
-                    crossAxisSpacing: 7,
+                Padding(
+                  padding: EdgeInsets.only(bottom: 10),
+                  child: GridView.builder(
+                    shrinkWrap: true,
+                    itemCount: snapshot.data.size,
+                    padding: EdgeInsets.symmetric(horizontal: 15),
+                    physics: NeverScrollableScrollPhysics(),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      childAspectRatio: _itemWidth > _itemHeight
+                          ? (_itemHeight / _itemWidth)
+                          : (_itemWidth / _itemHeight),
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 15,
+                      crossAxisSpacing: 7,
+                    ),
+                    itemBuilder: (context, index) {
+                      return ProductItem(
+                          product: Product.fromJson(
+                              snapshot.data.docs[index].data(),
+                              snapshot.data.docs[index].id));
+                    },
                   ),
-                  itemBuilder: (context, index) {
-                    return ProductItem(
-                        product: Product.fromJson(
-                            snapshot.data.docs[index].data(),
-                            snapshot.data.docs[index].id));
-                  },
                 ),
               ],
             );
@@ -861,52 +586,258 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
         ]);
   }
 
-  Widget _bottomBarWidget() {
-    return SizedBox(
-      height: 70,
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border(
-            top: BorderSide(
-              color: Colors.black87,
-              width: 0.1,
-            ),
-          ),
-        ),
-        child: Row(
+  Future<dynamic> _productStateChangeModal() {
+    return showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            SizedBox(
-              width: 60,
-              height: 60,
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border(
-                    right: BorderSide(
-                      color: Colors.black87,
-                      width: 0.1,
-                    ),
-                  ),
+            if (widget.product.trading || widget.product.completed)
+              ListTile(
+                title: Center(
+                  child: Text('판매중'),
                 ),
-                child: setFavorite(),
+                onTap: () {
+                  FirebaseFirestore.instance
+                      .collection("university")
+                      .doc(currentUserModel.university)
+                      .collection("product")
+                      .doc(widget.product.firestoreid)
+                      .update({
+                    "trading": false,
+                    "completed": false
+                  }).whenComplete(() {
+                    _imageStreamController.sink.add(0);
+
+                    Navigator.pop(context);
+                  }).onError((error, stackTrace) => null);
+                },
               ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(right: 10.0),
-            ),
-            SizedBox(
-              width: 100,
-              child: Text(
-                "${widget.product.price}원",
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+            if (!widget.product.trading)
+              ListTile(
+                title: Center(
+                  child: Text('예약됨'),
+                ),
+                onTap: () {
+                  FirebaseFirestore.instance
+                      .collection("university")
+                      .doc(currentUserModel.university)
+                      .collection("product")
+                      .doc(widget.product.firestoreid)
+                      .update({"trading": true}).whenComplete(() {
+                    _imageStreamController.sink.add(1);
+                    Navigator.pop(context);
+                  });
+                },
               ),
+            if (!widget.product.completed)
+              ListTile(
+                title: Center(
+                  child: Text('판매완료'),
+                ),
+                onTap: () {
+                  FirebaseFirestore.instance
+                      .collection("university")
+                      .doc(currentUserModel.university)
+                      .collection("product")
+                      .doc(widget.product.firestoreid)
+                      .update({"completed": true}).whenComplete(() {
+                    _imageStreamController.sink.add(2);
+                    Navigator.pop(context);
+                  });
+                },
+              ),
+            Divider(color: Colors.black.withOpacity(0.3)),
+            ListTile(
+              title: Center(
+                child: Text('취소'),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+              },
             ),
-            Expanded(child: Container()),
-            if (widget.product.uid != googleSignIn.currentUser.id.toString())
-              bottomChatWidget(),
           ],
+        );
+      },
+    );
+  }
+
+  Widget setFavorite() {
+    bool chk = widget.product.favoriteUserList == null ||
+        widget.product
+                .favoriteUserList[googleSignIn.currentUser.id.toString()] ==
+            null;
+
+    return StreamBuilder<bool>(
+      stream: _favoriteStreamController.stream,
+      initialData: chk,
+      builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+        return GestureDetector(
+          onTap: () {
+            if (_isRunning == false) {
+              _isRunning = true;
+              if (snapshot.data) {
+                FavoriteFirebaseApi.insertFavorite(widget.product.firestoreid);
+                _favoriteStreamController.sink.add(false);
+                FavoriteAnimation().showFavoriteDialog(context);
+                _favoriteTextController.text =
+                    (int.parse(_favoriteTextController.text) + 1).toString();
+              } else {
+                FavoriteFirebaseApi.deleteFavorite(widget.product.firestoreid);
+                _favoriteStreamController.sink.add(true);
+                _favoriteTextController.text =
+                    (int.parse(_favoriteTextController.text) - 1).toString();
+              }
+            }
+            _isRunning = false;
+          },
+          child: Icon(
+            snapshot.data ? Icons.favorite_border : Icons.favorite,
+            color: Colors.pink,
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _bottomChatWidget() {
+    return Padding(
+      padding: EdgeInsets.only(right: 10.0),
+      child: SizedBox(
+        width: 150,
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            primary: Colors.pink,
+            textStyle: TextStyle(color: Colors.white),
+          ),
+          onPressed: () {
+            RealTimeChatNavigationManager.navigateToRealTimeChattingRoom(
+                context,
+                googleSignIn.currentUser.id.toString(),
+                widget.product.uid,
+                widget.product.firestoreid);
+          },
+          child: Text('채팅'),
         ),
       ),
     );
+  }
+
+  Widget _bottomBarWidget() {
+    if (widget.product.uid == googleSignIn.currentUser.id) {
+      return SizedBox(
+        height: 55,
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border(
+              top: BorderSide(color: Colors.grey.withOpacity(0.3), width: 0.5),
+            ),
+          ),
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            padding: EdgeInsets.only(left: 20, right: 20),
+            children: [
+              Padding(
+                padding: EdgeInsets.only(right: 20),
+                child: GestureDetector(
+                  onTap: () {},
+                  child: Row(
+                    children: [Icon(Icons.upload_outlined), Text("끌올하기")],
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(right: 20),
+                child: GestureDetector(
+                  onTap: () {},
+                  child: Row(
+                    children: [
+                      Icon(Icons.favorite_border_outlined),
+                      Text("찜한사람")
+                    ],
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(right: 20),
+                child: GestureDetector(
+                  onTap: () {
+                    _productStateChangeModal();
+                  },
+                  child: Row(
+                    children: [
+                      Icon(Icons.check_circle_outline_rounded),
+                      Text("상태변경")
+                    ],
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(right: 20),
+                child: GestureDetector(
+                  onTap: () {},
+                  child: Row(
+                    children: [Icon(Icons.edit_outlined), Text("상품수정")],
+                  ),
+                ),
+              ),
+              GestureDetector(
+                onTap: () {},
+                child: Row(
+                  children: [Icon(Icons.delete_outline), Text("상품삭제")],
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    } else {
+      return SizedBox(
+        height: 70,
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border(
+              top: BorderSide(
+                color: Colors.black87,
+                width: 0.1,
+              ),
+            ),
+          ),
+          child: Row(
+            children: <Widget>[
+              SizedBox(
+                width: 60,
+                height: 60,
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border(
+                      right: BorderSide(
+                        color: Colors.black87,
+                        width: 0.1,
+                      ),
+                    ),
+                  ),
+                  child: setFavorite(),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(right: 10.0),
+              ),
+              SizedBox(
+                width: 100,
+                child: Text(
+                  "${widget.product.price}원",
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
+              ),
+              Expanded(child: Container()),
+              _bottomChatWidget(),
+            ],
+          ),
+        ),
+      );
+    }
   }
 
   @override
@@ -921,125 +852,5 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
         );
       },
     );
-
-    // return LayoutBuilder(
-    //   builder: (context, constraint) {
-    //     Size _size = MediaQuery.of(context).size;
-
-    //     return Scaffold(
-    //       body: SafeArea(
-    //         bottom: false,
-    //         child: CustomScrollView(
-    //           controller: _customScrollViewScrollController,
-    //           slivers: [
-    //             StreamBuilder(
-    //                 initialData: false,
-    //                 stream: _customScrollViewStreamController.stream,
-    //                 builder: (context, snapshot) {
-    //                   return SliverAppBar(
-    //                     iconTheme: IconThemeData(
-    //                       color: snapshot.data
-    //                           ? Colors.black
-    //                           : Colors.white, //change your color here
-    //                     ),
-    //                     title: Text(
-    //                       widget.product.title,
-    //                       style: TextStyle(
-    //                           color: snapshot.data
-    //                               ? Colors.black
-    //                               : Colors.transparent),
-    //                     ),
-    //                     backgroundColor: Colors.white,
-    //                     primary: true,
-    //                     pinned: true,
-    //                     expandedHeight: _size.width,
-    //                     actions: [
-    //                       //     // shareButton(snapshot),
-    //                       popupMenuButton(snapshot.data),
-    //                     ],
-    //                     flexibleSpace: Stack(
-    //                       children: [
-    //                         FlexibleSpaceBar(
-    //                           background: SizedBox(
-    //                             height: _size.width,
-    //                             width: _size.width,
-    //                             child: Swiper(
-    //                               onTap: (index) {
-    //                                 Navigator.push(
-    //                                   context,
-    //                                   MaterialPageRoute(
-    //                                     builder: (context) => ImagesFullViewer(
-    //                                         imagesUrl: widget.product.imagesUrl,
-    //                                         index: index),
-    //                                   ),
-    //                                 );
-    //                               },
-    //                               loop: widget.product.imagesUrl.length == 1
-    //                                   ? false
-    //                                   : true,
-    //                               pagination: SwiperPagination(
-    //                                 alignment: Alignment.bottomCenter,
-    //                                 builder: DotSwiperPaginationBuilder(
-    //                                   activeColor: Colors.pink,
-    //                                   color: Colors.grey,
-    //                                 ),
-    //                               ),
-    //                               itemCount: widget.product.imagesUrl.length,
-    //                               itemBuilder:
-    //                                   (BuildContext context, int index) {
-    //                                 return Container(
-    //                                   child: Hero(
-    //                                     tag: widget.product.firestoreid,
-    //                                     child: CachedNetworkImage(
-    //                                       imageUrl:
-    //                                           widget.product.imagesUrl[index],
-    //                                       width:
-    //                                           MediaQuery.of(context).size.width,
-    //                                       height: MediaQuery.of(context)
-    //                                           .size
-    //                                           .height,
-    //                                       errorWidget: (context, url, error) =>
-    //                                           Icon(Icons.error), // 로딩 오류 시 이미지
-    //                                       fit: BoxFit.cover,
-    //                                     ),
-    //                                   ),
-    //                                 );
-    //                               },
-    //                             ),
-    //                           ),
-    //                         ),
-    //                         SizedBox(
-    //                           height: 70,
-    //                           child: FlexibleSpaceBar(
-    //                             collapseMode: CollapseMode.none,
-    //                             background: Container(
-    //                               decoration: BoxDecoration(
-    //                                 gradient: LinearGradient(
-    //                                   begin: Alignment.topCenter,
-    //                                   end: Alignment.bottomCenter,
-    //                                   colors: [
-    //                                     Colors.black38,
-    //                                     Colors.transparent
-    //                                   ],
-    //                                   stops: [0.0, 0.15],
-    //                                 ),
-    //                               ),
-    //                             ),
-    //                           ),
-    //                         ),
-    //                       ],
-    //                     ),
-    //                   );
-    //                 }),
-    //             SliverToBoxAdapter(
-    //               child: renderBody(),
-    //             ),
-    //           ],
-    //         ),
-    //       ),
-    //       // bottomNavigationBar: bottomNavigator(),
-    //     );
-    //   },
-    // );
   }
 }

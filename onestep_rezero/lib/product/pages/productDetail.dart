@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/product/models/product.dart';
-import 'package:onestep_rezero/product/widgets/detail/TestproductDetailBody.dart';
 import 'package:onestep_rezero/product/widgets/detail/productDetailBody.dart';
 
 class ClothDetail extends StatefulWidget {
@@ -49,24 +48,20 @@ class _ClothDetailState extends State<ClothDetail> {
           .doc(widget.docId)
           .get(),
       builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-        if (snapshot.hasError) return new Text('Error: ${snapshot.error}');
+        if (snapshot.hasError)
+          return Container(child: Center(child: Text("상품을 불러오는데 실패했어요.")));
         switch (snapshot.connectionState) {
           case ConnectionState.waiting:
             return Container();
           default:
             if (snapshot.data.data()['deleted'] ||
                 snapshot.data.data()['hide']) {
-              return Container(
-                child: Center(
-                  child: Text("없는 상품이에요."),
-                ),
-              );
+              return Container(child: Center(child: Text("없는 상품이에요.")));
             } else {
               _product =
                   Product.fromJson(snapshot.data.data(), snapshot.data.id);
               incProductViews();
               return ProductDetailBody(product: _product);
-              // return TestProductDetailBody(product: _product);
             }
         }
       },

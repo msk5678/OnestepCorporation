@@ -3,12 +3,15 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
-import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:multi_image_picker2/multi_image_picker2.dart';
+
 import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/product/pages/productAddCategorySelect.dart';
 import 'package:onestep_rezero/product/widgets/detail/convertImages.dart';
+
 import 'package:onestep_rezero/product/widgets/main/productMainBody.dart';
 import 'package:pattern_formatter/numeric_formatter.dart';
 import 'package:random_string/random_string.dart';
@@ -21,7 +24,7 @@ class ProductAdd extends StatefulWidget {
 }
 
 class _ProductAddState extends State<ProductAdd> {
-  List<Asset> _assetImageList = <Asset>[];
+  List<Asset> imageList = <Asset>[];
 
   final _titleTextEditingController = TextEditingController();
   final _priceTextEditingController = TextEditingController();
@@ -33,40 +36,41 @@ class _ProductAddState extends State<ProductAdd> {
     super.initState();
   }
 
-  BoxDecoration myBoxDecoration() {
-    return BoxDecoration(
-      border: Border.all(width: 1.0, color: Colors.grey),
-      borderRadius: BorderRadius.all(
-        Radius.circular(5.0),
-      ),
-    );
-  }
+  Future<void> loadAssets() async {
+    List<Asset> resultList = <Asset>[];
+    String error = 'No Error Detected';
 
-  void getImages() async {
-    List<Asset> _resultList = <Asset>[];
+    try {
+      resultList = await MultiImagePicker.pickImages(
+        maxImages: 5,
+        enableCamera: true,
+        selectedAssets: imageList,
+        // cupertinoOptions: CupertinoOptions(
+        //   takePhotoIcon: "chat",
+        //   doneButtonTitle: "Fatto",
+        // ),
+        materialOptions: MaterialOptions(
+          useDetailsView: true,
+          startInAllView: true,
+          actionBarColor: "#FFFFFF", // 앱바 백그라운드 색
+          actionBarTitleColor: "#000000", // 제목 글자색
+          selectCircleStrokeColor: "#FFFFFF",
+          backButtonDrawable: "back",
+          okButtonDrawable: "check",
+          statusBarColor: "#BBBBBB", // 상단 상태바 색
+        ),
+      );
+    } on Exception catch (e) {
+      error = e.toString();
+    }
 
-    _resultList = await MultiImagePicker.pickImages(
-      maxImages: 5,
-      enableCamera: true,
-      selectedAssets: _assetImageList,
-      cupertinoOptions: CupertinoOptions(),
-      materialOptions: MaterialOptions(
-        useDetailsView: true,
-        startInAllView: true,
-        actionBarColor: "#FFFFFF", // 앱바 백그라운드 색
-        actionBarTitleColor: "#000000", // 제목 글자색
-        selectCircleStrokeColor: "#FFFFFF",
-        backButtonDrawable: "back",
-        okButtonDrawable: "check",
-        statusBarColor: "#BBBBBB", // 상단 상태바 색
-      ),
-    );
-
-    if (_resultList.isEmpty) return;
-    if (listEquals(_assetImageList, _resultList)) return;
-
+    // If the widget was removed from the tree while the asynchronous platform
+    // message was in flight, we want to discard the reply rather than calling
+    // setState to update our non-existent appearance.
+    if (!mounted) return;
     setState(() {
-      _assetImageList = _resultList;
+      imageList = resultList;
+      // _error = error;
     });
   }
 
@@ -83,13 +87,18 @@ class _ProductAddState extends State<ProductAdd> {
           children: <Widget>[
             GestureDetector(
               onTap: () {
-                getImages();
+                loadAssets();
               },
               child: Container(
                 width: 80,
                 height: 80,
                 margin: EdgeInsets.only(top: 10, bottom: 20),
-                decoration: myBoxDecoration(), //       <--- BoxDecoration here
+                decoration: BoxDecoration(
+                  border: Border.all(width: 1.0, color: Colors.grey),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(5.0),
+                  ),
+                ), //       <--- BoxDecoration here
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
@@ -102,7 +111,7 @@ class _ProductAddState extends State<ProductAdd> {
                       right: 5,
                       bottom: 5,
                       child: Text(
-                        "${_assetImageList.length}/5",
+                        "${imageList.length}/5",
                         style: TextStyle(color: Colors.grey),
                       ),
                     ),
@@ -117,7 +126,7 @@ class _ProductAddState extends State<ProductAdd> {
                 margin: EdgeInsets.only(top: 10, bottom: 20),
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  itemCount: _assetImageList.length,
+                  itemCount: imageList.length,
                   itemBuilder: (BuildContext context, int index) {
                     return Padding(
                       padding: EdgeInsets.only(left: 7),
@@ -125,13 +134,18 @@ class _ProductAddState extends State<ProductAdd> {
                         borderRadius: BorderRadius.all(Radius.circular(5.0)),
                         child: Stack(
                           children: [
+                            // Image.memory(
+                            //   ima[index].buffer.asUint8List(), width: 80,
+                            //   height: 80,
+                            //   // key: ValueKey(asset.identifier),
+                            //   fit: BoxFit.cover,
+                            // ),
                             ConvertImages(
-                                asset: _assetImageList[index],
-                                width: 80,
-                                height: 80),
+                                asset: imageList[index], width: 80, height: 80),
+
                             // AssetThumb(
                             //     quality: 100,
-                            //     asset: _assetImageList[index],
+                            //     asset: imageList[index],
                             //     width: 80,
                             //     height: 80),
                             Positioned(
@@ -140,7 +154,7 @@ class _ProductAddState extends State<ProductAdd> {
                               child: GestureDetector(
                                 onTap: () {
                                   setState(() {
-                                    _assetImageList.removeAt(index);
+                                    imageList.removeAt(index);
                                   });
                                 },
                                 child: Container(
@@ -163,76 +177,6 @@ class _ProductAddState extends State<ProductAdd> {
                         ),
                       ),
                     );
-                    // return Padding(
-                    //   padding: EdgeInsets.only(left: 7),
-                    //   // child : Image.memory(Uint8List.fromList(_imageList[index].)),
-                    //   child: FutureBuilder(
-                    //     future:
-                    //         convertAssetToByteData(_assetImageList[index]),
-                    //     builder: (context, snapshot) {
-                    //       switch (snapshot.connectionState) {
-                    //         case ConnectionState.waiting:
-                    //           return SizedBox(
-                    //             width: 80,
-                    //             height: 80,
-                    //             child: Container(
-                    //               margin: EdgeInsets.all(10.0),
-                    //               child: CircularProgressIndicator(),
-                    //               height: 20.0,
-                    //               width: 20.0,
-                    //             ),
-                    //           );
-
-                    //         default:
-
-                    //           // Image.memory(bytes);
-                    //           return ClipRRect(
-                    //             borderRadius:
-                    //                 BorderRadius.all(Radius.circular(5.0)),
-                    //             child: Stack(
-                    //               children: [
-                    //                 Image(
-                    //                   image: MemoryImage(
-                    //                     snapshot.data,
-                    //                   ),
-                    //                   width: 80,
-                    //                   height: 80,
-                    //                   fit: BoxFit.cover,
-                    //                 ),
-                    //                 Positioned(
-                    //                   top: 3,
-                    //                   right: 3,
-                    //                   child: GestureDetector(
-                    //                     onTap: () {
-                    //                       setState(() {
-                    //                         _assetImageList.removeAt(index);
-                    //                       });
-                    //                     },
-                    //                     child: Container(
-                    //                       decoration: BoxDecoration(
-                    //                         borderRadius:
-                    //                             BorderRadius.circular(100),
-                    //                         color:
-                    //                             Color.fromRGBO(0, 0, 0, 0.5),
-                    //                       ),
-                    //                       child: Padding(
-                    //                         padding: EdgeInsets.all(2.0),
-                    //                         child: Icon(
-                    //                           Icons.close,
-                    //                           color: Colors.white,
-                    //                           size: 13,
-                    //                         ),
-                    //                       ),
-                    //                     ),
-                    //                   ),
-                    //                 ),
-                    //               ],
-                    //             ),
-                    //           );
-                    //       }
-                    //     },
-                    //   ),
-                    // );
                   },
                 ),
               ),
@@ -389,7 +333,7 @@ class _ProductAddState extends State<ProductAdd> {
         duration: Duration(seconds: 2),
         content: Text("설명을 입력해주세요."),
       ));
-    } else if (_assetImageList.length < 1) {
+    } else if (imageList.length < 1) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         duration: Duration(seconds: 2),
         content: Text("물품을 등록하려면 한장 이상의 사진이 필요합니다."),
@@ -397,7 +341,7 @@ class _ProductAddState extends State<ProductAdd> {
     } else {
       List _imgUriarr = [];
 
-      for (var imaged in _assetImageList) {
+      for (var imaged in imageList) {
         Reference storageReference = FirebaseStorage.instance
             .ref()
             .child("productimage/${randomAlphaNumeric(15)}");
