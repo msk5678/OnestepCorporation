@@ -210,23 +210,13 @@ class _LastChatState extends State<ChatScreen> {
         .then((DataSnapshot snapshot) {
       if (snapshot.value == null) {
         _createChatId();
-        print('#realpro check exist chat  : null $chattingRoomId');
       } else {
-        print('#realpro check exist chat  : not null');
-        print('#realpro Data strmsg : ${snapshot.value}');
         Map<dynamic, dynamic> values = snapshot.value;
         //retest(values);
         //retest2();
         values.forEach((key, values) {
           Future.delayed(const Duration(seconds: 1));
-          print('#realpro Data strmsg second value : ${values.toString()}');
-          print('#realpro Data strmsg second key : ${key.toString()}');
-          print(
-              "#realpro 생성 채팅방 가져온값 186 key ${key.toString()} / myid ${values['users'].keys.toList()[0]} / fid ${values['users'].keys.toList()[1]} / postId ${values['postId']}");
 
-          print(
-              "#realpro Data strmsg second 1  myid $myId / fid $friendId / post $postId");
-          print("#realpro 생성 채팅방 상단");
           if ((myId == values['users'].keys.toList()[0] &&
                   friendId == values['users'].keys.toList()[1] &&
                   postId == values['postId']) ||
@@ -235,23 +225,13 @@ class _LastChatState extends State<ChatScreen> {
                   postId == values['postId'])) {
             existChattingRoom = true;
             chattingRoomId = key.toString();
-
-            print(
-                "#realpro Data strmsg second 채팅방 있음 22 myid $myId / fid $friendId / post $postId / chatId $chattingRoomId");
           }
         });
-        print("#realpro 생성 채팅방 하단");
         if (existChattingRoom == true) {
-          print(
-              "#realpro 생성 채팅방 있음 186 myid $myId / fid $friendId / chatId $chattingRoomId");
           //만약 채팅방이 있으면
           setState(() {});
         } else {
           _createChatId();
-          print(
-              "#realpro 생성 채팅방 없음 $existChattingRoom 186 myid $myId / fid $friendId / chatId $chattingRoomId");
-          print(
-              "#realpro 생성 채팅방 찍기 $existChattingRoom 186 myid ${DateTime.now().millisecondsSinceEpoch.toString()}");
         }
       } //else
     } //than
@@ -268,8 +248,6 @@ class _LastChatState extends State<ChatScreen> {
     isDisplaySticker = false;
     isLoading = false;
     existChattingRoom = false;
-
-    print("#### Data strmsg init");
 
     checkExistChattingRoom();
   }
@@ -485,48 +463,20 @@ class _LastChatState extends State<ChatScreen> {
                     return Container();
                   //CircularProgressIndicator();
                   default:
-                    print("#realpro Strmsg top $chattingRoomId");
                     if (snapshot == null ||
                         !snapshot.hasData ||
                         snapshot.data.snapshot.value == null) {
-                      print(
-                          "stream values if0 null : ${snapshot.data.snapshot.value}");
                       return Container();
                     } else if (snapshot.hasData) {
-                      print("#realpro Strmsg top 값 있음");
                       listProductMessage.clear(); //리스트 클리어
                       DataSnapshot dataValues = snapshot.data.snapshot;
                       Map<dynamic, dynamic> values = dataValues.value;
-                      print("#realpro Strmsg top value : " + values.toString());
-                      print("#realpro Strmsg keys : ${values.keys.toString()}");
-                      print("#realpro Strmsg top con : " +
-                          values['content'].toString());
 
                       values.forEach((key, values) {
-                        print(
-                            "#realpro Strmsg message id : ${values["idTo"].keys.toList()[0]}");
-                        String s = values[
-                            "idTo/${googleSignIn.currentUser.id.toString()}"];
-                        print(
-                            "#realpro Strmsg message read : ${googleSignIn.currentUser.id.toString()} ${values["idTo/${googleSignIn.currentUser.id.toString()}"]} $s");
-                        print(
-                            "#realpro Strmsg message read : ${googleSignIn.currentUser.id.toString()} ${values["idTo/TLtvLka2sHTPQE3q6U2WPxfgJ8j2"].toString()} ");
-
-                        print(
-                            "#realpro Strmsg message key : ${key.toString()}");
-                        print(
-                            "#realpro Strmsg message value : ${values['content']}");
-                        print(
-                            "#realpro Strmsg message idTo : ${values['idTo']}");
-                        print(
-                            "#realpro Strmsg message idTo : ${values['idTo'].values.toList()[0]}");
-
                         //Message Read update
                         if (values["idTo"].keys.toList()[0] ==
                                 googleSignIn.currentUser.id.toString() &&
                             values['idTo'].values.toList()[0] == false) {
-                          print(
-                              "안읽은 메세지, idTo : ${values["idTo"].keys.toList()[0]} // bool : ${values['idTo'].values.toList()[0]} // vals : $values");
                           //listProductMessage[0].
                           //
                           RealtimeProductChatController()
@@ -552,8 +502,7 @@ class _LastChatState extends State<ChatScreen> {
                       });
                       listProductMessage.sort((b, a) =>
                           a.timestamp.compareTo(b.timestamp)); //정렬3. 시간 순 정렬
-                      print("#realpro Strmsg top list index : " +
-                          listProductMessage.length.toString());
+
                       return listProductMessage.length > 0
                           ? ListView.builder(
                               padding: EdgeInsets.all(10.0),
@@ -620,8 +569,7 @@ class _LastChatState extends State<ChatScreen> {
   Widget createMessageDate(int index, int maxIndex,
       ProductMessage productMessage, ProductMessage nextProductMessage) {
     var maxindex = maxIndex - 1;
-    print(
-        "##message index $index / m Index $maxIndex / proMsg ${productMessage.timestamp}");
+
     if (index == maxindex && productMessage != null) //메세지 시작일 경우 이거 출력
       return getMessageDate(productMessage.timestamp);
     else if (index < maxindex && productMessage != null) {
@@ -730,10 +678,6 @@ class _LastChatState extends State<ChatScreen> {
                               clipBehavior: Clip.hardEdge,
                             ),
                             onPressed: () {
-                              // print("pic click " +
-                              //     document["content"] +
-                              //     'index : ' +
-                              //     index.toString());
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -954,11 +898,8 @@ class _LastChatState extends State<ChatScreen> {
                   icon: Icon(Icons.send),
                   color: Colors.lightBlueAccent,
                   onPressed: () {
-                    print(
-                        "#realpro myid $myId / fid $friendId / chatId $chattingRoomId");
                     if (existChattingRoom == false) {
                       //방 만들어진 적이 없으면
-                      print("#realpro 채팅방 없음, 방생성ㅇ.");
                       ProductSendMessage productSendMessage;
                       productSendMessage =
                           new ProductSendMessage.forMapSnapshot(
@@ -1062,7 +1003,6 @@ class _LastChatState extends State<ChatScreen> {
 
   // var metadata;
   Future getImage() async {
-    print("1. 이미지 선택");
     pickFile = await ImagePicker().getImage(source: ImageSource.gallery);
     if (pickFile != null) {
       isLoading = true;
@@ -1077,16 +1017,12 @@ class _LastChatState extends State<ChatScreen> {
     // if (imageFile != null) {
     //   isLoading = true;
     // }
-    print("2. 이미지 선택 완료");
 
     uploadImageFile();
-    print("0. 이미지 업로드 완료");
   }
 
   Future uploadImageFile() async {
-    print("3. 이미지 업로드 호출");
     String fileName = DateTime.now().millisecondsSinceEpoch.toString();
-    print('4. 이미지 파일명 : $fileName');
     firebase_storage.Reference storageReference = firebase_storage
         .FirebaseStorage.instance
         .ref()

@@ -224,12 +224,6 @@ class _ProductChatListPageState extends State<ProductChatListPage>
                             : productsUserId =
                                 listProductChat[index].chatUsers.user1Uid;
 
-                        print(
-                            "@@@@@@@@@@@@@@@ userid : $productsUserId , anotherid : 108438757310040285856");
-
-                        print("test" +
-                            identical(productsUserId, "108438757310040285856")
-                                .toString());
                         // print(
                         //     "##dd pro $productsUserId : '${listProductChat[index].chatId.toString()}/message'");
 

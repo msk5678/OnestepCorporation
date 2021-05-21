@@ -64,7 +64,8 @@ class ProductMainHeader extends ConsumerWidget {
   }
 
   Widget header(BuildContext context) {
-    categoryList.then((value) => print("@@@@@@#### ${value.docs.length}"));
+    categoryList
+        .then((value) => print("@@@@@@#### 카테고리 갯수 : ${value.docs.length}"));
 
     return GridView(
       physics: NeverScrollableScrollPhysics(),
