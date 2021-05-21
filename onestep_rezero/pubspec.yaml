@@ -85,6 +85,9 @@ dependencies:
   fluttertoast: ^7.1.1
   ##########
 
+  #admob
+  flutter_native_admob: ^2.1.0
+
   
 
   #Chat Test
