@@ -66,8 +66,51 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     _currentIndex = 0;
+    // String kakaoAppKey = "88b99cb950dc222f10f369161182d008";
+    // KakaoContext.clientId = kakaoAppKey;
+    // initDynamicLinks();
     super.initState();
   }
+
+  //   void initDynamicLinks() async {
+  //   // 앱이 active이거나 background 상태일때 들어온 링크를 알 수 있는 링크 콜백에 대한 리스너 onLink()
+  //   FirebaseDynamicLinks.instance.onLink(
+  //       onSuccess: (PendingDynamicLinkData dynamicLink) async {
+  //     final NavigationService navService = NavigationService();
+  //     final Uri deepLink = dynamicLink?.link;
+
+  //     print(deepLink.path);
+
+  //     if (deepLink != null) {
+  //       var code = deepLink.queryParameters['code'];
+  //       navService.pushNamed('/DetailProduct', args: {"PRODUCTID": code}).then(
+  //           (value) {
+  //         print("clothitem");
+  //       });
+  //       // _handleDynamicLink(deepLink);
+  //     }
+  //   }, onError: (OnLinkErrorException e) async {
+  //     print('onLinkError');
+  //     print(e.message);
+  //   });
+
+  //   // 앱을 새로 런치한 링크를 알 수 있는 getInitialLink()
+  //   final PendingDynamicLinkData data =
+  //       await FirebaseDynamicLinks.instance.getInitialLink();
+  //   final Uri deepLink = data?.link;
+
+  //   print(deepLink);
+  //   if (deepLink != null) {
+  //     var code = deepLink.queryParameters['code'];
+  //     navService
+  //         .pushNamed('/DetailProduct', args: {"PRODUCTID": code}).then((value) {
+  //       print("clothitem");
+  //     });
+
+  //     // navService.pushNamed('/helloOnestep', args: deepLink);
+  //     // _handleDynamicLink(deepLink);
+  //   }
+  // }
 
   bool isEnd() {
     DateTime now = DateTime.now();
