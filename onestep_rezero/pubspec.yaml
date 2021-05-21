@@ -86,8 +86,8 @@ dependencies:
   ##########
 
   #admob
-  flutter_native_admob: ^2.1.0
-
+  flutter_native_admob: ^2.1.0+3
+  google_mobile_ads: ^0.12.1
   
 
   #Chat Test
