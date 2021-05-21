@@ -25,9 +25,6 @@ class ProductChatList {
   });
 
   ProductChatList.forMapSnapshot(dynamic snapshot) {
-    print("##@#채팅방 생성@#@# ${snapshot["chatId"]} ${snapshot["chatUsers"]}");
-    //print("##@#채팅방 생성@#@# ${snapshot["chatUsers"][0]}");
-    //productChatInfo
     chatId = snapshot["chatId"];
     postId = snapshot["postId"];
     createTime = snapshot["createTime"];

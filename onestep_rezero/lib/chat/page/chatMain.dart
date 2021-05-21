@@ -132,7 +132,7 @@ class ChatMainPageState extends State<ChatMainPage>
               isScrollable: true,
               labelPadding: EdgeInsets.only(left: 8, right: 0),
               tabs: _allPages.map<Tab>((_Page page) {
-                print("####### ${page.text}");
+                // print("####### ${page.text}");
                 return Tab(
                     text: page.text,
                     icon:
@@ -161,8 +161,9 @@ class ChatMainPageState extends State<ChatMainPage>
               itemBuilder: (context, position) {
                 return Container(
                   child: (position == 0 && page.text == '장터게시판')
-                      ? RealTimePage()
-                      : ProductChatListPage(),
+                      ? ProductChatListPage()
+                      : Text("익명 향후 보완"),
+                  //RealTimePage()
                 );
               },
               itemCount: 1,

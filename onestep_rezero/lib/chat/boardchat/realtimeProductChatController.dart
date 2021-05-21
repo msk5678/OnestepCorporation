@@ -266,9 +266,9 @@ class RealtimeProductChatController {
       "productChatCount": chatCount,
     }).whenComplete(() {
       //Fluttertoast.showToast(msg: '채팅방카운트를 업데이트했습니다.');
-      print("##챗카운트 업데이트 성공");
+      // print("##챗카운트 업데이트 성공");
     }).catchError((onError) {
-      Fluttertoast.showToast(msg: '채팅방카운트를 업데이트 실패.');
+      //Fluttertoast.showToast(msg: '채팅방카운트를 업데이트 실패.');
       print(onError);
     });
   }
