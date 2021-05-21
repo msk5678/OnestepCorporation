@@ -87,8 +87,11 @@ dependencies:
 
   #admob
   flutter_native_admob: ^2.1.0
-
   
+  #SlideUpPanel
+  sliding_up_panel: ^2.0.0+1
+  #LikeButton
+  like_button: ^2.0.2
 
   #Chat Test
   #stream_chat_flutter: ^1.5.1
