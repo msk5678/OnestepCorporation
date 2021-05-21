@@ -30,93 +30,115 @@ class _ProductItemState extends State<ProductItem> {
     super.dispose();
   }
 
+  Widget setFavorite() {
+    return StreamBuilder<DocumentSnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection("university")
+          .doc(currentUserModel.university)
+          .collection('product')
+          .doc(widget.product.firestoreid)
+          .snapshots(),
+      builder:
+          (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.waiting:
+            return Positioned(
+              right: 0,
+              top: 0,
+              child: Padding(
+                padding: EdgeInsets.all(5),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    Icon(
+                      _fChk ? Icons.favorite_border : Icons.favorite,
+                      color: _fChk ? Colors.white : Colors.pink,
+                    ),
+                  ],
+                ),
+              ),
+            );
+          default:
+            Product p =
+                Product.fromJson(snapshot.data.data(), snapshot.data.id);
+
+            bool chk = p.favoriteUserList == null ||
+                p.favoriteUserList[googleSignIn.currentUser.id] == null;
+
+            _fChk = chk;
+            return Positioned(
+              right: 0,
+              top: 0,
+              child: Padding(
+                padding: EdgeInsets.all(5),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    GestureDetector(
+                      onTap: () {
+                        if (chk) {
+                          FavoriteFirebaseApi.insertFavorite(
+                              widget.product.firestoreid);
+                          FavoriteAnimation().showFavoriteDialog(context);
+                        } else {
+                          FavoriteFirebaseApi.deleteFavorite(
+                              widget.product.firestoreid);
+                        }
+                      },
+                      child: Icon(
+                        chk ? Icons.favorite_border : Icons.favorite,
+                        color: _fChk ? Colors.white : Colors.pink,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+        }
+      },
+    );
+  }
+
+  Widget getImage() {
+    Size size = MediaQuery.of(context).size;
+    return CachedNetworkImage(
+      imageUrl: widget.product.imagesUrl[0],
+      width: size.width,
+      height: size.height,
+      errorWidget: (context, url, error) => Icon(Icons.error), // 로딩 오류 시 이미지
+      fit: BoxFit.cover,
+    );
+  }
+
+  Widget productState() {
+    if (widget.product.trading || widget.product.completed) {
+      return Positioned(
+        left: 0,
+        right: 0,
+        bottom: 0,
+        height: 30,
+        child: Container(
+          alignment: Alignment.center,
+          color: Colors.black.withOpacity(0.3),
+          child: Text(widget.product.trading ? "예약중" : "판매완료",
+              style: TextStyle(color: Colors.white),
+              textAlign: TextAlign.center),
+        ),
+      );
+    } else
+      return Container();
+  }
+
   @override
   Widget build(BuildContext context) {
-    Widget setFavorite() {
-      return StreamBuilder<DocumentSnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('products')
-            .doc(widget.product.firestoreid)
-            .snapshots(),
-        builder:
-            (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.waiting:
-              return Positioned(
-                right: 0,
-                bottom: 0,
-                child: Padding(
-                  padding: EdgeInsets.all(5),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      Icon(
-                        _fChk ? Icons.favorite_border : Icons.favorite,
-                        color: Colors.pink,
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            default:
-              Product p =
-                  Product.fromJson(snapshot.data.data(), snapshot.data.id);
-
-              bool chk = p.favoriteuserlist == null ||
-                  p.favoriteuserlist[googleSignIn.currentUser.id.toString()] ==
-                      null;
-
-              _fChk = chk;
-              return Positioned(
-                right: 0,
-                bottom: 0,
-                child: Padding(
-                  padding: EdgeInsets.all(5),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      GestureDetector(
-                        onTap: () {
-                          if (chk) {
-                            FavoriteFirebaseApi.insertFavorite(
-                                widget.product.firestoreid);
-                            FavoriteAnimation().showFavoriteDialog(context);
-                          } else {
-                            FavoriteFirebaseApi.deleteFavorite(
-                                widget.product.firestoreid);
-                          }
-                        },
-                        child: Icon(
-                          chk ? Icons.favorite_border : Icons.favorite,
-                          color: Colors.pink,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-          }
-        },
-      );
-    }
-
-    Widget getImage(BuildContext context) {
-      return CachedNetworkImage(
-        imageUrl: widget.product.images[0],
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        errorWidget: (context, url, error) => Icon(Icons.error), // 로딩 오류 시 이미지
-        fit: BoxFit.cover,
-      );
-    }
-
-    double coverSize = 110;
-
     return GestureDetector(
       onTap: () {
-        Navigator.of(context).push(MaterialPageRoute(
+        Navigator.of(context).push(
+          MaterialPageRoute(
             builder: (context) =>
-                ClothDetail(docId: widget.product.firestoreid)));
+                ClothDetail(docId: widget.product.firestoreid),
+          ),
+        );
       },
       child: Container(
         child: Column(
@@ -125,71 +147,47 @@ class _ProductItemState extends State<ProductItem> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(4),
                 child: Stack(
-                  fit: StackFit.passthrough,
+                  fit: StackFit.expand,
                   children: <Widget>[
-                    Center(child: CircularProgressIndicator()),
-                    getImage(context),
-                    Positioned(
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      height: coverSize / 2,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              Colors.transparent,
-                              Color.fromARGB(100, 0, 0, 0)
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
+                    getImage(),
+                    productState(),
                     setFavorite(),
                   ].where((item) => item != null).toList(),
                 ),
               ),
             ),
-            Padding(padding: EdgeInsets.only(top: 5)),
+            SizedBox(height: 4),
             SizedBox(
-              height: 15,
               child: Align(
-                child: Row(
-                  children: <Widget>[
-                    Text(
-                      "${widget.product.price}",
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                        color: Color(0xFF333333),
-                      ),
-                    ),
-                    Text(
-                      "원",
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontSize: 12),
-                    ),
-                  ],
+                child: Text(
+                  "${widget.product.title}",
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                    color: Color(0xFF333333),
+                  ),
                 ),
                 alignment: Alignment.centerLeft,
               ),
             ),
+            SizedBox(height: 4),
             SizedBox(
-              height: 14,
               child: Align(
-                child: Text(
-                  "${widget.product.title}",
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                    color: Color(0xFF333333),
-                  ),
+                child: Row(
+                  children: <Widget>[
+                    Text(
+                      "${widget.product.price}원",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF333333),
+                      ),
+                    ),
+                  ],
                 ),
                 alignment: Alignment.centerLeft,
               ),
@@ -225,7 +223,7 @@ class _ProductItemState extends State<ProductItem> {
                 // ),
                 Spacer(),
                 Text(
-                  TimeUtil.timeAgo(date: widget.product.bumptime),
+                  TimeUtil.timeAgo(date: widget.product.bumpTime),
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w400,

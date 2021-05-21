@@ -10,8 +10,10 @@ class FavoriteFirebaseApi {
     var refProducts;
 
     refProducts = FirebaseFirestore.instance
-        .collection("products")
-        .orderBy("favoriteuserlist." + googleSignIn.currentUser.id.toString(),
+        .collection("university")
+        .doc(currentUserModel.university)
+        .collection("product")
+        .orderBy("favoriteUserList." + googleSignIn.currentUser.id,
             descending: true)
         .limit(limit);
 
@@ -25,15 +27,24 @@ class FavoriteFirebaseApi {
   static void insertFavorite(String docId) {
     var time = DateTime.now().millisecondsSinceEpoch;
 
-    FirebaseFirestore.instance.collection("products").doc(docId).update({
-      "favoriteuserlist." + googleSignIn.currentUser.id.toString(): time,
+    FirebaseFirestore.instance
+        .collection("university")
+        .doc(currentUserModel.university)
+        .collection("product")
+        .doc(docId)
+        .update({
+      "favoriteUserList." + googleSignIn.currentUser.id: time,
     });
   }
 
   static void deleteFavorite(String docId) {
-    FirebaseFirestore.instance.collection("products").doc(docId).update({
-      "favoriteuserlist" + googleSignIn.currentUser.id.toString():
-          FieldValue.delete()
+    FirebaseFirestore.instance
+        .collection("university")
+        .doc(currentUserModel.university)
+        .collection("product")
+        .doc(docId)
+        .update({
+      "favoriteUserList." + googleSignIn.currentUser.id: FieldValue.delete()
     });
   }
 }

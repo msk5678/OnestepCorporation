@@ -24,13 +24,15 @@ class _ClothDetailState extends State<ClothDetail> {
     // 조회수 증가
 
     if (_product.views == null ||
-        _product.views[googleSignIn.currentUser.id.toString()] != true) {
+        _product.views[googleSignIn.currentUser.id] != true) {
       FirebaseFirestore.instance
-          .collection("products")
+          .collection("university")
+          .doc(currentUserModel.university)
+          .collection("product")
           .doc(widget.docId)
           .update(
         {
-          "views." + googleSignIn.currentUser.id.toString(): true,
+          "views." + googleSignIn.currentUser.id: true,
         },
       );
     }
@@ -40,22 +42,21 @@ class _ClothDetailState extends State<ClothDetail> {
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: FirebaseFirestore.instance
-          .collection("products")
+          .collection("university")
+          .doc(currentUserModel.university)
+          .collection("product")
           .doc(widget.docId)
           .get(),
       builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-        if (snapshot.hasError) return new Text('Error: ${snapshot.error}');
+        if (snapshot.hasError)
+          return Container(child: Center(child: Text("상품을 불러오는데 실패했어요.")));
         switch (snapshot.connectionState) {
           case ConnectionState.waiting:
             return Container();
           default:
             if (snapshot.data.data()['deleted'] ||
                 snapshot.data.data()['hide']) {
-              return Container(
-                child: Center(
-                  child: Text("없는 상품이에요."),
-                ),
-              );
+              return Container(child: Center(child: Text("없는 상품이에요.")));
             } else {
               _product =
                   Product.fromJson(snapshot.data.data(), snapshot.data.id);
