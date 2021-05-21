@@ -392,7 +392,6 @@ class _ProductAddState extends State<ProductAdd> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       appBar: AppBar(
         iconTheme: IconThemeData(
