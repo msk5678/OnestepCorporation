@@ -121,10 +121,10 @@ class _ProductMainState extends State<ProductMain> {
     context.read(productMainService).fetchProducts();
   }
 
-  Widget productAddFLoatingActionButton() {
+  Widget productAddFloatingActionButton() {
     return StreamBuilder<bool>(
         stream: _productAddstreamController.stream,
-        initialData: false,
+        initialData: true,
         builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
           return Visibility(
             visible: snapshot.data,
@@ -219,8 +219,8 @@ class _ProductMainState extends State<ProductMain> {
       floatingActionButton: Stack(
         children: <Widget>[
           Align(
-            alignment: Alignment.bottomCenter,
-            child: productAddFLoatingActionButton(),
+            alignment: Alignment(0.1, 1.0),
+            child: productAddFloatingActionButton(),
           ),
           Align(
             alignment: Alignment.bottomRight,

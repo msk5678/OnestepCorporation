@@ -3,6 +3,14 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as FBA;
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kakao_flutter_sdk/common.dart';
+import 'package:no_context_navigation/no_context_navigation.dart';
+import 'package:onestep_rezero/moor/moor_database.dart';
+import 'package:onestep_rezero/timeUtil.dart';
+import 'package:provider/provider.dart' as provider;
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -24,7 +32,9 @@ void main() async {
   await Firebase.initializeApp();
   TimeUtil.setLocalMessages();
   runApp(
-    ProviderScope(child: MyApp()),
+    provider.MultiProvider(providers: [
+      provider.Provider<AppDatabase>.value(value: new AppDatabase()),
+    ], child: ProviderScope(child: MyApp())),
   );
 }
 
@@ -40,6 +50,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: NavigationService.navigationKey,
       debugShowCheckedModeBanner: false,
       title: 'Onestep',
       // builder: (context, child) {
@@ -70,18 +81,51 @@ class _MainPageState extends State<MainPage> {
       "ca-app-pub-3940256099942544/6300978111"; //testId
   @override
   void initState() {
-    _currentIndex = 0;
     super.initState();
-    // GoogleAdmob().initAdmob();
-    //GoogleAdmob().initBannerAd(banner);
+    _currentIndex = 0;
+    String kakaoAppKey = "88b99cb950dc222f10f369161182d008";
+    KakaoContext.clientId = kakaoAppKey;
+    initDynamicLinks();
+  }
 
-    banner = BannerAd(
-      listener: AdListener(),
-      size: AdSize.banner,
-      adUnitId: Platform.isIOS ? iOsTestUnitid : androidTestUnitid,
-//      adUnitId: androidTestUnitid,
-      request: AdRequest(),
-    )..load();
+  void initDynamicLinks() async {
+    // 앱이 active이거나 background 상태일때 들어온 링크를 알 수 있는 링크 콜백에 대한 리스너 onLink()
+    FirebaseDynamicLinks.instance.onLink(
+        onSuccess: (PendingDynamicLinkData dynamicLink) async {
+      final NavigationService navService = NavigationService();
+      final Uri deepLink = dynamicLink?.link;
+
+      print(deepLink.path);
+
+      if (deepLink != null) {
+        var code = deepLink.queryParameters['code'];
+        navService.pushNamed('/DetailProduct', args: {"PRODUCTID": code}).then(
+            (value) {
+          print("clothitem");
+        });
+        // _handleDynamicLink(deepLink);
+      }
+    }, onError: (OnLinkErrorException e) async {
+      print('onLinkError');
+      print(e.message);
+    });
+
+    // 앱을 새로 런치한 링크를 알 수 있는 getInitialLink()
+    final PendingDynamicLinkData data =
+        await FirebaseDynamicLinks.instance.getInitialLink();
+    final Uri deepLink = data?.link;
+
+    print(deepLink);
+    if (deepLink != null) {
+      var code = deepLink.queryParameters['code'];
+      navService
+          .pushNamed('/DetailProduct', args: {"PRODUCTID": code}).then((value) {
+        print("clothitem");
+      });
+
+      // navService.pushNamed('/helloOnestep', args: deepLink);
+      // _handleDynamicLink(deepLink);
+    }
   }
 
   bool isEnd() {
@@ -313,7 +357,7 @@ class _MainPageState extends State<MainPage> {
                       for (final tabItem in BottomNavigationItem.items)
                         BottomNavigationBarItem(
                           icon: tabItem.icon,
-                          title: tabItem.title,
+                          label: tabItem.title,
                         )
                     ],
                   ),

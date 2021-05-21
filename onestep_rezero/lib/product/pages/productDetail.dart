@@ -60,7 +60,6 @@ class _ClothDetailState extends State<ClothDetail> {
               _product =
                   Product.fromJson(snapshot.data.data(), snapshot.data.id);
               incProductViews();
-
               return ProductDetailBody(product: _product);
             }
         }
