@@ -29,7 +29,6 @@ class _BoardCreate extends State<BoardCreate> with TickerProviderStateMixin {
     resetItem();
     textControllerTitle = TextEditingController();
     textControllerExplain = TextEditingController();
-    isTitleTextEmpty = false;
   }
 
   @override
@@ -43,7 +42,6 @@ class _BoardCreate extends State<BoardCreate> with TickerProviderStateMixin {
         color: Colors.black, fontSize: 22, fontWeight: FontWeight.bold);
     double deviceHeight = MediaQuery.of(context).size.height;
     double deviceWidth = MediaQuery.of(context).size.width;
-    isTitleTextEmpty = textControllerTitle.text.trim() == "" ? true : false;
 
     return GestureDetector(
       onTap: () {
@@ -155,7 +153,18 @@ class _BoardCreate extends State<BoardCreate> with TickerProviderStateMixin {
                 TextField(
                   decoration: InputDecoration(
                       labelText: "게시판 이름",
-                      errorText: isTitleTextEmpty ? "이름을 입력하세요." : null),
+                      errorText: isTitleTextEmpty != null
+                          ? isTitleTextEmpty
+                              ? "이름을 입력하세요."
+                              : null
+                          : null),
+                  onChanged: (value) {
+                    if (value == "")
+                      isTitleTextEmpty = true;
+                    else
+                      isTitleTextEmpty = false;
+                    setState(() {});
+                  },
                   controller: textControllerTitle,
                 ),
                 TextField(
@@ -175,7 +184,8 @@ class _BoardCreate extends State<BoardCreate> with TickerProviderStateMixin {
   //     .then((value) => Navigator.pop(context, true));
 
   Widget saveButtonWidget() {
-    if (!isTitleTextEmpty) {
+    if (isTitleTextEmpty != null) if (!isTitleTextEmpty &&
+        selectedBoardCategory != null) {
       return ShowUp(
         child: RaisedButton(
           child: Text("게시하기!"),
@@ -187,20 +197,21 @@ class _BoardCreate extends State<BoardCreate> with TickerProviderStateMixin {
               TipDialogHelper.loading("게시 중입니다.\n 잠시만 기다려주세요.");
               await db.collection('board').doc(currentTimeStamp).set({
                 "boardName": textControllerTitle.text.trim(),
-                "boardExplain": textControllerExplain.text.trim()
+                "boardExplain": textControllerExplain.text.trim(),
+                "boardCategory": selectedBoardCategory.boardCategoryName
               }).then((value) {
                 TipDialogHelper.dismiss();
                 TipDialogHelper.success("저장 완료!");
                 Future.delayed(Duration(seconds: 2))
-                    .then((value) => Navigator.pop(context));
+                    .then((value) => Navigator.pop(context, true));
               });
             }
           },
         ),
       );
-    } else {
-      return Container();
     }
+
+    return Container();
   }
 
   void _removeItems() {

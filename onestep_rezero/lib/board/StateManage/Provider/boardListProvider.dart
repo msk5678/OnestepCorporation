@@ -73,7 +73,7 @@ class BoardListProvider with ChangeNotifier {
   static Future<QuerySnapshot> getBoardCategory(
       // Get Board Category List
       ) async {
-    return FirebaseFirestore.instance.collection('Board').get();
+    return FirebaseFirestore.instance.collection('board').get();
   }
 }
 

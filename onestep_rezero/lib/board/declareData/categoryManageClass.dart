@@ -36,7 +36,21 @@ extension BoardCategoryExtension on BoardCategory {
             explain: "투표 위주의 게시판");
       default:
         return throw CategoryException(
-            "Enum Category Error, Please Update Enum ContentCategory in parentState.dart");
+            "Enum Category Error, Please Update Enum ContentCategory categoryData in categoryManageClass.dart");
+    }
+  }
+
+  String get boardCategoryName {
+    switch (this) {
+      case BoardCategory.PICTURE:
+        return "PICTURE";
+      case BoardCategory.POST:
+        return "POST";
+      case BoardCategory.VOTE:
+        return "VOTE";
+      default:
+        return throw CategoryException(
+            "Enum Category Error, Please Update Enum ContentCategory boardCategoryName in categoryManageClass.dart");
     }
   }
 }
