@@ -96,6 +96,10 @@ dependencies:
 
   #kakao_flutter_sdk
   kakao_flutter_sdk: ^0.6.3
+  
+  #mailer
+  mailer: ^5.0.0
+
   #admob
   flutter_native_admob: ^2.1.0+3
   google_mobile_ads: ^0.12.1
