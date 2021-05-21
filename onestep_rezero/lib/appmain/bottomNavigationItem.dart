@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:onestep_rezero/board/boardMain.dart';
+import 'package:onestep_rezero/chat/boardchat/realtimeProductChatController.dart';
+import 'package:onestep_rezero/chat/page/chatMain.dart';
 import 'package:onestep_rezero/home/homeMain.dart';
-import 'package:onestep_rezero/myinfo/myinfoMain.dart';
-import 'package:onestep_rezero/notification/page/chatMain.dart';
-import 'package:onestep_rezero/notification/realtime/realtimeProductChatController.dart';
+
+import 'package:onestep_rezero/myinfo/pages/myinfoMain.dart';
+
 import 'package:onestep_rezero/product/pages/productMain.dart';
 
 class BottomNavigationItem {
