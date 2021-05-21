@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:badges/badges.dart';
@@ -7,6 +8,7 @@ import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:onestep_rezero/chat/boardchat/realtimeProductChatController.dart';
 import 'package:onestep_rezero/chat/page/productChatListPage.dart';
 import 'package:onestep_rezero/chat/page/realtimePage.dart';
+import 'package:onestep_rezero/chat/productchat/controller/productChatController.dart';
 import 'package:onestep_rezero/main.dart';
 
 class ChatMainPage extends StatefulWidget {
@@ -38,6 +40,7 @@ class ChatMainPageState extends State<ChatMainPage>
   BannerAd banner;
   InterstitialAd interstitialAd;
   RewardedAd rewardedAd;
+
   @override
   void initState() {
     super.initState();
@@ -80,9 +83,36 @@ class ChatMainPageState extends State<ChatMainPage>
   Widget build(BuildContext context) {
     print("chat main");
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
+        actions: <Widget>[
+          // Stack(
+          //   children: [
+          //     Positioned(
+          //       child: Text("dd"),
+          //       // _buildjson(context),
+          //       left: 30,
+          //       // height: 100,
+          //       // width: 100,
+          //       // bottom: 100,
+          //       // right: 10,
+          //     ),
+          //     Positioned(
+          //       child: Text("rrr"),
+          //       //_buildjson2(context),
+          //       //left: 30,
+          //       // height: 100,
+          //       // width: 100,
+          //       // bottom: 100,
+          //       right: 100,
+          //     ),
+          //   ],
+          // ),
+        ],
         backgroundColor: Color.fromRGBO(150, 150, 150, 1),
-        title: Text(
+        title:
+            //Text("채팅"),
+            Text(
           '장터 & 익명채팅 ${googleSignIn.currentUser.id}',
           style: TextStyle(
             fontSize: 10,
@@ -146,7 +176,7 @@ class ChatMainPageState extends State<ChatMainPage>
         print("플로팅 클릭");
         //1. Create Product Chat
         //friendUid, String postId, String chattingRoomId
-        getImage();
+        // getImage();
 
         //채팅방 생성
         // ProductChatController().createProductChattingRoomToRealtimeDatabase(
@@ -154,11 +184,64 @@ class ChatMainPageState extends State<ChatMainPage>
 
         // //메세지 생성
         // ProductChatController().onSendToProductMessage(
-        //     "1618662154938", "108438757310040285856", "개시발좆같은거", 0);
+        //     "1621354025388", "108438757310040285856", "개시발좆같은거", 0);
         //2. AdMob
         //rewardedAd.show();
-        //interstitialAd.show();
       }),
+    );
+  }
+
+  Widget _buildjson2(var context) {
+    return Stack(
+      alignment: Alignment.center,
+      children: <Widget>[
+        Container(
+          width: 300,
+          height: 300,
+          color: Colors.red,
+        ),
+        // Positioned(
+        //   top: 12.0,
+        //   right: 10.0,
+        //   width: 10.0,
+        //   height: 10.0,
+        //   child: Container(
+        //     decoration: BoxDecoration(
+        //       shape: BoxShape.circle,
+        //       //color: AppColors.notification,
+        //     ),
+        //   ),
+        // )
+      ],
+    );
+  }
+
+  Widget _buildjson(var context) {
+    return Stack(
+      alignment: Alignment.center,
+      children: <Widget>[
+        IconButton(
+            icon: Icon(Icons.ac_unit),
+            onPressed: () {
+              //productChat.toJson();
+              print("JSON 실행");
+//              database.child("test").set(productChat.toJson());
+
+              //print(productChat.toJson());
+            }),
+        // Positioned(
+        //   top: 12.0,
+        //   right: 10.0,
+        //   width: 10.0,
+        //   height: 10.0,
+        //   child: Container(
+        //     decoration: BoxDecoration(
+        //       shape: BoxShape.circle,
+        //       //color: AppColors.notification,
+        //     ),
+        //   ),
+        // )
+      ],
     );
   }
 

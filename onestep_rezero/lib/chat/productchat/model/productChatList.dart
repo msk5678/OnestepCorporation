@@ -13,7 +13,7 @@ class ProductChatList {
   //user1['nickName'] = 'dd'; //str
   //user1['imageUrl'] = 'dd'; //str
   //user1['uid'] = 'dd'; //str
-  //user1['connextTime'] = 'dd'; //int
+  //user1['connectTime'] = 'dd'; //int
   //user1['hide'] = 'bool';
 
   ProductChatList({

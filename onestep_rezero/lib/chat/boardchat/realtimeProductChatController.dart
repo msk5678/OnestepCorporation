@@ -173,13 +173,20 @@ class RealtimeProductChatController {
             }
 
             if (snapshot.data['nickName'] == "") {
+              print("nick 공백.");
+
               return Text("닉네임 오류");
             } else if (snapshot.hasError) {
+              print("nick 에러.");
+
               return Text(
-                'Error: ${snapshot.error}',
+                'er',
+                //'Error: ${snapshot.error}',
                 style: TextStyle(fontSize: 15),
               );
             } else {
+              print("nick 있음.");
+
               return AutoSizeText(
                 snapshot.data['nickName'],
                 style: TextStyle(fontSize: 15),

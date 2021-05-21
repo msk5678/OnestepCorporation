@@ -5,6 +5,7 @@ import 'package:onestep_rezero/chat/boardchat/model/productChat.dart';
 import 'package:onestep_rezero/chat/boardchat/model/productChatCount.dart';
 import 'package:onestep_rezero/chat/boardchat/realtimeProductChatController.dart';
 import 'package:onestep_rezero/chat/controller/realtimeNavigationManager.dart';
+import 'package:onestep_rezero/chat/productchat/controller/productChatController.dart';
 import 'package:onestep_rezero/chat/widget/chatBadge.dart';
 import 'package:onestep_rezero/chat/widget/chat_list_time.dart';
 import 'package:onestep_rezero/main.dart';
@@ -203,11 +204,19 @@ class _RealTimePageState extends State<RealTimePage>
                       itemBuilder: (context, index) {
                         String productsUserId; //장터 상대방 Id
                         listProductChat[index].user1 ==
-                                googleSignIn.currentUser.id.toString()
+                                googleSignIn.currentUser.id
                             ? productsUserId = listProductChat[index].user2
                             : productsUserId = listProductChat[index].user1;
                         print(
-                            "##dd'${listProductChat[index].chatId.toString()}/message'");
+                            "##dd $productsUserId : '${listProductChat[index].chatId.toString()}/message'");
+                        "$productsUserId" //시발왜다름
+                                ==
+                                "108438757310040285856"
+                            ? print(
+                                "같음 pro Id : $productsUserId // 108438757310040285856")
+                            : print(
+                                "다름 pro Id : $productsUserId !// 108438757310040285856");
+
                         return ListTile(
                           leading: Material(
                             child: RealtimeProductChatController()
@@ -224,6 +233,7 @@ class _RealTimePageState extends State<RealTimePage>
                               children: <Widget>[
                                 RealtimeProductChatController()
                                     .getProductUserNickname(productsUserId),
+
                                 SizedBox(width: 10, height: 10),
                                 Spacer(),
                                 //시간

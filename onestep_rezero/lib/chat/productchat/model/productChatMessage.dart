@@ -1,5 +1,7 @@
+import 'package:onestep_rezero/chat/productchat/model/productChatMessageContent.dart';
+
 class ProductChatMessage {
-  String content;
+  ProductChatMessageContent content;
   String idFrom;
   String idTo;
   bool isRead;
@@ -16,7 +18,7 @@ class ProductChatMessage {
   });
 
   ProductChatMessage.forMapSnapshot(dynamic snapshot) {
-    content = snapshot["content"];
+    content = ProductChatMessageContent.forMapSnapshot(snapshot);
     idFrom = snapshot["idFrom"];
     idTo = snapshot["idTo"].keys.toList()[0];
     isRead = snapshot['idTo'].values.toList()[0];
@@ -25,7 +27,7 @@ class ProductChatMessage {
   }
 
   ProductChatMessage.forReadMapSnapshot(dynamic snapshot) {
-    content = snapshot["content"];
+    content = ProductChatMessageContent.forMapSnapshot(snapshot);
     idFrom = snapshot["idFrom"];
     idTo = snapshot["idTo"].keys.toList()[0];
     isRead = true;

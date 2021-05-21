@@ -456,9 +456,9 @@ class _ProductDetailBodyState extends State<ProductDetailBody> {
                   widget.product.uid,
                   widget.product.firestoreid,
                   widget.product);
-              widget.product.title;
-              widget.product.images;
-              widget.product.price;
+              // widget.product.title;
+              // widget.product.images;
+              // widget.product.price;
               //   ProductChatController().createProductChattingRoomToRealtimeDatabase(
               // "111357489031227818227", "1617992413066022", "1618662154936");
 

@@ -5,13 +5,13 @@ class ProductChatUser {
   String user1Uid;
   // String user1NickName;
   // String user1ImageUrl;
-  int user1ConnectTime;
+  String user1ConnectTime;
   bool user1Hide;
 //user2
   String user2Uid;
   // String user2NickName;
   // String user2ImageUrl;
-  int user2ConnectTime;
+  String user2ConnectTime;
   bool user2Hide;
 
   ProductChatUser({

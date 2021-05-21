@@ -47,7 +47,7 @@ class RealTimeChatNavigationManager {
     //1. 나인지 판별( 나면 못넘어감)
 
     //2. 나 아니면 (디비 저장 후에 )
-    print("#### 노티 $myUid $friendUid $postId");
+    print("#### 노티 $myUid $friendUid $postId ${product.title}");
     Navigator.push(
         context,
         MaterialPageRoute(

@@ -51,26 +51,30 @@ class _ProductChatListPageState extends State<ProductChatListPage>
       //     _buildupdate(context),
       //   ],
       // ),
-      body: Column(
-        children: [
-          Text("dd"),
-          // TextField(),
+      body: SingleChildScrollView(
+        // scrollDirection: Axis.horizontal,
+        child: Column(
+          children: [
+            //Text("dd"),
+            // TextField(),
 
-          ProductChatListPage.imageList.isEmpty
-              ? Container()
-              : Container(
-                  height: 400,
-                  width: MediaQuery.of(context).size.width,
-                  child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: ProductChatListPage.imageList.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        Asset asset = ProductChatListPage.imageList[index];
-                        return AssetTest(asset: asset, width: 300, height: 300);
-                      }),
-                ),
-          _buildChatListListTileStream(),
-        ],
+            // ProductChatListPage.imageList.isEmpty
+            //     ? Container()
+            //     : Container(
+            //         height: 400,
+            //         width: MediaQuery.of(context).size.width,
+            //         child: ListView.builder(
+            //             scrollDirection: Axis.horizontal,
+            //             itemCount: ProductChatListPage.imageList.length,
+            //             itemBuilder: (BuildContext context, int index) {
+            //               Asset asset = ProductChatListPage.imageList[index];
+            //               return AssetTest(
+            //                   asset: asset, width: 300, height: 300);
+            //             }),
+            //       ),
+            _buildChatListListTileStream(),
+          ],
+        ),
       ),
     );
   }
@@ -219,11 +223,26 @@ class _ProductChatListPageState extends State<ProductChatListPage>
                                 listProductChat[index].chatUsers.user2Uid
                             : productsUserId =
                                 listProductChat[index].chatUsers.user1Uid;
+
                         print(
-                            "##dd'${listProductChat[index].chatId.toString()}/message'");
+                            "@@@@@@@@@@@@@@@ userid : $productsUserId , anotherid : 108438757310040285856");
+
+                        print("test" +
+                            identical(productsUserId, "108438757310040285856")
+                                .toString());
+                        // print(
+                        //     "##dd pro $productsUserId : '${listProductChat[index].chatId.toString()}/message'");
+
+                        // "$productsUserId" //시발왜다름
+                        //         ==
+                        //         "108438757310040285856"
+                        //     ? print(
+                        //         "같음 pro Id : $productsUserId // 108438757310040285856")
+                        //     : print(
+                        //         "다름 pro Id : $productsUserId !// 108438757310040285856");
                         return ListTile(
                           leading: Material(
-                            child: RealtimeProductChatController()
+                            child: ProductChatController()
                                 .getUserImage(productsUserId),
                             borderRadius:
                                 BorderRadius.all(Radius.circular(6.0)),
@@ -236,8 +255,25 @@ class _ProductChatListPageState extends State<ProductChatListPage>
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: <Widget>[
                                 ProductChatController()
-                                    .getProductUserNickname(productsUserId),
-                                // Text(listProductChat[index].friendNickName),
+                                    .getProductUserNicknames(productsUserId),
+                                // Text(
+                                //   productsUserId + " 108438757310040285856",
+                                //   style: TextStyle(fontSize: 9),
+                                // ),
+                                // ProductChatController().createProductInfomation(
+                                //     "1620367437865460"),
+
+                                // Text("$productsUserId"),
+                                // ProductChatController()
+                                //     .getProductUserNicknames(productsUserId),
+
+                                // Container(
+                                //   height: 10,
+                                //   width: 10,
+                                //   child: ProductChatController()
+                                //       .getProductUserNicknames(productsUserId),
+                                // ),
+                                //Text(listProductChat[index].recentText),
                                 SizedBox(width: 10, height: 10),
                                 Spacer(),
                                 //시간
@@ -280,7 +316,10 @@ class _ProductChatListPageState extends State<ProductChatListPage>
                         );
                       },
                     )
-                  : Text("생성된 채팅방이 없습니다. . !");
+                  :
+                  //Text("생성된 채팅방이 없습니다. . !");
+                  ProductChatController()
+                      .getProductUserNicknames("108438757310040285856");
             }
         }
       },
