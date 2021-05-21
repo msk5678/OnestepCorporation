@@ -1,8 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:onestep_rezero/board/Animation/slideUpAnimation.dart';
+import 'package:onestep_rezero/board/Animation/fadeInAnimationWidget.dart';
+import 'package:onestep_rezero/board/Animation/slideUpAnimationWidget.dart';
 import 'package:onestep_rezero/board/declareData/categoryManageClass.dart';
 import 'package:onestep_rezero/board/declareData/postData.dart';
+
+import 'TipDialog/tip_dialog.dart';
 
 class BoardCreate extends StatefulWidget {
   @override
@@ -11,11 +15,21 @@ class BoardCreate extends StatefulWidget {
 
 class _BoardCreate extends State<BoardCreate> with TickerProviderStateMixin {
   final GlobalKey<AnimatedListState> _listKey = GlobalKey();
+  TextEditingController textControllerTitle;
+  TextEditingController textControllerExplain;
+
   int delayAmount = 500;
   List<BoardCategory> boardCategoryList = [];
+  BoardCategory selectedBoardCategory;
+  int selectedIndex;
+  bool isTitleTextEmpty;
+
   initState() {
     super.initState();
     resetItem();
+    textControllerTitle = TextEditingController();
+    textControllerExplain = TextEditingController();
+    isTitleTextEmpty = false;
   }
 
   @override
@@ -29,121 +43,225 @@ class _BoardCreate extends State<BoardCreate> with TickerProviderStateMixin {
         color: Colors.black, fontSize: 22, fontWeight: FontWeight.bold);
     double deviceHeight = MediaQuery.of(context).size.height;
     double deviceWidth = MediaQuery.of(context).size.width;
+    isTitleTextEmpty = textControllerTitle.text.trim() == "" ? true : false;
 
-    return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding:
-              EdgeInsets.only(left: deviceWidth / 20, right: deviceWidth / 20),
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            SizedBox(
-              height: deviceHeight / 13,
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).requestFocus(FocusNode());
+      },
+      child: Stack(children: [
+        Scaffold(
+          body: SafeArea(
+            child: Padding(
+              padding: EdgeInsets.only(
+                  left: deviceWidth / 20, right: deviceWidth / 20),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      height: deviceHeight / 13,
+                    ),
+                    ShowUp(
+                      child: Text(
+                        "어떤",
+                        style: textStyle,
+                      ),
+                      delay: delayAmount,
+                    ),
+                    ShowUp(
+                      child: Text(
+                        "게시판을 만들까요?",
+                        style: textStyle,
+                      ),
+                      delay: delayAmount + 200,
+                    ),
+                    SizedBox(
+                      height: deviceHeight / 20,
+                    ),
+                    AnimatedList(
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      key: _listKey,
+                      initialItemCount: boardCategoryList.length,
+                      itemBuilder: (context, index, animation) {
+                        return _buildItem(
+                            boardCategoryList[index], animation, index);
+                      },
+                    ),
+                    boardDetailSettingWidget(),
+                    saveButtonWidget(),
+                    // ListView.separated(
+                    //   shrinkWrap: true,
+                    //   physics: NeverScrollableScrollPhysics(),
+                    //   itemCount: BoardCategory.values.length,
+                    //   itemBuilder: (context, index) {
+                    //     return ShowUp(
+                    //         delay: delayAmount + (700 + 200 * index),
+                    //         child: Container(
+                    //           decoration: BoxDecoration(
+                    //               borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                    //               border: Border.all(width: 0.5, color: Colors.grey)),
+                    //           child: Row(
+                    //             // mainAxisAlignment: MainAxisAlignment,
+                    //             children: <Widget>[
+                    //               Icon(
+                    //                 BoardCategory.values[index].categoryData.icon,
+                    //                 size: 35,
+                    //               ),
+                    //               SizedBox(
+                    //                 width: deviceWidth / 70,
+                    //               ),
+                    //               Text(BoardCategory.values[index].categoryData.title,
+                    //                   style: TextStyle(
+                    //                       fontWeight: FontWeight.bold, fontSize: 20)),
+                    //               SizedBox(
+                    //                 width: deviceWidth / 50,
+                    //               ),
+                    //               Text(BoardCategory.values[index].categoryData.explain,
+                    //                   textAlign: TextAlign.end,
+                    //                   style:
+                    //                       TextStyle(fontSize: 13, color: Colors.grey)),
+                    //             ],
+                    //           ),
+                    //         ));
+                    //   },
+                    //   separatorBuilder: (BuildContext context, int index) {
+                    //     return Divider(
+                    //       color: Colors.white,
+                    //     );
+                    //   },
+                    // )
+                  ]),
             ),
-            ShowUp(
-              child: Text(
-                "어떤",
-                style: textStyle,
-              ),
-              delay: delayAmount,
-            ),
-            ShowUp(
-              child: Text(
-                "게시판을 만들까요?",
-                style: textStyle,
-              ),
-              delay: delayAmount + 200,
-            ),
-            SizedBox(
-              height: deviceHeight / 20,
-            ),
-            AnimatedList(
-              physics: NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              key: _listKey,
-              initialItemCount: boardCategoryList.length,
-              itemBuilder: (context, index, animation) {
-                return _buildItem(index, animation);
-              },
-            )
-            // ListView.separated(
-            //   shrinkWrap: true,
-            //   physics: NeverScrollableScrollPhysics(),
-            //   itemCount: BoardCategory.values.length,
-            //   itemBuilder: (context, index) {
-            //     return ShowUp(
-            //         delay: delayAmount + (700 + 200 * index),
-            //         child: Container(
-            //           decoration: BoxDecoration(
-            //               borderRadius: BorderRadius.all(Radius.circular(5.0)),
-            //               border: Border.all(width: 0.5, color: Colors.grey)),
-            //           child: Row(
-            //             // mainAxisAlignment: MainAxisAlignment,
-            //             children: <Widget>[
-            //               Icon(
-            //                 BoardCategory.values[index].categoryData.icon,
-            //                 size: 35,
-            //               ),
-            //               SizedBox(
-            //                 width: deviceWidth / 70,
-            //               ),
-            //               Text(BoardCategory.values[index].categoryData.title,
-            //                   style: TextStyle(
-            //                       fontWeight: FontWeight.bold, fontSize: 20)),
-            //               SizedBox(
-            //                 width: deviceWidth / 50,
-            //               ),
-            //               Text(BoardCategory.values[index].categoryData.explain,
-            //                   textAlign: TextAlign.end,
-            //                   style:
-            //                       TextStyle(fontSize: 13, color: Colors.grey)),
-            //             ],
-            //           ),
-            //         ));
-            //   },
-            //   separatorBuilder: (BuildContext context, int index) {
-            //     return Divider(
-            //       color: Colors.white,
-            //     );
-            //   },
-            // )
-          ]),
+          ),
         ),
-      ),
+        TipDialogContainer(duration: const Duration(seconds: 2))
+      ]),
     );
   }
 
-  void _removeSingleItem(int removeIndex) {
-    // Remove item from data list but keep copy to give to the animation.
-    boardCategoryList.removeAt(removeIndex);
-    // This builder is just for showing the row while it is still
-    // animating away. The item is already gone from the data list.
-    AnimatedListRemovedItemBuilder builder = (context, animation) {
-      return _buildItem(removeIndex, animation);
-      // return _buildItem(removedItem, animation);
-    };
+  Widget boardDetailSettingWidget() {
+    if (selectedBoardCategory != null) {
+      return ShowUp(
+        delay: 500,
+        child: Container(
+          decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey),
+              borderRadius: BorderRadius.circular(5)),
+          child: Padding(
+            padding: EdgeInsets.all(10),
+            child: Column(
+              children: <Widget>[
+                TextField(
+                  decoration: InputDecoration(
+                      labelText: "게시판 이름",
+                      errorText: isTitleTextEmpty ? "이름을 입력하세요." : null),
+                  controller: textControllerTitle,
+                ),
+                TextField(
+                  decoration: InputDecoration(labelText: "게시판 설명"),
+                  controller: textControllerExplain,
+                )
+              ],
+            ),
+          ),
+        ),
+      );
+    } else {
+      return Container();
+    }
+  }
+  // Future.delayed(Duration(seconds: 2))
+  //     .then((value) => Navigator.pop(context, true));
 
-    // Remove the item visually from the AnimatedList.
-    _listKey.currentState.removeItem(removeIndex, builder);
+  Widget saveButtonWidget() {
+    if (!isTitleTextEmpty) {
+      return ShowUp(
+        child: RaisedButton(
+          child: Text("게시하기!"),
+          onPressed: () async {
+            if (!isTitleTextEmpty) {
+              final db = FirebaseFirestore.instance;
+              String currentTimeStamp =
+                  DateTime.now().millisecondsSinceEpoch.toString();
+              TipDialogHelper.loading("게시 중입니다.\n 잠시만 기다려주세요.");
+              await db.collection('board').doc(currentTimeStamp).set({
+                "boardName": textControllerTitle.text.trim(),
+                "boardExplain": textControllerExplain.text.trim()
+              }).then((value) {
+                TipDialogHelper.dismiss();
+                TipDialogHelper.success("저장 완료!");
+                Future.delayed(Duration(seconds: 2))
+                    .then((value) => Navigator.pop(context));
+              });
+            }
+          },
+        ),
+      );
+    } else {
+      return Container();
+    }
   }
 
-  Widget _buildItem(int index, Animation animation) {
+  void _removeItems() {
+    //Dismiss Under selected item
+    int removeIndex = selectedIndex + 1;
+    int count = boardCategoryList.length - removeIndex;
+    for (int i = 0; i < count; i++) {
+      BoardCategory removedItem = boardCategoryList.removeAt(removeIndex);
+      AnimatedListRemovedItemBuilder builder = (context, animation) {
+        return _buildItem(removedItem, animation, removeIndex);
+      };
+      _listKey.currentState.removeItem(removeIndex, builder);
+    }
+    //Dismiss Over selected item
+    removeIndex = 0;
+    count = selectedIndex;
+    for (int i = 0; i < count; i++) {
+      BoardCategory removedItem = boardCategoryList.removeAt(removeIndex);
+      AnimatedListRemovedItemBuilder builder = (context, animation) {
+        return _buildItem(removedItem, animation, removeIndex);
+      };
+      _listKey.currentState.removeItem(removeIndex, builder);
+    }
+    setState(() {});
+  }
+
+  // void insertItems() {
+  //   resetItem();
+
+  //   for (int offset = 0; offset < selectedIndex; offset++) {
+  //     _listKey.currentState.insertItem(offset);
+  //   }
+  // }
+
+  Widget _buildItem(
+    BoardCategory boardCategory,
+    Animation animation,
+    int index,
+  ) {
     return ShowUp(
       delay: delayAmount + (700 + 200 * index),
       child: GestureDetector(
         onTap: () {
-          int length = boardCategoryList.length;
+          if (selectedBoardCategory == null) {
+            selectedBoardCategory = boardCategory;
 
-          // for (int i = index + 1; i < length; i++) _removeSingleItem(i);
-          // for (int i = 0; i < index; i++) _removeSingleItem(i);
+            selectedIndex = index;
+            _removeItems();
+          }
+          //  else {
+          //   insertItems();
+          //   selectedBoardCategory = null;
+          // }
         },
         child: SizeTransition(
             sizeFactor: animation,
             child: Card(
                 child: ListTile(
-              leading: Icon(boardCategoryList[index].categoryData.icon),
+              leading: Icon(boardCategory.categoryData.icon),
               title: Text(
-                boardCategoryList[index].categoryData.title,
+                boardCategory.categoryData.title,
                 style: TextStyle(fontSize: 20),
               ),
             ))),
@@ -154,4 +272,6 @@ class _BoardCreate extends State<BoardCreate> with TickerProviderStateMixin {
   void resetItem() {
     boardCategoryList = BoardCategory.values.toList();
   }
+
+  saveBoard() async {}
 }
