@@ -20,6 +20,8 @@ class SearchProductProvider extends ChangeNotifier {
           category: _product['category'],
           favoriteUserList: _product['favoriteUserList'],
           price: _product['price'],
+          trading: _product['trading'],
+          completed: _product['completed'],
           hide: _product['hide'],
           deleted: _product['deleted'],
           imagesUrl: _product['imagesUrl'],
