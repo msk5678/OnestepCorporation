@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onestep_rezero/login/models/authFlag.dart';
 import 'package:onestep_rezero/login/providers/providers.dart';
-import 'package:onestep_rezero/notification/realtime/firebase_api.dart';
 import 'package:onestep_rezero/sendMail.dart';
 
 String _tempEmail;
@@ -24,7 +23,6 @@ Future getRandomNumber() async {
 
   while (checkNumber.length <= 6) {
     var tmp = numMin + _random.nextInt(charMax - numMin);
-    // skip 안됌..
     if (skipCharacter.contains(skipCharacter)) {
       continue;
     }
@@ -445,6 +443,7 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                         checkPassword ==
                                             _authNumberController.text) {
                                       print("성공");
+                                      // sunghun
                                       // university 는 지금 계명대학교라고 줬는데, 나중에 학교이메일 판단해서 넣어줘야함
                                       // ex) stu.kmu -> 계명대학교 이런식으로
                                       // FirebaseFirestore.instance

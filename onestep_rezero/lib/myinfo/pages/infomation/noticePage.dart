@@ -14,7 +14,7 @@ class NoticePage extends StatelessWidget {
           iconTheme: IconThemeData(color: Colors.black),
         ),
         body: FutureBuilder(
-          // 나중에 구조 바꿔야함
+          // sunghun
           future: FirebaseFirestore.instance
               .collection('notice')
               .orderBy('time', descending: true)

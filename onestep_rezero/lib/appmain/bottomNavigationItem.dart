@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:onestep_rezero/board/boardMain.dart';
 import 'package:onestep_rezero/home/homeMain.dart';
-import 'package:onestep_rezero/home/pages/homeMain.dart';
 import 'package:onestep_rezero/login/pages/choiceAuthWayPage.dart';
 import 'package:onestep_rezero/login/pages/loginJoinPage.dart';
 import 'package:onestep_rezero/myinfo/pages/myinfoMain.dart';
-import 'package:onestep_rezero/notification/page/chatMain.dart';
-import 'package:onestep_rezero/notification/realtime/realtimeProductChatController.dart';
 import 'package:onestep_rezero/product/pages/productMain.dart';
 
 class BottomNavigationItem {
@@ -32,16 +29,13 @@ class BottomNavigationItem {
           title: "장터",
         ),
         BottomNavigationItem(
-          // page: BoardMain(),
-          page: LoginJoinPage(),
+          page: BoardMain(),
           icon: Icon(Icons.list),
           title: "게시판",
         ),
         BottomNavigationItem(
           page: ChoiceAuthWayPage(),
           icon: Icon(Icons.list),
-          // page: ChatMainPage(),
-          // icon: RealtimeProductChatController().getTotalChatCountInBottomBar(),
           title: "알림",
         ),
         BottomNavigationItem(

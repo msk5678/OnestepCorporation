@@ -6,15 +6,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart';
 import 'package:onestep_rezero/myinfo/providers/providers.dart';
-import 'package:onestep_rezero/notification/realtime/firebase_api.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 class UserProfileBody extends ConsumerWidget {
+  // sunghun
   Widget getUserName() {
     return FutureBuilder(
       future: FirebaseFirestore.instance
           .collection("users")
-          .doc(FirebaseApi.getId())
+          .doc('FirebaseApi.getId()')
           .get(),
       builder:
           (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
@@ -37,11 +37,13 @@ class UserProfileBody extends ConsumerWidget {
     );
   }
 
+  // sunghun
   Widget getUserImage() {
     return FutureBuilder(
+      // sunghun
       future: FirebaseFirestore.instance
           .collection("users")
-          .doc(FirebaseApi.getId())
+          .doc('FirebaseApi.getId()')
           .get(),
       builder:
           (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {

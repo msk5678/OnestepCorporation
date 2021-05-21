@@ -76,9 +76,9 @@ class _MainPageState extends State<MainPage> {
   void initState() {
     super.initState();
     _currentIndex = 0;
-    String kakaoAppKey = "38cc3c08e0c39fa8f9422cc4b871a82f";
+    String kakaoAppKey = "88b99cb950dc222f10f369161182d008";
     KakaoContext.clientId = kakaoAppKey;
-    // initDynamicLinks();
+    initDynamicLinks();
   }
 
   void initDynamicLinks() async {

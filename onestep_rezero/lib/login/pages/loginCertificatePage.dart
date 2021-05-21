@@ -5,7 +5,6 @@ import 'dart:io' as io;
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 import 'package:image_picker/image_picker.dart';
-import 'package:onestep_rezero/notification/realtime/firebase_api.dart';
 import 'package:onestep_rezero/sendMail.dart';
 import 'package:random_string/random_string.dart';
 
@@ -115,6 +114,7 @@ class _LoginCertificatePageState extends State<LoginCertificatePage> {
                 onPressed: _image != null
                     ? () async {
                         _showDialog(context);
+                        // sunghun
                         // 증명서 storage 저장
                         // String ramdomNum = randomAlphaNumeric(15);
                         // firebase_storage.Reference ref = firebase_storage

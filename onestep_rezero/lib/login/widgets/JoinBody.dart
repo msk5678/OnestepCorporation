@@ -25,11 +25,6 @@ class JoinBody extends ConsumerWidget {
 
     final _isStatusCheck = watch(statusProvider.state);
 
-    // dropdown btn 주는게 나은지 없는게 나은지 물어보기
-    // final _emailTest = watch(emailValueProvider);
-    // final _emailList = ['naver.com', 'gmail.com', 'hanmail.net'];
-    // final _emailFirstValue = 'naver.com';
-
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -131,35 +126,6 @@ class JoinBody extends ConsumerWidget {
                     ? true
                     : false,
               ),
-              // Padding(
-              //   padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
-              //   child: Row(
-              //     mainAxisAlignment: MainAxisAlignment.center,
-              //     children: [
-              //       Padding(
-              //         padding: EdgeInsets.fromLTRB(
-              //             0, 0, (MediaQuery.of(context).size.width / 40), 0),
-              //         child: Container(
-              //           child: Text("@"),
-              //         ),
-              //       ),
-              //       DropdownButton(
-              //         value: _emailTest.state,
-              //         items: _emailList.map(
-              //           (value) {
-              //             return DropdownMenuItem(
-              //               child: Text(value),
-              //               value: value,
-              //             );
-              //           },
-              //         ).toList(),
-              //         onChanged: (value) {
-              //           _emailTest.state = value;
-              //         },
-              //       )
-              //     ],
-              //   ),
-              // ),
               Padding(
                 padding: EdgeInsets.fromLTRB(
                     0, MediaQuery.of(context).size.height / 50, 0, 0),
@@ -226,69 +192,31 @@ class JoinBody extends ConsumerWidget {
                         ? true
                         : false,
               ),
-              // Padding(
-              //   padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-              //   child: Row(
-              //     mainAxisAlignment: MainAxisAlignment.center,
-              //     children: [
-              //       Padding(
-              //         padding: const EdgeInsets.only(right: 2),
-              //         child: ElevatedButton(
-              //             style: ButtonStyle(
-              //                 backgroundColor: _isStatusCheck == true
-              //                     ? MaterialStateProperty.all<Color>(Colors.red)
-              //                     : MaterialStateProperty.all<Color>(
-              //                         Colors.black)),
-              //             onPressed: () {
-              //               context.read(statusProvider).changeStatus("재학생");
-              //             },
-              //             child: Container(
-              //               width: MediaQuery.of(context).size.width / 4,
-              //               child: Center(child: Text("재학생")),
-              //             )),
-              //       ),
-              //       Padding(
-              //         padding: const EdgeInsets.only(left: 2),
-              //         child: ElevatedButton(
-              //             style: ButtonStyle(
-              //                 backgroundColor: _isStatusCheck == false
-              //                     ? MaterialStateProperty.all<Color>(Colors.red)
-              //                     : MaterialStateProperty.all<Color>(
-              //                         Colors.black)),
-              //             onPressed: () {
-              //               context.read(statusProvider).changeStatus("졸업생");
-              //             },
-              //             child: Container(
-              //               width: MediaQuery.of(context).size.width / 4,
-              //               child: Center(child: Text("졸업생")),
-              //             )),
-              //       ),
-              //     ],
-              //   ),
-              // ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
                 child: Container(
                   width: 200,
-                  // 이메일, 별명 (중복확인까지) 적혀있어야 가입완료 o
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(primary: Colors.white70),
-                    onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => ChoiceAuthWayPage()));
-                    },
-                    // onPressed: _isEmailCheck == true && _isNickNameCheck == true
-                    //     ? () {
-                    //         if (_isEmailCheck == true &&
-                    //             _isNickNameCheck == true) {
-                    //           print("성공");
-                    //           // updateUser(
-                    //           //     emailController.text, nicknameController.text);
-                    //           // Navigator.of(context).push(MaterialPageRoute(
-                    //           //     builder: (context) => ChoiceAuthWayPage()));
-                    //         }
-                    //       }
-                    //     : null,
+                    onPressed: _isEmailCheck == true && _isNickNameCheck == true
+                        ? () {
+                            if (_isEmailCheck == true &&
+                                _isNickNameCheck == true) {
+                              // sunghun
+                              // FirebaseFirestore.instance
+                              //             .collection('user')
+                              //             .doc(FirebaseApi.getId())
+                              //             .update({
+                              //           "nickName": _nicknameController.text,
+                              //           "email":
+                              //               _emailController.text,
+                              //         });
+
+                              // Navigator.of(context).push(MaterialPageRoute(
+                              //     builder: (context) => ChoiceAuthWayPage()));
+                            }
+                          }
+                        : null,
                     child: Text(
                       "가입완료",
                       style: TextStyle(color: Colors.black),

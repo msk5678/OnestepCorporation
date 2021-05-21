@@ -7,7 +7,6 @@ import 'dart:io' as io;
 import 'package:image_picker/image_picker.dart';
 import 'package:onestep_rezero/myinfo/pages/myinfoSettingsPage.dart';
 import 'package:onestep_rezero/myinfo/providers/providers.dart';
-import 'package:onestep_rezero/notification/realtime/firebase_api.dart';
 import 'package:random_string/random_string.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -33,9 +32,10 @@ class MyProfileImage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ScopedReader watch) {
     return StreamBuilder(
+      // sunghun
       stream: FirebaseFirestore.instance
           .collection("users")
-          .doc(FirebaseApi.getId())
+          .doc('FirebaseApi.getId()')
           .snapshots(),
       builder:
           (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
@@ -57,7 +57,10 @@ class MyProfileImage extends ConsumerWidget {
                 children: [
                   ClipOval(
                     child: CachedNetworkImage(
-                      imageUrl: snapshot.data.data()['photoUrl'].toString(),
+                      // sunghun
+                      imageUrl:
+                          'https://firebasestorage.googleapis.com/v0/b/onestep-project.appspot.com/o/user%20images%2FekE14P2v3704mA4?alt=media&token=f473133c-41fa-4ad0-9bb6-7266c4438104',
+                      // imageUrl: snapshot.data.data()['photoUrl'].toString(),
                       width: MediaQuery.of(context).size.width / 5,
                       height: MediaQuery.of(context).size.height / 9,
                       errorWidget: (context, url, error) =>

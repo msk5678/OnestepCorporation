@@ -13,7 +13,7 @@ DatabaseReference notificationDB =
 
 List<NotificationModel> notificationModel = [];
 
-Widget test(AsyncSnapshot snapshot) {
+Widget body(AsyncSnapshot snapshot) {
   return Expanded(
     child: ListView.builder(
       scrollDirection: Axis.vertical,
@@ -82,16 +82,19 @@ class _NotificationBodyState extends State<NotificationBody> {
     super.initState();
   }
 
+  // 개인알림, 전체알림 합치고 sort
   void method(AsyncSnapshot snapshot) {
     notificationModel = [];
 
     Map<dynamic, dynamic> values = snapshot.data.snapshot.value;
     values.forEach((key, value) {
       // university
+      // sunghun
       if (key == 'KMU') {
         Map<dynamic, dynamic> values = value;
         values.forEach((key, value) {
           // user 개인 uid
+          // sunghun
           if (key == 'user3') {
             Map<dynamic, dynamic> values = value;
             values.values.forEach((element) {
@@ -139,6 +142,8 @@ class _NotificationBodyState extends State<NotificationBody> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
+                    // 알림 들어가는 부분 보여주려고 만든 test 버튼 2개
+                    // sunghun
                     ElevatedButton(
                       onPressed: () {
                         FirebaseDatabase.instance
@@ -178,13 +183,9 @@ class _NotificationBodyState extends State<NotificationBody> {
                       },
                       child: Text("공지 알림"),
                     ),
-                    ElevatedButton(
-                      onPressed: () {},
-                      child: Text("test"),
-                    ),
                   ],
                 ),
-                test(snapshot),
+                body(snapshot),
               ],
             );
         }

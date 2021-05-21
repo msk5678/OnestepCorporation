@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:onestep_rezero/login/pages/loginAuthPage.dart';
 import 'package:onestep_rezero/login/pages/loginCertificatePage.dart';
-import 'package:onestep_rezero/notification/realtime/firebase_api.dart';
 
 void _showDialog(BuildContext context) {
   showDialog(
@@ -46,9 +45,10 @@ class ChoiceAuthWayPage extends StatelessWidget {
           ),
         ),
         body: FutureBuilder(
+          // sunghun
           future: FirebaseFirestore.instance
               .collection('users')
-              .doc(FirebaseApi.getId())
+              .doc('FirebaseApi.getId()')
               .get(),
           builder:
               (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {

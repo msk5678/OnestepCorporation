@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:onestep_rezero/myinfo/pages/myinfoNickNameChagnePage.dart';
 import 'package:onestep_rezero/myinfo/providers/providers.dart';
-import 'package:onestep_rezero/notification/realtime/firebase_api.dart';
 import 'package:random_string/random_string.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io' as io;
@@ -107,6 +106,7 @@ class SettingsBody extends ConsumerWidget {
           ),
           InkWell(
             onTap: () async {
+              // sugnhun
               // // storage 삭제 보류
               // Reference ref = FirebaseStorage.instance
               //     .refFromURL(
@@ -135,9 +135,10 @@ class SettingsBody extends ConsumerWidget {
 
                 await storageUploadTask.whenComplete(() async => {
                       downloadURL = await ref.getDownloadURL(),
+                      // sunghun
                       FirebaseFirestore.instance
                           .collection("users")
-                          .doc(FirebaseApi.getId())
+                          .doc('FirebaseApi.getId()')
                           .update({
                         "photoUrl": downloadURL,
                       }),
@@ -165,6 +166,7 @@ class SettingsBody extends ConsumerWidget {
                   IconButton(
                     icon: Icon(Icons.keyboard_arrow_right),
                     onPressed: () async {
+                      // sugnhun
                       // // storage 삭제 보류
                       // Reference ref = FirebaseStorage.instance
                       //     .refFromURL(
@@ -193,9 +195,10 @@ class SettingsBody extends ConsumerWidget {
 
                         await storageUploadTask.whenComplete(() async => {
                               downloadURL = await ref.getDownloadURL(),
+                              // sunghun
                               FirebaseFirestore.instance
                                   .collection("users")
-                                  .doc(FirebaseApi.getId())
+                                  .doc('FirebaseApi.getId()')
                                   .update({
                                 "photoUrl": downloadURL,
                               }),

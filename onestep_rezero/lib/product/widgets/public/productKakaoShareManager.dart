@@ -21,8 +21,7 @@ class KakaoShareManager {
   }
 
   void initializeKakaoSDK() {
-    // String kakaoAppKey = "38cc3c08e0c39fa8f9422cc4b871a82f";
-    // // String kakaoAppKey = "c9095cdfce8884adb0b88729a7e95aba";
+    // String kakaoAppKey = "88b99cb950dc222f10f369161182d008";
     // KakaoContext.clientId = kakaoAppKey;
   }
 
@@ -49,7 +48,7 @@ class KakaoShareManager {
     try {
       var dynamicLink = await _getDynamicLink(product.images[0]);
       print("dynamicLink = $dynamicLink");
-      Share.share("더보기 test $dynamicLink");
+      Share.share("$dynamicLink");
     } catch (error) {
       print(error.toString());
     }

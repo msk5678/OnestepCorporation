@@ -3,18 +3,14 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
-import 'package:onestep_rezero/KakaoShareManager.dart';
 import 'package:onestep_rezero/animation/favoriteAnimation.dart';
 import 'package:onestep_rezero/favorite/utils/favoriteFirebaseApi.dart';
 import 'package:onestep_rezero/main.dart';
-import 'package:onestep_rezero/notification/realtime/realtimeNavigationManager.dart';
 import 'package:onestep_rezero/product/models/product.dart';
 import 'package:onestep_rezero/product/pages/productBump.dart';
 import 'package:onestep_rezero/product/widgets/public/productItem.dart';
+import 'package:onestep_rezero/product/widgets/public/productKakaoShareManager.dart';
 import 'package:onestep_rezero/timeUtil.dart';
-import 'package:onestep_rezero/kakaoTest.dart';
-
-import '../../../kakaoTestPage.dart';
 
 class ProductDetailBody extends StatefulWidget {
   final Product product;
@@ -56,47 +52,41 @@ class _ProductDetailBodyState extends State<ProductDetailBody> {
     super.dispose();
   }
 
-  // sunghun kakao test
-  void _testModalBottomSheet(context, Product product) {
+  // share
+  void _shareModalBottomSheet(context, Product product) {
     showModalBottomSheet(
         context: context,
         builder: (BuildContext bc) {
           return Container(
             height: MediaQuery.of(context).size.height * .30,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              // mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(5, 5, 0, 0),
+                  padding: EdgeInsets.fromLTRB(0, 25, 0, 0),
                   child: Row(
-                    // mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      IconButton(
-                        icon: Icon(
-                          Icons.clear,
-                          size: 30,
-                        ),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(125, 0, 0, 0),
-                        child: Center(
-                            child: Container(
-                                child: Text(
-                          "공유하기",
-                          style: TextStyle(fontSize: 15),
-                        ))),
-                      ),
+                      // IconButton(
+                      //   icon: Icon(
+                      //     Icons.clear,
+                      //     size: 20,
+                      //   ),
+                      //   onPressed: () {
+                      //     Navigator.pop(context);
+                      //   },
+                      // ),
+                      Container(
+                          child: Text(
+                        "공유하기",
+                        style: TextStyle(fontSize: 15),
+                      )),
                     ],
                   ),
                 ),
-                Divider(
-                  thickness: 2,
-                  color: Colors.grey,
-                ),
+                // Divider(
+                //   thickness: 1,
+                //   color: Colors.grey,
+                // ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -107,21 +97,18 @@ class _ProductDetailBodyState extends State<ProductDetailBody> {
                           RawMaterialButton(
                             onPressed: () {
                               // print("kakao 1");
-                              // // kakato test
-                              // // 일단 주석처리 detail 잡아야함
-                              // KakaoShareManager()
-                              //     .isKakaotalkInstalled()
-                              //     .then((installed) {
-                              //   if (installed) {
-                              //     print("kakao success");
-                              //     KakaoShareManager()
-                              //         .shareMyCode(widget.product);
-                              //     // KakaoShareManagerTest().shareMyCode();
-                              //   } else {
-                              //     print("kakao error");
-                              //     // show alert
-                              //   }
-                              // });
+                              KakaoShareManager()
+                                  .isKakaotalkInstalled()
+                                  .then((installed) {
+                                if (installed) {
+                                  print("kakao success");
+                                  KakaoShareManager()
+                                      .shareMyCode(widget.product);
+                                } else {
+                                  print("kakao error");
+                                  // show alert
+                                }
+                              });
                             },
                             constraints:
                                 BoxConstraints(minHeight: 80, minWidth: 80),
@@ -130,19 +117,18 @@ class _ProductDetailBodyState extends State<ProductDetailBody> {
                               icon: Image.asset('images/onestep icon.png'),
                               onPressed: () {
                                 // print("kakao 2");
-                                // KakaoShareManager()
-                                //     .isKakaotalkInstalled()
-                                //     .then((installed) {
-                                //   if (installed) {
-                                //     print("kakao success");
-                                //     KakaoShareManager()
-                                //         .shareMyCode(widget.product);
-                                //     // KakaoShareManagerTest().shareMyCode();
-                                //   } else {
-                                //     print("kakao error");
-                                //     // show alert
-                                //   }
-                                // });
+                                KakaoShareManager()
+                                    .isKakaotalkInstalled()
+                                    .then((installed) {
+                                  if (installed) {
+                                    print("kakao success");
+                                    KakaoShareManager()
+                                        .shareMyCode(widget.product);
+                                  } else {
+                                    print("kakao error");
+                                    // show alert
+                                  }
+                                });
                               },
                             ),
                             shape: CircleBorder(),
@@ -163,8 +149,8 @@ class _ProductDetailBodyState extends State<ProductDetailBody> {
                             onPressed: () {
                               print("URL");
                               // URL
-                              // KakaoShareManager()
-                              //     .getDynamicLink(widget.product);
+                              KakaoShareManager()
+                                  .getDynamicLink(widget.product);
                             },
                             constraints:
                                 BoxConstraints(minHeight: 80, minWidth: 80),
@@ -172,8 +158,8 @@ class _ProductDetailBodyState extends State<ProductDetailBody> {
                             child: IconButton(
                               icon: Image.asset('images/onestep icon.png'),
                               onPressed: () {
-                                // KakaoShareManager()
-                                //     .getDynamicLink(widget.product);
+                                KakaoShareManager()
+                                    .getDynamicLink(widget.product);
                               },
                             ),
                             shape: CircleBorder(),
@@ -524,13 +510,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody> {
               primary: Colors.pink,
               textStyle: TextStyle(color: Colors.white),
             ),
-            onPressed: () {
-              RealTimeChatNavigationManager.navigateToRealTimeChattingRoom(
-                  context,
-                  googleSignIn.currentUser.id.toString(),
-                  widget.product.uid,
-                  widget.product.firestoreid);
-            },
+            onPressed: () {},
             child: Text('채팅'),
           ),
         ),
@@ -590,19 +570,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody> {
       return new IconButton(
         icon: new Icon(Icons.share),
         onPressed: () => {
-          print("share cex"),
-          // _testModalBottomSheet(context, product),
-          Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => KaKaoTestPage(),
-          ))
-          // KakaoShareManager().isKakaotalkInstalled().then((installed) {
-          //   if (installed) {
-          //     print("share cex22");
-          //     KakaoShareManager().shareMyCode();
-          //   } else {
-          //     // show alert
-          //   }
-          // }
+          _shareModalBottomSheet(context, product),
         },
       );
     }
@@ -713,7 +681,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody> {
                         pinned: true,
                         expandedHeight: _size.width,
                         actions: [
-                          // shareButton(snapshot),
+                          // share button
                           testShareButton(widget.product),
                           popupMenuButton(snapshot.data),
                         ],

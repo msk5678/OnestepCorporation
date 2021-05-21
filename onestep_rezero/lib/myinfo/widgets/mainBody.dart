@@ -12,17 +12,50 @@ import 'package:onestep_rezero/myinfo/pages/myinfoTransaction.dart';
 import 'package:onestep_rezero/myinfo/providers/providers.dart';
 import 'dart:async';
 import 'package:onestep_rezero/myinfo/widgets/myProfileImage.dart';
-import 'package:onestep_rezero/notification/realtime/firebase_api.dart';
-import 'package:onestep_rezero/reportController.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+void _showDialog(BuildContext context, int authValue) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      // return object of type Dialog
+      return authValue == 1
+          ? AlertDialog(
+              title: Text("증명서인증 대기중"),
+              content: Text("대기중"),
+              actions: <Widget>[
+                ElevatedButton(
+                  child: Text("확인"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            )
+          : AlertDialog(
+              title: Text("인증을 완료하셨습니다"),
+              content: Text("완료"),
+              actions: <Widget>[
+                ElevatedButton(
+                  child: Text("확인"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+    },
+  );
+}
 
 class MyinfoMainBody extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ScopedReader watch) {
     return StreamBuilder(
+      // sunghun
       stream: FirebaseFirestore.instance
           .collection('users')
-          .doc(FirebaseApi.getId())
+          .doc('FirebaseApi.getId()')
           .snapshots(),
       builder:
           (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
@@ -46,14 +79,18 @@ class MyinfoMainBody extends ConsumerWidget {
                             Container(
                               child: Text(
                                 // 닉네임
-                                snapshot.data.data()['nickName'].toString(),
+                                // sunghun
+                                'nickname',
+                                // snapshot.data.data()['nickName'].toString(),
                                 style: TextStyle(fontSize: 20),
                               ),
                             ),
                             Container(
                               child: Text(
                                 // 아이디
-                                snapshot.data.data()['userEmail'].toString(),
+                                // sunghun
+                                'email',
+                                // snapshot.data.data()['userEmail'].toString(),
                                 style: TextStyle(fontSize: 15),
                               ),
                             ),
@@ -158,10 +195,10 @@ class MyinfoMainBody extends ConsumerWidget {
                   ),
                   InkWell(
                     onTap: () {
-                      // 여기 작업 마무리해야함 (finish ? 면 증명서 학교 인증 완료했다고 alert 박스 띄우기)
-
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => ChoiceAuthWayPage()));
+                      // sunghun
+                      // snapshot.data.data()['auth'] == 1
+                      //     ? _showDialog(context, 1)
+                      //     : _showDialog(context, 2);
                     },
                     child: Padding(
                       padding: EdgeInsets.fromLTRB(
@@ -181,8 +218,10 @@ class MyinfoMainBody extends ConsumerWidget {
                           IconButton(
                             icon: Icon(Icons.keyboard_arrow_right),
                             onPressed: () {
-                              // Navigator.of(context).push(MaterialPageRoute(
-                              //     builder: (context) => ChoiceAuthWayPage()));
+                              // sunghun
+                              // snapshot.data.data()['auth'] == 1
+                              //     ? _showDialog(context, 1)
+                              //     : _showDialog(context, 2);
                             },
                           )
                         ],
