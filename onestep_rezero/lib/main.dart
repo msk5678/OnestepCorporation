@@ -11,6 +11,7 @@ import 'package:onestep_rezero/login/model/user.dart';
 import 'package:onestep_rezero/timeUtil.dart';
 
 import 'appmain/bottomNavigationItem.dart';
+import 'appmain/routeGenterator.dart';
 
 final auth = FBA.FirebaseAuth.instance;
 final googleSignIn = GoogleSignIn();
@@ -41,6 +42,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      initialRoute: '/',
+      onGenerateRoute: RouteGenerator.generateRoute,
       debugShowCheckedModeBanner: false,
       title: 'Onestep',
       // builder: (context, child) {
