@@ -8,6 +8,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:onestep_rezero/main.dart';
 import 'package:random_string/random_string.dart';
 
+import '../../sendMail.dart';
+
 String downloadURL = "";
 bool _isDownloadCheck = false;
 io.File _image;
