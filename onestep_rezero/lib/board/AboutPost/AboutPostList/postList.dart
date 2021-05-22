@@ -15,14 +15,19 @@ class PostListRiverpod extends ConsumerWidget {
   Widget build(BuildContext context, watch) {
     final postlistProvider = watch(postListProvider).boards;
     return PostListView(
-      postList: postlistProvider,
+      postlist: postlistProvider,
     );
   }
 }
 
-class PostListView extends ConsumerWidget {
-  final List postList;
-  const PostListView({Key key, this.postList}) : super(key: key);
+abstract class AbstractPostListView extends ConsumerWidget {
+  List postList;
+}
+
+class PostListView extends AbstractPostListView {
+  PostListView({List postlist}) {
+    postList = postlist;
+  }
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
@@ -71,7 +76,7 @@ class PostListView extends ConsumerWidget {
                 onTap: () async {
                   await Navigator.of(context).pushNamed('/PostContent',
                       arguments: {
-                        "BOARD_DATA": boardData
+                        "CURRENTBOARDDATA": boardData
                       }).then((value) => context
                       .read(postListProvider)
                       .fetchPosts(boardData.boardId));

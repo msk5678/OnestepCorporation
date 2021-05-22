@@ -108,6 +108,8 @@ dependencies:
   sliding_up_panel: ^2.0.0+1
   #LikeButton
   like_button: ^2.0.2
+  #pageTransition_pageChanged Animation
+  page_transition: ^2.0.2
 
   #Chat Test
   #stream_chat_flutter: ^1.5.1

@@ -9,6 +9,9 @@ import 'package:onestep_rezero/board/declareData/postData.dart';
 import 'TipDialog/tip_dialog.dart';
 
 class BoardCreate extends StatefulWidget {
+  final boardCategory;
+
+  const BoardCreate({Key key, this.boardCategory}) : super(key: key);
   @override
   _BoardCreate createState() => _BoardCreate();
 }
@@ -88,47 +91,6 @@ class _BoardCreate extends State<BoardCreate> with TickerProviderStateMixin {
                     ),
                     boardDetailSettingWidget(),
                     saveButtonWidget(),
-                    // ListView.separated(
-                    //   shrinkWrap: true,
-                    //   physics: NeverScrollableScrollPhysics(),
-                    //   itemCount: BoardCategory.values.length,
-                    //   itemBuilder: (context, index) {
-                    //     return ShowUp(
-                    //         delay: delayAmount + (700 + 200 * index),
-                    //         child: Container(
-                    //           decoration: BoxDecoration(
-                    //               borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                    //               border: Border.all(width: 0.5, color: Colors.grey)),
-                    //           child: Row(
-                    //             // mainAxisAlignment: MainAxisAlignment,
-                    //             children: <Widget>[
-                    //               Icon(
-                    //                 BoardCategory.values[index].categoryData.icon,
-                    //                 size: 35,
-                    //               ),
-                    //               SizedBox(
-                    //                 width: deviceWidth / 70,
-                    //               ),
-                    //               Text(BoardCategory.values[index].categoryData.title,
-                    //                   style: TextStyle(
-                    //                       fontWeight: FontWeight.bold, fontSize: 20)),
-                    //               SizedBox(
-                    //                 width: deviceWidth / 50,
-                    //               ),
-                    //               Text(BoardCategory.values[index].categoryData.explain,
-                    //                   textAlign: TextAlign.end,
-                    //                   style:
-                    //                       TextStyle(fontSize: 13, color: Colors.grey)),
-                    //             ],
-                    //           ),
-                    //         ));
-                    //   },
-                    //   separatorBuilder: (BuildContext context, int index) {
-                    //     return Divider(
-                    //       color: Colors.white,
-                    //     );
-                    //   },
-                    // )
                   ]),
             ),
           ),

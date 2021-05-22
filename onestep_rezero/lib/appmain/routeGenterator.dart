@@ -5,6 +5,7 @@ import 'package:onestep_rezero/board/AboutPost/AboutPostList/postListMain.dart';
 import 'package:onestep_rezero/board/AboutPost/createPost.dart';
 import 'package:onestep_rezero/board/AboutPost/postContent.dart';
 import 'package:onestep_rezero/board/boardCreate.dart';
+import 'package:page_transition/page_transition.dart';
 
 import 'package:path/path.dart' as p;
 
@@ -35,8 +36,7 @@ class RouteGenerator {
     switch (_pageName) {
       case 'PostList':
         _pageWidget = PostListMain(
-          boardName: arguments["BOARDNAME"],
-          boardId: arguments["BOARDID"],
+          currentBoardData: arguments["CURRENTBOARDDATA"],
           // boardCategory: arguments["BOARD_NAME"],
         );
         break;
@@ -51,20 +51,25 @@ class RouteGenerator {
       //   break;
 
       case 'PostContent':
-
         // Navigator.of(context).pushNamed('/BoardContent?INDEX=$index&BOARD_NAME="current"') -> arguments['INDEX'] = index, arguments['BOARD_NAME'] = "current"
         _pageWidget = PostContent(
-          postData: arguments["BOARD_DATA"],
+          postData: arguments["CURRENTBOARDDATA"],
         );
         break;
       case 'CreatePost':
-        _pageWidget = CreatePost(
-          currentBoardName: arguments['CURRENTBOARDNAME'],
-          currentBoardId: arguments["CURRENTBOARDID"],
-        );
+        return PageTransition(
+            child: CreatePost(
+              currentBoardData: arguments["CURRENTBOARDDATA"],
+            ),
+            type: PageTransitionType.fade);
         break;
       case 'BoardCreate':
-        _pageWidget = BoardCreate();
+        return PageTransition(
+            child: BoardCreate(
+              boardCategory:
+                  arguments.isEmpty ? null : arguments["BOARDCATEGORY"],
+            ),
+            type: PageTransitionType.fade);
         break;
 
       // case 'BoardList':

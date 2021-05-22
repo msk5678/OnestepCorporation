@@ -4,11 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onestep_rezero/board/AboutPost/AboutPostList/postList.dart';
+import 'package:onestep_rezero/board/declareData/boardData.dart';
+import 'package:onestep_rezero/board/declareData/categoryManageClass.dart';
 
 class PostListMain extends StatefulWidget {
-  final boardName;
-  final boardId;
-  const PostListMain({Key key, this.boardName, this.boardId}) : super(key: key);
+  final currentBoardData;
+
+  const PostListMain({
+    Key key,
+    this.currentBoardData,
+  }) : super(key: key);
 
   @override
   _PostListWidget createState() => _PostListWidget();
@@ -21,14 +26,12 @@ class _PostListWidget extends State<PostListMain> {
   final StreamController<bool> _productAddstreamController =
       StreamController<bool>()..add(true);
   bool _isVisibility = false;
-  String boardName;
-  String boardId;
+  BoardData currentBoardData;
   @override
   void initState() {
-    boardName = widget.boardName;
-    boardId = widget.boardId;
+    currentBoardData = widget.currentBoardData;
     _scrollController.addListener(scrollListenerScroll);
-    context.read(postListProvider).fetchPosts(boardId);
+    context.read(postListProvider).fetchPosts(currentBoardData.boardId);
     // context.read(postListProvider).fetchNextProducts(widget.boardName);
     super.initState();
   }
@@ -51,7 +54,9 @@ class _PostListWidget extends State<PostListMain> {
     }
     if ((_scrollController.position.maxScrollExtent * 0.7) <
         _scrollController.position.pixels) {
-      context.read(postListProvider).fetchNextProducts(boardId);
+      context
+          .read(postListProvider)
+          .fetchNextProducts(currentBoardData.boardId);
     }
     if (_scrollController.offset >= 600) {
       if (!_isVisibility) {
@@ -114,11 +119,11 @@ class _PostListWidget extends State<PostListMain> {
                   heroTag: null,
                   onPressed: () async {
                     await Navigator.pushNamed(context, "/CreatePost",
-                        arguments: {
-                          "CURRENTBOARDNAME": boardName,
-                          "CURRENTBOARDID": boardId
-                        }).then((value) {
-                      context.read(postListProvider).fetchPosts(boardId);
+                            arguments: {"CURRENTBOARDDATA": currentBoardData})
+                        .then((value) {
+                      context
+                          .read(postListProvider)
+                          .fetchPosts(currentBoardData.boardId);
                     });
                   },
                   backgroundColor: Colors.white,
@@ -173,7 +178,7 @@ class _PostListWidget extends State<PostListMain> {
   }
 
   Future<void> _refreshPage() async {
-    context.read(postListProvider).fetchPosts(boardId);
+    context.read(postListProvider).fetchPosts(currentBoardData.boardId);
   }
 
   // @override

@@ -64,7 +64,7 @@ class PostListProvider with ChangeNotifier {
   static Future<QuerySnapshot> getBoardCategory(
       // Get Board Category List
       ) async {
-    return FirebaseFirestore.instance.collection('Board').get();
+    return FirebaseFirestore.instance.collection('board').get();
   }
 }
 
@@ -73,7 +73,7 @@ class PostFirebaseApi {
       {DocumentSnapshot startAfter, String boardId}) async {
     var refProducts;
     refProducts = FirebaseFirestore.instance
-        .collection('Board')
+        .collection('board')
         .doc(boardId)
         .collection(boardId)
         .orderBy("uploadTime", descending: true)

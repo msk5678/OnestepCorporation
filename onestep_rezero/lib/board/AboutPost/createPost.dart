@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-// import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:multi_image_picker2/multi_image_picker2.dart';
+import 'package:onestep_rezero/board/declareData/boardData.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-
-import 'package:onestep_rezero/board/StateManage/firebase_GetUID.dart';
 import 'package:onestep_rezero/board/declareData/postData.dart';
 import 'package:onestep_rezero/board/permissionLib.dart';
 import 'package:onestep_rezero/board/TipDialog/tip_dialog.dart';
@@ -28,10 +26,8 @@ enum ContentCategory { SMALLTALK, QUESTION }
 const int MAX_IMAGE_COUNT = 5;
 
 class CreatePost extends StatefulWidget {
-  final String currentBoardName;
-  final String currentBoardId;
-  CreatePost({Key key, this.currentBoardName, this.currentBoardId})
-      : super(key: key);
+  final currentBoardData;
+  CreatePost({Key key, this.currentBoardData}) : super(key: key);
 
   @override
   _CreateBoardState createState() => _CreateBoardState();
@@ -45,8 +41,7 @@ class _CreateBoardState extends _CreatePageParent<CreatePost> {
 
   @override
   setBoardData() {
-    boardName = widget.currentBoardName;
-    boardId = widget.currentBoardId;
+    currentBoardData = widget.currentBoardData;
   }
 }
 
@@ -67,8 +62,7 @@ abstract class _CreatePageParent<T extends StatefulWidget> extends State<T>
   PanelController panelController;
 
   ScrollController _scrollController;
-  String boardName;
-  String boardId;
+  BoardData currentBoardData;
   setBoardData();
   List<String> _initCommentList = ['', '', '', '', ''];
   Map<String, List<dynamic>> imageCommentMap = {"IMAGE": [], "COMMENT": []};
@@ -217,7 +211,7 @@ abstract class _CreatePageParent<T extends StatefulWidget> extends State<T>
                           child: Column(
                             children: <Widget>[
                               firstContainer(),
-                              displayCurrentBoard(boardName: boardName),
+                              displayCurrentBoard(),
                               secondContainer(),
                               thirdContainer(),
                               SizedBox(
@@ -237,14 +231,14 @@ abstract class _CreatePageParent<T extends StatefulWidget> extends State<T>
     );
   }
 
-  displayCurrentBoard({String boardName}) {
+  displayCurrentBoard() {
     return Container(
         alignment: Alignment.centerLeft,
         child: Row(
           children: [
             Text("게시되는 곳 : "),
             Text(
-              "${boardName ?? ''}",
+              "${currentBoardData.boardName ?? ''}",
               style: TextStyle(fontWeight: FontWeight.bold),
             )
           ],
@@ -355,8 +349,8 @@ abstract class _CreatePageParent<T extends StatefulWidget> extends State<T>
         imageCommentMap: imageCommentMap,
         textContent: textEditingControllerContent.text,
         contentCategory: _category.toString(),
-        boardName: boardName,
-        boardId: boardId);
+        boardName: currentBoardData.boardName,
+        boardId: currentBoardData.boardId);
     return await _postData.toFireStore(context);
   }
 

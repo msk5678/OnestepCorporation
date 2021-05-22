@@ -29,8 +29,7 @@ class BoardListView extends ConsumerWidget {
     List<Widget> categoryListWidget = [];
 
     boardList.forEach((value) {
-      BoardCategory boardCategory = BoardCategory.values.firstWhere((element) =>
-          element.toString() == 'BoardCategory.' + value.boardCategory);
+      BoardCategory boardCategory = value.boardCategory;
       categoryListWidget.add(ListTile(
         leading: IconButton(
           icon: Icon(
@@ -53,18 +52,14 @@ class BoardListView extends ConsumerWidget {
         ),
         subtitle: GestureDetector(
             onTap: () {
-              Navigator.pushNamed(context, '/PostList', arguments: {
-                "BOARDNAME": value.boardName,
-                "BOARDID": value.boardId
-              });
+              Navigator.pushNamed(context, '/PostList',
+                  arguments: {"CURRENTBOARDDATA": value});
             },
             child: Container(child: Text(value.boardExplain ?? "ERROR"))),
         title: GestureDetector(
             onTap: () {
-              Navigator.pushNamed(context, '/PostList', arguments: {
-                "BOARDNAME": value.boardName,
-                "BOARDID": value.boardId
-              });
+              Navigator.pushNamed(context, '/PostList',
+                  arguments: {"CURRENTBOARDDATA": value});
             },
             child: Container(child: Text(value.boardName ?? "ERROR"))),
       ));
