@@ -4,8 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:onestep_rezero/chat/boardchat/model/productChat.dart';
 import 'package:onestep_rezero/chat/boardchat/model/productChatCount.dart';
 import 'package:onestep_rezero/chat/boardchat/realtimeProductChatController.dart';
-import 'package:onestep_rezero/chat/controller/realtimeNavigationManager.dart';
-import 'package:onestep_rezero/chat/productchat/controller/productChatController.dart';
+import 'package:onestep_rezero/chat/navigator/chatNavigationManager.dart';
 import 'package:onestep_rezero/chat/widget/chatBadge.dart';
 import 'package:onestep_rezero/chat/widget/chat_list_time.dart';
 import 'package:onestep_rezero/main.dart';
@@ -278,7 +277,7 @@ class _RealTimePageState extends State<RealTimePage>
                             ),
                           ),
                           onTap: () {
-                            RealTimeChatNavigationManager
+                            ChatNavigationManager
                                 .navigateToRealTimeChattingRoom(
                               context,
                               listProductChat[index].user1,

@@ -298,7 +298,10 @@ class ProductChatController {
     //type = 2 its sticker image
     //contentMsg.characters;
     var content;
-    if (contentMsg != null) {
+    if (contentMsg == "" || contentMsg == null) {
+      Fluttertoast.showToast(msg: 'Empty Message. Can not be send.');
+      return false;
+    } else if (contentMsg != null) {
       if (contentMsg.runtimeType == Product) {
         print(
             "proChatController-onSendToProductMessage 2-1. contentMsg type이 product이면 map형식 생성");

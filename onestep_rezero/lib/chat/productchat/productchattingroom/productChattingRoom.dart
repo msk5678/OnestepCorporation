@@ -8,12 +8,10 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:onestep_rezero/chat/productchat/controller/productChatController.dart';
-import 'package:onestep_rezero/chat/productchat/model/productChatMenuItem.dart';
 import 'package:onestep_rezero/chat/productchat/model/productChatMessage.dart';
 import 'package:onestep_rezero/chat/widget/FullmageWidget.dart';
 import 'package:onestep_rezero/chat/widget/message_list_time.dart';
 import 'package:onestep_rezero/chat/widget/productChatMenu.dart';
-import 'package:onestep_rezero/chat/widget/productMenuItems.dart';
 import 'package:onestep_rezero/main.dart';
 
 import 'dart:io' as io;
@@ -164,39 +162,6 @@ class _ProductChattingRoomPageState extends State<ProductChattingRoomPage> {
   }
 }
 
-//  Widget _deleteChattingRoom(var context) {
-//     return Stack(
-//       alignment: Alignment.center,
-//       children: <Widget>[
-//         IconButton(
-//             icon: Icon(Icons.delete),
-//             onPressed: () {
-//               try {
-//                 FirebaseFirestore.instance
-//                     .collection("chat")
-//                     .doc(copy)
-//                     .collection('message')
-//                     .get()
-//                     .then((snapshot) {
-//                   for (DocumentSnapshot ds in snapshot.docs) {
-//                     ds.reference.delete();
-//                   }
-//                 });
-//                 FirebaseFirestore.instance
-//                     .collection("chat")
-//                     .doc(chat)
-//                     .delete();
-
-//                 Navigator.of(context).pop();
-//                 print("삭제 되었습니다." + chattingRoomId);
-//               } catch (e) {
-//                 print(e.message);
-//               }
-//             }),
-//       ],
-//     );
-//   }
-
 class ChatScreen extends StatefulWidget {
   final String myUid;
   final String friendId;
@@ -221,7 +186,7 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _LastChatState extends State<ChatScreen> {
-  final String myId; // uid 받음
+  final String myId;
   final String friendId;
   final String postId;
   final Product product;
@@ -357,8 +322,8 @@ class _LastChatState extends State<ChatScreen> {
               print(
                   "proChat-checkExistChattingRoom 1-3. 만약 장터에서 왔으면 초기 메세지 생성");
 
-              //장터에서 온게 맞으면
-              checkTheSendMessage(chatId, friendId, product, 3);
+              //장터에서 온게 맞으면 텍스트 필드에 물품정보 생성
+              setTextFieldtoProductInfo(product);
             }
             print(
                 "#realpro Data strmsg second 채팅방 있음 22 myid $myId / fid $friendId / post $postId / chatId $chatId");
@@ -378,6 +343,11 @@ class _LastChatState extends State<ChatScreen> {
       setState(() {});
     } //than
             );
+  }
+
+  void setTextFieldtoProductInfo(Product product) {
+    String title = product.title;
+    textEditingController.text = "[상품정보문의]안녕하세요. [$title] 보고 문의드립니다.";
   }
 
   @override
@@ -1150,6 +1120,7 @@ class _LastChatState extends State<ChatScreen> {
             child: TextField(
               style: TextStyle(color: Colors.black, fontSize: 15.0),
               controller: textEditingController,
+              maxLines: null,
               decoration: InputDecoration.collapsed(
                   hintText: "Write here...,",
                   hintStyle: TextStyle(color: Colors.grey)),
@@ -1167,11 +1138,15 @@ class _LastChatState extends State<ChatScreen> {
                   icon: Icon(Icons.send),
                   color: Colors.lightBlueAccent,
                   onPressed: () {
-                    print(
-                        "#realpro myid $myId / fid $friendId / chatId $chatId");
-                    checkTheSendMessage(
-                        chatId, friendId, textEditingController.text, 0);
-                    //onSendToProductMessage(textEditingController.text, 0);
+                    if (textEditingController.text.contains("[상품정보문의]")) {
+                      checkTheSendMessage(chatId, friendId, product, 3);
+                      print("상품정보");
+                    } else {
+                      print(
+                          "#realpro myid $myId / fid $friendId / chatId $chatId");
+                      checkTheSendMessage(
+                          chatId, friendId, textEditingController.text, 0);
+                    }
                   }),
               color: Colors.white,
             ),

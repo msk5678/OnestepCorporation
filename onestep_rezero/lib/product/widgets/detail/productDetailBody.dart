@@ -7,7 +7,7 @@ import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:onestep_rezero/animation/favoriteAnimation.dart';
 import 'package:onestep_rezero/favorite/utils/favoriteFirebaseApi.dart';
 import 'package:onestep_rezero/main.dart';
-import 'package:onestep_rezero/chat/controller/realtimeNavigationManager.dart';
+import 'package:onestep_rezero/chat/navigator/chatNavigationManager.dart';
 import 'package:onestep_rezero/product/models/product.dart';
 import 'package:onestep_rezero/product/pages/productBump.dart';
 import 'package:onestep_rezero/product/pages/productEdit.dart';
@@ -716,7 +716,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
             print(widget.product.uid);
             print(widget.product.firestoreid);
             print(widget.product);
-            RealTimeChatNavigationManager.navigateProductToProductChat(
+            ChatNavigationManager.navigateProductToProductChat(
                 context,
                 googleSignIn.currentUser.id,
                 widget.product.uid,
