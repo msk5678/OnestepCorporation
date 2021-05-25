@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' as foundation;
-import 'package:onestep_rezero/board/AboutPost/AboutPostList/postListMain.dart';
+import 'package:onestep_rezero/board/AboutPost/AboutPostListView/postListMain.dart';
 import 'package:onestep_rezero/board/AboutPost/createPost.dart';
 import 'package:onestep_rezero/board/AboutPost/postContent.dart';
 import 'package:onestep_rezero/board/boardCreate.dart';
@@ -40,15 +40,6 @@ class RouteGenerator {
           // boardCategory: arguments["BOARD_NAME"],
         );
         break;
-      // case 'MainPage':
-      //   //var arg = preferences.getString('id') ?? '아이디없음';
-      //   // Navigator.of(context).pushNamed('/MainPage?UID=$arg'); 또는
-      //   // Navigator.of(context).pushNamed('/BoardContent',arguments: {"BOARD_DATA": boardDataList[index]}); 으로 사용
-      //   _pageWidget = MyHomePage();
-      //   break;
-      // case 'ProductWidget':
-      //   _pageWidget = ClothWidget();
-      //   break;
 
       case 'PostContent':
         // Navigator.of(context).pushNamed('/BoardContent?INDEX=$index&BOARD_NAME="current"') -> arguments['INDEX'] = index, arguments['BOARD_NAME'] = "current"
@@ -61,7 +52,8 @@ class RouteGenerator {
             child: CreatePost(
               currentBoardData: arguments["CURRENTBOARDDATA"],
             ),
-            type: PageTransitionType.fade);
+            type: PageTransitionType.fade,
+            settings: RouteSettings(name: settings.name.toString()));
         break;
       case 'BoardCreate':
         return PageTransition(
@@ -71,43 +63,6 @@ class RouteGenerator {
             ),
             type: PageTransitionType.fade);
         break;
-
-      // case 'BoardList':
-      //   _pageWidget = Consumer<BoardProvider>(
-      //       builder: (context, productProvider, _) => BoardList(
-      //             boardCategory: arguments["BOARD_CATEGORY"],
-      //             boardProvider: productProvider,
-      //           ));
-      //   break;
-      // case 'BoardCategory':
-      //   _pageWidget = BoardCategoryList();
-      //   break;
-      // case 'JoinPage':
-      //   _pageWidget = JoinScreen(currentUserId: arguments['UID']);
-      //   break;
-      // case 'ImageFullViewer':
-      //   _pageWidget = ImageFullViewerWidget(
-      //     index: arguments["INDEX"],
-      //     galleryItems: arguments["IMAGES"],
-      //   );
-      //   break;
-      // case 'CustomFullViewer':
-      //   _pageWidget = CustomImageViewer(
-      //     index: arguments["INDEX"],
-      //     galleryItems: arguments["IMAGES"],
-      //   );
-      //   break;
-      // case 'DetailProduct':
-      //   _pageWidget = ClothDetailViewWidgetcopy(
-      //     docId: arguments['PRODUCTID'],
-      //   );
-      //   break;
-
-      // case 'BumpProduct':
-      //   _pageWidget = ClothBumpWidget(
-      //     product: arguments['PRODUCT'],
-      //   );
-      //   break;
     }
     return _isIOS
         ? CupertinoPageRoute(

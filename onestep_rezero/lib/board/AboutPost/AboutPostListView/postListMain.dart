@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:onestep_rezero/board/AboutPost/AboutPostList/postList.dart';
+import 'package:onestep_rezero/board/AboutPost/AboutPostListView/listRiverpod.dart';
+import 'package:onestep_rezero/board/AboutPost/AboutPostListView/photoList.dart';
+import 'package:onestep_rezero/board/AboutPost/AboutPostListView/postList.dart';
 import 'package:onestep_rezero/board/declareData/boardData.dart';
 import 'package:onestep_rezero/board/declareData/categoryManageClass.dart';
 
@@ -27,11 +29,13 @@ class _PostListWidget extends State<PostListMain> {
       StreamController<bool>()..add(true);
   bool _isVisibility = false;
   BoardData currentBoardData;
+  BoardCategory currentBoardCategory;
   @override
   void initState() {
     currentBoardData = widget.currentBoardData;
+    currentBoardCategory = currentBoardData.boardCategory;
     _scrollController.addListener(scrollListenerScroll);
-    context.read(postListProvider).fetchPosts(currentBoardData.boardId);
+    context.read(listProvider).fetchPosts(currentBoardData.boardId);
     // context.read(postListProvider).fetchNextProducts(widget.boardName);
     super.initState();
   }
@@ -54,9 +58,7 @@ class _PostListWidget extends State<PostListMain> {
     }
     if ((_scrollController.position.maxScrollExtent * 0.7) <
         _scrollController.position.pixels) {
-      context
-          .read(postListProvider)
-          .fetchNextProducts(currentBoardData.boardId);
+      context.read(listProvider).fetchNextProducts(currentBoardData.boardId);
     }
     if (_scrollController.offset >= 600) {
       if (!_isVisibility) {
@@ -85,7 +87,9 @@ class _PostListWidget extends State<PostListMain> {
           onRefresh: _refreshPage,
           child: SingleChildScrollView(
             child: Column(children: [
-              PostListRiverpod(),
+              ListRiverPod(
+                boardCategory: currentBoardCategory,
+              ),
             ]),
             controller: _scrollController,
           ),
@@ -122,7 +126,7 @@ class _PostListWidget extends State<PostListMain> {
                             arguments: {"CURRENTBOARDDATA": currentBoardData})
                         .then((value) {
                       context
-                          .read(postListProvider)
+                          .read(listProvider)
                           .fetchPosts(currentBoardData.boardId);
                     });
                   },
@@ -178,7 +182,7 @@ class _PostListWidget extends State<PostListMain> {
   }
 
   Future<void> _refreshPage() async {
-    context.read(postListProvider).fetchPosts(currentBoardData.boardId);
+    context.read(listProvider).fetchPosts(currentBoardData.boardId);
   }
 
   // @override

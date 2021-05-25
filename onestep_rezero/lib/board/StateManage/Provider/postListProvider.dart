@@ -15,7 +15,7 @@ class PostListProvider with ChangeNotifier {
   String get errorMessage => _errorMessage;
   bool get hasNext => _hasNext;
 
-  List<PostData> get boards => _productsSnapshot.map((snap) {
+  List<PostData> get posts => _productsSnapshot.map((snap) {
         return PostData.fromFireStore(snap);
       }).toList();
 
