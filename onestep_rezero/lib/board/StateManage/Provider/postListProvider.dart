@@ -10,13 +10,13 @@ class PostListProvider with ChangeNotifier {
   int documentLimit = 15;
   bool _hasNext = true;
   bool _isFetching = false;
-  List<BoardData> boardData = [];
+  List<PostData> boardData = [];
 
   String get errorMessage => _errorMessage;
   bool get hasNext => _hasNext;
 
-  List<BoardData> get boards => _productsSnapshot.map((snap) {
-        return BoardData.fromFireStore(snap);
+  List<PostData> get posts => _productsSnapshot.map((snap) {
+        return PostData.fromFireStore(snap);
       }).toList();
 
   fetchNextProducts(String boardName) async {
@@ -64,7 +64,7 @@ class PostListProvider with ChangeNotifier {
   static Future<QuerySnapshot> getBoardCategory(
       // Get Board Category List
       ) async {
-    return FirebaseFirestore.instance.collection('Board').get();
+    return FirebaseFirestore.instance.collection('board').get();
   }
 }
 
@@ -73,7 +73,7 @@ class PostFirebaseApi {
       {DocumentSnapshot startAfter, String boardId}) async {
     var refProducts;
     refProducts = FirebaseFirestore.instance
-        .collection('Board')
+        .collection('board')
         .doc(boardId)
         .collection(boardId)
         .orderBy("uploadTime", descending: true)

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/product/models/categoryItem.dart';
 
 final categoryStateProvider = StateProvider<bool>((ref) {
@@ -66,6 +67,9 @@ class ProductMainHeader extends ConsumerWidget {
   }
 
   Widget header(BuildContext context) {
+    categoryList
+        .then((value) => print("@@@@@@#### 카테고리 갯수 : ${value.docs.length}"));
+
     return GridView(
       physics: NeverScrollableScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

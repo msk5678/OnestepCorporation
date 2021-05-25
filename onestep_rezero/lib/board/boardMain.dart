@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'StateManage/FutureProvider/boardCategoryProvider.dart';
+import 'boardCategoryList.dart';
 
 class BoardMain extends StatefulWidget {
   BoardMain({
@@ -19,6 +19,11 @@ class _BoardMainState extends State<BoardMain> {
   double device_height;
 
   ScrollController scrollController = new ScrollController();
+  @override
+  void initState() {
+    context.read(boardListProvider).fetchBoards();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -147,7 +152,9 @@ class _BoardMainState extends State<BoardMain> {
                       border: Border.all(color: Colors.grey),
                       borderRadius: BorderRadius.all(Radius.circular(5))),
                   margin: EdgeInsets.all(device_width / 50),
-                  child: BoardNameProvider().futureConsumerWidget),
+                  child: BoardListRiverpod()
+                  // BoardNameProvider().futureConsumerWidget
+                  ),
             )
           ],
         ),

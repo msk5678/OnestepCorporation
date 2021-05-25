@@ -9,21 +9,44 @@ class ProductGridView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ScopedReader watch) {
     var _size = MediaQuery.of(context).size;
-    final double _itemHeight = (_size.height - kToolbarHeight - 24) / 2.28;
+    // final double _itemHeight = (_size.height - kToolbarHeight - 24) / 2.28;
+    final double _itemHeight = (_size.height - kToolbarHeight - 24) / 2.7;
     final double _itemWidth = _size.width / 2;
 
+    // return Padding(
+    //   padding: EdgeInsets.only(top: 10),
+    //   child: GridView(
+    //     shrinkWrap: true,
+    //     physics: NeverScrollableScrollPhysics(),
+    //     padding: EdgeInsets.symmetric(horizontal: 15),
+    //     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+    //       childAspectRatio: _itemWidth > _itemHeight
+    //           ? (_itemHeight / _itemWidth)
+    //           : (_itemWidth / _itemHeight),
+    //       crossAxisCount: 3,
+    //       mainAxisSpacing: 15,
+    //       crossAxisSpacing: 7,
+    //     ),
+    //     children: [
+    //       ...itemList
+    //           .map(
+    //             (product) => ProductItem(product: product),
+    //           )
+    //           .toList(),
+    //     ],
+    //   ),
+    // );
+
     return Padding(
-      padding: EdgeInsets.only(top: 10),
+      padding: EdgeInsets.only(top: 10, bottom: 10),
       child: GridView(
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),
         padding: EdgeInsets.symmetric(horizontal: 15),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          childAspectRatio: _itemWidth > _itemHeight
-              ? (_itemHeight / _itemWidth)
-              : (_itemWidth / _itemHeight),
-          crossAxisCount: 3,
-          mainAxisSpacing: 15,
+          childAspectRatio: (_itemWidth / _itemHeight),
+          crossAxisCount: 2,
+          mainAxisSpacing: 20,
           crossAxisSpacing: 7,
         ),
         children: [

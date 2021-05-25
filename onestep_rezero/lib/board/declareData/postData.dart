@@ -1,3 +1,4 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -5,87 +6,96 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:random_string/random_string.dart';
 import 'package:onestep_rezero/board/StateManage/firebase_GetUID.dart';
 
-class BoardData {
+class PostData {
   var uploadTime;
   var updateTime;
   String documentId;
-  final int favoriteCount;
   final String title;
   final String contentCategory;
   final int reportCount;
   final String textContent;
   final String uid;
-  final int scribeCount;
-  final Map<String, dynamic> views;
   final int commentCount;
   final String boardName;
   final String boardId;
   final Map<String, dynamic> favoriteUserList;
   final Map<String, dynamic> scrabUserList;
+  final Map<String, dynamic> views;
+  final Map<String, dynamic> commentUserList;
+  int favoriteCount;
+  int scribeCount;
+  Map<String, dynamic> imageCommentMap;
   Function completeImageUploadCallback;
   List imgUriList;
-  Map<String, dynamic> imageCommentList;
+
+  bool deleted;
+  int deletedTime;
 
   Future convertImage(var _imageArr) async {
     List _imgUriarr = [];
+
     for (var imaged in _imageArr) {
       Reference storageReference = FirebaseStorage.instance
           .ref()
           .child("boardimages/freeboard/${randomAlphaNumeric(15)}");
       UploadTask storageUploadTask = storageReference
           .putData((await imaged.getByteData()).buffer.asUint8List());
-      // await storageUploadTask;
-      String downloadURL = await storageReference.getDownloadURL();
-      _imgUriarr.add(downloadURL);
+      await storageUploadTask.whenComplete(() async {
+        String downloadURL = await storageReference.getDownloadURL();
+        _imgUriarr.add(downloadURL);
+      });
     }
     return _imgUriarr;
   }
 
-  BoardData(
+  PostData(
       {this.scrabUserList,
+      this.commentUserList,
       this.favoriteUserList,
       this.contentCategory,
       this.boardName,
       this.uploadTime,
-      this.favoriteCount,
       this.title,
       this.reportCount,
       this.textContent,
       this.uid,
-      this.imageCommentList,
+      this.imageCommentMap,
       this.scribeCount,
+      this.favoriteCount,
       this.views,
       this.documentId,
       this.commentCount,
       this.imgUriList,
-      this.boardId});
+      this.boardId,
+      this.deleted,
+      this.deletedTime});
   Future toFireStore(BuildContext context) async {
     String currentTimeStamp = DateTime.now().millisecondsSinceEpoch.toString();
-    imgUriList = await convertImage(imageCommentList["IMAGE"]);
-    imageCommentList.update("IMAGE", (value) => imgUriList);
+    imgUriList = await convertImage(imageCommentMap["IMAGE"]);
+    imageCommentMap.update("IMAGE", (value) => imgUriList);
     return await FirebaseFirestore.instance
-        .collection("Board")
-        .doc("Board_Free")
-        .collection("Board_Free")
+        .collection("board")
+        .doc(this.boardId ?? "boardFree")
+        .collection(this.boardId ?? "boardFree")
         .doc(currentTimeStamp)
         .set({
           "uid": UserUID.getId(),
           "uploadTime": Timestamp.fromDate(DateTime.now()),
           "updateTime": 0,
-          "scribeCount": scribeCount ?? 0,
-          "favoriteCount": favoriteCount ?? 0,
-          "title": title,
-          "contentCategory": contentCategory.toString(),
-          "reportCount": reportCount ?? 0,
-          "textContent": textContent ?? "",
-          "imageCommentList": imageCommentList ?? {},
-          "views": views ?? {},
           "commentCount": commentCount ?? 0,
-          "boardName": boardName,
-          "boardId": boardId,
+          "reportCount": reportCount ?? 0,
+          "deletedTime": deletedTime ?? 0,
+          "title": title ?? "",
+          "contentCategory": contentCategory.toString(),
+          "textContent": textContent ?? "",
+          "boardName": boardName ?? "",
+          "boardId": boardId ?? "",
+          "deleted": deleted ?? false,
+          "views": views ?? {},
+          "imageCommentList": imageCommentMap ?? {},
           "scrabUserList": scrabUserList ?? {},
           "favoriteUserList": favoriteUserList ?? {},
-          "commentUserUidList": []
+          "commentUserList": commentUserList ?? {},
         })
         .whenComplete(() => true)
         .then((value) => true)
@@ -97,137 +107,164 @@ class BoardData {
         );
   }
 
-  factory BoardData.fromFireStore(DocumentSnapshot snapshot) {
-    Map _boardData = snapshot.data();
-    return BoardData(
-        title: _boardData["title"],
-        imageCommentList: _boardData["imageCommentList"],
-        contentCategory: _boardData["contentCategory"],
-        favoriteCount: _boardData["favoriteCount"],
-        textContent: _boardData["textContent"],
-        uid: _boardData["uid"],
-        documentId: snapshot.id,
-        commentCount: _boardData["commentCount"],
-        uploadTime: _boardData["uploadTime"].toDate(),
-        views: _boardData["views"],
-        boardId: _boardData["boardId"],
-        boardName: _boardData["boardName"]);
-  }
-}
-
-class BoardCateogry {
-  final String boardName;
-  BoardCateogry({this.boardName});
-  factory BoardCateogry.fromFireStore(DocumentSnapshot snapshot) {
-    print("snapshot.id" + snapshot.id);
-    print("Log 1");
-    return BoardCateogry(boardName: snapshot.id);
+  factory PostData.fromFireStore(DocumentSnapshot snapshot) {
+    Map postData = snapshot.data();
+    return PostData(
+      title: postData["title"],
+      contentCategory: postData["contentCategory"] ?? '',
+      textContent: postData["textContent"] ?? '',
+      uid: postData["uid"] ?? '',
+      documentId: snapshot.id,
+      commentCount: postData["commentCount"] ?? 0,
+      uploadTime: postData["uploadTime"].toDate(),
+      boardId: postData["boardId"] ?? '',
+      boardName: postData["boardName"] ?? '',
+      deleted: postData["deleted"] ?? false,
+      deletedTime: postData["deletedTime"] ?? 0,
+      reportCount: postData["reportCount"] ?? 0,
+      views: postData["views"] ?? {},
+      commentUserList: postData["commentUserList"] ?? {},
+      favoriteUserList: postData["favoriteUserList"] ?? {},
+      scrabUserList: postData["scrabUserList"] ?? {},
+      imageCommentMap: postData["imageCommentList"] ?? {},
+      favoriteCount: postData["favoriteUserList"] != null
+          ? postData["favoriteUserList"].length
+          : 0,
+      scribeCount: postData["commentUserList"] != null
+          ? postData["commentUserList"].length
+          : 0,
+    );
   }
 }
 
 class Comment {
-  String COMMENT_COLLECTION_NAME = "Comment";
+  // commentSaveMethod() async {
+  //   final db = FirebaseDatabase.instance.reference();
+  //   String currentTimeStamp = DateTime.now().millisecondsSinceEpoch.toString();
+  //   db
+  //       .child('board')
+  //       .child(currentBoardId)
+  //       .child(currentPostId)
+  //       .child(currentTimeStamp)
+  //       .set({
+  //     "uid": currentUID,
+  //     "boardId": currentBoardId,
+  //     "boardName": currentBoardName,
+  //     "postId": currentPostId,
+  //     "textContent": _textEditingControllerComment.text.trimRight(),
+  //     "deleted": false,
+  //     "reported": false,
+  //     "deletedTime": 0,
+  //   });
+  //   // databaseRef.push().set({'name': 'hi', 'comment': 'A good season'});
+  // }
+
   final String uid;
-  final String text;
-  final int reportCount;
-  var uploadTime;
-  var lastUpdateTime;
-  final int favoriteCount;
-  final Map<String, dynamic> favoriteUserList;
-  final String name;
   final String boardId;
-  final String boardDocumentId;
-  Comment(
-      {this.uploadTime,
-      this.uid,
-      this.favoriteCount,
-      this.favoriteUserList,
-      this.lastUpdateTime,
-      this.name,
-      this.reportCount,
-      this.text,
-      this.boardDocumentId,
-      this.boardId});
-  Future toFireStore(BuildContext context,
-      {bool isUnderCommentSave, String commentDocumentId}) async {
-    isUnderCommentSave = isUnderCommentSave ?? false;
-    var _db = FirebaseFirestore.instance
-        .collection("Board")
-        .doc(boardId)
-        .collection(boardId)
-        .doc(boardDocumentId)
-        .collection(COMMENT_COLLECTION_NAME);
-    Map<String, dynamic> _saveData = {
-      "uid": UserUID.getId(),
-      "text": text ?? "",
-      "uploadTime": Timestamp.fromDate(DateTime.now()),
-      "lastUpdateTime": null,
-      "name": name ?? "익명",
-      "boardId": boardId ?? "",
-      "boardDocumentId": boardDocumentId ?? "",
-      "favoriteCount": 0,
-      "favoriteUserList": {},
-      "reportCount": 0,
-      "deleted": false,
-      "deleteTime": null,
-    };
-    return !isUnderCommentSave
-        ? await _db.add(_saveData).then((value) {
-            if (value.runtimeType == DocumentReference) {
-              return true;
-            }
-          })
-        : await _db
-            .doc(commentDocumentId)
-            .collection(COMMENT_COLLECTION_NAME)
-            .add(_saveData)
-            .then((value) {
-            if (value.runtimeType == DocumentReference) {
-              return true;
-            }
-          });
+  final String boardName;
+  final String postId;
+  final String textContent;
+  final String deleted;
+  final String deletedTime;
+  final String reported;
+  final String reportCount;
+  final String uploadTime;
+  final String updateTime;
+  final String userName;
+  String commentId;
+  Comment({
+    this.textContent,
+    this.reported,
+    this.uploadTime,
+    this.uid,
+    this.boardName,
+    this.updateTime,
+    this.reportCount,
+    this.userName,
+    this.postId,
+    this.boardId,
+    this.deleted,
+    this.deletedTime,
+  });
+  Future toRealtimeDatabase(Comment comment) async {
+    final db = FirebaseDatabase.instance.reference();
+    String currentTimeStamp = DateTime.now().millisecondsSinceEpoch.toString();
+    db
+        .child('board')
+        .child(boardId)
+        .child(postId)
+        .child(currentTimeStamp)
+        .set({
+          "uid": comment.uid,
+          "boardId": comment.boardId,
+          "boardName": comment.boardName,
+          "postId": comment.postId,
+          "textContent": comment.textContent ?? '',
+          "deleted": comment.deleted ?? 'false',
+          "deletedTime": comment.deletedTime ?? '',
+          "reported": comment.reported ?? '',
+          "reportCount": comment.reportCount ?? '',
+          "uploadTime": comment.uploadTime ?? currentTimeStamp,
+          "updateTime": comment.updateTime ?? '',
+          "userName": comment.userName
+        })
+        .then((value) => null)
+        .whenComplete(() => null);
   }
 
-  Future _saveUidInBoardField(
-      DocumentSnapshot documentSnapshot, String currentUid) async {
-    Map _data = documentSnapshot.data();
-    List _commentList = documentSnapshot.data()["commentList"];
-
-    if (!_commentList.contains(currentUid)) {
-      return await FirebaseFirestore.instance
-          .collection("Board")
-          .doc(boardId)
-          .collection(boardId)
-          .doc(boardDocumentId)
-          .update({"commentList": _data["commentList"].add(currentUid)})
-          .catchError((onError) {
-            print("catchError ");
-          })
-          .then((value) => print("Something error null pointer or.. "))
-          .whenComplete(() => true);
-    }
+  Future commentFavoriteCount({String currentUID, Comment comment}) async {
+    final db = FirebaseDatabase.instance.reference();
+    db
+        .child('board')
+        .child(boardId)
+        .child(postId)
+        .child(commentId)
+        .child("favoriteUserList")
+        .set({currentUID: false})
+        .then((value) => null)
+        .whenComplete(() => null);
   }
 
-  getUnderComment(
-      String boardId, String currentBoardId, String commentId) async {
-    var _result;
-    await FirebaseFirestore.instance
-        .collection("Board")
-        .doc(boardId)
-        .collection(boardId)
-        .doc(currentBoardId)
-        .collection(COMMENT_COLLECTION_NAME)
-        .doc(commentId)
-        .collection(COMMENT_COLLECTION_NAME)
-        .get()
-        .catchError((onError) {
-      print(onError.toString() + "Under comment");
-    }).then((value) {
-      _result = value;
-    });
+  // Future _saveUidInBoardField(
+  //     DocumentSnapshot documentSnapshot, String currentUid) async {
+  //   Map _data = documentSnapshot.data();
+  //   List _commentList = documentSnapshot.data()["commentList"];
 
-    return _result;
-  }
+  //   if (!_commentList.contains(currentUid)) {
+  //     return await FirebaseFirestore.instance
+  //         .collection("Board")
+  //         .doc(boardId)
+  //         .collection(boardId)
+  //         .doc(boardDocumentId)
+  //         .update({"commentList": _data["commentList"].add(currentUid)})
+  //         .catchError((onError) {
+  //           print("catchError ");
+  //         })
+  //         .then((value) => print("Something error null pointer or.. "))
+  //         .whenComplete(() => true);
+  //   }
+  // }
+
+  // getUnderComment(
+  //     String boardId, String currentBoardId, String commentId) async {
+  //   var _result;
+  //   await FirebaseFirestore.instance
+  //       .collection("Board")
+  //       .doc(boardId)
+  //       .collection(boardId)
+  //       .doc(currentBoardId)
+  //       .collection(COMMENT_COLLECTION_NAME)
+  //       .doc(commentId)
+  //       .collection(COMMENT_COLLECTION_NAME)
+  //       .get()
+  //       .catchError((onError) {
+  //     print(onError.toString() + "Under comment");
+  //   }).then((value) {
+  //     _result = value;
+  //   });
+
+  //   return _result;
+  // }
 }
 
 // class UnderComment extends Comment {

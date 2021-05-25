@@ -121,36 +121,37 @@ class _ProductMainState extends State<ProductMain> {
     context.read(productMainService).fetchProducts();
   }
 
-  Widget productAddFLoatingActionButton() {
+  Widget productAddFloatingActionButton() {
     return StreamBuilder<bool>(
-        stream: _productAddstreamController.stream,
-        initialData: false,
-        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-          return Visibility(
-            visible: snapshot.data,
-            child: Container(
-              height: 40,
-              child: FloatingActionButton.extended(
-                heroTag: null,
-                onPressed: () {
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => ProductAdd()));
-                },
-                backgroundColor: Colors.white,
-                // icon: Icon(
-                //   Icons.save,
-                //   color: Colors.black,
-                // ),
-                label: Text(
-                  "물품 등록",
-                  style: TextStyle(
-                    color: Colors.black,
-                  ),
+      stream: _productAddstreamController.stream,
+      initialData: true,
+      builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+        return Visibility(
+          visible: snapshot.data,
+          child: Container(
+            height: 40,
+            child: FloatingActionButton.extended(
+              heroTag: null,
+              onPressed: () {
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => ProductAdd()));
+              },
+              backgroundColor: Colors.white,
+              // icon: Icon(
+              //   Icons.save,
+              //   color: Colors.black,
+              // ),
+              label: Text(
+                "물품 등록",
+                style: TextStyle(
+                  color: Colors.black,
                 ),
               ),
             ),
-          );
-        });
+          ),
+        );
+      },
+    );
   }
 
   Widget scrollToTopFloatingActionButton() {
@@ -219,8 +220,8 @@ class _ProductMainState extends State<ProductMain> {
       floatingActionButton: Stack(
         children: <Widget>[
           Align(
-            alignment: Alignment.bottomCenter,
-            child: productAddFLoatingActionButton(),
+            alignment: Alignment(0.1, 1.0),
+            child: productAddFloatingActionButton(),
           ),
           Align(
             alignment: Alignment.bottomRight,

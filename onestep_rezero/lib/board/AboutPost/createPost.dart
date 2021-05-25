@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:multi_image_picker2/multi_image_picker2.dart';
+import 'package:onestep_rezero/board/declareData/boardData.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'package:multi_image_picker/multi_image_picker.dart';
-import 'package:onestep_rezero/board/StateManage/firebase_GetUID.dart';
 import 'package:onestep_rezero/board/declareData/postData.dart';
 import 'package:onestep_rezero/board/permissionLib.dart';
 import 'package:onestep_rezero/board/TipDialog/tip_dialog.dart';
@@ -26,10 +26,8 @@ enum ContentCategory { SMALLTALK, QUESTION }
 const int MAX_IMAGE_COUNT = 5;
 
 class CreatePost extends StatefulWidget {
-  final String currentBoardName;
-  final String currentBoardId;
-  CreatePost({Key key, this.currentBoardName, this.currentBoardId})
-      : super(key: key);
+  final currentBoardData;
+  CreatePost({Key key, this.currentBoardData}) : super(key: key);
 
   @override
   _CreateBoardState createState() => _CreateBoardState();
@@ -43,8 +41,7 @@ class _CreateBoardState extends _CreatePageParent<CreatePost> {
 
   @override
   setBoardData() {
-    boardName = widget.currentBoardName;
-    boardId = widget.currentBoardId;
+    currentBoardData = widget.currentBoardData;
   }
 }
 
@@ -65,9 +62,7 @@ abstract class _CreatePageParent<T extends StatefulWidget> extends State<T>
   PanelController panelController;
 
   ScrollController _scrollController;
-  BoardData boardData;
-  String boardName;
-  String boardId;
+  BoardData currentBoardData;
   setBoardData();
   List<String> _initCommentList = ['', '', '', '', ''];
   Map<String, List<dynamic>> imageCommentMap = {"IMAGE": [], "COMMENT": []};
@@ -216,15 +211,9 @@ abstract class _CreatePageParent<T extends StatefulWidget> extends State<T>
                           child: Column(
                             children: <Widget>[
                               firstContainer(),
-                              displayCurrentBoard(boardName: boardName),
+                              displayCurrentBoard(),
                               secondContainer(),
                               thirdContainer(),
-                              RaisedButton(
-                                onPressed: () {
-                                  setState(() {});
-                                },
-                                child: Text("hi"),
-                              ),
                               SizedBox(
                                 height: device_height / 15,
                               ),
@@ -242,14 +231,14 @@ abstract class _CreatePageParent<T extends StatefulWidget> extends State<T>
     );
   }
 
-  displayCurrentBoard({String boardName}) {
+  displayCurrentBoard() {
     return Container(
         alignment: Alignment.centerLeft,
         child: Row(
           children: [
             Text("게시되는 곳 : "),
             Text(
-              "${boardName ?? ''}",
+              "${currentBoardData.boardName ?? ''}",
               style: TextStyle(fontWeight: FontWeight.bold),
             )
           ],
@@ -343,14 +332,6 @@ abstract class _CreatePageParent<T extends StatefulWidget> extends State<T>
 
   _saveDataInFirestore() async {
     TipDialogHelper.loading("저장 중입니다.\n 잠시만 기다려주세요.");
-    // await saveData()
-    //     .onError((error, stackTrace) {
-    //       TipDialogHelper.fail("ERROR CODE : BOARD UPLOAD ERROR");
-    //     })
-    //     .then((value) => null)
-    //     .whenComplete(() => null);
-
-    // await saveData().whenComplete(() => null).then((value) => null);
 
     await saveData().then((value) {
       TipDialogHelper.dismiss();
@@ -362,14 +343,15 @@ abstract class _CreatePageParent<T extends StatefulWidget> extends State<T>
 
   Future saveData() async {
     _getterSetterImageComment(isMapSet: true, isSave: true);
-    BoardData _boardData = BoardData(
+
+    PostData _postData = PostData(
         title: textEditingControllerBottomSheet.text,
-        imageCommentList: imageCommentMap,
+        imageCommentMap: imageCommentMap,
         textContent: textEditingControllerContent.text,
         contentCategory: _category.toString(),
-        boardName: boardName,
-        boardId: boardId);
-    return await _boardData.toFireStore(context);
+        boardName: currentBoardData.boardName,
+        boardId: currentBoardData.boardId);
+    return await _postData.toFireStore(context);
   }
 
   showSnackBar(
@@ -693,7 +675,8 @@ abstract class _CreatePageParent<T extends StatefulWidget> extends State<T>
   thirdContainer({Widget popUpMenu}) {
     List<Widget> _imageWidget = [];
     List<Widget> _emptyWidget = [];
-    int containImageCount = imageCommentMap["IMAGE"].length;
+    int containImageCount =
+        imageCommentMap["IMAGE"] != null ? imageCommentMap["IMAGE"].length : 0;
 
     for (int i = 0; i < containImageCount; i++) {
       if (imageCommentMap["IMAGE"][i].runtimeType == String) {
