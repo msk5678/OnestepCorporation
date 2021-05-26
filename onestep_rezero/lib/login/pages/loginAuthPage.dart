@@ -1,10 +1,8 @@
 import 'dart:math';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onestep_rezero/login/providers/providers.dart';
-import 'package:onestep_rezero/main.dart';
 
 String _tempEmail;
 bool _firstEmailEnter;

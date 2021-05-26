@@ -128,38 +128,38 @@ class _ProductChattingRoomPageState extends State<ProductChattingRoomPage> {
     );
   }
 
-  Widget _buildjson(var context) {
-    return Stack(
-      alignment: Alignment.center,
-      children: <Widget>[
-        IconButton(
-            icon: Icon(Icons.ac_unit),
-            onPressed: () {
-              //productChat.toJson();
-              print("JSON 실행");
-              flags % 2 == 0
-                  ? streamController.sink.add(++flags)
-                  : streamController.sink.add(--flags);
-//              database.child("test").set(productChat.toJson());
+//   Widget _buildjson(var context) {
+//     return Stack(
+//       alignment: Alignment.center,
+//       children: <Widget>[
+//         IconButton(
+//             icon: Icon(Icons.ac_unit),
+//             onPressed: () {
+//               //productChat.toJson();
+//               print("JSON 실행");
+//               flags % 2 == 0
+//                   ? streamController.sink.add(++flags)
+//                   : streamController.sink.add(--flags);
+// //              database.child("test").set(productChat.toJson());
 
-              //print(productChat.toJson());
-            }),
-        Positioned(
-          // top: 12.0,
-          // right: 10.0,
-          // width: 10.0,
-          // height: 10.0,
-          left: 300,
-          child: Container(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              //color: AppColors.notification,
-            ),
-          ),
-        )
-      ],
-    );
-  }
+//               //print(productChat.toJson());
+//             }),
+//         Positioned(
+//           // top: 12.0,
+//           // right: 10.0,
+//           // width: 10.0,
+//           // height: 10.0,
+//           left: 300,
+//           child: Container(
+//             decoration: BoxDecoration(
+//               shape: BoxShape.circle,
+//               //color: AppColors.notification,
+//             ),
+//           ),
+//         )
+//       ],
+//     );
+//   }
 }
 
 class ChatScreen extends StatefulWidget {
