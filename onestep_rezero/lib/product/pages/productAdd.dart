@@ -1,20 +1,17 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
-import 'package:multi_image_picker2/multi_image_picker2.dart';
 
 import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/product/pages/productAddCategorySelect.dart';
-import 'package:onestep_rezero/product/widgets/detail/convertImages.dart';
 
 import 'package:onestep_rezero/product/widgets/main/productMainBody.dart';
 import 'package:pattern_formatter/numeric_formatter.dart';
-import 'package:random_string/random_string.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
 class ProductAdd extends StatefulWidget {
@@ -25,7 +22,8 @@ class ProductAdd extends StatefulWidget {
 }
 
 class _ProductAddState extends State<ProductAdd> {
-  List<Asset> imageList = <Asset>[];
+  List<AssetEntity> entity = [];
+  List<Uint8List> data = [];
 
   final _titleTextEditingController = TextEditingController();
   final _priceTextEditingController = TextEditingController();
@@ -38,43 +36,42 @@ class _ProductAddState extends State<ProductAdd> {
   }
 
   Future<void> loadAssets() async {
-    final List<AssetEntity> assets = await AssetPicker.pickAssets(context);
+    final Size size = MediaQuery.of(context).size;
+    final double scale = MediaQuery.of(context).devicePixelRatio;
 
-    // List<Asset> resultList = <Asset>[];
-    // String error = 'No Error Detected';
+    final List<AssetEntity> _entity = await AssetPicker.pickAssets(
+      context,
+      maxAssets: 5,
+      pageSize: 320,
+      pathThumbSize: 80,
+      gridCount: 4,
+      requestType: RequestType.image,
+      selectedAssets: entity,
+      specialPickerType: SpecialPickerType.wechatMoment,
+      // themeColor: Colors.cyan,
+      // This cannot be set when the `themeColor` was provided.
+      // / textDelegate: DefaultTextDelegate(),
+    );
 
-    // try {
-    //   resultList = await MultiImagePicker.pickImages(
-    //     maxImages: 5,
-    //     enableCamera: true,
-    //     selectedAssets: imageList,
-    //     // cupertinoOptions: CupertinoOptions(
-    //     //   takePhotoIcon: "chat",
-    //     //   doneButtonTitle: "Fatto",
-    //     // ),
-    //     materialOptions: MaterialOptions(
-    //       useDetailsView: true,
-    //       startInAllView: true,
-    //       actionBarColor: "#FFFFFF", // 앱바 백그라운드 색
-    //       actionBarTitleColor: "#000000", // 제목 글자색
-    //       selectCircleStrokeColor: "#FFFFFF",
-    //       backButtonDrawable: "back",
-    //       okButtonDrawable: "check",
-    //       statusBarColor: "#BBBBBB", // 상단 상태바 색
-    //     ),
-    //   );
-    // } on Exception catch (e) {
-    //   error = e.toString();
-    // }
+    if (_entity != null && entity != _entity) {
+      entity = _entity;
+      if (mounted) {
+        setState(() {});
+      }
+      Future.forEach(
+        _entity,
+        (element) async => data.add(
+          await element.thumbDataWithSize(
+            (size.width * scale).toInt(),
+            (size.height * scale).toInt(),
+          ),
+        ),
+      ).whenComplete(() => setState(() {}));
 
-    // // If the widget was removed from the tree while the asynchronous platform
-    // // message was in flight, we want to discard the reply rather than calling
-    // // setState to update our non-existent appearance.
-    // if (!mounted) return;
-    // setState(() {
-    //   imageList = resultList;
-    //   // _error = error;
-    // });
+      if (mounted) {
+        setState(() {});
+      }
+    }
   }
 
   Widget images() {
@@ -90,7 +87,6 @@ class _ProductAddState extends State<ProductAdd> {
           children: <Widget>[
             GestureDetector(
               onTap: () {
-                print("@@@@@@@@");
                 loadAssets();
               },
               child: Container(
@@ -102,7 +98,7 @@ class _ProductAddState extends State<ProductAdd> {
                   borderRadius: BorderRadius.all(
                     Radius.circular(5.0),
                   ),
-                ), //       <--- BoxDecoration here
+                ),
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
@@ -115,7 +111,7 @@ class _ProductAddState extends State<ProductAdd> {
                       right: 5,
                       bottom: 5,
                       child: Text(
-                        "${imageList.length}/5",
+                        "${data.length}/5",
                         style: TextStyle(color: Colors.grey),
                       ),
                     ),
@@ -130,7 +126,7 @@ class _ProductAddState extends State<ProductAdd> {
                 margin: EdgeInsets.only(top: 10, bottom: 20),
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  itemCount: imageList.length,
+                  itemCount: data.length,
                   itemBuilder: (BuildContext context, int index) {
                     return Padding(
                       padding: EdgeInsets.only(left: 7),
@@ -144,9 +140,15 @@ class _ProductAddState extends State<ProductAdd> {
                             //   // key: ValueKey(asset.identifier),
                             //   fit: BoxFit.cover,
                             // ),
-                            ConvertImages(
-                                asset: imageList[index], width: 80, height: 80),
+                            // ConvertImages(
+                            //     asset: imageList[index], width: 80, height: 80),
 
+                            Image.memory(
+                              data[index],
+                              fit: BoxFit.cover,
+                              width: 80,
+                              height: 80,
+                            ),
                             // AssetThumb(
                             //     quality: 100,
                             //     asset: imageList[index],
@@ -158,7 +160,8 @@ class _ProductAddState extends State<ProductAdd> {
                               child: GestureDetector(
                                 onTap: () {
                                   setState(() {
-                                    imageList.removeAt(index);
+                                    data.removeAt(index);
+                                    entity.removeAt(index);
                                   });
                                 },
                                 child: Container(
@@ -337,7 +340,7 @@ class _ProductAddState extends State<ProductAdd> {
         duration: Duration(seconds: 2),
         content: Text("설명을 입력해주세요."),
       ));
-    } else if (imageList.length < 1) {
+    } else if (data.length < 1) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         duration: Duration(seconds: 2),
         content: Text("물품을 등록하려면 한장 이상의 사진이 필요합니다."),
@@ -345,17 +348,17 @@ class _ProductAddState extends State<ProductAdd> {
     } else {
       List _imgUriarr = [];
 
-      for (var imaged in imageList) {
-        Reference storageReference = FirebaseStorage.instance
-            .ref()
-            .child("productimage/${randomAlphaNumeric(15)}");
-        UploadTask storageUploadTask = storageReference
-            .putData((await imaged.getByteData()).buffer.asUint8List());
-        await storageUploadTask.whenComplete(() async {
-          String downloadURL = await storageReference.getDownloadURL();
-          _imgUriarr.add(downloadURL);
-        });
-      }
+      // for (var imaged in imageList) {
+      //   Reference storageReference = FirebaseStorage.instance
+      //       .ref()
+      //       .child("productimage/${randomAlphaNumeric(15)}");
+      //   UploadTask storageUploadTask = storageReference
+      //       .putData((await imaged.getByteData()).buffer.asUint8List());
+      //   await storageUploadTask.whenComplete(() async {
+      //     String downloadURL = await storageReference.getDownloadURL();
+      //     _imgUriarr.add(downloadURL);
+      //   });
+      // }
 
       int time = DateTime.now().microsecondsSinceEpoch;
       FirebaseFirestore.instance

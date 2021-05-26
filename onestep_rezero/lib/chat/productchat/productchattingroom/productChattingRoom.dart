@@ -861,7 +861,13 @@ class _LastChatState extends State<ChatScreen> {
                                     child: ElevatedButton(
                                       onPressed: () {
                                         print("장터게시판 이동");
-                                        ProductDetail(docId: widget.postId);
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    (ProductDetail(
+                                                        docId:
+                                                            widget.postId))));
                                       },
                                       child: Container(
                                           alignment: Alignment.center,
