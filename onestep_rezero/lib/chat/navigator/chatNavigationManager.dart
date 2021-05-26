@@ -4,7 +4,7 @@ import 'package:onestep_rezero/chat/productchat/productchattingroom/productChatt
 import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/product/models/product.dart';
 
-class RealTimeChatNavigationManager {
+class ChatNavigationManager {
   static void navigateToRealTimeChattingRoom(
       var context, String myUid, String friendUid, String postId) {
     print("#### 노티 $myUid $friendUid $postId");
