@@ -1,17 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:onestep_rezero/login/pages/choiceAuthWayPage.dart';
-import 'package:onestep_rezero/login/pages/loginAuthPage.dart';
 import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/myinfo/pages/infomation/noticePage.dart';
-import 'package:onestep_rezero/myinfo/pages/infomation/questionsPage.dart';
 import 'package:onestep_rezero/myinfo/pages/myinfoProfilePage.dart';
 import 'package:onestep_rezero/myinfo/pages/myinfoSettingsPage.dart';
 import 'package:onestep_rezero/myinfo/pages/myinfoTransaction.dart';
 import 'package:onestep_rezero/myinfo/providers/providers.dart';
-import 'dart:async';
 import 'package:onestep_rezero/myinfo/widgets/myProfileImage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

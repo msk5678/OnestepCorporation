@@ -15,6 +15,7 @@ import 'package:onestep_rezero/product/widgets/detail/convertImages.dart';
 import 'package:onestep_rezero/product/widgets/main/productMainBody.dart';
 import 'package:pattern_formatter/numeric_formatter.dart';
 import 'package:random_string/random_string.dart';
+import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
 class ProductAdd extends StatefulWidget {
   const ProductAdd({Key key}) : super(key: key);
@@ -37,41 +38,43 @@ class _ProductAddState extends State<ProductAdd> {
   }
 
   Future<void> loadAssets() async {
-    List<Asset> resultList = <Asset>[];
-    String error = 'No Error Detected';
+    final List<AssetEntity> assets = await AssetPicker.pickAssets(context);
 
-    try {
-      resultList = await MultiImagePicker.pickImages(
-        maxImages: 5,
-        enableCamera: true,
-        selectedAssets: imageList,
-        // cupertinoOptions: CupertinoOptions(
-        //   takePhotoIcon: "chat",
-        //   doneButtonTitle: "Fatto",
-        // ),
-        materialOptions: MaterialOptions(
-          useDetailsView: true,
-          startInAllView: true,
-          actionBarColor: "#FFFFFF", // 앱바 백그라운드 색
-          actionBarTitleColor: "#000000", // 제목 글자색
-          selectCircleStrokeColor: "#FFFFFF",
-          backButtonDrawable: "back",
-          okButtonDrawable: "check",
-          statusBarColor: "#BBBBBB", // 상단 상태바 색
-        ),
-      );
-    } on Exception catch (e) {
-      error = e.toString();
-    }
+    // List<Asset> resultList = <Asset>[];
+    // String error = 'No Error Detected';
 
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
-    setState(() {
-      imageList = resultList;
-      // _error = error;
-    });
+    // try {
+    //   resultList = await MultiImagePicker.pickImages(
+    //     maxImages: 5,
+    //     enableCamera: true,
+    //     selectedAssets: imageList,
+    //     // cupertinoOptions: CupertinoOptions(
+    //     //   takePhotoIcon: "chat",
+    //     //   doneButtonTitle: "Fatto",
+    //     // ),
+    //     materialOptions: MaterialOptions(
+    //       useDetailsView: true,
+    //       startInAllView: true,
+    //       actionBarColor: "#FFFFFF", // 앱바 백그라운드 색
+    //       actionBarTitleColor: "#000000", // 제목 글자색
+    //       selectCircleStrokeColor: "#FFFFFF",
+    //       backButtonDrawable: "back",
+    //       okButtonDrawable: "check",
+    //       statusBarColor: "#BBBBBB", // 상단 상태바 색
+    //     ),
+    //   );
+    // } on Exception catch (e) {
+    //   error = e.toString();
+    // }
+
+    // // If the widget was removed from the tree while the asynchronous platform
+    // // message was in flight, we want to discard the reply rather than calling
+    // // setState to update our non-existent appearance.
+    // if (!mounted) return;
+    // setState(() {
+    //   imageList = resultList;
+    //   // _error = error;
+    // });
   }
 
   Widget images() {
@@ -87,6 +90,7 @@ class _ProductAddState extends State<ProductAdd> {
           children: <Widget>[
             GestureDetector(
               onTap: () {
+                print("@@@@@@@@");
                 loadAssets();
               },
               child: Container(

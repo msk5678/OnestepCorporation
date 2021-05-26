@@ -1,13 +1,10 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'dart:io' as io;
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
-
 import 'package:image_picker/image_picker.dart';
 import 'package:onestep_rezero/main.dart';
 import 'package:random_string/random_string.dart';
-
 import '../../sendMail.dart';
 
 String downloadURL = "";
@@ -116,7 +113,7 @@ class _LoginCertificatePageState extends State<LoginCertificatePage> {
                 onPressed: _image != null
                     ? () async {
                         _showDialog(context);
-                        // 증명서 storage 저장
+                        // // 증명서 storage 저장
                         // String ramdomNum = randomAlphaNumeric(15);
                         // firebase_storage.Reference ref = firebase_storage
                         //     .FirebaseStorage.instance
@@ -130,7 +127,7 @@ class _LoginCertificatePageState extends State<LoginCertificatePage> {
                         //       sendCertificateAuth(downloadURL, ramdomNum)
                         //     });
 
-                        // 여기서 authTime이랑, university랑 업데이트 시켜줘야하는지 아니면 인증서 확인하고 다른데서 update 시켜줘야하는지 생각
+                        // // 여기서 authTime이랑, university랑 업데이트 시켜줘야하는지 아니면 인증서 확인하고 다른데서 update 시켜줘야하는지 생각
                         // FirebaseFirestore.instance
                         //     .collection("user")
                         //     .doc(googleSignIn.currentUser.id)
