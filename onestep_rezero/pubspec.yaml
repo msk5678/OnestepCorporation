@@ -115,6 +115,9 @@ dependencies:
   flutter_staggered_animations: "^1.0.0"
   #Cache Manager
   flutter_cache_manager: ^3.0.2
+  #Image FadeIn Animation
+  transparent_image: ^2.0.0
+  
 
   #Chat Test
   #stream_chat_flutter: ^1.5.1

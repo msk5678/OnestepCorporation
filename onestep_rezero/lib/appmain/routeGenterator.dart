@@ -64,12 +64,16 @@ class RouteGenerator {
             type: PageTransitionType.fade);
         break;
     }
-    return _isIOS
-        ? CupertinoPageRoute(
-            builder: (context) => _pageWidget,
-            settings: RouteSettings(name: settings.name.toString()))
-        : MaterialPageRoute(
-            builder: (context) => _pageWidget,
-            settings: RouteSettings(name: settings.name.toString()));
+    return PageTransition(
+        child: _pageWidget,
+        type: PageTransitionType.fade,
+        settings: RouteSettings(name: settings.name.toString()));
+    // return _isIOS
+    //     ? CupertinoPageRoute(
+    //         builder: (context) => _pageWidget,
+    //         settings: RouteSettings(name: settings.name.toString()))
+    //     : MaterialPageRoute(
+    //         builder: (context) => _pageWidget,
+    //         settings: RouteSettings(name: settings.name.toString()));
   }
 }
