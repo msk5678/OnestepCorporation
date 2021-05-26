@@ -99,7 +99,7 @@ class _ProductItemState extends State<ProductItem> {
     );
   }
 
-  Widget getImage() {
+  Widget image() {
     Size size = MediaQuery.of(context).size;
     return CachedNetworkImage(
       imageUrl: widget.product.imagesUrl[0],
@@ -149,7 +149,7 @@ class _ProductItemState extends State<ProductItem> {
                 child: Stack(
                   fit: StackFit.expand,
                   children: <Widget>[
-                    getImage(),
+                    image(),
                     productState(),
                     setFavorite(),
                   ].where((item) => item != null).toList(),

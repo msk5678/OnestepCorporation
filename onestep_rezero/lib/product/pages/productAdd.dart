@@ -13,7 +13,6 @@ import 'package:onestep_rezero/product/pages/productAddCategorySelect.dart';
 import 'package:onestep_rezero/product/utils/numericTextFormatter.dart';
 
 import 'package:onestep_rezero/product/widgets/main/productMainBody.dart';
-import 'package:pattern_formatter/numeric_formatter.dart';
 import 'package:random_string/random_string.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
@@ -26,7 +25,6 @@ class ProductAdd extends StatefulWidget {
 
 class _ProductAddState extends State<ProductAdd> {
   List<AssetEntity> entity = [];
-  List<Uint8List> data = [];
 
   final _titleTextEditingController = TextEditingController();
   final _priceTextEditingController = TextEditingController();
@@ -38,39 +36,21 @@ class _ProductAddState extends State<ProductAdd> {
     super.initState();
   }
 
-  Future<void> loadAssets() async {
-    final Size size = MediaQuery.of(context).size;
-    final double scale = MediaQuery.of(context).devicePixelRatio;
-
+  Future<void> aa() async {
     final List<AssetEntity> _entity = await AssetPicker.pickAssets(
       context,
       maxAssets: 5,
-      pageSize: 320,
+      pageSize: 330,
       pathThumbSize: 80,
-      gridCount: 4,
+      gridCount: 3,
       requestType: RequestType.image,
       selectedAssets: entity,
       specialPickerType: SpecialPickerType.wechatMoment,
-      // themeColor: Colors.cyan,
-      // This cannot be set when the `themeColor` was provided.
       textDelegate: KoreaTextDelegate(),
     );
 
     if (_entity != null && entity.toString() != _entity.toString()) {
       entity = _entity;
-      data.clear();
-      if (mounted) {
-        setState(() {});
-      }
-      Future.forEach(
-        _entity,
-        (element) async => data.add(
-          await element.thumbDataWithSize(
-            (size.width * scale).toInt(),
-            (size.height * scale).toInt(),
-          ),
-        ),
-      ).whenComplete(() => setState(() {}));
 
       if (mounted) {
         setState(() {});
@@ -78,40 +58,62 @@ class _ProductAddState extends State<ProductAdd> {
     }
   }
 
-  Widget imageItem(int index, Uint8List image) {
+  Widget pickAssets() {
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+        aa();
+      },
+      child: Container(
+        width: 80,
+        height: 80,
+        decoration: BoxDecoration(
+          border: Border.all(width: 1.0, color: Colors.grey),
+          borderRadius: BorderRadius.all(
+            Radius.circular(5.0),
+          ),
+        ),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Icon(
+              Icons.photo_camera,
+              color: Colors.grey,
+              size: 30,
+            ),
+            Positioned(
+              right: 5,
+              bottom: 5,
+              child: Text(
+                "${entity.length}/5",
+                style: TextStyle(color: Colors.grey),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget imageItem(int index, AssetEntity image) {
     return Padding(
       padding: EdgeInsets.only(left: 7),
       child: ClipRRect(
         borderRadius: BorderRadius.all(Radius.circular(5.0)),
         child: Stack(
           children: [
-            // Image.memory(
-            //   ima[index].buffer.asUint8List(), width: 80,
-            //   height: 80,
-            //   // key: ValueKey(asset.identifier),
-            //   fit: BoxFit.cover,
-            // ),
-            // ConvertImages(
-            //     asset: imageList[index], width: 80, height: 80),
-
-            Image.memory(
-              image,
-              fit: BoxFit.cover,
+            Image(
               width: 80,
               height: 80,
+              image: AssetEntityImageProvider(image, isOriginal: false),
+              fit: BoxFit.cover,
             ),
-            // AssetThumb(
-            //     quality: 100,
-            //     asset: imageList[index],
-            //     width: 80,
-            //     height: 80),
             Positioned(
               top: 3,
               right: 3,
               child: GestureDetector(
                 onTap: () {
                   setState(() {
-                    data.removeAt(index);
                     entity.removeAt(index);
                   });
                 },
@@ -153,40 +155,8 @@ class _ProductAddState extends State<ProductAdd> {
           child: ListView(
             scrollDirection: Axis.horizontal,
             children: [
-              GestureDetector(
-                onTap: () {
-                  loadAssets();
-                },
-                child: Container(
-                  width: 80,
-                  height: 80,
-                  decoration: BoxDecoration(
-                    border: Border.all(width: 1.0, color: Colors.grey),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(5.0),
-                    ),
-                  ),
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Icon(
-                        Icons.photo_camera,
-                        color: Colors.grey,
-                        size: 30,
-                      ),
-                      Positioned(
-                        right: 5,
-                        bottom: 5,
-                        child: Text(
-                          "${data.length}/5",
-                          style: TextStyle(color: Colors.grey),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              ...data
+              pickAssets(),
+              ...entity
                   .asMap()
                   .map(
                     (i, element) => MapEntry(
@@ -347,19 +317,27 @@ class _ProductAddState extends State<ProductAdd> {
         duration: Duration(seconds: 2),
         content: Text("설명을 입력해주세요."),
       ));
-    } else if (data.length < 1) {
+    } else if (entity.length < 1) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         duration: Duration(seconds: 2),
         content: Text("물품을 등록하려면 한장 이상의 사진이 필요합니다."),
       ));
     } else {
       List _imgUriarr = [];
+      final Size size = MediaQuery.of(context).size;
+      final double scale = MediaQuery.of(context).devicePixelRatio;
 
-      for (var image in data) {
+      for (var image in entity) {
         Reference storageReference = FirebaseStorage.instance
             .ref()
             .child("productimage/${randomAlphaNumeric(15)}");
-        UploadTask storageUploadTask = storageReference.putData(image);
+
+        Uint8List uint8list = await image.thumbDataWithSize(
+          (size.width * scale).toInt(),
+          (size.height * scale).toInt(),
+        );
+
+        UploadTask storageUploadTask = storageReference.putData(uint8list);
         await storageUploadTask.whenComplete(() async {
           String downloadURL = await storageReference.getDownloadURL();
           _imgUriarr.add(downloadURL);

@@ -14,6 +14,7 @@ import 'package:onestep_rezero/product/pages/productEdit.dart';
 import 'package:onestep_rezero/product/widgets/detail/imagesFullViewer.dart';
 import 'package:onestep_rezero/product/widgets/public/productItem.dart';
 import 'package:onestep_rezero/timeUtil.dart';
+import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
 class ProductDetailBody extends StatefulWidget {
   final Product product;
@@ -250,7 +251,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
       child: Stack(
         children: [
           Swiper(
-            onTap: (index) {
+            onTap: (index) async {
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -270,17 +271,14 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
             itemCount: widget.product.imagesUrl.length,
             itemBuilder: (BuildContext context, int index) {
               return Container(
-                child: Hero(
-                  tag: widget.product.imagesUrl[index],
-                  child: CachedNetworkImage(
-                    imageUrl: widget.product.imagesUrl[index],
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height,
-                    errorWidget: (context, url, error) =>
-                        Icon(Icons.error), // 로딩 오류 시 이미지
+                child: CachedNetworkImage(
+                  imageUrl: widget.product.imagesUrl[index],
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height,
+                  errorWidget: (context, url, error) =>
+                      Icon(Icons.error), // 로딩 오류 시 이미지
 
-                    fit: BoxFit.cover,
-                  ),
+                  fit: BoxFit.cover,
                 ),
               );
             },
