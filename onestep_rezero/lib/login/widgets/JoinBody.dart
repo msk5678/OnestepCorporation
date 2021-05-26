@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:onestep_rezero/login/pages/choiceAuthWayPage.dart';
 import 'package:onestep_rezero/login/providers/providers.dart';
-import 'package:onestep_rezero/main.dart';
 
 String _tempEmail = "";
 String _tempNickName = "";
