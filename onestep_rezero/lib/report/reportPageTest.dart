@@ -21,37 +21,60 @@ class ReportPageTest extends StatelessWidget {
           children: [
             Center(
               child: ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
+                  String count;
+                  int countValue;
+
                   FirebaseDatabase.instance
                       .reference()
                       .child('report')
                       .child('user1')
                       .child('deal')
                       .child('post1')
-                      .onValue
-                      .listen((Event event) {
-                    print("@@@@@@@@@@@@ ${event.snapshot.value.length}");
-                  });
-
-                  // FirebaseDatabase.instance
-                  //     .reference()
-                  //     .child('report')
-                  //     .child("user1")
-                  //     .child('deal')
-                  //     .child('post1')
-                  //     .child(DateTime.now().millisecondsSinceEpoch.toString())
-                  //     .set({
-                  //   'case': '1',
-                  //   'content': "asdasdasd",
-                  //   'title': "asdasd111",
-                  //   'count': "5",
-                  //   'reportedUid':'uid'
-                  // });
-
-                  // FirebaseFirestore.instance
-                  //     .collection('users')
-                  //     .doc(FirebaseApi.getId())
-                  //     .update({"userScore": 5});
+                      .once()
+                      .then((value) => {
+                            if (value.value == null)
+                              {
+                                FirebaseDatabase.instance
+                                    .reference()
+                                    .child('report')
+                                    .child("user1")
+                                    .child('deal')
+                                    .child('post1')
+                                    .child(DateTime.now()
+                                        .millisecondsSinceEpoch
+                                        .toString())
+                                    .set({
+                                  'case': '1',
+                                  'content': "asdasdasd",
+                                  'title': "asdasd111",
+                                  'count': '0',
+                                  'reportedUid': '112293538348632094935'
+                                })
+                              }
+                            else
+                              {
+                                countValue = value.value.length,
+                                countValue++,
+                                count = countValue.toString(),
+                                FirebaseDatabase.instance
+                                    .reference()
+                                    .child('report')
+                                    .child("user1")
+                                    .child('deal')
+                                    .child('post1')
+                                    .child(DateTime.now()
+                                        .millisecondsSinceEpoch
+                                        .toString())
+                                    .set({
+                                  'case': '1',
+                                  'content': "asdasdasd",
+                                  'title': "asdasd111",
+                                  'count': count,
+                                  'reportedUid': '112293538348632094935'
+                                })
+                              }
+                          });
 
                   // Navigator.of(context).push(MaterialPageRoute(
                   //     builder: (context) => ReportDealPage()));

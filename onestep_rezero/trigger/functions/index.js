@@ -49,23 +49,46 @@ exports.onReportCreate = functions.database.ref('/report/{reportedUid}/deal/{pos
     const countValue = snapshot.val();
     var count;
 
+    // console.log("@@@@" + admin.firestore.Timestamp.now())
+
     console.log(countValue.count)
+
     if (countValue.count === '5') {
-        console.log('!!!!')
-
-        // const query = await databaseTest.collection('user').document('112293538348632094935').get();
-        const db = await databaseTest.collection('user').where('uid', '==', '112293538348632094935').get();
-
-        db.forEach(async testValue => {
-            count = testValue.data()['reportPoint'];
+        
+        await databaseTest.collection('user').doc(countValue.reportedUid).collection('report').doc('point').get().then(value => {
+            count = value.data()['reportPoint'];
         })
+        
+        // const db = await databaseTest.collection('user').where('uid', '==', countValue.reportedUid).get();
+        // const db = await databaseTest.collection('user').where('uid', '==', countValue.reportedUid).collection('report').doc('point').get();
+
+        // db.forEach(async testValue => {
+        //     count = testValue.data()['reportPoint'];
+        // })
 
         console.log('!!!!' + count);
-
-        await databaseTest.doc('user/' + '112293538348632094935').update({
-            "reportPoint" : 1,
+        // console.log('????' + countValue.reportedUid);
+        count += 1;
+        await databaseTest.doc('user/' + countValue.reportedUid+'/report/point').update({
+            "reportPoint" : count,
         })
     }
+
 });
 
-// exports.onUserReportTest = functions.database.document('user/{}')
+exports.onUpdateReportPoint = functions.firestore.document('user/{userId}/report/point').onUpdate(async (snapshot, context) =>{
+    const afterReportPointValue = snapshot.after.data();
+    const beforeReportPointValue = snapshot.before.data();
+    console.log('after ' + afterReportPointValue.reportPoint)
+    console.log('before ' + beforeReportPointValue.reportPoint)
+
+    if (afterReportPointValue.reportPoint === 5) {
+        console.log('ZZZZZZZZZZZZZZZ')
+        
+        await databaseTest.doc('user/' + context.params.userId).update({
+            "reportPoint": 1,
+            "reportTime" : admin.firestore.Timestamp.now(),
+        })
+    }
+    }
+);
