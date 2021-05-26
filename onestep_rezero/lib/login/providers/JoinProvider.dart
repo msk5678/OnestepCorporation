@@ -11,10 +11,11 @@ class EmailCheckProvider extends StateNotifier<bool> {
   EmailCheckProvider() : super(false);
 
   void authEmailNickNameCheck(String tempEmail) async {
-    String email = tempEmail;
-    final bool isValid = EmailValidator.validate(email);
+    // String email = tempEmail;
+    // final bool isValid = EmailValidator.validate(email);
 
-    if (tempEmail == "" || !isValid) {
+    // if (tempEmail == "" || !isValid) {
+    if (tempEmail == "") {
       state = false;
     } else {
       QuerySnapshot ref = await FirebaseFirestore.instance

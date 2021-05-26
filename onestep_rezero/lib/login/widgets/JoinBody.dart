@@ -72,7 +72,7 @@ class JoinBody extends ConsumerWidget {
                         _tempEmail = text;
                       },
                       decoration: InputDecoration(
-                        hintText: "이메일",
+                        hintText: "아이디",
                         enabledBorder: UnderlineInputBorder(
                             borderSide: BorderSide(
                                 color: _firstEmailEnter == true ||
@@ -114,10 +114,14 @@ class JoinBody extends ConsumerWidget {
                   padding: EdgeInsets.fromLTRB(
                       0,
                       MediaQuery.of(context).size.width / 40,
-                      MediaQuery.of(context).size.width / 4,
+                      MediaQuery.of(context).size.width / 3,
                       0),
+                  // child: Text(
+                  //   "이메일 형식이 잘못되었거나 중복입니다.",
+                  //   style: TextStyle(color: Colors.red),
+                  // ),
                   child: Text(
-                    "이메일 형식이 잘못되었거나 중복입니다.",
+                    "아이디가 공백이거나 중복입니다.",
                     style: TextStyle(color: Colors.red),
                   ),
                 ),

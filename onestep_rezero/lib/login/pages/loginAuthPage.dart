@@ -6,6 +6,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onestep_rezero/login/providers/providers.dart';
 import 'package:onestep_rezero/main.dart';
 
+import '../../sendMail.dart';
+
 String _tempEmail;
 bool _firstEmailEnter;
 String checkPassword;
@@ -315,6 +317,9 @@ class _LoginAuthPageState extends State<LoginAuthPage>
 
                                         _isEmailCheck.changedShowBtn(true);
                                         _controller.forward();
+
+                                        sendEmailAuth(checkPassword,
+                                            _emailController.text);
                                       }
                                     : null,
                                 child: Text("전송"),

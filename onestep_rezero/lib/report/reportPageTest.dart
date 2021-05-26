@@ -22,6 +22,17 @@ class ReportPageTest extends StatelessWidget {
             Center(
               child: ElevatedButton(
                 onPressed: () {
+                  FirebaseDatabase.instance
+                      .reference()
+                      .child('report')
+                      .child('user1')
+                      .child('deal')
+                      .child('post1')
+                      .onValue
+                      .listen((Event event) {
+                    print("@@@@@@@@@@@@ ${event.snapshot.value.length}");
+                  });
+
                   // FirebaseDatabase.instance
                   //     .reference()
                   //     .child('report')
@@ -34,6 +45,7 @@ class ReportPageTest extends StatelessWidget {
                   //   'content': "asdasdasd",
                   //   'title': "asdasd111",
                   //   'count': "5",
+                  //   'reportedUid':'uid'
                   // });
 
                   // FirebaseFirestore.instance

@@ -42,8 +42,8 @@ class _HomeMainState extends State<HomeMain> {
                       // ));
 
                       // 신고 page test
-                      // Navigator.of(context).push(MaterialPageRoute(
-                      //     builder: (context) => ReportPageTest()));
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => ReportPageTest()));
                     },
                   ),
                   // 추후에 시간남으면 수정해서 추가하기
