@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,9 +10,11 @@ import 'package:flutter/material.dart';
 
 import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/product/pages/productAddCategorySelect.dart';
+import 'package:onestep_rezero/product/utils/numericTextFormatter.dart';
 
 import 'package:onestep_rezero/product/widgets/main/productMainBody.dart';
 import 'package:pattern_formatter/numeric_formatter.dart';
+import 'package:random_string/random_string.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
 class ProductAdd extends StatefulWidget {
@@ -53,8 +56,9 @@ class _ProductAddState extends State<ProductAdd> {
       textDelegate: KoreaTextDelegate(),
     );
 
-    if (_entity != null && entity != _entity) {
+    if (_entity != null && entity.toString() != _entity.toString()) {
       entity = _entity;
+      data.clear();
       if (mounted) {
         setState(() {});
       }
@@ -74,6 +78,65 @@ class _ProductAddState extends State<ProductAdd> {
     }
   }
 
+  Widget imageItem(int index, Uint8List image) {
+    return Padding(
+      padding: EdgeInsets.only(left: 7),
+      child: ClipRRect(
+        borderRadius: BorderRadius.all(Radius.circular(5.0)),
+        child: Stack(
+          children: [
+            // Image.memory(
+            //   ima[index].buffer.asUint8List(), width: 80,
+            //   height: 80,
+            //   // key: ValueKey(asset.identifier),
+            //   fit: BoxFit.cover,
+            // ),
+            // ConvertImages(
+            //     asset: imageList[index], width: 80, height: 80),
+
+            Image.memory(
+              image,
+              fit: BoxFit.cover,
+              width: 80,
+              height: 80,
+            ),
+            // AssetThumb(
+            //     quality: 100,
+            //     asset: imageList[index],
+            //     width: 80,
+            //     height: 80),
+            Positioned(
+              top: 3,
+              right: 3,
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    data.removeAt(index);
+                    entity.removeAt(index);
+                  });
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(100),
+                    color: Color.fromRGBO(0, 0, 0, 0.5),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.all(2.0),
+                    child: Icon(
+                      Icons.close,
+                      color: Colors.white,
+                      size: 15,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget images() {
     return Column(
       children: <Widget>[
@@ -83,112 +146,58 @@ class _ProductAddState extends State<ProductAdd> {
             "물품 사진",
           ),
         ),
-        Row(
-          children: <Widget>[
-            GestureDetector(
-              onTap: () {
-                loadAssets();
-              },
-              child: Container(
-                width: 80,
-                height: 80,
-                margin: EdgeInsets.only(top: 10, bottom: 20),
-                decoration: BoxDecoration(
-                  border: Border.all(width: 1.0, color: Colors.grey),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(5.0),
+        Container(
+          height: 80,
+          width: MediaQuery.of(context).size.width,
+          margin: EdgeInsets.only(top: 10, bottom: 20),
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            children: [
+              GestureDetector(
+                onTap: () {
+                  loadAssets();
+                },
+                child: Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    border: Border.all(width: 1.0, color: Colors.grey),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(5.0),
+                    ),
                   ),
-                ),
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Icon(
-                      Icons.photo_camera,
-                      color: Colors.grey,
-                      size: 30,
-                    ),
-                    Positioned(
-                      right: 5,
-                      bottom: 5,
-                      child: Text(
-                        "${data.length}/5",
-                        style: TextStyle(color: Colors.grey),
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Icon(
+                        Icons.photo_camera,
+                        color: Colors.grey,
+                        size: 30,
                       ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Expanded(
-              child: Container(
-                height: 80,
-                width: MediaQuery.of(context).size.width,
-                margin: EdgeInsets.only(top: 10, bottom: 20),
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: data.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Padding(
-                      padding: EdgeInsets.only(left: 7),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                        child: Stack(
-                          children: [
-                            // Image.memory(
-                            //   ima[index].buffer.asUint8List(), width: 80,
-                            //   height: 80,
-                            //   // key: ValueKey(asset.identifier),
-                            //   fit: BoxFit.cover,
-                            // ),
-                            // ConvertImages(
-                            //     asset: imageList[index], width: 80, height: 80),
-
-                            Image.memory(
-                              data[index],
-                              fit: BoxFit.cover,
-                              width: 80,
-                              height: 80,
-                            ),
-                            // AssetThumb(
-                            //     quality: 100,
-                            //     asset: imageList[index],
-                            //     width: 80,
-                            //     height: 80),
-                            Positioned(
-                              top: 3,
-                              right: 3,
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    data.removeAt(index);
-                                    entity.removeAt(index);
-                                  });
-                                },
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(100),
-                                    color: Color.fromRGBO(0, 0, 0, 0.5),
-                                  ),
-                                  child: Padding(
-                                    padding: EdgeInsets.all(2.0),
-                                    child: Icon(
-                                      Icons.close,
-                                      color: Colors.white,
-                                      size: 15,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
+                      Positioned(
+                        right: 5,
+                        bottom: 5,
+                        child: Text(
+                          "${data.length}/5",
+                          style: TextStyle(color: Colors.grey),
                         ),
                       ),
-                    );
-                  },
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+              ...data
+                  .asMap()
+                  .map(
+                    (i, element) => MapEntry(
+                      i,
+                      imageItem(i, element),
+                    ),
+                  )
+                  .values
+                  .toList(),
+            ],
+          ),
         ),
       ],
     );
@@ -235,9 +244,7 @@ class _ProductAddState extends State<ProductAdd> {
         child: TextField(
           controller: _priceTextEditingController,
           keyboardType: TextInputType.number,
-          inputFormatters: [
-            ThousandsFormatter(),
-          ],
+          inputFormatters: [NumericTextFormatter()],
           decoration: InputDecoration(
             border: OutlineInputBorder(),
             focusedBorder: OutlineInputBorder(
@@ -348,17 +355,16 @@ class _ProductAddState extends State<ProductAdd> {
     } else {
       List _imgUriarr = [];
 
-      // for (var imaged in imageList) {
-      //   Reference storageReference = FirebaseStorage.instance
-      //       .ref()
-      //       .child("productimage/${randomAlphaNumeric(15)}");
-      //   UploadTask storageUploadTask = storageReference
-      //       .putData((await imaged.getByteData()).buffer.asUint8List());
-      //   await storageUploadTask.whenComplete(() async {
-      //     String downloadURL = await storageReference.getDownloadURL();
-      //     _imgUriarr.add(downloadURL);
-      //   });
-      // }
+      for (var image in data) {
+        Reference storageReference = FirebaseStorage.instance
+            .ref()
+            .child("productimage/${randomAlphaNumeric(15)}");
+        UploadTask storageUploadTask = storageReference.putData(image);
+        await storageUploadTask.whenComplete(() async {
+          String downloadURL = await storageReference.getDownloadURL();
+          _imgUriarr.add(downloadURL);
+        });
+      }
 
       int time = DateTime.now().microsecondsSinceEpoch;
       FirebaseFirestore.instance

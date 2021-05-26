@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:multi_image_picker2/multi_image_picker2.dart';
 import 'package:onestep_rezero/product/models/product.dart';
 import 'package:onestep_rezero/product/pages/productAddCategorySelect.dart';
 import 'package:pattern_formatter/numeric_formatter.dart';
@@ -15,7 +14,6 @@ class ProductEdit extends StatefulWidget {
 
 class _ProductEditState extends State<ProductEdit> {
   List<dynamic> _initImagesUrl;
-  List<Asset> imagesUrl;
   int _imageCount;
   TextEditingController _titleTextEditingController;
   TextEditingController _priceTextEditingController = TextEditingController();
@@ -44,33 +42,7 @@ class _ProductEditState extends State<ProductEdit> {
     super.dispose();
   }
 
-  void getImages() async {
-    List<Asset> _resultList = <Asset>[];
-
-    _resultList = await MultiImagePicker.pickImages(
-      maxImages: 5 - _imageCount,
-      enableCamera: true,
-      selectedAssets: imagesUrl,
-      cupertinoOptions: CupertinoOptions(),
-      materialOptions: MaterialOptions(
-        useDetailsView: true,
-        startInAllView: true,
-        actionBarColor: "#FFFFFF", // 앱바 백그라운드 색
-        actionBarTitleColor: "#000000", // 제목 글자색
-        selectCircleStrokeColor: "#FFFFFF",
-        backButtonDrawable: "back",
-        okButtonDrawable: "check",
-        statusBarColor: "#BBBBBB", // 상단 상태바 색
-      ),
-    );
-
-    if (_resultList.isEmpty) return;
-
-    setState(() {
-      _imageCount = _initImagesUrl.length + _resultList.length;
-      imagesUrl = _resultList;
-    });
-  }
+  void getImages() async {}
 
   Widget imageMerge() {
     return Container();

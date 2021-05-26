@@ -54,6 +54,10 @@ dependencies:
 
   ###########
 
+  #intl
+  intl: ^0.17.0
+  #####
+
   #formatter
   pattern_formatter: ^2.0.0         # 숫자, 날짜 format 라이브러리
   random_string: ^2.2.0-nullsafety  # fireStoreage image random name
