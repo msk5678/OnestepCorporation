@@ -432,4 +432,82 @@ class ProductChatController {
       //"111357489031227818227": true,
     });
   }
+
+  StreamBuilder getTotalChatCountInBottomBar() {
+    return StreamBuilder<DocumentSnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('user')
+            .doc(googleSignIn.currentUser.id.toString())
+            .collection("chatCount")
+            .doc(googleSignIn.currentUser.id.toString())
+            .snapshots(),
+        builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          //return Text("dd");
+          // if (snapshot == null) {
+          //   return Text("d");
+          // } else
+          if (snapshot.hasData) {
+            print(snapshot.data.toString());
+          } else
+            return Text("error");
+
+          if (snapshot.data.data()['productChatCount'] == 0 &&
+              snapshot.data.data()['boardChatCount'] == 0) {
+            return Stack(
+              children: [
+                new Icon(
+                  Icons.notifications_none,
+                  size: 25,
+                  color: Colors.black,
+                ),
+                Positioned(
+                  top: 1,
+                  right: 1,
+                  child: Stack(
+                    children: [
+                      Container(
+                        width: 15,
+                        height: 15,
+                        decoration: BoxDecoration(),
+                        child: Center(
+                          child: Text(""),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            );
+          } else if (snapshot.data.data()['productChatCount'] > 0 ||
+              snapshot.data.data()['boardChatCount'] > 0) {
+            return Stack(
+              children: [
+                new Icon(
+                  Icons.notifications_none,
+                  size: 25,
+                  color: Colors.black,
+                ),
+                Positioned(
+                  top: 1,
+                  right: 1,
+                  child: Stack(
+                    children: [
+                      Container(
+                        width: 10,
+                        height: 10,
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle, color: Colors.red),
+                        child: Center(
+                          child: Text(""),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            );
+          }
+          return Container();
+        });
+  }
 }

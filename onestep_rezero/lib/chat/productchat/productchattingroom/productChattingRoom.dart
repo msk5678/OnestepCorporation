@@ -405,7 +405,7 @@ class _LastChatState extends State<ChatScreen> {
               AppBar(
                 title: Text("ge"),
                 actions: [
-                  ProductChatMenu().getProductMenu(context, chatId),
+                  ProductChatMenu().getProductMenu(context, chatId, friendId),
                 ],
               ),
               //Text("con $connectTime"),
