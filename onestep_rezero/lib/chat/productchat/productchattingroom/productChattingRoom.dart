@@ -17,6 +17,8 @@ import 'package:onestep_rezero/main.dart';
 import 'dart:io' as io;
 
 import 'package:onestep_rezero/product/models/product.dart';
+import 'package:onestep_rezero/product/pages/productDetail.dart';
+import 'package:onestep_rezero/product/widgets/detail/productDetailBody.dart';
 
 class ProductChattingRoomPage extends StatefulWidget {
   final String myUid;
@@ -859,6 +861,7 @@ class _LastChatState extends State<ChatScreen> {
                                     child: ElevatedButton(
                                       onPressed: () {
                                         print("장터게시판 이동");
+                                        ProductDetail(docId: widget.postId);
                                       },
                                       child: Container(
                                           alignment: Alignment.center,

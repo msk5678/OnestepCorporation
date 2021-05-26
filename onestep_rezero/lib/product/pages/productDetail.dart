@@ -4,15 +4,15 @@ import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/product/models/product.dart';
 import 'package:onestep_rezero/product/widgets/detail/productDetailBody.dart';
 
-class ClothDetail extends StatefulWidget {
+class ProductDetail extends StatefulWidget {
   final String docId;
-  ClothDetail({Key key, @required this.docId}) : super(key: key);
+  ProductDetail({Key key, @required this.docId}) : super(key: key);
 
   @override
-  _ClothDetailState createState() => _ClothDetailState();
+  _ProductDetailState createState() => _ProductDetailState();
 }
 
-class _ClothDetailState extends State<ClothDetail> {
+class _ProductDetailState extends State<ProductDetail> {
   Product _product;
 
   @override

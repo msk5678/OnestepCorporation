@@ -136,7 +136,7 @@ class _ProductItemState extends State<ProductItem> {
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) =>
-                ClothDetail(docId: widget.product.firestoreid),
+                ProductDetail(docId: widget.product.firestoreid),
           ),
         );
       },
