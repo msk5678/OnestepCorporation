@@ -6,6 +6,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:random_string/random_string.dart';
 import 'package:onestep_rezero/board/StateManage/firebase_GetUID.dart';
 
+import '../../main.dart';
+
 class PostData {
   var uploadTime;
   var updateTime;
@@ -79,7 +81,7 @@ class PostData {
         .collection(this.boardId ?? "boardFree")
         .doc(currentTimeStamp)
         .set({
-          "uid": UserUID.getId(),
+          "uid": googleSignIn.currentUser.id,
           "uploadTime": Timestamp.fromDate(DateTime.now()),
           "updateTime": 0,
           "commentCount": commentCount ?? 0,
@@ -137,135 +139,113 @@ class PostData {
   }
 }
 
-class Comment {
-  // commentSaveMethod() async {
-  //   final db = FirebaseDatabase.instance.reference();
-  //   String currentTimeStamp = DateTime.now().millisecondsSinceEpoch.toString();
-  //   db
-  //       .child('board')
-  //       .child(currentBoardId)
-  //       .child(currentPostId)
-  //       .child(currentTimeStamp)
-  //       .set({
-  //     "uid": currentUID,
-  //     "boardId": currentBoardId,
-  //     "boardName": currentBoardName,
-  //     "postId": currentPostId,
-  //     "textContent": _textEditingControllerComment.text.trimRight(),
-  //     "deleted": false,
-  //     "reported": false,
-  //     "deletedTime": 0,
-  //   });
-  //   // databaseRef.push().set({'name': 'hi', 'comment': 'A good season'});
-  // }
+// class Comment {
+//   final String uid;
+//   final String boardId;
+//   final String boardName;
+//   final String postId;
+//   final String textContent;
+//   final String deleted;
+//   final String deletedTime;
+//   final String reported;
+//   final String reportCount;
+//   final String uploadTime;
+//   final String updateTime;
+//   final String userName;
+//   String commentId;
+//   Comment({
+//     this.textContent,
+//     this.reported,
+//     this.uploadTime,
+//     this.uid,
+//     this.boardName,
+//     this.updateTime,
+//     this.reportCount,
+//     this.userName,
+//     this.postId,
+//     this.boardId,
+//     this.deleted,
+//     this.deletedTime,
+//   });
+//   Future toRealtimeDatabase(Comment comment) async {
+//     final db = FirebaseDatabase.instance.reference();
+//     String currentTimeStamp = DateTime.now().millisecondsSinceEpoch.toString();
+//     db
+//         .child('board')
+//         .child(boardId)
+//         .child(postId)
+//         .child(currentTimeStamp)
+//         .set({
+//           "uid": comment.uid,
+//           "boardId": comment.boardId,
+//           "boardName": comment.boardName,
+//           "postId": comment.postId,
+//           "textContent": comment.textContent ?? '',
+//           "deleted": comment.deleted ?? 'false',
+//           "deletedTime": comment.deletedTime ?? '',
+//           "reported": comment.reported ?? '',
+//           "reportCount": comment.reportCount ?? '',
+//           "uploadTime": comment.uploadTime ?? currentTimeStamp,
+//           "updateTime": comment.updateTime ?? '',
+//           "userName": comment.userName
+//         })
+//         .then((value) => null)
+//         .whenComplete(() => null);
+//   }
 
-  final String uid;
-  final String boardId;
-  final String boardName;
-  final String postId;
-  final String textContent;
-  final String deleted;
-  final String deletedTime;
-  final String reported;
-  final String reportCount;
-  final String uploadTime;
-  final String updateTime;
-  final String userName;
-  String commentId;
-  Comment({
-    this.textContent,
-    this.reported,
-    this.uploadTime,
-    this.uid,
-    this.boardName,
-    this.updateTime,
-    this.reportCount,
-    this.userName,
-    this.postId,
-    this.boardId,
-    this.deleted,
-    this.deletedTime,
-  });
-  Future toRealtimeDatabase(Comment comment) async {
-    final db = FirebaseDatabase.instance.reference();
-    String currentTimeStamp = DateTime.now().millisecondsSinceEpoch.toString();
-    db
-        .child('board')
-        .child(boardId)
-        .child(postId)
-        .child(currentTimeStamp)
-        .set({
-          "uid": comment.uid,
-          "boardId": comment.boardId,
-          "boardName": comment.boardName,
-          "postId": comment.postId,
-          "textContent": comment.textContent ?? '',
-          "deleted": comment.deleted ?? 'false',
-          "deletedTime": comment.deletedTime ?? '',
-          "reported": comment.reported ?? '',
-          "reportCount": comment.reportCount ?? '',
-          "uploadTime": comment.uploadTime ?? currentTimeStamp,
-          "updateTime": comment.updateTime ?? '',
-          "userName": comment.userName
-        })
-        .then((value) => null)
-        .whenComplete(() => null);
-  }
+//   Future commentFavoriteCount({String currentUID, Comment comment}) async {
+//     final db = FirebaseDatabase.instance.reference();
+//     db
+//         .child('board')
+//         .child(boardId)
+//         .child(postId)
+//         .child(commentId)
+//         .child("favoriteUserList")
+//         .set({currentUID: false})
+//         .then((value) => null)
+//         .whenComplete(() => null);
+//   }
 
-  Future commentFavoriteCount({String currentUID, Comment comment}) async {
-    final db = FirebaseDatabase.instance.reference();
-    db
-        .child('board')
-        .child(boardId)
-        .child(postId)
-        .child(commentId)
-        .child("favoriteUserList")
-        .set({currentUID: false})
-        .then((value) => null)
-        .whenComplete(() => null);
-  }
+// Future _saveUidInBoardField(
+//     DocumentSnapshot documentSnapshot, String currentUid) async {
+//   Map _data = documentSnapshot.data();
+//   List _commentList = documentSnapshot.data()["commentList"];
 
-  // Future _saveUidInBoardField(
-  //     DocumentSnapshot documentSnapshot, String currentUid) async {
-  //   Map _data = documentSnapshot.data();
-  //   List _commentList = documentSnapshot.data()["commentList"];
+//   if (!_commentList.contains(currentUid)) {
+//     return await FirebaseFirestore.instance
+//         .collection("Board")
+//         .doc(boardId)
+//         .collection(boardId)
+//         .doc(boardDocumentId)
+//         .update({"commentList": _data["commentList"].add(currentUid)})
+//         .catchError((onError) {
+//           print("catchError ");
+//         })
+//         .then((value) => print("Something error null pointer or.. "))
+//         .whenComplete(() => true);
+//   }
+// }
 
-  //   if (!_commentList.contains(currentUid)) {
-  //     return await FirebaseFirestore.instance
-  //         .collection("Board")
-  //         .doc(boardId)
-  //         .collection(boardId)
-  //         .doc(boardDocumentId)
-  //         .update({"commentList": _data["commentList"].add(currentUid)})
-  //         .catchError((onError) {
-  //           print("catchError ");
-  //         })
-  //         .then((value) => print("Something error null pointer or.. "))
-  //         .whenComplete(() => true);
-  //   }
-  // }
+// getUnderComment(
+//     String boardId, String currentBoardId, String commentId) async {
+//   var _result;
+//   await FirebaseFirestore.instance
+//       .collection("Board")
+//       .doc(boardId)
+//       .collection(boardId)
+//       .doc(currentBoardId)
+//       .collection(COMMENT_COLLECTION_NAME)
+//       .doc(commentId)
+//       .collection(COMMENT_COLLECTION_NAME)
+//       .get()
+//       .catchError((onError) {
+//     print(onError.toString() + "Under comment");
+//   }).then((value) {
+//     _result = value;
+//   });
 
-  // getUnderComment(
-  //     String boardId, String currentBoardId, String commentId) async {
-  //   var _result;
-  //   await FirebaseFirestore.instance
-  //       .collection("Board")
-  //       .doc(boardId)
-  //       .collection(boardId)
-  //       .doc(currentBoardId)
-  //       .collection(COMMENT_COLLECTION_NAME)
-  //       .doc(commentId)
-  //       .collection(COMMENT_COLLECTION_NAME)
-  //       .get()
-  //       .catchError((onError) {
-  //     print(onError.toString() + "Under comment");
-  //   }).then((value) {
-  //     _result = value;
-  //   });
-
-  //   return _result;
-  // }
-}
+//   return _result;
+// }
 
 // class UnderComment extends Comment {
 //   UnderComment(

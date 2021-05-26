@@ -1,11 +1,9 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_fadein/flutter_fadein.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onestep_rezero/board/AboutPost/AboutPostListView/listRiverpod.dart';
-import 'package:onestep_rezero/board/AboutPost/AboutPostListView/photoList.dart';
-import 'package:onestep_rezero/board/AboutPost/AboutPostListView/postList.dart';
 import 'package:onestep_rezero/board/declareData/boardData.dart';
 import 'package:onestep_rezero/board/declareData/categoryManageClass.dart';
 
@@ -77,12 +75,22 @@ class _PostListWidget extends State<PostListMain> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(50.0),
-          child: AppBar(
-            backgroundColor: Colors.white,
+        appBar:
+            // PreferredSize(
+            //   preferredSize: Size.fromHeight(50.0),
+            //   child:
+            AppBar(
+          backgroundColor: Colors.white,
+          title: FadeIn(
+            child: Text(
+              currentBoardData.boardName,
+              style: TextStyle(color: Colors.black),
+            ),
+            curve: Curves.easeIn,
+            duration: Duration(milliseconds: 300),
           ),
         ),
+        // ),
         body: RefreshIndicator(
           onRefresh: _refreshPage,
           child: SingleChildScrollView(

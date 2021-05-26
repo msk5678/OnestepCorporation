@@ -5,14 +5,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:like_button/like_button.dart';
 import 'package:onestep_rezero/board/TipDialog/tip_dialog.dart';
 import 'package:onestep_rezero/board/declareData/postData.dart';
+import 'package:onestep_rezero/board/declareData/commentData.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/animation.dart';
 import 'package:async/async.dart';
 import 'package:onestep_rezero/board/StateManage/firebase_GetUID.dart';
 import 'dart:io' show Platform;
+
+import '../../main.dart';
 
 class PostContent extends StatefulWidget {
   final PostData postData;
@@ -33,11 +37,11 @@ abstract class _PostParent<T extends StatefulWidget> extends State<T>
     with SingleTickerProviderStateMixin
 // with TickerProviderStateMixin
 {
-  final String REFRESH_COMMENT = "COMMENT";
-  final String REFRESH_IMAGE = "IMAGE";
-  final String REFRESH_LIKEBUTTON = "LIKEBUTTON";
-  final String COMMENT_COLLECTION_NAME = "Comment";
-  final String REFRESH_UNDERCOMMENT = "UNDERCOMMENT";
+  final refreshComment = "COMMENT";
+  final refreshImage = "IMAGE";
+  final refreshLikeButton = "LIKEBUTTON";
+  final commentCollectionName = "Comment";
+  final refreshUnderComment = "UNDERCOMMENT";
   final _scrollController = ScrollController(keepScrollOffset: true);
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   var boardContentSnapshot;
@@ -48,6 +52,7 @@ abstract class _PostParent<T extends StatefulWidget> extends State<T>
   AsyncMemoizer _likeButtonMemoizer = AsyncMemoizer();
   AsyncMemoizer _commentMemoizer = AsyncMemoizer();
   Map<String, dynamic> _commentMemoizerMapping;
+  List<Comment> commentList = [];
 
   double device_width;
   double device_height;
@@ -89,13 +94,13 @@ abstract class _PostParent<T extends StatefulWidget> extends State<T>
         isLikeButtonRefresh = isCommentRefresh = isUnderCommentRefresh = true;
     _commentMemoizerMapping = {};
     _onFavoriteClicked = false;
-    isWritter = UserUID.getId() == postData.uid;
+    isWritter = googleSignIn.currentUser.id == postData.uid;
 
     watchCountUpdate();
   }
 
   setInitialPostData() {
-    currentUID = UserUID.getId();
+    currentUID = googleSignIn.currentUser.id;
     currentBoardId = postData.boardId;
     currentBoardName = postData.boardName;
     currentPostId = postData.documentId;
@@ -189,11 +194,11 @@ abstract class _PostParent<T extends StatefulWidget> extends State<T>
                     // Title Container
                     // setTitle(boardData.title),
                     //Date Container
-                    setDateNVisitor(postData.uploadTime, postData.views),
+                    // setDateNVisitor(postData.uploadTime, postData.views),
                     setBoardContent(),
-                    imageContent(),
+                    // imageContent(),
                     buttonContent(),
-                    // createCommentListMethod(),
+                    createCommentListMethod(),
 
                     // commentBoxExpanded(isCommentBoxVisible),
                   ])),
@@ -228,7 +233,7 @@ abstract class _PostParent<T extends StatefulWidget> extends State<T>
 
   futureBuilderFetchRefreshMethod(
       {String refreshType, bool onlyUnderCommentRefresh, String commentId}) {
-    if (refreshType == REFRESH_IMAGE) {
+    if (refreshType == refreshImage) {
       if (isImageRefresh) {
         _imageMemoizer = AsyncMemoizer();
         isImageRefresh = false;
@@ -236,7 +241,7 @@ abstract class _PostParent<T extends StatefulWidget> extends State<T>
       return this._imageMemoizer.runOnce(() async {
         return await _fetchData();
       });
-    } else if (refreshType == REFRESH_LIKEBUTTON) {
+    } else if (refreshType == refreshLikeButton) {
       if (isLikeButtonRefresh) {
         _likeButtonMemoizer = AsyncMemoizer();
         isLikeButtonRefresh = false;
@@ -244,7 +249,7 @@ abstract class _PostParent<T extends StatefulWidget> extends State<T>
       return this._likeButtonMemoizer.runOnce(() async {
         return await _fetchData();
       });
-    } else if (refreshType == REFRESH_COMMENT) {
+    } else if (refreshType == refreshComment) {
       if (isCommentRefresh) {
         _commentMemoizer = AsyncMemoizer();
         isCommentRefresh = false;
@@ -273,13 +278,13 @@ abstract class _PostParent<T extends StatefulWidget> extends State<T>
     final FirebaseFirestore _db = FirebaseFirestore.instance;
 
     return _db
-        .collection("Board")
+        .collection("board")
         .doc(currentBoardId)
         .collection(currentBoardId)
         .doc(currentPostId)
-        .collection(COMMENT_COLLECTION_NAME)
+        .collection(commentCollectionName)
         .doc(commentId)
-        .collection(COMMENT_COLLECTION_NAME)
+        .collection(commentCollectionName)
         .orderBy("createDate")
         .get();
   }
@@ -288,7 +293,7 @@ abstract class _PostParent<T extends StatefulWidget> extends State<T>
     final FirebaseFirestore _db = FirebaseFirestore.instance;
 
     return _db
-        .collection("Board")
+        .collection("board")
         .doc(currentBoardId)
         .collection(currentBoardId)
         .doc(currentPostId)
@@ -298,11 +303,11 @@ abstract class _PostParent<T extends StatefulWidget> extends State<T>
   _commentFetchDataMethod() {
     final FirebaseFirestore _db = FirebaseFirestore.instance;
     return _db
-        .collection("Board")
+        .collection("board")
         .doc(currentBoardId)
         .collection(currentBoardId)
         .doc(currentPostId)
-        .collection(COMMENT_COLLECTION_NAME)
+        .collection(commentCollectionName)
         // .orderBy("createDate")
         .get();
   }
@@ -355,42 +360,42 @@ abstract class _PostParent<T extends StatefulWidget> extends State<T>
     );
   }
 
-  Widget imageContent() {
-    return FutureBuilder(
-      future: futureBuilderFetchRefreshMethod(refreshType: REFRESH_IMAGE),
-      builder: (context, snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.waiting:
-          case ConnectionState.none:
-            return CupertinoActivityIndicator();
-          default:
-            if (snapshot.hasError) {
-              return Center(
-                  child: Column(children: [
-                Text("데이터 불러오기에 실패하였습니다. 네트워크 연결상태를 확인하여 주십시오."),
-                Text("${snapshot.hasError}"),
-                IconButton(
-                  icon: Icon(Icons.refresh),
-                  onPressed: () {
-                    setState(() {
-                      isImageRefresh = true;
-                    });
-                  },
-                )
-              ]));
-            } else {
-              return Container(
-                child: _setImageContent(snapshot.data),
-              );
-            }
-        }
-      },
-    );
-  }
+  // Widget imageContent() {
+  //   return FutureBuilder(
+  //     future: futureBuilderFetchRefreshMethod(refreshType: refreshImage),
+  //     builder: (context, snapshot) {
+  //       switch (snapshot.connectionState) {
+  //         case ConnectionState.waiting:
+  //         case ConnectionState.none:
+  //           return CupertinoActivityIndicator();
+  //         default:
+  //           if (snapshot.hasError) {
+  //             return Center(
+  //                 child: Column(children: [
+  //               Text("데이터 불러오기에 실패하였습니다. 네트워크 연결상태를 확인하여 주십시오."),
+  //               Text("${snapshot.hasError}"),
+  //               IconButton(
+  //                 icon: Icon(Icons.refresh),
+  //                 onPressed: () {
+  //                   setState(() {
+  //                     isImageRefresh = true;
+  //                   });
+  //                 },
+  //               )
+  //             ]));
+  //           } else {
+  //             return Container(
+  //               child: _setImageContent(snapshot.data),
+  //             );
+  //           }
+  //       }
+  //     },
+  //   );
+  // }
 
   Widget buttonContent() {
     return FutureBuilder(
-      future: futureBuilderFetchRefreshMethod(refreshType: REFRESH_LIKEBUTTON),
+      future: futureBuilderFetchRefreshMethod(refreshType: refreshLikeButton),
       builder: (context, snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.waiting:
@@ -873,33 +878,51 @@ abstract class _PostParent<T extends StatefulWidget> extends State<T>
   }
 
   Widget createCommentListMethod() {
-    return FutureBuilder(
-      future: futureBuilderFetchRefreshMethod(refreshType: REFRESH_COMMENT),
-      builder: (context, snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.waiting:
-          case ConnectionState.none:
-            return CupertinoActivityIndicator();
-          default:
-            if (snapshot.hasError) {
-              return Center(
-                  child: Column(children: [
-                Text("데이터 불러오기에 실패하였습니다. 네트워크 연결상태를 확인하여 주십시오."),
-                Text("${snapshot.hasError}"),
-                IconButton(
-                  icon: Icon(Icons.refresh),
-                  onPressed: () {
-                    setState(() {
-                      isCommentRefresh = true;
-                    });
-                  },
-                )
-              ]));
-            } else {
-              return _commentContainerMethod(snapshot.data);
-            }
-        }
-      },
+    final firebaseRealtimeDb = FirebaseDatabase.instance.reference();
+    // firebaseRealtimeDb.
+    bool isSnapshotNotNull;
+    firebaseRealtimeDb
+        .child('board')
+        .child(postData.boardId)
+        .child(postData.documentId)
+        .once()
+        .then((DataSnapshot snapshot) {
+      if (snapshot.value != null) {
+        commentList = Comment().fromFirebaseReference(snapshot);
+        return AnimationLimiter(
+          child: ListView.builder(
+            key: PageStorageKey<String>("commentList"),
+            physics: NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: commentList.length,
+            itemBuilder: (BuildContext context, int index) {
+              return AnimationConfiguration.staggeredList(
+                position: index,
+                duration: const Duration(milliseconds: 375),
+                child: SlideAnimation(
+                  verticalOffset: 50.0,
+                  child: FadeInAnimation(
+                    child: commentBoxDesignMethod(index, commentList[index]),
+                  ),
+                ),
+              );
+            },
+          ),
+        );
+      }
+    });
+    return Container();
+  }
+
+  Widget commentBoxDesignMethod(int index, Comment comment) {
+    return Container(
+      child: Column(
+        children: [
+          Container(
+            child: Text(comment.textContent),
+          )
+        ],
+      ),
     );
   }
 
@@ -965,6 +988,15 @@ abstract class _PostParent<T extends StatefulWidget> extends State<T>
     ////
     ////
     ///
+
+    Comment.toRealtimeDataWithPostData(postData)
+        .toRealtimeDatabase(
+            textContent: _textEditingControllerComment.text.trimRight(),
+            commentList: postData.commentUserList)
+        .then((value) {
+      print("DONE");
+    });
+
     // await Comment(
     //     uid: currentUID,
     //     boardId: currentBoardId,
@@ -1051,7 +1083,7 @@ abstract class _PostParent<T extends StatefulWidget> extends State<T>
           deletedWithInDay = diffToNow.inDays < 1;
         }
 
-        bool isItSelf = _commentData["uid"] == UserUID.getId();
+        bool isItSelf = _commentData["uid"] == googleSignIn.currentUser.id;
         String _createDate =
             _commentCreateTimeMethod(_commentData["createDate"]);
 
@@ -1324,7 +1356,7 @@ abstract class _PostParent<T extends StatefulWidget> extends State<T>
             .doc(_postId)
             .collection(_postId)
             .doc(_documentID)
-            .collection(COMMENT_COLLECTION_NAME)
+            .collection(commentCollectionName)
             .doc(documentId)
             .update({
           "isDelete": !isUndo ? true : false,
@@ -1337,9 +1369,9 @@ abstract class _PostParent<T extends StatefulWidget> extends State<T>
             .doc(_postId)
             .collection(_postId)
             .doc(_documentID)
-            .collection(COMMENT_COLLECTION_NAME)
+            .collection(commentCollectionName)
             .doc(parentCommentId)
-            .collection(COMMENT_COLLECTION_NAME)
+            .collection(commentCollectionName)
             .doc(documentId)
             .update({
           "isDelete": !isUndo ? true : false,
@@ -1381,7 +1413,7 @@ abstract class _PostParent<T extends StatefulWidget> extends State<T>
             .doc(_postId)
             .collection(_postId)
             .doc(_documentID)
-            .collection(COMMENT_COLLECTION_NAME)
+            .collection(commentCollectionName)
             .doc(documentId)
             .update({
           "favoriteCount": commentData["favoriteCount"] + 1,
@@ -1395,9 +1427,9 @@ abstract class _PostParent<T extends StatefulWidget> extends State<T>
             .doc(_postId)
             .collection(_postId)
             .doc(_documentID)
-            .collection(COMMENT_COLLECTION_NAME)
+            .collection(commentCollectionName)
             .doc(parentCommentId)
-            .collection(COMMENT_COLLECTION_NAME)
+            .collection(commentCollectionName)
             .doc(documentId)
             .update({
           "favoriteCount": commentData["favoriteCount"] + 1,
@@ -1458,6 +1490,12 @@ abstract class _PostParent<T extends StatefulWidget> extends State<T>
     super.dispose();
     _animationController.dispose();
     _favoriteAnimationController?.dispose();
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(StringProperty('REFRESH_COMMENT', refreshComment));
   }
 }
 

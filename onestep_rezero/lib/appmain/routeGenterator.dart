@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart' as foundation;
+// import 'package:flutter/foundation.dart' as foundation;
 import 'package:onestep_rezero/board/AboutPost/AboutPostListView/postListMain.dart';
 import 'package:onestep_rezero/board/AboutPost/createPost.dart';
 import 'package:onestep_rezero/board/AboutPost/postContent.dart';
@@ -10,8 +10,8 @@ import 'package:page_transition/page_transition.dart';
 import 'package:path/path.dart' as p;
 
 class RouteGenerator {
-  static bool _isIOS =
-      foundation.defaultTargetPlatform == foundation.TargetPlatform.iOS;
+  // static bool _isIOS =
+  //     foundation.defaultTargetPlatform == foundation.TargetPlatform.iOS;
   static Route<dynamic> generateRoute(RouteSettings settings) {
     assert(settings.name.indexOf("/") == 0,
         "[ROUTER] routing MUST Begin with '/'");

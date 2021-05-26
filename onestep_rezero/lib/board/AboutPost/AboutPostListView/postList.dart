@@ -4,47 +4,35 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:onestep_rezero/board/AboutPost/AboutPostListView/listRiverpod.dart';
 
-import 'package:onestep_rezero/board/StateManage/Provider/postListProvider.dart';
+// import 'package:onestep_rezero/board/StateManage/Provider/postListProvider.dart';
 import 'package:onestep_rezero/board/declareData/categoryManageClass.dart';
 import 'package:onestep_rezero/board/declareData/postData.dart';
 
 abstract class AbstractPostListView extends ConsumerWidget {
-  List<PostData> postList;
-  double deviceHeight;
-  double deviceWidth;
+  AbstractPostListView({this.postList});
+  final List<PostData> postList;
 
   // firstColumnLine(postData);
   // secondColumnLine(postData);
   // thirdColumnLine(postData);
-  setPostList();
-  setDeviceHeightWidth(context);
+
 }
 
-class PostList extends AbstractPostListView {
-  List<PostData> postlist;
-
-  PostList({this.postlist});
-  @override
-  setDeviceHeightWidth(context) {
-    deviceHeight = MediaQuery.of(context).size.height;
-    deviceWidth = MediaQuery.of(context).size.width;
-  }
-
-  @override
-  setPostList() {
-    postList = postlist;
-  }
+// ignore: must_be_immutable
+class PostList extends ConsumerWidget {
+  final List<PostData> postList;
+  PostList({this.postList});
+  double deviceHeight;
+  double deviceWidth;
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
-    setPostList();
-    setDeviceHeightWidth(context);
-    // @override
-    // Widget build(BuildContext context) {
+    deviceHeight = MediaQuery.of(context).size.height;
+    deviceWidth = MediaQuery.of(context).size.width;
     return Container(
       child: AnimationLimiter(
         child: ListView.builder(
-          key: PageStorageKey<String>("value"),
+          key: PageStorageKey<String>("commentList"),
           physics: NeverScrollableScrollPhysics(),
           shrinkWrap: true,
           itemCount: postList.length,
