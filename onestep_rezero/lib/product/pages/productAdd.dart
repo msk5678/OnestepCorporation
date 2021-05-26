@@ -50,7 +50,7 @@ class _ProductAddState extends State<ProductAdd> {
       specialPickerType: SpecialPickerType.wechatMoment,
       // themeColor: Colors.cyan,
       // This cannot be set when the `themeColor` was provided.
-      textDelegate: EnglishTextDelegate(),
+      textDelegate: KoreaTextDelegate(),
     );
 
     if (_entity != null && entity != _entity) {

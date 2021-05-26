@@ -1144,9 +1144,11 @@ packages:
   wechat_assets_picker:
     dependency: "direct main"
     description:
-      name: wechat_assets_picker
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "."
+      ref: master
+      resolved-ref: "3d97b0bb23fcf46cc7ef16cbe41ff7e6c76343dd"
+      url: "https://github.com/honghoker/flutter_wechat_assets_picker.git"
+    source: git
     version: "5.5.3+1"
   win32:
     dependency: transitive
