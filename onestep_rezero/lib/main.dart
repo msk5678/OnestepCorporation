@@ -346,7 +346,10 @@ class _MainPageState extends State<MainPage> {
               bottomNavigationBar: BottomNavigationBar(
                 fixedColor: Colors.black,
                 currentIndex: _currentIndex,
-                onTap: (int index) => setState(() => _currentIndex = index),
+                onTap: (int index) {
+                  if (_currentIndex != index)
+                    setState(() => _currentIndex = index);
+                },
                 type: BottomNavigationBarType.fixed,
                 showSelectedLabels: false,
                 showUnselectedLabels: false, // title 안보이게 설정
