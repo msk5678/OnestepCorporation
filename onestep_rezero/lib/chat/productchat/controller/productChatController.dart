@@ -1,4 +1,3 @@
-import 'package:async/async.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -147,16 +146,16 @@ class ProductChatController {
     );
   }
 
-  final AsyncMemoizer _memoizer = AsyncMemoizer();
+  // final AsyncMemoizer _memoizer = AsyncMemoizer();
 
-  _fetchData(String proUserId) {
-    return this._memoizer.runOnce(() async {
-      return await FirebaseFirestore.instance
-          .collection('user')
-          .doc(proUserId)
-          .get();
-    });
-  }
+  // _fetchData(String proUserId) {
+  //   return this._memoizer.runOnce(() async {
+  //     return await FirebaseFirestore.instance
+  //         .collection('user')
+  //         .doc(proUserId)
+  //         .get();
+  //   });
+  // }
 
   FutureBuilder getProductUserNickName(String proUserId) {
     return FutureBuilder(

@@ -39,7 +39,6 @@ class FullPhotoScreenState extends State<FullPhotoScreen> {
   FullPhotoScreenState({Key key, this.url});
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
