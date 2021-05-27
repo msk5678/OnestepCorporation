@@ -10,6 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:onestep_rezero/chat/productchat/controller/productChatController.dart';
 import 'package:onestep_rezero/chat/productchat/model/productChatMessage.dart';
 import 'package:onestep_rezero/chat/widget/FullmageWidget.dart';
+import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/chat/widget/message_list_time.dart';
 import 'package:onestep_rezero/chat/widget/productChatMenu.dart';
 import 'package:onestep_rezero/main.dart';
@@ -405,6 +406,7 @@ class _LastChatState extends State<ChatScreen> {
             //mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               AppBar(
+                backgroundColor: OnestepColors().thirdColor,
                 title: Text("ge"),
                 actions: [
                   ProductChatMenu().getProductMenu(context, chatId, friendId),
@@ -808,7 +810,7 @@ class _LastChatState extends State<ChatScreen> {
                               // width: 150.0,
                               //height: 150,
                               decoration: BoxDecoration(
-                                  color: Colors.yellow,
+                                  color: OnestepColors().fourthColor,
                                   borderRadius: BorderRadius.circular(8.0)),
                               child: Column(
                                 children: [
@@ -828,15 +830,6 @@ class _LastChatState extends State<ChatScreen> {
                                             Radius.circular(8.0)),
                                         clipBehavior: Clip.hardEdge,
                                       ),
-
-                                      // child: ExtendedImage.network(
-                                      //   snapshot.data['imageUrl'],
-                                      //   fit: BoxFit.cover,
-                                      //   height: 50,
-                                      //   width: 50,
-                                      //   cache: true,
-                                      // ),
-                                      // ),
                                       SizedBox(
                                         width: 15,
                                       ),
@@ -859,8 +852,13 @@ class _LastChatState extends State<ChatScreen> {
                                     padding:
                                         const EdgeInsets.fromLTRB(5, 5, 5, 0),
                                     child: ElevatedButton(
+                                      style: ButtonStyle(
+                                        backgroundColor:
+                                            MaterialStateProperty.all(
+                                                OnestepColors().test1Color),
+                                      ),
                                       onPressed: () {
-                                        print("장터게시판 이동");
+                                        print("장터게시판 이동s");
                                         ProductDetail(docId: widget.postId);
                                       },
                                       child: Container(
