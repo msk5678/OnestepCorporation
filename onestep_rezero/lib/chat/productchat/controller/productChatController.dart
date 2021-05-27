@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/product/models/product.dart';
 
@@ -157,7 +158,7 @@ class ProductChatController {
   //   });
   // }
 
-  FutureBuilder getProductUserNickName(String proUserId) {
+  FutureBuilder getProductUserNickName(String proUserId, double fontSize) {
     return FutureBuilder(
       future: getUserId(proUserId),
       //_fetchData(proUserId),
@@ -174,14 +175,14 @@ class ProductChatController {
               print("nick 에러.");
               return Text(
                 'Error: ${snapshot.error}',
-                style: TextStyle(fontSize: 15),
+                style: TextStyle(fontSize: fontSize), //15
               );
             } else if (snapshot.data['nickName'] == "") {
               return Text("닉오류");
             } else {
               return AutoSizeText(
                 snapshot.data.data()['nickName'],
-                style: TextStyle(fontSize: 15),
+                style: TextStyle(fontSize: fontSize), //15
                 minFontSize: 10,
                 stepGranularity: 10,
                 maxLines: 1,
@@ -221,7 +222,7 @@ class ProductChatController {
               return Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(8, 4, 0, 0),
+                    padding: const EdgeInsets.fromLTRB(12, 12, 0, 8),
                     child: Row(
                       children: <Widget>[
                         // Material(
@@ -238,30 +239,46 @@ class ProductChatController {
                         Material(
                           child: CachedNetworkImage(
                             imageUrl: snapshot.data['imagesUrl'][0],
-                            width: 55,
-                            height: 55,
+                            width: 35,
+                            height: 35,
                             fit: BoxFit.cover,
                           ),
-                          borderRadius: BorderRadius.all(Radius.circular(6.0)),
+                          //borderRadius: BorderRadius.all(Radius.circular(6.0)),
                           clipBehavior: Clip.hardEdge,
                         ),
                         SizedBox(
                           width: 10,
                           height: 10,
                         ),
-                        Column(
-                          children: <Widget>[
-                            Text(snapshot.data['title']),
-                            Text(snapshot.data['price']),
-                          ],
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 0, 0, 5),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                snapshot.data['title'],
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 3,
+                              ),
+                              Text(
+                                snapshot.data['price'],
+                                style: TextStyle(fontSize: 10),
+                              ),
+                            ],
+                          ),
                         )
                       ],
                     ),
                   ),
                   Divider(
-                    color: Colors.black,
-                    height: 10,
-                    thickness: 1,
+                    color: OnestepColors().mainColor,
+                    height: 7,
+                    thickness: 2,
                   ),
                 ],
               );
@@ -495,7 +512,9 @@ class ProductChatController {
                         width: 10,
                         height: 10,
                         decoration: BoxDecoration(
-                            shape: BoxShape.circle, color: Colors.red),
+                          shape: BoxShape.circle,
+                          color: OnestepColors().secondColor, //red??
+                        ),
                         child: Center(
                           child: Text(""),
                         ),
