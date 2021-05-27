@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class CategoryDetail extends StatefulWidget {
   final String category;
-  final List<dynamic> detailCategory;
+  final Map<String, dynamic> detailCategory;
   CategoryDetail(
       {Key key, @required this.category, @required this.detailCategory})
       : super(key: key);
@@ -16,7 +16,7 @@ class _CategoryDetailState extends State<CategoryDetail> {
   @override
   void initState() {
     _headerindex = 0;
-    widget.detailCategory.insert(0, "전체");
+
     super.initState();
   }
 
@@ -50,7 +50,7 @@ class _CategoryDetailState extends State<CategoryDetail> {
                     child: Align(
                       alignment: Alignment.center,
                       child: Text(
-                        widget.detailCategory[index],
+                        widget.detailCategory.keys.elementAt(index),
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 12,
