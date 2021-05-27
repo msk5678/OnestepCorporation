@@ -70,7 +70,7 @@ class JoinBody extends ConsumerWidget {
                         _tempEmail = text;
                       },
                       decoration: InputDecoration(
-                        hintText: "이메일",
+                        hintText: "아이디",
                         enabledBorder: UnderlineInputBorder(
                             borderSide: BorderSide(
                                 color: _firstEmailEnter == true ||
