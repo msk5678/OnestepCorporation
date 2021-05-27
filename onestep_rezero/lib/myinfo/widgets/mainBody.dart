@@ -104,38 +104,55 @@ class MyinfoMainBody extends ConsumerWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Column(
-                          children: [
-                            IconButton(
-                              onPressed: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => MyinfoProfilePage()));
-                              },
-                              icon: Icon(Icons.error_outline),
-                            ),
-                            Text("프로필보기"),
-                          ],
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => MyinfoProfilePage()));
+                          },
+                          child: Column(
+                            children: [
+                              IconButton(
+                                onPressed: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) =>
+                                          MyinfoProfilePage()));
+                                },
+                                icon: Icon(Icons.error_outline),
+                              ),
+                              Text("프로필보기"),
+                            ],
+                          ),
                         ),
-                        Column(
-                          children: [
-                            IconButton(
-                              onPressed: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => MyinfoTransaction()));
-                              },
-                              icon: Icon(Icons.error_outline),
-                            ),
-                            Text("거래내역"),
-                          ],
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => MyinfoTransaction()));
+                          },
+                          child: Column(
+                            children: [
+                              IconButton(
+                                icon: Icon(Icons.error_outline),
+                                onPressed: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) =>
+                                          MyinfoTransaction()));
+                                },
+                              ),
+                              Text("거래내역"),
+                            ],
+                          ),
                         ),
-                        Column(
-                          children: [
-                            IconButton(
-                              onPressed: () {},
-                              icon: Icon(Icons.error_outline),
-                            ),
-                            Text("찜목록"),
-                          ],
+                        GestureDetector(
+                          onTap: () {},
+                          child: Column(
+                            children: [
+                              IconButton(
+                                onPressed: () {},
+                                icon: Icon(Icons.error_outline),
+                              ),
+                              Text("찜목록"),
+                            ],
+                          ),
                         ),
                       ],
                     ),

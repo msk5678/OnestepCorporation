@@ -45,6 +45,10 @@ exports.deleteProduct = functions.firestore.document('university/{universityId}/
     }
 );
 
+// deal -> 거래신고 : 신고 들어올때 각 post 에 5번까지 count -> if count === 5 -> user에 reportPoint++
+// {} 있는거랑 없는거 차이는 없는거는 예를 들어 report 는 이름이 report 인 친구들을 찾는거고
+// {reportedUid}, reportedUid는 아무런 의미가 없고(아무거나 써도 ㄱㅊ), report 다음에 있는 모든 애들을 가르킴 
+// report 안에 있는 모든 유저 대상
 exports.onReportCreate = functions.database.ref('/report/{reportedUid}/deal/{postUid}/{timestamp}').onCreate(async (snapshot, context) => {
     const countValue = snapshot.val();
     var count;
@@ -76,6 +80,9 @@ exports.onReportCreate = functions.database.ref('/report/{reportedUid}/deal/{pos
 
 });
 
+// realTime에서 post 5번 신고 먹어서 user에 reportPoint 1개 올라가면 일로옴 (update)
+// update 하고 나서 reportPoint 가 5면 제재
+// 일정시간 지나면 다시 되돌리는거 해야함
 exports.onUpdateReportPoint = functions.firestore.document('user/{userId}/report/point').onUpdate(async (snapshot, context) =>{
     const afterReportPointValue = snapshot.after.data();
     const beforeReportPointValue = snapshot.before.data();
