@@ -80,6 +80,8 @@ class ProductMainHeader extends ConsumerWidget {
   }
 
   Widget header(BuildContext context) {
+    Map<String, dynamic> a;
+
     return FutureBuilder(
         future: categoryList,
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -105,7 +107,8 @@ class ProductMainHeader extends ConsumerWidget {
                           MaterialPageRoute(
                             builder: (context) => CategoryDetail(
                               category: snapshot.data.docs[index].id,
-                              detailCategory: snapshot.data.docs[index]['list'],
+                              detailCategory: snapshot.data.docs[index]
+                                  ['detail'],
                             ),
                           ),
                         );
