@@ -1,8 +1,14 @@
 import 'dart:math';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:onestep_rezero/home/homeMain.dart';
+import 'package:onestep_rezero/login/model/user.dart';
 import 'package:onestep_rezero/login/providers/providers.dart';
+
+import '../../main.dart';
 
 String _tempEmail;
 bool _firstEmailEnter;
@@ -65,12 +71,18 @@ void init() {
 }
 
 class LoginAuthPage extends StatefulWidget {
+  final GoogleSignInAccount user;
+  LoginAuthPage(this.user);
+
   @override
-  _LoginAuthPageState createState() => _LoginAuthPageState();
+  _LoginAuthPageState createState() => _LoginAuthPageState(user);
 }
 
 class _LoginAuthPageState extends State<LoginAuthPage>
     with TickerProviderStateMixin {
+  final GoogleSignInAccount user;
+  _LoginAuthPageState(this.user);
+
   @override
   void initState() {
     super.initState();
@@ -434,7 +446,7 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                           width: MediaQuery.of(context).size.width / 1.2,
                           child: ElevatedButton(
                             onPressed: _isEmailCheck.authFlag.isShowBtn == true
-                                ? () {
+                                ? () async {
                                     // 5분 안에 인증해야함
                                     if (timeOver == false &&
                                         checkPassword ==
@@ -442,19 +454,39 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                       print("성공");
                                       // university 는 지금 계명대학교라고 줬는데, 나중에 학교이메일 판단해서 넣어줘야함
                                       // ex) stu.kmu -> 계명대학교 이런식으로
-                                      // FirebaseFirestore.instance
-                                      //     .collection('user')
-                                      //     .doc(googleSignIn.currentUser.id)
-                                      //     .update({
-                                      //   "auth": 2,
-                                      //   "univerisityEmail":
-                                      //       _emailController.text,
-                                      //   "university": "계명대학교",
-                                      //   "authTime": DateTime.now()
-                                      //       .millisecondsSinceEpoch
-                                      // });
+                                      FirebaseFirestore.instance
+                                          .collection('user')
+                                          .doc(user.id)
+                                          .update({
+                                        "auth": 2,
+                                        "univerisityEmail":
+                                            _emailController.text,
+                                        "university": "kmu",
+                                        "authTime": DateTime.now()
+                                            .millisecondsSinceEpoch
+                                      });
 
-                                      // Navigator.of(context).pop();
+                                      var time =
+                                          DateTime.now().microsecondsSinceEpoch;
+                                      DocumentSnapshot userRecord =
+                                          await ref.doc(user.id).get();
+                                      currentUserModel =
+                                          User.fromDocument(userRecord);
+                                      ref
+                                          .doc(currentUserModel.uid)
+                                          .collection("log")
+                                          .doc(time.toString())
+                                          .set({
+                                        "loginTime": time,
+                                      });
+                                      categoryList = FirebaseFirestore.instance
+                                          .collection('category')
+                                          .get();
+
+                                      Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  HomeMain()));
                                     } else if (timeOver == true) {
                                       print("time over 실패");
                                       _isEmailCheck

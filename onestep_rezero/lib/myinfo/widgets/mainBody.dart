@@ -173,10 +173,10 @@ class MyinfoMainBody extends ConsumerWidget {
                               //     builder: (context) => MyinfoSettingsPage(
                               //         _prefsPush, _prefsMarketing)));
 
-                              // Navigator.of(context).push(MaterialPageRoute(
-                              //     builder: (context) => MyinfoSettingsPage()));
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => MyinfoSettingsPage()));
 
-                              _testShowDialog(context);
+                              // _testShowDialog(context);
                             },
                           ),
                         ),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'dart:io' as io;
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:image_picker/image_picker.dart';
+import 'package:onestep_rezero/login/pages/authWaitPage.dart';
 import 'package:onestep_rezero/main.dart';
 import 'package:random_string/random_string.dart';
 import '../../sendMail.dart';
@@ -22,7 +23,9 @@ void _showDialog(BuildContext context) {
           ElevatedButton(
             child: Text("확인"),
             onPressed: () {
-              Navigator.of(context).popUntil((route) => route.isFirst);
+              Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => AuthWaitPage()));
+              // Navigator.of(context).popUntil((route) => route.isFirst);
             },
           ),
         ],
@@ -114,6 +117,7 @@ class _LoginCertificatePageState extends State<LoginCertificatePage> {
                     ? () async {
                         _showDialog(context);
                         // // 증명서 storage 저장
+                        // 추후에 웹 개발되면 연동해야하는 부분 같아서 일단 보류
                         // String ramdomNum = randomAlphaNumeric(15);
                         // firebase_storage.Reference ref = firebase_storage
                         //     .FirebaseStorage.instance
@@ -131,6 +135,9 @@ class _LoginCertificatePageState extends State<LoginCertificatePage> {
                         //     .collection("user")
                         //     .doc(googleSignIn.currentUser.id)
                         //     .update({"auth": 1});
+
+                        // Navigator.of(context).push(MaterialPageRoute(
+                        //     builder: (context) => AuthWaitPage()));
                       }
                     : null,
                 child: Container(

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:onestep_rezero/login/pages/loginAuthPage.dart';
 import 'package:onestep_rezero/login/pages/loginCertificatePage.dart';
 import 'package:onestep_rezero/main.dart';
@@ -26,6 +27,9 @@ void _showDialog(BuildContext context) {
 }
 
 class ChoiceAuthWayPage extends StatelessWidget {
+  final GoogleSignInAccount user;
+  ChoiceAuthWayPage(this.user);
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -107,7 +111,8 @@ class ChoiceAuthWayPage extends StatelessWidget {
                               child: ElevatedButton(
                                 onPressed: () {
                                   Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) => LoginAuthPage()));
+                                      builder: (context) =>
+                                          LoginAuthPage(user)));
                                 },
                                 child: Container(
                                   child: Text("이메일"),
