@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:onestep_rezero/animation/favoriteAnimation.dart';
+import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/favorite/utils/favoriteFirebaseApi.dart';
 import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/chat/navigator/chatNavigationManager.dart';
@@ -706,7 +707,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
         width: 150,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            primary: Colors.pink,
+            primary: OnestepColors().mainColor,
             textStyle: TextStyle(color: Colors.white),
           ),
           onPressed: () {
