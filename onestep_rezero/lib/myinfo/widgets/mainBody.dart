@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onestep_rezero/main.dart';
@@ -42,6 +43,61 @@ void _showDialog(BuildContext context, int authValue) {
             );
     },
   );
+}
+
+void _testShowDialog(BuildContext context) {
+  showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("OneStep 회원가입을 진심으로 환영합니다!"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text("마케팅 및 이벤트성 알림을 받으시겠습니까?"),
+              Padding(
+                padding: EdgeInsets.fromLTRB(
+                    0, MediaQuery.of(context).size.height / 30, 0, 0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    SizedBox(
+                      width: 100,
+                      child: ElevatedButton(
+                        child: Text("취소"),
+                        onPressed: () {
+                          // FirebaseFirestore.instance
+                          //     .collection('user')
+                          //     .doc(googleSignIn.currentUser.id)
+                          //     .collection('notification')
+                          //     .doc('setting')
+                          //     .set({"marketing": 0, "push": 1});
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      width: 100,
+                      child: ElevatedButton(
+                        child: Text("확인"),
+                        onPressed: () {
+                          // FirebaseFirestore.instance
+                          //     .collection('user')
+                          //     .doc(googleSignIn.currentUser.id)
+                          //     .collection('notification')
+                          //     .doc('setting')
+                          //     .set({"marketing": 1, "push": 1});
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      });
 }
 
 class MyinfoMainBody extends ConsumerWidget {
@@ -97,25 +153,30 @@ class MyinfoMainBody extends ConsumerWidget {
                             color: Colors.black,
                             iconSize: 30,
                             onPressed: () async {
-                              // SharedPreferences 내부 db
-                              SharedPreferences _prefsPush;
-                              SharedPreferences _prefsMarketing;
-                              _prefsPush =
-                                  await SharedPreferences.getInstance();
-                              // set 부분은 추후에 회원가입할때 푸시 알림 받으시겠습니까? ok -> true, no -> false
-                              // 줘서 로그인할때 set 해주는 코드 넣기 지금은 임시
-                              _prefsPush.setBool('value', true);
-                              context
-                                  .read(switchCheckPush)
-                                  .changeSwitch(_prefsPush.getBool('value'));
-                              _prefsMarketing =
-                                  await SharedPreferences.getInstance();
-                              _prefsMarketing.setBool('value', true);
-                              context.read(switchCheckMarketing).changeSwitch(
-                                  _prefsMarketing.getBool('value'));
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => MyinfoSettingsPage(
-                                      _prefsPush, _prefsMarketing)));
+                              // // SharedPreferences 내부 db
+                              // SharedPreferences _prefsPush;
+                              // SharedPreferences _prefsMarketing;
+                              // _prefsPush =
+                              //     await SharedPreferences.getInstance();
+                              // // set 부분은 추후에 회원가입할때 푸시 알림 받으시겠습니까? ok -> true, no -> false
+                              // // 줘서 로그인할때 set 해주는 코드 넣기 지금은 임시
+                              // _prefsPush.setBool('value', true);
+                              // context
+                              //     .read(switchCheckPush)
+                              //     .changeSwitch(_prefsPush.getBool('value'));
+                              // _prefsMarketing =
+                              //     await SharedPreferences.getInstance();
+                              // _prefsMarketing.setBool('value', true);
+                              // context.read(switchCheckMarketing).changeSwitch(
+                              //     _prefsMarketing.getBool('value'));
+                              // Navigator.of(context).push(MaterialPageRoute(
+                              //     builder: (context) => MyinfoSettingsPage(
+                              //         _prefsPush, _prefsMarketing)));
+
+                              // Navigator.of(context).push(MaterialPageRoute(
+                              //     builder: (context) => MyinfoSettingsPage()));
+
+                              _testShowDialog(context);
                             },
                           ),
                         ),

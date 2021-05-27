@@ -127,7 +127,6 @@ class _LoginCertificatePageState extends State<LoginCertificatePage> {
                         //       sendCertificateAuth(downloadURL, ramdomNum)
                         //     });
 
-                        // // 여기서 authTime이랑, university랑 업데이트 시켜줘야하는지 아니면 인증서 확인하고 다른데서 update 시켜줘야하는지 생각
                         // FirebaseFirestore.instance
                         //     .collection("user")
                         //     .doc(googleSignIn.currentUser.id)
