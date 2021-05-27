@@ -200,9 +200,9 @@ class _ProductMainState extends State<ProductMain> {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 // ProductMainHeader(),
-                SizedBox(
-                    height: 10,
-                    child: Container(color: Color.fromRGBO(240, 240, 240, 1))),
+                // SizedBox(
+                //     height: 10,
+                //     child: Container(color: Color.fromRGBO(240, 240, 240, 1))),
                 // Align(
                 //   alignment: Alignment.centerLeft,
                 //   child: Padding(
