@@ -3,8 +3,11 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onestep_rezero/main.dart';
 
 class ChatBlockController {
-  static final DatabaseReference blockToChatReference =
-      FirebaseDatabase.instance.reference().child("blackList")
+  static final DatabaseReference blockToChatReference = FirebaseDatabase
+          .instance
+          .reference()
+          .child("blackList")
+          .child("productBlackList")
       //향후 대학교 추가
       ;
 
