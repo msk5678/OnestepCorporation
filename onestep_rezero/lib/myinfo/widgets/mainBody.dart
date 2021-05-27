@@ -45,61 +45,6 @@ void _showDialog(BuildContext context, int authValue) {
   );
 }
 
-void _testShowDialog(BuildContext context) {
-  showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("OneStep 회원가입을 진심으로 환영합니다!"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text("마케팅 및 이벤트성 알림을 받으시겠습니까?"),
-              Padding(
-                padding: EdgeInsets.fromLTRB(
-                    0, MediaQuery.of(context).size.height / 30, 0, 0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    SizedBox(
-                      width: 100,
-                      child: ElevatedButton(
-                        child: Text("취소"),
-                        onPressed: () {
-                          // FirebaseFirestore.instance
-                          //     .collection('user')
-                          //     .doc(googleSignIn.currentUser.id)
-                          //     .collection('notification')
-                          //     .doc('setting')
-                          //     .set({"marketing": 0, "push": 1});
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ),
-                    SizedBox(
-                      width: 100,
-                      child: ElevatedButton(
-                        child: Text("확인"),
-                        onPressed: () {
-                          // FirebaseFirestore.instance
-                          //     .collection('user')
-                          //     .doc(googleSignIn.currentUser.id)
-                          //     .collection('notification')
-                          //     .doc('setting')
-                          //     .set({"marketing": 1, "push": 1});
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        );
-      });
-}
-
 class MyinfoMainBody extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ScopedReader watch) {
@@ -175,8 +120,6 @@ class MyinfoMainBody extends ConsumerWidget {
 
                               Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) => MyinfoSettingsPage()));
-
-                              // _testShowDialog(context);
                             },
                           ),
                         ),

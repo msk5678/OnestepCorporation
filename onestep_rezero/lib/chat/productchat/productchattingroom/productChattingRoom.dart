@@ -10,6 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:onestep_rezero/chat/productchat/controller/productChatController.dart';
 import 'package:onestep_rezero/chat/productchat/model/productChatMessage.dart';
 import 'package:onestep_rezero/chat/widget/FullmageWidget.dart';
+import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/chat/widget/message_list_time.dart';
 import 'package:onestep_rezero/chat/widget/productChatMenu.dart';
 import 'package:onestep_rezero/main.dart';
@@ -405,7 +406,12 @@ class _LastChatState extends State<ChatScreen> {
             //mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               AppBar(
-                title: Text("ge"),
+                backgroundColor: OnestepColors().thirdColor,
+                title: Center(
+                  child: ProductChatController()
+                      .getProductUserNickName(friendId, 20),
+                  // Text("ge"),
+                ),
                 actions: [
                   ProductChatMenu().getProductMenu(context, chatId, friendId),
                 ],
@@ -713,14 +719,14 @@ class _LastChatState extends State<ChatScreen> {
                         productMessage.content.title,
                         maxLines: 2,
                         style: TextStyle(
-                          color: Colors.white,
+                          color: Colors.black,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
                       padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
                       //width: 150.0,
                       decoration: BoxDecoration(
-                          color: Colors.lightBlueAccent,
+                          color: OnestepColors().fifColor,
                           borderRadius: BorderRadius.circular(8.0)),
                       margin: EdgeInsets.only(
                           //textmargin
@@ -739,7 +745,7 @@ class _LastChatState extends State<ChatScreen> {
                                 placeholder: (context, url) => Container(
                                   child: CircularProgressIndicator(
                                     valueColor: AlwaysStoppedAnimation<Color>(
-                                        (Colors.lightBlueAccent)),
+                                        (OnestepColors().mainColor)),
                                   ),
                                   width: 200.0,
                                   height: 200.0,
@@ -805,10 +811,10 @@ class _LastChatState extends State<ChatScreen> {
                           : Container(
                               padding:
                                   EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
-                              // width: 150.0,
+                              //width: 200.0,
                               //height: 150,
                               decoration: BoxDecoration(
-                                  color: Colors.yellow,
+                                  color: OnestepColors().fifColor,
                                   borderRadius: BorderRadius.circular(8.0)),
                               child: Column(
                                 children: [
@@ -828,15 +834,6 @@ class _LastChatState extends State<ChatScreen> {
                                             Radius.circular(8.0)),
                                         clipBehavior: Clip.hardEdge,
                                       ),
-
-                                      // child: ExtendedImage.network(
-                                      //   snapshot.data['imageUrl'],
-                                      //   fit: BoxFit.cover,
-                                      //   height: 50,
-                                      //   width: 50,
-                                      //   cache: true,
-                                      // ),
-                                      // ),
                                       SizedBox(
                                         width: 15,
                                       ),
@@ -859,6 +856,15 @@ class _LastChatState extends State<ChatScreen> {
                                     padding:
                                         const EdgeInsets.fromLTRB(5, 5, 5, 0),
                                     child: ElevatedButton(
+                                      style: ButtonStyle(
+                                        backgroundColor:
+                                            MaterialStateProperty.all(
+                                                OnestepColors().mainColor),
+                                        elevation: MaterialStateProperty.all(0),
+                                        // hoverElevation: 0,
+                                        // focusElevation: 0,
+                                        // highlightElevation: 0,
+                                      ),
                                       onPressed: () {
                                         print("장터게시판 이동");
                                         Navigator.push(
@@ -873,12 +879,16 @@ class _LastChatState extends State<ChatScreen> {
                                           alignment: Alignment.center,
                                           width: 100,
                                           height: 30,
-                                          child: Text("구매하기")),
+                                          child: Text("상세보기")),
                                     ),
                                   ),
                                 ],
                               ),
-                            )
+                              margin: EdgeInsets.only(
+                                  top: 10,
+                                  bottom: isLastMsgRight(index) ? 20.0 : 10.0,
+                                  right: 10.0),
+                            ),
               // GetTime(document), //채팅 우측 시간출력
             ],
             mainAxisAlignment: MainAxisAlignment.end,
@@ -1104,7 +1114,7 @@ class _LastChatState extends State<ChatScreen> {
               margin: EdgeInsets.symmetric(horizontal: 1.0),
               child: IconButton(
                 icon: Icon(Icons.image),
-                color: Colors.lightBlueAccent,
+                color: OnestepColors().mainColor,
                 onPressed: getImage, //getImageFromGallery,
               ),
             ),
@@ -1117,7 +1127,7 @@ class _LastChatState extends State<ChatScreen> {
               margin: EdgeInsets.symmetric(horizontal: 1.0),
               child: IconButton(
                 icon: Icon(Icons.face),
-                color: Colors.lightBlueAccent,
+                color: OnestepColors().mainColor,
                 onPressed: getSticker, //getImageFromGallery,
               ),
             ),
@@ -1145,7 +1155,7 @@ class _LastChatState extends State<ChatScreen> {
               ),
               child: IconButton(
                   icon: Icon(Icons.send),
-                  color: Colors.lightBlueAccent,
+                  color: OnestepColors().mainColor,
                   onPressed: () {
                     if (textEditingController.text.contains("[상품정보문의]")) {
                       checkTheSendMessage(chatId, friendId, product, 3);

@@ -144,10 +144,7 @@ class _MainPageState extends State<MainPage> {
     if (userRecord.data() == null) {
       // no user record exists, time to create
 
-      String nickName = "홍은표";
-
       // ********* 회원가입 ************* aaaaa
-      print("user ${user.toString()}");
       Navigator.of(context)
           .push(MaterialPageRoute(builder: (context) => LoginJoinPage(user)));
 
