@@ -32,8 +32,7 @@ class BottomNavigationItem {
           title: "장터",
         ),
         BottomNavigationItem(
-          // page: BoardMain(),
-          page: LoginJoinPage(),
+          page: BoardMain(),
           icon: Icon(Icons.list),
           title: "게시판",
         ),
