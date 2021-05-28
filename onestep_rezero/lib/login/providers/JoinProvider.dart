@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:email_validator/email_validator.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final emailCheckProvider = StateNotifierProvider<EmailCheckProvider>((ref) {
@@ -11,10 +10,10 @@ class EmailCheckProvider extends StateNotifier<bool> {
   EmailCheckProvider() : super(false);
 
   void authEmailNickNameCheck(String tempEmail) async {
-    String email = tempEmail;
-    final bool isValid = EmailValidator.validate(email);
+    // String email = tempEmail;
+    // final bool isValid = EmailValidator.validate(email);
 
-    if (tempEmail == "" || !isValid) {
+    if (tempEmail == "") {
       state = false;
     } else {
       QuerySnapshot ref = await FirebaseFirestore.instance

@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:onestep_rezero/login/model/user.dart';
+import 'package:onestep_rezero/login/pages/authWaitPage.dart';
+import 'package:onestep_rezero/login/pages/loginJoinPage.dart';
 import 'package:onestep_rezero/timeUtil.dart';
 
 import 'appmain/bottomNavigationItem.dart';
@@ -142,9 +144,9 @@ class _MainPageState extends State<MainPage> {
     if (userRecord.data() == null) {
       // no user record exists, time to create
 
-      String nickName = "홍은표";
-
       // ********* 회원가입 ************* aaaaa
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (context) => LoginJoinPage(user)));
 
       // await Navigator.push(
       //   context,
@@ -169,36 +171,45 @@ class _MainPageState extends State<MainPage> {
       //           )),
       // );
 
-      if (nickName != null || nickName.length != 0) {
-        await ref.doc(user.id).set({
-          "auth": 0, // 대학인증여부 0 : 안됨, 1 : 인증대기중, 2 : 인증 완료
-          "authTime": 0, // 학교 인증시간
-          "uid": user.id, // uid
-          "nickName": nickName, // 닉네임
-          "imageUrl": user.photoUrl, // 사진
-          "email": user.email, // 이메일
-          "reportPoint": 0, // 신고 점수
-          "university": "", // 학교이름
-          "universityEmail": "", // 학교이메일
-          "joinTime": time, // 가입시간
-        }).whenComplete(() {
-          ref.doc(user.id).collection("chatCount").doc(user.id).set({
-            "productChatCount": 0,
-            "boardChatCount": 0,
-          });
-        });
-        // .whenComplete(() {
-        //   ref.doc(user.id).collection("grade").doc(time).set({
-        //     "grade": "", // 판매 등급
-        //     "gradePoint": 0, // 거래 게이지
-        //     "getPoint": 0, // 얻은 게이지
-        //     "time": time, // 시간
-        //     "type": 0, // 활동 유형
-        //   });
-        // });
-      }
+      // if (nickName != null || nickName.length != 0) {
+      //   await ref.doc(user.id).set({
+      //     "auth": 0, // 대학인증여부 0 : 안됨, 1 : 인증대기중, 2 : 인증 완료
+      //     "authTime": 0, // 학교 인증시간
+      //     "uid": user.id, // uid
+      //     "nickName": nickName, // 닉네임
+      //     "imageUrl": user.photoUrl, // 사진
+      //     "email": user.email, // 이메일
+      //     "reportPoint": 0, // 신고 점수
+      //     "university": "", // 학교이름
+      //     "universityEmail": "", // 학교이메일
+      //     "joinTime": time, // 가입시간
+      //   }).whenComplete(() {
+      //     ref.doc(user.id).collection("chatCount").doc(user.id).set({
+      //       "productChatCount": 0,
+      //       "boardChatCount": 0,
+      //     });
+      //   });
+      //   // .whenComplete(() {
+      //   //   ref.doc(user.id).collection("grade").doc(time).set({
+      //   //     "grade": "", // 판매 등급
+      //   //     "gradePoint": 0, // 거래 게이지
+      //   //     "getPoint": 0, // 얻은 게이지
+      //   //     "time": time, // 시간
+      //   //     "type": 0, // 활동 유형
+      //   //   });
+      //   // });
+      // }
       userRecord = await ref.doc(user.id).get();
     }
+
+    if (userRecord.data()['auth'] == 1) {
+      // 증명서 대기 페이지
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (context) => AuthWaitPage()));
+      return null;
+    }
+
+    // 무조건 거쳐야함
     currentUserModel = User.fromDocument(userRecord);
     ref.doc(currentUserModel.uid).collection("log").doc(time.toString()).set({
       "loginTime": time,
@@ -346,7 +357,10 @@ class _MainPageState extends State<MainPage> {
               bottomNavigationBar: BottomNavigationBar(
                 fixedColor: Colors.black,
                 currentIndex: _currentIndex,
-                onTap: (int index) => setState(() => _currentIndex = index),
+                onTap: (int index) {
+                  if (_currentIndex != index)
+                    setState(() => _currentIndex = index);
+                },
                 type: BottomNavigationBarType.fixed,
                 showSelectedLabels: false,
                 showUnselectedLabels: false, // title 안보이게 설정

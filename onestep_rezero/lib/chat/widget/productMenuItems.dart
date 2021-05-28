@@ -4,7 +4,7 @@ import 'package:onestep_rezero/chat/productchat/model/productChatMenuItem.dart';
 class ProductChatMenuItems {
   static const List<ProductChatMenuItem> itemsFirst = [
     itemSettings,
-    itemShare,
+    itemBlock,
   ];
   static const List<ProductChatMenuItem> itemsSecond = [
     itemExit,
@@ -15,9 +15,9 @@ class ProductChatMenuItems {
     icon: Icons.settings,
   );
 
-  static const itemShare = ProductChatMenuItem(
-    text: 'Share',
-    icon: Icons.share,
+  static const itemBlock = ProductChatMenuItem(
+    text: 'Block',
+    icon: Icons.block,
   );
 
   static const itemExit = ProductChatMenuItem(

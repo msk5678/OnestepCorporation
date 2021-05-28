@@ -246,7 +246,7 @@ class _ProductChatListPageState extends State<ProductChatListPage>
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: <Widget>[
                                 ProductChatController()
-                                    .getProductUserNickName(productsUserId),
+                                    .getProductUserNickName(productsUserId, 15),
                                 // Text(
                                 //   productsUserId + " 108438757310040285856",
                                 //   style: TextStyle(fontSize: 9),
