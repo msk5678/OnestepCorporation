@@ -709,6 +709,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
           style: ElevatedButton.styleFrom(
             primary: OnestepColors().mainColor,
             textStyle: TextStyle(color: Colors.white),
+            elevation: 0,
           ),
           onPressed: () {
             print("장터채팅누름");
