@@ -45,7 +45,7 @@ class BoardListView extends ConsumerWidget {
         trailing: IconButton(
           icon: Icon(
             Icons.star_border_rounded,
-            color: Colors.yellow[600],
+            // color: Colors.yellow[600],
           ),
           onPressed: () {
             print("Something to do");

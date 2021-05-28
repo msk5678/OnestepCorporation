@@ -5,6 +5,7 @@ import 'package:onestep_rezero/board/Animation/fadeInAnimationWidget.dart';
 import 'package:onestep_rezero/board/Animation/slideUpAnimationWidget.dart';
 import 'package:onestep_rezero/board/declareData/categoryManageClass.dart';
 import 'package:onestep_rezero/board/declareData/postData.dart';
+import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/main.dart';
 
 import 'TipDialog/tip_dialog.dart';
@@ -143,8 +144,6 @@ class _BoardCreate extends State<BoardCreate> with TickerProviderStateMixin {
       return Container();
     }
   }
-  // Future.delayed(Duration(seconds: 2))
-  //     .then((value) => Navigator.pop(context, true));
 
   Widget saveButtonWidget() {
     if (isTitleTextEmpty != null) if (!isTitleTextEmpty &&
@@ -152,7 +151,7 @@ class _BoardCreate extends State<BoardCreate> with TickerProviderStateMixin {
       return ShowUp(
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-              primary: Color.fromRGBO(164, 227, 210, 1)),
+              primary: OnestepColors().fifColor, elevation: 0),
           child: Text("게시하기!"),
           onPressed: () async {
             FocusScope.of(context).unfocus();
@@ -254,6 +253,4 @@ class _BoardCreate extends State<BoardCreate> with TickerProviderStateMixin {
   void resetItem() {
     boardCategoryList = BoardCategory.values.toList();
   }
-
-  saveBoard() async {}
 }

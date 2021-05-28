@@ -5,6 +5,7 @@ import 'package:flutter_fadein/flutter_fadein.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onestep_rezero/board/AboutPost/AboutPostListView/listRiverpod.dart';
 import 'package:onestep_rezero/board/declareData/boardData.dart';
+import 'package:onestep_rezero/board/declareData/categoryManageClass.dart';
 
 class PostListMain extends StatefulWidget {
   final currentBoardData;
