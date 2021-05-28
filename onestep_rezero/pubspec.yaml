@@ -119,7 +119,8 @@ dependencies:
   #Image FadeIn Animation
   transparent_image: ^2.0.0
   flutter_fadein: ^2.0.0
-
+  #rive Animation
+  rive: ^0.7.5
   #Chat Test
   #stream_chat_flutter: ^1.5.1
 
@@ -154,6 +155,7 @@ flutter:
   assets:
     - icons/category/
     - images/   
+    - rives/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 
@@ -165,17 +167,27 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
-  #         style: italic
-  #   - family: Trajan Pro
-  #     fonts:
-  #       - asset: fonts/TrajanPro.ttf
-  #       - asset: fonts/TrajanPro_Bold.ttf
-  #         weight: 700
+  fonts:
+    - family: Ubuntu
+      fonts:
+        # - asset: fonts/Ubuntu-Bold.ttf
+        # - asset: fonts/Ubuntu-BoldItalic.ttf
+        # - asset: fonts/Ubuntu-Italic.ttf
+        # - asset: fonts/Ubuntu-Light.ttf
+        # # - asset: fonts/Ubuntu-LightItalic
+        # - asset: fonts/Ubuntu-Medium.ttf
+        # - asset: fonts/Ubuntu-MediumItalic.ttf
+        - asset: fonts/Ubuntu-Regular.ttf
+    - family: GamjaFlower
+      fonts:
+        - asset: fonts/GamjaFlower-Regular.ttf 
+
+          # style: italic
+    # - family: Trajan Pro
+    #   fonts:
+    #     - asset: fonts/TrajanPro.ttf
+    #     - asset: fonts/TrajanPro_Bold.ttf
+    #       weight: 700
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

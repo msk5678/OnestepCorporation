@@ -28,6 +28,8 @@ class _PostListWidget extends State<PostListMain> {
   bool _isVisibility = false;
   BoardData currentBoardData;
   BoardCategory currentBoardCategory;
+  double deviceWidth;
+  double deviceHeight;
   @override
   void initState() {
     currentBoardData = widget.currentBoardData;
@@ -72,19 +74,37 @@ class _PostListWidget extends State<PostListMain> {
   }
 
   @override
+  void didChangeDependencies() {
+    deviceHeight = MediaQuery.of(context).size.height;
+    deviceWidth = MediaQuery.of(context).size.width;
+    super.didChangeDependencies();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar:
-            // PreferredSize(
-            //   preferredSize: Size.fromHeight(50.0),
-            //   child:
-            AppBar(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
           backgroundColor: Colors.white,
           title: FadeIn(
-            child: Text(
-              currentBoardData.boardName,
-              style: TextStyle(color: Colors.black),
+            child: Row(
+              children: [
+                Container(
+                  margin: EdgeInsets.only(
+                      left: deviceWidth / 200, right: deviceWidth / 250),
+                  child: IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      icon: Icon(
+                        currentBoardCategory.categoryData.icon,
+                        color: Colors.indigo,
+                      )),
+                ),
+                Text(
+                  currentBoardData.boardName,
+                  style: TextStyle(color: Colors.black),
+                ),
+              ],
             ),
             curve: Curves.easeIn,
             duration: Duration(milliseconds: 300),
@@ -105,7 +125,7 @@ class _PostListWidget extends State<PostListMain> {
         floatingActionButton: Stack(
           children: <Widget>[
             Align(
-              alignment: Alignment.bottomCenter,
+              alignment: Alignment(0.1, 1.0),
               child: productAddFLoatingActionButton(),
             ),
             Align(

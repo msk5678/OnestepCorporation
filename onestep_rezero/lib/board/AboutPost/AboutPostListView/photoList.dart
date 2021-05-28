@@ -64,16 +64,10 @@ class PhotoList extends ConsumerWidget {
     String imageURL =
         postData.imageCommentMap.values.toList()[0].toString() ?? "";
     String parseURL = imageURL.substring(1, imageURL.length - 1);
-    // CacheManager().getSingleFile(parseURL);
-    // return Image(
-    //   image: new CachedNetworkImageProvider(parseURL,),
-    // );
+
     return GestureDetector(
       onTap: () {},
       child: Center(
-        // child: Container(
-        //   decoration:
-        //       BoxDecoration(border: Border.all(width: 1, color: Colors.black)),
         child: FadeInImage(
           fit: BoxFit.fill,
           placeholder: MemoryImage(kTransparentImage),

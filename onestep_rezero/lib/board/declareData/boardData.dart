@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:onestep_rezero/board/declareData/categoryManageClass.dart';
+import 'dart:math' as math;
 
 class BoardData {
   final boardName;
@@ -21,3 +23,36 @@ class BoardData {
     );
   }
 }
+
+class BoardInitData {
+  final icons;
+  final explain;
+  BoardInitData({this.icons, this.explain});
+}
+//                 leading: Icon(
+//                   Icons.library_books_outlined,
+//                   color: Colors.green[100],
+//                 ),
+//                 title: Text("나의 글"),
+//               ),
+//               ListTile(
+//                 leading: Icon(
+//                   Icons.mode_comment_rounded,
+//                   color: Colors.green[100],
+//                 ),
+//                 title: Text("나의 댓글"),
+//               ),
+//               ListTile(
+//                 leading: Icon(
+//                   Icons.book_rounded,
+//                   color: Colors.yellow[600],
+//                 ),
+//                 title: Text("나의 스크랩"),
+//               ),
+//               ListTile(
+//                 leading: Icon(
+//                   Icons.favorite,
+//                   color: Colors.redAccent[100],
+//                 ),
+//                 title: Text("인기글"),
+//               ),

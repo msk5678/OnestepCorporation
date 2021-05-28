@@ -5,7 +5,7 @@ import 'package:onestep_rezero/board/declareData/postData.dart';
 
 import '../../main.dart';
 
-class Comment {
+class CommentData {
   final String uid;
   final String boardId;
   final String boardName;
@@ -19,7 +19,7 @@ class Comment {
   final String updateTime;
   final String userName;
   final String commentId;
-  Comment(
+  CommentData(
       {this.uid,
       this.boardId,
       this.boardName,
@@ -33,9 +33,9 @@ class Comment {
       this.deleted,
       this.deletedTime,
       this.commentId});
-  factory Comment.toRealtimeDataWithPostData(PostData postData) {
+  factory CommentData.toRealtimeDataWithPostData(PostData postData) {
     String currentTimeStamp = DateTime.now().millisecondsSinceEpoch.toString();
-    return Comment(
+    return CommentData(
       uid: googleSignIn.currentUser.id,
       boardId: postData.boardId,
       boardName: postData.boardName,
@@ -95,9 +95,9 @@ class Comment {
     else
       print("SNAPSHOT : " + snapshot.value.runtimeType.toString());
     Map<dynamic, dynamic> commentSnapshot = snapshot.value;
-    List<Comment> commentList = [];
+    List<CommentData> commentList = [];
     commentSnapshot.forEach((key, value) {
-      commentList.add(Comment(
+      commentList.add(CommentData(
           uid: value["uid"],
           boardId: value["boardId"],
           boardName: value["boardName"],
@@ -108,6 +108,7 @@ class Comment {
           reported: value['reported'],
           updateTime: value["updateTime"],
           uploadTime: value["uploadTime"],
+          textContent: value["textContent"],
           commentId: key));
     });
     return commentList;

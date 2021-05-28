@@ -5,6 +5,7 @@ import 'package:onestep_rezero/board/Animation/fadeInAnimationWidget.dart';
 import 'package:onestep_rezero/board/Animation/slideUpAnimationWidget.dart';
 import 'package:onestep_rezero/board/declareData/categoryManageClass.dart';
 import 'package:onestep_rezero/board/declareData/postData.dart';
+import 'package:onestep_rezero/main.dart';
 
 import 'TipDialog/tip_dialog.dart';
 
@@ -157,7 +158,12 @@ class _BoardCreate extends State<BoardCreate> with TickerProviderStateMixin {
               String currentTimeStamp =
                   DateTime.now().millisecondsSinceEpoch.toString();
               TipDialogHelper.loading("게시 중입니다.\n 잠시만 기다려주세요.");
-              await db.collection('board').doc(currentTimeStamp).set({
+              await db
+                  .collection('university')
+                  .doc(currentUserModel.university)
+                  .collection('board')
+                  .doc(currentTimeStamp)
+                  .set({
                 "boardName": textControllerTitle.text.trim(),
                 "boardExplain": textControllerExplain.text.trim(),
                 "boardCategory": selectedBoardCategory.boardCategoryName

@@ -7,16 +7,7 @@ import 'package:onestep_rezero/board/AboutPost/AboutPostListView/listRiverpod.da
 // import 'package:onestep_rezero/board/StateManage/Provider/postListProvider.dart';
 import 'package:onestep_rezero/board/declareData/categoryManageClass.dart';
 import 'package:onestep_rezero/board/declareData/postData.dart';
-
-abstract class AbstractPostListView extends ConsumerWidget {
-  AbstractPostListView({this.postList});
-  final List<PostData> postList;
-
-  // firstColumnLine(postData);
-  // secondColumnLine(postData);
-  // thirdColumnLine(postData);
-
-}
+import 'package:onestep_rezero/timeUtil.dart';
 
 // ignore: must_be_immutable
 class PostList extends ConsumerWidget {
@@ -51,38 +42,6 @@ class PostList extends ConsumerWidget {
         ),
       ),
     );
-
-    // setDeviceHeightWidth(context);
-    // setPostList();
-    // Widget scaffoldBody;
-    // if (postList != null) {
-    //   if (postList.isNotEmpty) {
-    //     scaffoldBody = Container(
-    //         child: ListView.builder(
-    // physics: NeverScrollableScrollPhysics(),
-    // shrinkWrap: true,
-    //             //PageStorageKey is Keepping ListView scroll position when switching pageview
-    //             key: PageStorageKey<String>("value"),
-    //             //Bottom Padding
-    //             padding: const EdgeInsets.only(
-    //                 bottom: kFloatingActionButtonMargin + 60),
-    // itemCount: postList.length,
-    //             itemBuilder: (context, index) {
-    //               // final currentRow = (index + 1) ~/ FETCH_ROW;
-    //               // if (_lastRow != currentRow) {
-    //               //   _lastRow = currentRow;
-    //               // }
-    //               return _buildListCard(context, index, postList[index]);
-    //             }));
-    //   } else {
-    //     return Center(child: CupertinoActivityIndicator());
-    //   }
-    //   //This part setting
-    //   // scaffoldBody = Center(child: Text("새 게시글로 시작해보세요!"));
-    // } else {
-    //   scaffoldBody = Center(child: Text(PostListProvider().errorMessage));
-    // }
-    // return scaffoldBody;
   }
 
   Widget _buildListCard(BuildContext context, int index, var postData) {
@@ -135,7 +94,7 @@ class PostList extends ConsumerWidget {
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
                   color: Colors.black,
-                  fontSize: 18,
+                  fontSize: 17,
                   fontWeight: FontWeight.bold),
             )),
         // titleContainerMethod(title: postData.title ?? ""),
@@ -159,14 +118,16 @@ class PostList extends ConsumerWidget {
     // }
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Container(
           padding: EdgeInsets.only(left: deviceWidth / 50),
         ),
         Container(
             height: deviceHeight / 27 * 0.6,
+            alignment: Alignment.center,
             decoration: BoxDecoration(
-                color: Colors.grey[300],
+                color: Colors.grey[200],
                 borderRadius: BorderRadius.all(Radius.circular(3.0))),
             child: Center(
               child: Text(
@@ -178,16 +139,16 @@ class PostList extends ConsumerWidget {
               ),
             )),
         Container(
-          height: deviceHeight / 27,
-          alignment: Alignment.centerLeft,
-          child: Container(
+            height: deviceHeight / 27 * 0.6,
+            alignment: Alignment.centerLeft,
+            child: Container(
               margin: EdgeInsets.only(left: deviceWidth / 50),
               width: deviceWidth * 0.8,
               child: Text(postData.textContent ?? "",
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: Colors.black, fontSize: 13))),
-        ),
+                  style: TextStyle(color: Colors.black, fontSize: 13)),
+            )),
       ],
     );
   }
@@ -221,7 +182,7 @@ class PostList extends ConsumerWidget {
                     fontWeight: FontWeight.bold),
               ),
               Container(
-                child: _setDateTimeText(postData.uploadTime, postData),
+                child: Text('${TimeUtil.timeAgo(date: postData.uploadTime)}'),
               ),
               Spacer(),
               Container(
@@ -239,31 +200,5 @@ class PostList extends ConsumerWidget {
             // Icon(Icons.favorite), child: Text('Date')
           )),
         ]));
-  }
-
-  _setDateTimeText(DateTime dateTime, var boardData) {
-    String resultText;
-    DateTime today = DateTime.now();
-    today =
-        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
-    DateTime setUTC9 = dateTime;
-    var _dateDifference = DateTime(setUTC9.year, setUTC9.month, setUTC9.day)
-        .difference(today)
-        .inDays;
-    if (_dateDifference == 0 || _dateDifference == -1) {
-      var _date = setUTC9.toString().split(' ')[1].split('.')[0];
-      if (_dateDifference == 0) {
-        resultText = "오늘 " + _date;
-      } else {
-        resultText = "어제 " + _date;
-      }
-    } else {
-      var _date = dateTime.toString().split('');
-      int _dateLength = dateTime.toString().split('').length;
-      _date.removeRange(_dateLength - 10, _dateLength);
-      resultText = _date.join();
-    }
-
-    return Text(resultText);
   }
 }

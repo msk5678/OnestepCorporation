@@ -35,7 +35,7 @@ class BoardListView extends ConsumerWidget {
           icon: Icon(
             boardCategory.categoryData.icon,
             size: 25,
-            color: Colors.yellow[600],
+            color: Colors.indigo[300],
           ),
           onPressed: () {
             print("Something to do");
@@ -55,13 +55,19 @@ class BoardListView extends ConsumerWidget {
               Navigator.pushNamed(context, '/PostList',
                   arguments: {"CURRENTBOARDDATA": value});
             },
-            child: Container(child: Text(value.boardExplain ?? "ERROR"))),
+            child: Container(
+                child: Text(
+              value.boardExplain ?? "ERROR",
+            ))),
         title: GestureDetector(
             onTap: () {
               Navigator.pushNamed(context, '/PostList',
                   arguments: {"CURRENTBOARDDATA": value});
             },
-            child: Container(child: Text(value.boardName ?? "ERROR"))),
+            child: Container(
+                child: Text(
+              value.boardName ?? "ERROR",
+            ))),
       ));
     });
 
