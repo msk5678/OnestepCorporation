@@ -129,9 +129,26 @@ class _ProductMainState extends State<ProductMain> {
         return Visibility(
           visible: snapshot.data,
           child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(100),
+                  topRight: Radius.circular(100),
+                  bottomLeft: Radius.circular(100),
+                  bottomRight: Radius.circular(100)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.1),
+                  spreadRadius: 3,
+                  blurRadius: 7,
+                  offset: Offset(0, 3), // changes position of shadow
+                ),
+              ],
+            ),
             height: 40,
             child: FloatingActionButton.extended(
               heroTag: null,
+              elevation: 0,
               onPressed: () {
                 Navigator.of(context).push(
                     MaterialPageRoute(builder: (context) => ProductAdd()));
@@ -162,10 +179,27 @@ class _ProductMainState extends State<ProductMain> {
         return Visibility(
           visible: snapshot.data,
           child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(100),
+                  topRight: Radius.circular(100),
+                  bottomLeft: Radius.circular(100),
+                  bottomRight: Radius.circular(100)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.1),
+                  spreadRadius: 3,
+                  blurRadius: 7,
+                  offset: Offset(0, 3), // changes position of shadow
+                ),
+              ],
+            ),
             height: 40.0,
             width: 40.0,
             child: FittedBox(
               child: FloatingActionButton(
+                elevation: 0,
                 heroTag: null,
                 onPressed: () {
                   _scrollController.position
@@ -174,8 +208,6 @@ class _ProductMainState extends State<ProductMain> {
                 child:
                     Icon(Icons.keyboard_arrow_up_rounded, color: Colors.black),
                 backgroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(100.0))),
               ),
             ),
           ),
