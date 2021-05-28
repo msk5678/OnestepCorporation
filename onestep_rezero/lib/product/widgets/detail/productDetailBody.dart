@@ -265,7 +265,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
             pagination: SwiperPagination(
               alignment: Alignment.bottomCenter,
               builder: DotSwiperPaginationBuilder(
-                activeColor: Colors.pink,
+                activeColor: OnestepColors().mainColor,
                 color: Colors.grey,
               ),
             ),

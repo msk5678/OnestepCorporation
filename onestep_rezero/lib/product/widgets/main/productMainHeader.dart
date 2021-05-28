@@ -105,8 +105,6 @@ class ProductMainHeader extends ConsumerWidget {
                           MaterialPageRoute(
                             builder: (context) => CategoryDetail(
                               category: snapshot.data.docs[index].id,
-                              detailCategory: snapshot.data.docs[index]
-                                  ['detail'],
                             ),
                           ),
                         );
