@@ -66,8 +66,9 @@ class ProductChatController {
             print(
                 "proChatController-createProductChatToRealtimeDatabase 2. 채팅방 생성 완료, 초기 메세지 생성");
 
-            onSendToProductMessage(chatId, friendUid, product, 3);
-            onSendToProductAddMessage(chatId, friendUid);
+            // onSendToProductMessage(chatId, friendUid, product, 3);
+            // onSendToProductAddMessage(chatId, friendUid);
+
             // productChatReference
             //     .child(chatId)
             //     //.child("roominfo")
@@ -182,7 +183,7 @@ class ProductChatController {
             } else {
               return AutoSizeText(
                 snapshot.data.data()['nickName'],
-                style: TextStyle(fontSize: fontSize), //15
+                style: TextStyle(fontSize: fontSize, color: Colors.black), //15
                 minFontSize: 10,
                 stepGranularity: 10,
                 maxLines: 1,

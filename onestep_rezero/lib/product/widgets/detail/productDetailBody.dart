@@ -711,6 +711,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
             textStyle: TextStyle(color: Colors.white),
           ),
           onPressed: () {
+            print("장터채팅누름");
             print(googleSignIn.currentUser.id);
             print(widget.product.uid);
             print(widget.product.firestoreid);

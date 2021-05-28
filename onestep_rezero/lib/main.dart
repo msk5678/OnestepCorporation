@@ -77,6 +77,12 @@ class _MainPageState extends State<MainPage> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    print("종료 디스포즈..");
+    super.dispose();
+    print("종료 디스포즈..2");
+  }
   //   void initDynamicLinks() async {
   //   // 앱이 active이거나 background 상태일때 들어온 링크를 알 수 있는 링크 콜백에 대한 리스너 onLink()
   //   FirebaseDynamicLinks.instance.onLink(

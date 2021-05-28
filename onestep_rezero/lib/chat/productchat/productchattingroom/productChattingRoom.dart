@@ -43,6 +43,7 @@ class _ProductChattingRoomPageState extends State<ProductChattingRoomPage> {
   void dispose() {
     super.dispose();
     streamController.close();
+    print("채팅방 디스포즈");
   }
 
   @override
@@ -286,27 +287,15 @@ class _LastChatState extends State<ChatScreen> {
         _createChatId(); //chatId 생성
         ProductChatController().createProductChatToRealtimeDatabase(
             friendId, postId, chatId, product); //chat Id로 채팅방 생성
-      } //채팅방 확인 무조건 진행. 없으면 id랑 채팅방 생성, 후에 채팅방 생성 내부에서 메세지 생성
-      else {
-        //1-2. 채팅방 있을 경우 채팅방 미생성, chatId 를 가져온다.
-        print(
-            "proChat-checkExistChattingRoom 1-2. 채팅방 있을 경우 채팅방 생성X, get chatId");
-
-        print('#realpro check exist chat  : not null');
-        print('#realpro Data strmsg : ${snapshot.value}');
+        setTextFieldtoProductInfo(product);
+      } else {
+        //채팅방 하나라도 있으면 판별해줘야 함
         Map<dynamic, dynamic> values = snapshot.value;
-        //retest(values);
-        //retest2();
         values.forEach((key, values) {
-          Future.delayed(const Duration(seconds: 1));
-          print('#realpro Data strmsg second value : ${values.toString()}');
-          print('#realpro Data strmsg second key : ${key.toString()}');
           print(
               "#realpro 생성 채팅방 가져온값 186 key ${key.toString()} / myid ${values['chatUsers'].keys.toList()[0]} / fid ${values['chatUsers'].keys.toList()[1]} / postId ${values['postId']}");
 
-          print(
-              "#realpro Data strmsg second 1  myid $myId / fid $friendId / post $postId");
-          print("#realpro 생성 채팅방 상단");
+          //만약 나와 상대 채팅방이 있으면, 텍스트 필드 생성
           if ((myId == values['chatUsers'].keys.toList()[0] &&
                   friendId == values['chatUsers'].keys.toList()[1]
               //&&postId == values['postId']
@@ -321,28 +310,22 @@ class _LastChatState extends State<ChatScreen> {
             print("getc 커넥타임 $connectTime ");
             // getConnectTime(chatId);
 
+            //채팅방 있으면서 & 장터에서 넘어온 경우
             if (checkProductExist() == true) {
               print(
                   "proChat-checkExistChattingRoom 1-3. 만약 장터에서 왔으면 초기 메세지 생성");
-
               //장터에서 온게 맞으면 텍스트 필드에 물품정보 생성
               setTextFieldtoProductInfo(product);
             }
-            print(
-                "#realpro Data strmsg second 채팅방 있음 22 myid $myId / fid $friendId / post $postId / chatId $chatId");
-          } //채팅방이 있을 경우 기존 채팅방의 chatId 가져온다.
-        }); //챗리스트 반복 종료
-        print("#realpro 생성 채팅방 하단");
-        // if (existChattingRoom == true) {
-        //   print(
-        //       "#realpro 생성 채팅방 있음 186 myid $myId / fid $friendId / chatId $chatId");
-        //만약 채팅방이 있으면
-
-        //  }
-      } //else
-      //3. 뭐가 됐건 장터에서 넘어왔는지 체크한다.
-
-      //4. 정리 setState
+          }
+        }); //foreach 종료하고 생성해야됨.
+        if (existChattingRoom == false) {
+          _createChatId(); //chatId 생성
+          ProductChatController().createProductChatToRealtimeDatabase(
+              friendId, postId, chatId, product); //chat Id로 채팅방 생성
+          setTextFieldtoProductInfo(product);
+        }
+      } //else 데이터 하나라도 있을 경우
       setState(() {});
     } //than
             );
@@ -350,7 +333,7 @@ class _LastChatState extends State<ChatScreen> {
 
   void setTextFieldtoProductInfo(Product product) {
     String title = product.title;
-    textEditingController.text = "[상품정보문의]안녕하세요. [$title] 보고 문의드립니다.";
+    textEditingController.text = "[상품정보문의] [$title] 상품에 관심있어요!";
   }
 
   @override
@@ -406,14 +389,46 @@ class _LastChatState extends State<ChatScreen> {
             //mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               AppBar(
-                backgroundColor: OnestepColors().thirdColor,
+                leading: BackButton(
+                  color: Colors.black,
+                  // OnestepColors().mainColor,
+                ),
+                // shadowColor: Colors.white,
+                elevation: 0,
+                backgroundColor: Colors.white10,
+                // OnestepColors().thirdColor,
                 title: Center(
-                  child: ProductChatController()
-                      .getProductUserNickName(friendId, 20),
+                  child: Column(
+                    children: [
+                      ProductChatController()
+                          .getProductUserNickName(friendId, 15),
+                      SizedBox(
+                        height: 1,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.circle,
+                            color: Colors.green,
+                            size: 9,
+                          ),
+                          Text(
+                            "접속중",
+                            style: TextStyle(
+                              color: Colors.green,
+                              fontSize: 9,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                   // Text("ge"),
                 ),
                 actions: [
                   ProductChatMenu().getProductMenu(context, chatId, friendId),
+                  // Text("ge"),
                 ],
               ),
               //Text("con $connectTime"),
@@ -693,23 +708,18 @@ class _LastChatState extends State<ChatScreen> {
       return Column(
         //요기
         children: <Widget>[
-          //Text("time test"),
-          // if (index == size - 1) Text(chatTime),
-          // if (chatTime != nextchatTime) Text(chatTime),
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: <Widget>[
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: <Widget>[
-                  productMessage.isRead == false ? Text("1") : Text(""),
-                  // ? Text("${productMessage.isRead} 상대방 안읽음")
-                  // : Text("${productMessage.isRead} 상대방 읽음"),
-                  //Text(document["isRead"].toString()),
-                  //GetTime(document),
-                  //Text("time"),
-                  getMessageTime(productMessage.sendTime),
-                ],
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: <Widget>[
+                    productMessage.isRead == false ? Text("1") : Text(""),
+                    getMessageTime(productMessage.sendTime),
+                  ],
+                ),
               ),
               SizedBox(width: 5, height: 10),
               productMessage.type == 0
@@ -731,7 +741,7 @@ class _LastChatState extends State<ChatScreen> {
                       margin: EdgeInsets.only(
                           //textmargin
                           top: 10,
-                          bottom: isLastMsgRight(index) ? 0.0 : 10.0,
+                          bottom: isLastMsgRight(index) ? 0.0 : 0.0,
                           right: 10.0),
                     )
                   //Image Msg
@@ -791,7 +801,7 @@ class _LastChatState extends State<ChatScreen> {
                           margin: EdgeInsets.only(
                               //image margin
                               top: 10,
-                              bottom: isLastMsgRight(index) ? 0.0 : 10.0,
+                              bottom: isLastMsgRight(index) ? 0.0 : 0.0,
                               right: 0.0),
                         )
                       //Sticker . gif Msg
@@ -804,14 +814,14 @@ class _LastChatState extends State<ChatScreen> {
                                 fit: BoxFit.cover,
                               ),
                               margin: EdgeInsets.only(
-                                  bottom: isLastMsgRight(index) ? 20.0 : 10.0,
+                                  bottom: isLastMsgRight(index) ? 20.0 : 0.0,
                                   right: 10.0),
                             )
                           //inMessage
                           : Container(
                               padding:
-                                  EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
-                              //width: 200.0,
+                                  EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 8.0),
+                              // width: 150.0,
                               //height: 150,
                               decoration: BoxDecoration(
                                   color: OnestepColors().fifColor,
@@ -819,6 +829,8 @@ class _LastChatState extends State<ChatScreen> {
                               child: Column(
                                 children: [
                                   Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
                                     children: [
                                       // Expanded(
                                       //child:
@@ -827,8 +839,8 @@ class _LastChatState extends State<ChatScreen> {
                                           imageUrl:
                                               productMessage.content.imageUrl,
                                           fit: BoxFit.cover,
-                                          height: 70,
-                                          width: 70,
+                                          height: 50,
+                                          width: 50,
                                         ),
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(8.0)),
@@ -838,12 +850,20 @@ class _LastChatState extends State<ChatScreen> {
                                         width: 15,
                                       ),
                                       Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
-                                          Text(
-                                            productMessage.content.title,
+                                          Container(
+                                            width: 200,
+                                            child: Text(
+                                              productMessage.content.title,
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
                                           ),
                                           SizedBox(
-                                            height: 15,
+                                            height: 8,
                                           ),
                                           Text(
                                             productMessage.content.price + "원",
@@ -886,7 +906,7 @@ class _LastChatState extends State<ChatScreen> {
                               ),
                               margin: EdgeInsets.only(
                                   top: 10,
-                                  bottom: isLastMsgRight(index) ? 20.0 : 10.0,
+                                  bottom: isLastMsgRight(index) ? 20.0 : 0.0,
                                   right: 10.0),
                             ),
               // GetTime(document), //채팅 우측 시간출력
@@ -910,19 +930,29 @@ class _LastChatState extends State<ChatScreen> {
                     ? Material(
                         //display receiver profile image
                         child: CachedNetworkImage(
-                          placeholder: (context, url) => Container(
-                            child: CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                  (Colors.lightBlueAccent)),
-                            ),
-                            width: 35.0,
-                            height: 35.0,
-                            padding: EdgeInsets.all(10.0),
-                          ),
-                          imageUrl: "images/mimi1.gif",
+                          imageUrl:
+                              "https://firebasestorage.googleapis.com/v0/b/onestep-project.appspot.com/o/productimage%2FNNGS4k93wiSum1S?alt=media&token=0229cb9e-9f48-4d89-aac4-fb8ebb2ed386",
+                          fit: BoxFit.cover,
+                          height: 50,
+                          width: 50,
                         ),
+                        // CachedNetworkImage(
+                        //   placeholder: (context, url) => Container(
+                        //     child: CircularProgressIndicator(
+                        //       valueColor: AlwaysStoppedAnimation<Color>(
+                        //           (Colors.lightBlueAccent)),
+                        //     ),
+                        //     width: 35.0,
+                        //     height: 35.0,
+                        //     padding: EdgeInsets.all(10.0),
+                        //   ),
+                        //   imageUrl:
+                        //       "https://firebasestorage.googleapis.com/v0/b/onestep-project.appspot.com/o/productimage%2FNNGS4k93wiSum1S?alt=media&token=0229cb9e-9f48-4d89-aac4-fb8ebb2ed386",
+                        //   //  "images/st.gif",
+                        // ),
+
                         borderRadius: BorderRadius.all(
-                          Radius.circular(18.0),
+                          Radius.circular(50.0),
                         ),
                         clipBehavior: Clip.hardEdge,
                       )
@@ -1047,6 +1077,8 @@ class _LastChatState extends State<ChatScreen> {
                                           width: 15,
                                         ),
                                         Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Text(
                                               productMessage.content.title,
