@@ -80,8 +80,6 @@ class ProductMainHeader extends ConsumerWidget {
   }
 
   Widget header(BuildContext context) {
-    Map<String, dynamic> a;
-
     return FutureBuilder(
         future: categoryList,
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {

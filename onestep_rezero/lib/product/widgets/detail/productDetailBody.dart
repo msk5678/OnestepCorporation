@@ -727,7 +727,10 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
             //     widget.product.uid,
             //     widget.product.firestoreid); aaaaa
           },
-          child: Text('채팅'),
+          child: Text(
+            '채팅',
+            style: TextStyle(),
+          ),
         ),
       ),
     );

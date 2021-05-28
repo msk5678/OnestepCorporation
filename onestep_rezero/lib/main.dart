@@ -214,7 +214,10 @@ class _MainPageState extends State<MainPage> {
     ref.doc(currentUserModel.uid).collection("log").doc(time.toString()).set({
       "loginTime": time,
     });
-    categoryList = FirebaseFirestore.instance.collection('category').get();
+    categoryList = FirebaseFirestore.instance
+        .collection('category')
+        .orderBy('total', descending: true)
+        .get();
     print("@@@@ category 가져오기");
     return null;
   }
