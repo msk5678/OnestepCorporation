@@ -150,9 +150,12 @@ class _BoardCreate extends State<BoardCreate> with TickerProviderStateMixin {
     if (isTitleTextEmpty != null) if (!isTitleTextEmpty &&
         selectedBoardCategory != null) {
       return ShowUp(
-        child: RaisedButton(
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+              primary: Color.fromRGBO(164, 227, 210, 1)),
           child: Text("게시하기!"),
           onPressed: () async {
+            FocusScope.of(context).unfocus();
             if (!isTitleTextEmpty) {
               final db = FirebaseFirestore.instance;
               String currentTimeStamp =

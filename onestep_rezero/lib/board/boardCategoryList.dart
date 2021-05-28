@@ -35,7 +35,8 @@ class BoardListView extends ConsumerWidget {
           icon: Icon(
             boardCategory.categoryData.icon,
             size: 25,
-            color: Colors.indigo[300],
+            // color: Colors.indigo[300],
+            color: Colors.black,
           ),
           onPressed: () {
             print("Something to do");

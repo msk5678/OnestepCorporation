@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:onestep_rezero/board/declareData/boardData.dart';
+import 'package:onestep_rezero/search/pages/searchAllMain.dart';
 import 'boardCategoryList.dart';
 
 class BoardMain extends StatefulWidget {
@@ -128,129 +129,133 @@ class _BoardMainState extends State<BoardMain> {
         FocusScope.of(context).requestFocus(FocusNode());
       },
       child: Scaffold(
-        appBar: AppBar(
-          elevation: 0,
-          title: Text(
-            "게시판",
-            style: TextStyle(color: Colors.white),
-          ),
-          backgroundColor: Color.fromRGBO(164, 227, 210, 1),
-        ),
-        body: Stack(
-          children: [
-            Container(
-              height: mintColorContainerHeight,
-              decoration: BoxDecoration(
-                  color: pColor,
-                  borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(30),
-                      bottomRight: Radius.circular(30))),
-            ),
+        appBar: appBar(),
+        // AppBar(
+        //   elevation: 0,
+        //   title: Text(
+        //     "게시판",
+        //     style: TextStyle(color: Colors.white),
+        //   ),
+        //   backgroundColor: Color.fromRGBO(164, 227, 210, 1),
+        // ),
+
+        body:
+            // Stack(
+            //   children: [
+            //     Container(
+            //       height: mintColorContainerHeight,
+            //       decoration: BoxDecoration(
+            //           color: pColor,
+            //           borderRadius: BorderRadius.only(
+            //               bottomLeft: Radius.circular(30),
+            //               bottomRight: Radius.circular(30))),
+            //     ),
             Column(
-              children: [
-                SizedBox(
-                  height: mintColorContainerHeight / 4,
-                ),
-                // Container(
-                //     padding: EdgeInsets.only(left: 10),
-                //     alignment: Alignment.centerLeft,
-                //     child: Text(
-                //       "게시판 검색",
-                //       style: TextStyle(
-                //           fontFamily: 'GamjaFlower',
-                //           fontWeight: FontWeight.bold,
-                //           fontSize: 19),
-                //     )),
-                Container(
-                  padding: EdgeInsets.only(
-                      left: deviceWidth / 5, right: deviceWidth / 5, top: 10),
-                  height: mintColorContainerHeight / 1.5,
-                  child: TextField(
-                    decoration: InputDecoration(
-                        fillColor: Colors.tealAccent[100],
-                        filled: true,
-                        prefixIcon: Icon(
-                          Icons.search,
-                          color: Colors.white,
-                        ),
-                        border: OutlineInputBorder(
-                            borderSide: BorderSide.none,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(50)))),
-                  ),
-                ),
-                SizedBox(
-                  height: mintColorContainerHeight -
-                      (mintColorContainerHeight / 2 +
-                          mintColorContainerHeight / 4),
-                ),
-                Container(
-                  padding: EdgeInsets.only(
-                    left: 20,
-                  ),
-                  alignment: Alignment.centerLeft,
-                  // child: Text(
-                  //   "Categories",
-                  //   style: TextStyle(fontSize: 18, fontFamily: 'Ubuntu'),
-                  // ),
-                ),
-                Container(
-                  padding: EdgeInsets.only(
-                      left: 16, right: 16, bottom: 10, top: deviceHeight / 150),
-                  child: GridView.count(
-                    shrinkWrap: true,
-                    crossAxisSpacing: 0.1,
-                    mainAxisSpacing: 0.1,
-                    crossAxisCount: 3,
-                    childAspectRatio: 1,
-                    children: List.generate(initialItems.length, (index) {
-                      return Card(
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8)),
-                        child: Center(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              initialItems[index].icons,
-                              Container(
-                                padding: EdgeInsets.only(top: 5),
-                                child: Text(
-                                  "${initialItems[index].explain}",
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                      );
-                    }),
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.only(left: 20),
-                  alignment: Alignment.centerLeft,
-                  // child: Text(
-                  //   "게시판",
-                  //   style: TextStyle(fontSize: 18),
-                  // ),
-                ),
-                GestureDetector(
-                  onTap: () {},
-                  child: Container(
-                      // decoration: BoxDecoration(
-                      //     border: Border.all(color: Colors.grey),
-                      //     borderRadius: BorderRadius.all(Radius.circular(5))),
-                      margin: EdgeInsets.all(deviceWidth / 50),
-                      child: BoardListRiverpod()
-                      // BoardNameProvider().futureConsumerWidget
-                      ),
-                )
-              ],
+          children: [
+            //         SizedBox(
+            //           height: mintColorContainerHeight / 4,
+            //         ),
+            // Container(
+            //     padding: EdgeInsets.only(left: 10),
+            //     alignment: Alignment.centerLeft,
+            //     child: Text(
+            //       "게시판 검색",
+            //       style: TextStyle(
+            //           fontFamily: 'GamjaFlower',
+            //           fontWeight: FontWeight.bold,
+            //           fontSize: 19),
+            //     )),
+            // Container(
+            //   padding: EdgeInsets.only(left: 10, right: 10, top: 10),
+            //   height: mintColorContainerHeight / 1.5,
+            //   child: TextField(
+            //     decoration: InputDecoration(
+            //         fillColor: Colors.tealAccent[100],
+            //         filled: true,
+            //         prefixIcon: Icon(
+            //           Icons.search,
+            //           color: Colors.white,
+            //         ),
+            //         border: OutlineInputBorder(
+            //             borderSide: BorderSide.none,
+            //             borderRadius: BorderRadius.all(Radius.circular(50)))),
+            //   ),
+            // ),
+            SizedBox(
+              height: mintColorContainerHeight -
+                  (mintColorContainerHeight / 2 + mintColorContainerHeight / 4),
             ),
+            Container(
+              padding: EdgeInsets.only(
+                left: 20,
+              ),
+              alignment: Alignment.centerLeft,
+              // child: Text(
+              //   "Categories",
+              //   style: TextStyle(fontSize: 18, fontFamily: 'Ubuntu'),
+              // ),
+            ),
+            Container(
+              padding: EdgeInsets.only(
+                  left: deviceWidth / 10,
+                  right: deviceWidth / 10,
+                  bottom: 10,
+                  top: deviceHeight / 150),
+              child: GridView.count(
+                shrinkWrap: true,
+                crossAxisSpacing: 0.1,
+                mainAxisSpacing: 0.1,
+                crossAxisCount: 3,
+                childAspectRatio: 1,
+                children: List.generate(initialItems.length, (index) {
+                  return Card(
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8)),
+                    child: Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          initialItems[index].icons,
+                          Container(
+                            padding: EdgeInsets.only(top: 5),
+                            child: Text(
+                              "${initialItems[index].explain}",
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  );
+                }),
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.only(left: 20),
+              alignment: Alignment.centerLeft,
+              // child: Text(
+              //   "게시판",
+              //   style: TextStyle(fontSize: 18),
+              // ),
+            ),
+            GestureDetector(
+              onTap: () {},
+              child: Container(
+                  // decoration: BoxDecoration(
+                  //     border: Border.all(color: Colors.grey),
+                  //     borderRadius: BorderRadius.all(Radius.circular(5))),
+                  margin: EdgeInsets.all(deviceWidth / 50),
+                  child: BoardListRiverpod()
+                  // BoardNameProvider().futureConsumerWidget
+                  ),
+            )
           ],
+          //   ),
+          // ],
         ),
       ),
     );
+
     // return Scaffold(
     //   appBar: AppBar(
     //     backgroundColor: Colors.white,
@@ -381,5 +386,43 @@ class _BoardMainState extends State<BoardMain> {
     //     ),
     //   ),
     // );
+  }
+
+  PreferredSizeWidget appBar() {
+    return AppBar(
+      title: Text(
+        '게시판',
+        style: TextStyle(color: Colors.black),
+      ),
+      elevation: 0,
+      backgroundColor: Colors.white,
+      actions: <Widget>[
+        // new IconButton(
+        //   icon: new Icon(
+        //     Icons.refresh,
+        //     color: Colors.black,
+        //   ),
+        //   onPressed: () => {
+        //     // setState(() {
+        //     _scrollController.position
+        //         .moveTo(0.5, duration: Duration(milliseconds: 500)),
+        //     context.read(productMainService).fetchProducts(),
+        //     // })
+        //   },
+        // ),
+        new IconButton(
+          icon: new Icon(
+            Icons.search,
+            color: Colors.black,
+          ),
+          onPressed: () => {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                  builder: (context) => SearchAllMain(searchKey: 1)),
+            ),
+          },
+        ),
+      ],
+    );
   }
 }
