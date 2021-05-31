@@ -4,7 +4,7 @@ import 'package:onestep_rezero/board/AboutPost/AboutPostContent/postContent.dart
 // import 'package:flutter/foundation.dart' as foundation;
 import 'package:onestep_rezero/board/AboutPost/AboutPostListView/postListMain.dart';
 import 'package:onestep_rezero/board/AboutPost/createPost.dart';
-import 'package:onestep_rezero/board/boardCreate.dart';
+import 'package:onestep_rezero/board/AboutBoard/boardCreate.dart';
 import 'package:page_transition/page_transition.dart';
 
 import 'package:path/path.dart' as p;

@@ -8,7 +8,7 @@ import 'package:onestep_rezero/board/declareData/postData.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/main.dart';
 
-import 'TipDialog/tip_dialog.dart';
+import '../TipDialog/tip_dialog.dart';
 
 class BoardCreate extends StatefulWidget {
   final boardCategory;
