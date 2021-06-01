@@ -1,12 +1,10 @@
 import 'dart:async';
-import 'dart:math' as math;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:onestep_rezero/board/AboutBoard/boardCategoryList.dart';
-import 'package:onestep_rezero/board/Animation/Rive/boardMyPostIcon.dart';
+import 'package:onestep_rezero/board/Animation/Rive/AboutBoard/boardMyPostIcon.dart';
+import 'package:onestep_rezero/board/Animation/Rive/AboutBoard/randomList.dart';
 import 'package:onestep_rezero/board/declareData/boardData.dart';
 import 'package:onestep_rezero/search/pages/searchAllMain.dart';
 
@@ -29,9 +27,17 @@ class _BoardMainState extends State<BoardMain> {
   StreamController<bool> streamControllerIcon4;
   StreamController<bool> streamControllerIcon5;
   StreamController<bool> streamControllerIcon6;
+  Timer _updateRandomAnimationInterval;
+  Timer _animationInterval;
+  CreateRandomNumberNotDuplicated randomClass;
+  List<int> randomNuberList = [];
+  int animationPivot;
 
   @override
   void dispose() {
+    if (_updateRandomAnimationInterval != null)
+      _updateRandomAnimationInterval.cancel();
+    if (_animationInterval != null) _animationInterval.cancel();
     streamControllerIcon1.close();
     streamControllerIcon2.close();
     streamControllerIcon3.close();
@@ -50,14 +56,58 @@ class _BoardMainState extends State<BoardMain> {
     streamControllerIcon4 = StreamController<bool>();
     streamControllerIcon5 = StreamController<bool>();
     streamControllerIcon6 = StreamController<bool>();
-
+    animationPivot = 0;
     context.read(boardListProvider).fetchBoards();
+    setBoardIconData();
+    randomClass = CreateRandomNumberNotDuplicated(length: initIconData.length);
+    setRiveAnimationTimer();
     super.initState();
+  }
+
+  setRiveAnimationTimer() {
+    //Each Animation Interval 3 seconds(Animation 1 second and 2second  waiting next animation ) * 6 Icons
+    _updateRandomAnimationInterval =
+        Timer.periodic(Duration(seconds: 17), (timer) {
+      animationPivot = 0;
+      randomClass =
+          CreateRandomNumberNotDuplicated(length: initIconData.length);
+      randomNuberList = randomClass.getRandomNumberList;
+      print("randomNuberList : ${randomNuberList}");
+    });
+    _animationInterval =
+        Timer.periodic((Duration(seconds: 3)), (timer) => startAnimation());
+  }
+
+  setRandomAnimationList() {}
+  startAnimation() {
+    if (randomNuberList.isNotEmpty) {
+      if (randomNuberList.length != 0) {
+        int animationNumber = randomNuberList[animationPivot++];
+        if (animationNumber == 0)
+          streamControllerIcon1.add(true);
+        else if (animationNumber == 1)
+          streamControllerIcon2.add(true);
+        else if (animationNumber == 2)
+          streamControllerIcon3.add(true);
+        else if (animationNumber == 3)
+          streamControllerIcon4.add(true);
+        else if (animationNumber == 4)
+          streamControllerIcon5.add(true);
+        else if (animationNumber == 5)
+          streamControllerIcon6.add(true);
+        else {
+          return null;
+        }
+      }
+    }
+  }
+
+  setBoardIconData() {
     initIconData = [
       BoardInitData(
           icons: MyBoardCategoryIcon(
             riveFileData: RiveFileData(
-                riveFile: 'rives/new_file.riv',
+                riveFile: 'rives/20210601.riv',
                 riveStateMachine: "StateMachine"),
             stream: streamControllerIcon1.stream,
           ),
@@ -67,7 +117,7 @@ class _BoardMainState extends State<BoardMain> {
             height: 50,
             width: 50,
             riveFileData: RiveFileData(
-                riveFile: 'rives/new_file.riv',
+                riveFile: 'rives/20210601.riv',
                 riveStateMachine: "StateMachine"),
             stream: streamControllerIcon2.stream,
           ),
@@ -80,7 +130,7 @@ class _BoardMainState extends State<BoardMain> {
           // ),
           icons: MyBoardCategoryIcon(
             riveFileData: RiveFileData(
-                riveFile: 'rives/new_file.riv',
+                riveFile: 'rives/20210601.riv',
                 riveStateMachine: "StateMachine"),
             stream: streamControllerIcon3.stream,
           ),
@@ -181,7 +231,7 @@ class _BoardMainState extends State<BoardMain> {
   @override
   Widget build(BuildContext context) {
     double mintColorContainerHeight = deviceHeight / 10;
-    Color pColor = Color.fromRGBO(164, 227, 210, 1);
+    // Color pColor = Color.fromRGBO(164, 227, 210, 1);
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).requestFocus(FocusNode());

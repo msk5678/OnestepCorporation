@@ -1,7 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:onestep_rezero/board/declareData/categoryManageClass.dart';
-import 'dart:math' as math;
 
 class BoardData {
   final boardName;

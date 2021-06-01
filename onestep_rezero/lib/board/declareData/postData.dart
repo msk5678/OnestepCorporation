@@ -1,4 +1,3 @@
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -104,6 +103,7 @@ class PostData {
           Duration(seconds: 3),
           onTimeout: () {
             Navigator.pop(context);
+            return null;
           },
         );
   }
