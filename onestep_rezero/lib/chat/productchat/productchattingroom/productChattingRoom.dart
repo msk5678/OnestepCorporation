@@ -925,6 +925,7 @@ class _LastChatState extends State<ChatScreen> {
         child: Column(
           children: <Widget>[
             Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
                 isLastMsgLeft(index)
                     ? Material(
@@ -957,6 +958,7 @@ class _LastChatState extends State<ChatScreen> {
                         clipBehavior: Clip.hardEdge,
                       )
                     : Container(
+                        child: Icon(Icons.person),
                         width: 35.0,
                       ),
                 //displayMessages
@@ -965,16 +967,17 @@ class _LastChatState extends State<ChatScreen> {
                     ? Container(
                         child: Text(
                           productMessage.content.title,
+                          maxLines: 2,
                           style: TextStyle(
                               color: Colors.black, fontWeight: FontWeight.w400),
                         ),
                         padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
-                        width: 150.0,
+                        //width: 150.0,
                         decoration: BoxDecoration(
                             color: Colors.grey[200],
                             borderRadius: BorderRadius.circular(8.0)),
                         margin: EdgeInsets.only(
-                            left: 10.0, right: 10.0), //상대 텍스트 마진
+                            left: 10.0, right: 10.0, top: 5), //상대 텍스트 마진
                       )
                     : productMessage.type == 1
                         ? Container(
