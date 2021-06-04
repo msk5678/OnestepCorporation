@@ -41,6 +41,7 @@ class ReportPageTest extends StatelessWidget {
                                     .child("user1")
                                     .child('deal')
                                     .child('post1')
+                                    .child('value')
                                     .child(DateTime.now()
                                         .millisecondsSinceEpoch
                                         .toString())
@@ -49,7 +50,10 @@ class ReportPageTest extends StatelessWidget {
                                   'content': "asdasdasd",
                                   'title': "asdasd111",
                                   'count': '0',
-                                  'reportedUid': '112293538348632094935'
+                                  'reportedUid': '112293538348632094935',
+                                  'time': DateTime.now()
+                                      .millisecondsSinceEpoch
+                                      .toString(),
                                 })
                               }
                             else
@@ -63,6 +67,7 @@ class ReportPageTest extends StatelessWidget {
                                     .child("user1")
                                     .child('deal')
                                     .child('post1')
+                                    .child('value')
                                     .child(DateTime.now()
                                         .millisecondsSinceEpoch
                                         .toString())
@@ -71,7 +76,10 @@ class ReportPageTest extends StatelessWidget {
                                   'content': "asdasdasd",
                                   'title': "asdasd111",
                                   'count': count,
-                                  'reportedUid': '112293538348632094935'
+                                  'reportedUid': '112293538348632094935',
+                                  'time': DateTime.now()
+                                      .millisecondsSinceEpoch
+                                      .toString(),
                                 })
                               }
                           });

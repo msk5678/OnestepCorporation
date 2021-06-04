@@ -15,6 +15,7 @@ class _HomeMainState extends State<HomeMain> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Text("홈"),
         actions: <Widget>[
           Row(

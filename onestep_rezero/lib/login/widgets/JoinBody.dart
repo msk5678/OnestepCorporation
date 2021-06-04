@@ -43,19 +43,19 @@ class JoinBody extends ConsumerWidget {
               children: [
                 Container(
                   child: Text(
-                    "OneStep 과 함께",
+                    "한발자국 거리의",
                     style: TextStyle(fontSize: 30),
                   ),
                 ),
                 Container(
                   child: Text(
-                    "즐거운 대학생활을",
+                    "캠퍼스 내에서",
                     style: TextStyle(fontSize: 30),
                   ),
                 ),
                 Container(
                   child: Text(
-                    "지금 바로 RUN",
+                    "즐거운 중고거래!",
                     style: TextStyle(fontSize: 30),
                   ),
                 ),
@@ -216,7 +216,7 @@ class JoinBody extends ConsumerWidget {
                                     "nickName": _nicknameController.text, // 닉네임
                                     "imageUrl": user.photoUrl, // 사진
                                     "email": _emailController.text, // 이메일
-                                    "reportPoint": 0, // 신고 점수
+                                    "reportCheck": 0, // 제재 확인
                                     "university": "", // 학교이름
                                     "universityEmail": "", // 학교이메일
                                     "joinTime": DateTime.now()
