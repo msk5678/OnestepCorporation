@@ -132,7 +132,11 @@ class _ProductBumpState extends State<ProductBump> {
                   children: <Widget>[
                     Text(
                       widget.product.title,
-                      style: TextStyle(fontSize: 20),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 20,
+                      ),
                     ),
                     SizedBox(height: 10),
                     Text(
@@ -140,7 +144,7 @@ class _ProductBumpState extends State<ProductBump> {
                       style: TextStyle(fontSize: 18),
                     ),
                   ],
-                )
+                ),
               ],
             ),
             SizedBox(
