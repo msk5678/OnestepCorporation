@@ -71,29 +71,38 @@ exports.onReportCreate = functions.database.ref('/report/{reportedUid}/deal/{pos
                 return count + 1;
             })
             break;
+        case '3':
+            const thirdeCase = snapshot.ref.parent.parent.child('thirdeCase')
+            await thirdeCase.transaction(count => {
+                return count + 1;
+            })
+        break;
+        case '4':
+            const fourCase = snapshot.ref.parent.parent.child('fourCase')
+            await fourCase.transaction(count => {
+                return count + 1;
+            })
+            break;
         default:
             break;
     }
 
     // report 총 몇갠지 count
+    // parent 할때마다 위에서 접근한 경로 ('/report/{reportedUid}/deal/{postUid}/value/{timestamp}')
+    // 뒤에서 한칸씩 올라가는거 같음
     const countRef = snapshot.ref.parent.parent.child('reportCount')
     await countRef.transaction(count => {
         postReportPoint = count + 1;
         return postReportPoint;
     })
 
-    // 이거 쓰는데는 5번째 신고당해서 user report ++ 해주는 동시에 case count 친것도 같이 update 시켜줘야해서 map 형식이든 뭐든 
-    // first, second ... case 유형들 다 넘겨줘야함
-    // firstCase value 
-    console.log('value ' + (await snapshot.ref.parent.parent.child('firstCase').get()).val());
-
+    // case count
     postFirstCasePoint = (await snapshot.ref.parent.parent.child('firstCase').get()).val();
     postSecondCasePoint = (await snapshot.ref.parent.parent.child('secondCase').get()).val();
     postThirdCasePoint = (await snapshot.ref.parent.parent.child('thirdCase').get()).val();
     postFourCasePoint = (await snapshot.ref.parent.parent.child('fourCase').get()).val();
 
-
-    // 신고가 들어왔는데 5번째 신고다 -> user report ++
+    // post 신고가 들어왔는데 그게 그 post의 5번째 신고다 -> user report ++
     if (postReportPoint === 5) {
         await databaseTest.collection('user').doc(countValue.reportedUid).collection('report').doc(countValue.reportedUid).get().then(value => {
             realTimeCountTest = value.data()['reportPoint'];
@@ -119,33 +128,44 @@ exports.onUpdateReportPoint = functions.firestore.document('user/{userId}/report
     console.log('before ' + beforeReportPointValue.reportPoint)
 
     if (afterReportPointValue.reportPoint === 5) {
-        console.log('ZZZZZZZZZZZZZZZ')
         
         await databaseTest.doc('user/' + context.params.userId).update({
-            "reportPoint": 1,
             // reprt 컬렉션 -> point -> reportPoint 안에 필드 두개 같이 두고 싶은데 그럼 무한루프돔 
-            // user -> report 컬렉션 -> point, time 으로 doc 2개 두고 -> 각 reportPoint, reportTime 이렇게 해야할거같은데
-            // 일단 이렇게 해서 시간되면 자동으로 update 되는거 먼저 하고 db 옮기기
+            "reportPoint": 1,
             "reportTime" : admin.firestore.Timestamp.now(),
         })
     }
     }
 );
 
+// 'every 1 minutes' -> 1분마다 확인 -> 비효율 -> 이야기해보고 하루 기준으로 확인하면 될듯?
+// ex) 신고 제재 기간이 1주일이면 그 기간이 지날때 자동으로 제재 해제하기 위한 트리거
+// 604800000 -> 1주일을 ms 로 변경한 값
 exports.checkReportTime = functions.pubsub.schedule('every 1 minutes').onRun(async (context) => {
-    // const weekOldTimestamp = admin.firestore.Timestamp.fromMillis(Date.now() - 604800000);
-    // const query = await databaseTest.collection('user').where('reportTime', '<=', admin.firestore.Timestamp.now()).get();
     const query = await databaseTest.collection('user').get();
     query.forEach(async eachGroup => {
-        console.log('time hi');
-        var nickName = eachGroup.data()['nickName'];
-        var test = eachGroup.data()['reportTime'];
-        var test2 = eachGroup.data()['reportPoint'];
+        var reportTime = eachGroup.data()['reportTime'];
 
-        if (admin.firestore.Timestamp.now() >= test + 604800000) {
-            console.log('uid = ' + nickName);
-            console.log('test = ' + test);
-            console.log('test2 = ' + test2);
+        // var nickName = eachGroup.data()['nickName'];
+        // var test2 = eachGroup.data()['reportPoint'];
+
+        // if (nickName === '엉춘') {
+        //     console.log('now time = ' + admin.firestore.Timestamp.now());
+        //     console.log('week sub time = ' + admin.firestore.Timestamp.fromMillis(Date.now() - 604800000))
+        //     console.log('user time = ' + reportTime);
+        // }
+
+        // user 안에 있는 reportTime 확인해서 제재기간 지났으면 제재 해제
+        if (admin.firestore.Timestamp.fromMillis(Date.now() - 604800000) > reportTime) {
+            await databaseTest.doc('user/' + eachGroup.data()['uid']).update({
+                "reportPoint": 0,
+                "reportTime" : 0,
+            })
+
+            // console.log('uid = ' + nickName);
+            // console.log('test = ' + test);
+            // console.log('test2 = ' + test2);
+            console.log('succes');
         }
     })
 })
