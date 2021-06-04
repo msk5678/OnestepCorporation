@@ -36,7 +36,7 @@ class _ProductAddState extends State<ProductAdd> {
     super.initState();
   }
 
-  Future<void> aa() async {
+  Future<void> pickAssets() async {
     final List<AssetEntity> _entity = await AssetPicker.pickAssets(
       context,
       maxAssets: 5,
@@ -58,11 +58,11 @@ class _ProductAddState extends State<ProductAdd> {
     }
   }
 
-  Widget pickAssets() {
+  Widget getImages() {
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
-        aa();
+        pickAssets();
       },
       child: Container(
         width: 80,
@@ -155,7 +155,7 @@ class _ProductAddState extends State<ProductAdd> {
           child: ListView(
             scrollDirection: Axis.horizontal,
             children: [
-              pickAssets(),
+              getImages(),
               ...entity
                   .asMap()
                   .map(

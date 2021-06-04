@@ -1,8 +1,18 @@
+import 'dart:typed_data';
+
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:onestep_rezero/main.dart';
+import 'package:onestep_rezero/onestepCustomDialog.dart';
 import 'package:onestep_rezero/product/models/product.dart';
 import 'package:onestep_rezero/product/pages/productAddCategorySelect.dart';
+import 'package:onestep_rezero/product/widgets/main/productMainBody.dart';
 import 'package:pattern_formatter/numeric_formatter.dart';
+import 'package:random_string/random_string.dart';
+import 'package:wechat_assets_picker/wechat_assets_picker.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ProductEdit extends StatefulWidget {
   final Product product;
@@ -13,8 +23,9 @@ class ProductEdit extends StatefulWidget {
 }
 
 class _ProductEditState extends State<ProductEdit> {
+  List<AssetEntity> entity = [];
   List<dynamic> _initImagesUrl;
-  int _imageCount;
+
   TextEditingController _titleTextEditingController;
   TextEditingController _priceTextEditingController = TextEditingController();
   TextEditingController _explainTextEditingController = TextEditingController();
@@ -24,7 +35,7 @@ class _ProductEditState extends State<ProductEdit> {
   @override
   void initState() {
     _initImagesUrl = widget.product.imagesUrl;
-    _imageCount = _initImagesUrl.length;
+
     _titleTextEditingController =
         TextEditingController(text: widget.product.title);
     _priceTextEditingController =
@@ -42,105 +53,107 @@ class _ProductEditState extends State<ProductEdit> {
     super.dispose();
   }
 
-  void getImages() async {}
+  Future<void> pickAssets() async {
+    final List<AssetEntity> _entity = await AssetPicker.pickAssets(
+      context,
+      maxAssets: 5 - _initImagesUrl.length,
+      pageSize: 330,
+      pathThumbSize: 80,
+      gridCount: 3,
+      requestType: RequestType.image,
+      selectedAssets: entity,
+      specialPickerType: SpecialPickerType.wechatMoment,
+      textDelegate: KoreaTextDelegate(),
+    );
 
-  Widget imageMerge() {
-    return Container();
-    List<Widget> result1 = _initImagesUrl
-        .map(
-          (data) => Padding(
-            padding: EdgeInsets.only(left: 7),
-            child: ClipRRect(
-              borderRadius: BorderRadius.all(Radius.circular(5.0)),
-              child: Stack(
-                children: [
-                  CachedNetworkImage(
-                    imageUrl: data,
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height,
-                    errorWidget: (context, url, error) =>
-                        Icon(Icons.error), // 로딩 오류 시 이미지
-                    fit: BoxFit.cover,
-                  ),
-                  Positioned(
-                    top: 3,
-                    right: 3,
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _initImagesUrl.remove(data);
-                        });
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(100),
-                          color: Color.fromRGBO(0, 0, 0, 0.5),
-                        ),
-                        child: Padding(
-                          padding: EdgeInsets.all(2.0),
-                          child: Icon(
-                            Icons.close,
-                            color: Colors.white,
-                            size: 13,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+    if (_entity != null && entity.toString() != _entity.toString()) {
+      entity = _entity;
+
+      if (mounted) {
+        setState(() {});
+      }
+    }
+  }
+
+  Widget getImages() {
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+        pickAssets();
+      },
+      child: Container(
+        width: 80,
+        height: 80,
+        decoration: BoxDecoration(
+          border: Border.all(width: 1.0, color: Colors.grey),
+          borderRadius: BorderRadius.all(
+            Radius.circular(5.0),
+          ),
+        ),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Icon(
+              Icons.photo_camera,
+              color: Colors.grey,
+              size: 30,
+            ),
+            Positioned(
+              right: 5,
+              bottom: 5,
+              child: Text(
+                "${entity.length + _initImagesUrl.length}/5",
+                style: TextStyle(color: Colors.grey),
               ),
             ),
-          ),
-        )
-        .toList();
+          ],
+        ),
+      ),
+    );
+  }
 
-    // List<Widget> result2 = imagesUrl
-    //     .map(
-    //       (data) => Padding(
-    //         padding: EdgeInsets.only(left: 7),
-    //         child: ClipRRect(
-    //           borderRadius: BorderRadius.all(Radius.circular(5.0)),
-    //           child: Stack(
-    //             children: [
-    //               Image(
-    //                 image: MemoryImage(
-    //                   data,
-    //                 ),
-    //                 width: 80,
-    //                 height: 80,
-    //                 fit: BoxFit.cover,
-    //               ),
-    //               Positioned(
-    //                 top: 3,
-    //                 right: 3,
-    //                 child: GestureDetector(
-    //                   onTap: () {
-    //                     setState(() {
-    //                       _initImagesUrl.remove(data);
-    //                     });
-    //                   },
-    //                   child: Container(
-    //                     decoration: BoxDecoration(
-    //                       borderRadius: BorderRadius.circular(100),
-    //                       color: Color.fromRGBO(0, 0, 0, 0.5),
-    //                     ),
-    //                     child: Padding(
-    //                       padding: EdgeInsets.all(2.0),
-    //                       child: Icon(
-    //                         Icons.close,
-    //                         color: Colors.white,
-    //                         size: 13,
-    //                       ),
-    //                     ),
-    //                   ),
-    //                 ),
-    //               ),
-    //             ],
-    //           ),
-    //         ),
-    //       ),
-    //     )
-    //     .toList();
+  Widget imageItem(int index, AssetEntity image) {
+    return Padding(
+      padding: EdgeInsets.only(left: 7),
+      child: ClipRRect(
+        borderRadius: BorderRadius.all(Radius.circular(5.0)),
+        child: Stack(
+          children: [
+            Image(
+              width: 80,
+              height: 80,
+              image: AssetEntityImageProvider(image, isOriginal: false),
+              fit: BoxFit.cover,
+            ),
+            Positioned(
+              top: 3,
+              right: 3,
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    entity.removeAt(index);
+                  });
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(100),
+                    color: Color.fromRGBO(0, 0, 0, 0.5),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.all(2.0),
+                    child: Icon(
+                      Icons.close,
+                      color: Colors.white,
+                      size: 15,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget images() {
@@ -152,47 +165,73 @@ class _ProductEditState extends State<ProductEdit> {
             "물품 사진",
           ),
         ),
-        Row(
-          children: <Widget>[
-            GestureDetector(
-              onTap: () {
-                getImages();
-              },
-              child: Container(
-                width: 80,
-                height: 80,
-                margin: EdgeInsets.only(top: 10, bottom: 20),
-                decoration: BoxDecoration(
-                  border: Border.all(width: 1.0, color: Colors.grey),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(5.0),
+        Container(
+          height: 80,
+          width: MediaQuery.of(context).size.width,
+          margin: EdgeInsets.only(top: 10, bottom: 20),
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            children: [
+              getImages(),
+              ..._initImagesUrl.map(
+                (image) => Padding(
+                  padding: EdgeInsets.only(left: 7),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                    child: Stack(
+                      children: [
+                        CachedNetworkImage(
+                          imageUrl: image,
+                          width: 80,
+                          height: 80,
+                          errorWidget: (context, url, error) =>
+                              Icon(Icons.error), // 로딩 오류 시 이미지
+
+                          fit: BoxFit.cover,
+                        ),
+                        Positioned(
+                          top: 3,
+                          right: 3,
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _initImagesUrl.remove(image);
+                              });
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(100),
+                                color: Color.fromRGBO(0, 0, 0, 0.5),
+                              ),
+                              child: Padding(
+                                padding: EdgeInsets.all(2.0),
+                                child: Icon(
+                                  Icons.close,
+                                  color: Colors.white,
+                                  size: 15,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ), //       <--- BoxDecoration here
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Icon(
-                      Icons.photo_camera,
-                      color: Colors.grey,
-                      size: 30,
-                    ),
-                    Positioned(
-                      right: 5,
-                      bottom: 5,
-                      child: Text(
-                        "$_imageCount/5",
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                    ),
-                  ],
                 ),
               ),
-            ),
-            Expanded(
-              child: imageMerge(),
-            )
-          ],
-        )
+              ...entity
+                  .asMap()
+                  .map(
+                    (i, element) => MapEntry(
+                      i,
+                      imageItem(i, element),
+                    ),
+                  )
+                  .values
+                  .toList(),
+            ],
+          ),
+        ),
       ],
     );
   }
@@ -322,6 +361,97 @@ class _ProductEditState extends State<ProductEdit> {
     ]);
   }
 
+  // Future<File> _compressImage(File file, String targetPath) async {
+  //   var result = await FlutterImageCompress.compressAndGetFile(
+  //     file.absolute.path,
+  //     targetPath,
+  //     quality: 88,
+  //     minWidth: 500,
+  //     minHeight: 500
+  //     //rotate: 180,
+  //   );
+
+  //   //단위 바이트 확률 높음
+  //   print(file.lengthSync());
+  //   print(result.lengthSync());
+
+  //   return result;
+  // }
+
+  Future<void> updateProduct() async {
+    if (_titleTextEditingController.text.trim() == "") {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        duration: Duration(seconds: 2),
+        content: Text("물품명을 입력해주세요."),
+      ));
+    } else if (_priceTextEditingController.text.trim() == "") {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        duration: Duration(seconds: 2),
+        content: Text("가격을 입력해주세요."),
+      ));
+    } else if (_categoryTextEditingController.text.trim() == "") {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        duration: Duration(seconds: 2),
+        content: Text("카테고리를 선택해주세요."),
+      ));
+    } else if (_explainTextEditingController.text.trim() == "") {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        duration: Duration(seconds: 2),
+        content: Text("설명을 입력해주세요."),
+      ));
+    } else if (entity.length + _initImagesUrl.length < 1) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        duration: Duration(seconds: 2),
+        content: Text("물품을 등록하려면 한장 이상의 사진이 필요합니다."),
+      ));
+    } else {
+      List _imgUriarr = [];
+      final Size size = MediaQuery.of(context).size;
+      final double scale = MediaQuery.of(context).devicePixelRatio;
+
+      _imgUriarr.addAll(_initImagesUrl);
+      for (var image in entity) {
+        Reference storageReference = FirebaseStorage.instance
+            .ref()
+            .child("productimage/${randomAlphaNumeric(15)}");
+
+        Uint8List uint8list = await image.thumbDataWithSize(
+          (size.width * scale).toInt(),
+          (size.height * scale).toInt(),
+        );
+
+        UploadTask storageUploadTask = storageReference.putData(uint8list);
+        await storageUploadTask.whenComplete(() async {
+          String downloadURL = await storageReference.getDownloadURL();
+          _imgUriarr.add(downloadURL);
+        });
+      }
+
+      int time = DateTime.now().microsecondsSinceEpoch;
+      FirebaseFirestore.instance
+          .collection("university")
+          .doc(currentUserModel.university)
+          .collection("product")
+          .doc(widget.product.firestoreid)
+          .update({
+        'imagesUrl': _imgUriarr,
+        'title': _titleTextEditingController.text,
+        'category': _categoryTextEditingController.text,
+        'detailcategory': "",
+        'price': _priceTextEditingController.text,
+        'explain': _explainTextEditingController.text,
+        'updateTime': time,
+      }).whenComplete(() {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          duration: Duration(seconds: 2),
+          content: Text("물품 수정이 완료되었습니다."),
+        ));
+        context.read(productMainService).fetchProducts();
+        Navigator.pop(context, "OK");
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -336,7 +466,19 @@ class _ProductEditState extends State<ProductEdit> {
           new IconButton(
             icon: new Icon(Icons.check),
             onPressed: () => {
-              // uploadProduct(),
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return OnestepCustomDialog(
+                      title: '상품을 수정하시겠습니까?',
+                      cancleButtonText: '취소',
+                      confirmButtonText: '확인',
+                      confirmButtonOnPress: () {
+                        updateProduct();
+                        Navigator.pop(context);
+                      },
+                    );
+                  }),
             },
           ),
         ],
