@@ -1,16 +1,18 @@
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/onestepCustomDialog.dart';
 import 'package:onestep_rezero/product/models/product.dart';
 import 'package:onestep_rezero/product/pages/productAddCategorySelect.dart';
 import 'package:onestep_rezero/product/widgets/main/productMainBody.dart';
 import 'package:pattern_formatter/numeric_formatter.dart';
-import 'package:random_string/random_string.dart';
+
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -51,6 +53,15 @@ class _ProductEditState extends State<ProductEdit> {
   @override
   void dispose() {
     super.dispose();
+  }
+
+  Future<Uint8List> assetCompressFile(File file) async {
+    var result = await FlutterImageCompress.compressWithFile(
+      file.absolute.path,
+      quality: 30,
+    );
+
+    return result;
   }
 
   Future<void> pickAssets() async {
@@ -361,23 +372,6 @@ class _ProductEditState extends State<ProductEdit> {
     ]);
   }
 
-  // Future<File> _compressImage(File file, String targetPath) async {
-  //   var result = await FlutterImageCompress.compressAndGetFile(
-  //     file.absolute.path,
-  //     targetPath,
-  //     quality: 88,
-  //     minWidth: 500,
-  //     minHeight: 500
-  //     //rotate: 180,
-  //   );
-
-  //   //단위 바이트 확률 높음
-  //   print(file.lengthSync());
-  //   print(result.lengthSync());
-
-  //   return result;
-  // }
-
   Future<void> updateProduct() async {
     if (_titleTextEditingController.text.trim() == "") {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -406,19 +400,15 @@ class _ProductEditState extends State<ProductEdit> {
       ));
     } else {
       List _imgUriarr = [];
-      final Size size = MediaQuery.of(context).size;
-      final double scale = MediaQuery.of(context).devicePixelRatio;
 
       _imgUriarr.addAll(_initImagesUrl);
+
       for (var image in entity) {
         Reference storageReference = FirebaseStorage.instance
             .ref()
-            .child("productimage/${randomAlphaNumeric(15)}");
+            .child("productimage/${DateTime.now().microsecondsSinceEpoch}");
 
-        Uint8List uint8list = await image.thumbDataWithSize(
-          (size.width * scale).toInt(),
-          (size.height * scale).toInt(),
-        );
+        Uint8List uint8list = await assetCompressFile(await image.originFile);
 
         UploadTask storageUploadTask = storageReference.putData(uint8list);
         await storageUploadTask.whenComplete(() async {

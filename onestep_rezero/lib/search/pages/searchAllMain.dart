@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:onestep_rezero/search/widgets/product/searchProductBody.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SearchAllMain extends StatefulWidget {
   final int searchKey;
@@ -36,7 +37,7 @@ class _SearchAllMainState extends State<SearchAllMain> {
     _boardScrollController.addListener(boardScrollListener);
 
     _searchText = "";
-    _isSearchMode = true;
+    _isSearchMode = false;
 
     super.initState();
   }
@@ -65,6 +66,39 @@ class _SearchAllMainState extends State<SearchAllMain> {
     }
   }
 
+  _setLatestSearch(String text) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String> search = (prefs.getStringList('latestSearch') ?? []);
+
+    search.removeWhere((element) => element == text);
+    search.insert(0, text);
+
+    await prefs.setStringList('latestSearch', search);
+  }
+
+  _searchContent(String text) {
+    if (text.trim().length >= 2) {
+      _searchText = text;
+
+      _setLatestSearch(_searchText); // 검색어 내부 DB 저장
+
+      switch (this.widget.searchKey) {
+        case 0:
+        // 게시판 검색
+        case 1:
+          context.read(searchProductProvider).searchProducts(_searchText);
+          break;
+
+        case 2:
+        // 게시판 검색
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: const Text('두 글자 이상 입력해주세요.'),
+      ));
+    }
+  }
+
   Widget appBar() {
     return AppBar(
       titleSpacing: 0,
@@ -79,35 +113,15 @@ class _SearchAllMainState extends State<SearchAllMain> {
                 height: 50,
                 child: TextField(
                   onTap: () {
-                    // setState(() {
-                    //   _isSearchMode = true;
-                    // });
+                    setState(() {
+                      _isSearchMode = true;
+                    });
                   },
                   // autofocus: _isSearchMode == true ? true : false,
                   controller: _textController,
                   onSubmitted: (text) {
-                    if (text.trim().length >= 2) {
-                      _searchText = text;
-
-                      switch (this.widget.searchKey) {
-                        case 0:
-                        // 게시판 검색
-                        case 1:
-                          context
-                              .read(searchProductProvider)
-                              .searchProducts(_searchText);
-                          break;
-
-                        case 2:
-                        // 게시판 검색
-                      }
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: const Text('두 글자 이상 입력해주세요.'),
-                      ));
-                    }
+                    _searchContent(text);
                   },
-
                   textAlignVertical: TextAlignVertical.center,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
@@ -133,7 +147,7 @@ class _SearchAllMainState extends State<SearchAllMain> {
           ),
         ],
       ),
-      bottom: appBarBottom(),
+      bottom: _isSearchMode ? appBarBottom() : null,
     );
   }
 
@@ -242,6 +256,60 @@ class _SearchAllMainState extends State<SearchAllMain> {
     );
   }
 
+  Widget aaBody() {
+    return FutureBuilder(
+        future: SharedPreferences.getInstance(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            List<String> search =
+                (snapshot.data.getStringList('latestSearch') ?? []);
+            return Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: SizedBox(
+                height: 50,
+                child: ListView.builder(
+                  itemCount: search.length,
+                  physics: ClampingScrollPhysics(),
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Card(
+                      color: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                      child: InkWell(
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                            left: 10,
+                            right: 10,
+                            top: 5,
+                            bottom: 5,
+                          ),
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Text("${search[index]}",
+                                style: TextStyle(),
+                                textAlign: TextAlign.center),
+                          ),
+                        ),
+                        onTap: () {
+                          _searchContent(search[index]);
+                          setState(() {
+                            _isSearchMode = false;
+                          });
+                        },
+                      ),
+                    );
+                  },
+                ),
+              ),
+            );
+          } else {
+            return Container();
+          }
+        });
+  }
+
   Widget aa() {
     return Column(
       children: [
@@ -269,7 +337,7 @@ class _SearchAllMainState extends State<SearchAllMain> {
             ],
           ),
         ),
-        // searchBody(),
+        aaBody(),
       ],
     );
   }
@@ -283,7 +351,11 @@ class _SearchAllMainState extends State<SearchAllMain> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: appBar(),
-        body: chk ? allBody() : singleBody(),
+        body: _isSearchMode
+            ? chk
+                ? allBody()
+                : singleBody()
+            : aa(),
         floatingActionButton: floatingButton(),
       ),
     );
