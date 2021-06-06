@@ -47,7 +47,7 @@ class _MyPostIconState extends State<MyBoardCategoryIcon> {
     widgetWidth = widget.width;
     widgetHeight = widget.height;
     String loadRivePath = widget.riveFileData.riveFile;
-    String loadRiveAnimation = widget.riveFileData.riveFile;
+    // String loadRiveAnimation = widget.riveFileData.riveFile;
     String loadRiveStateMachine = widget.riveFileData.riveStateMachine;
     super.initState();
     widget.stream.listen((bool isPlay) {

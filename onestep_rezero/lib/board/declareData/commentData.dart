@@ -53,6 +53,8 @@ class CommentData {
     final firestoreDb = FirebaseFirestore.instance;
     if (!commentList.containsKey(googleSignIn.currentUser.id)) {
       firestoreDb
+          .collection('university')
+          .doc(currentUserModel.university)
           .collection('board')
           .doc(this.boardId)
           .collection(this.boardId)
@@ -60,39 +62,33 @@ class CommentData {
           .update({
         "commentUserList": {googleSignIn.currentUser.id: true}
       });
-      String currentTimeStamp =
-          DateTime.now().millisecondsSinceEpoch.toString();
-      realtimeDb
-          .child('board')
-          .child(boardId)
-          .child(postId)
-          .child(currentTimeStamp)
-          .set({
-            "uid": this.uid,
-            "boardId": this.boardId,
-            "boardName": this.boardName,
-            "postId": this.postId,
-            "textContent": textContent ?? this.textContent ?? '',
-            "deleted": this.deleted ?? 'false',
-            "deletedTime": this.deletedTime ?? '',
-            "reported": this.reported ?? '',
-            "reportCount": this.reportCount ?? '',
-            "uploadTime": this.uploadTime ?? currentTimeStamp,
-            "updateTime": this.updateTime ?? '',
-            "userName": ""
-          })
-          .then((value) => null)
-          .whenComplete(() => null);
     }
+    String currentTimeStamp = DateTime.now().millisecondsSinceEpoch.toString();
+    return realtimeDb
+        .child('board')
+        .child(boardId)
+        .child(postId)
+        .child(currentTimeStamp)
+        .set({
+          "uid": this.uid,
+          "boardId": this.boardId,
+          "boardName": this.boardName,
+          "postId": this.postId,
+          "textContent": textContent ?? this.textContent ?? '',
+          "deleted": this.deleted ?? 'false',
+          "deletedTime": this.deletedTime ?? '',
+          "reported": this.reported ?? '',
+          "reportCount": this.reportCount ?? '',
+          "uploadTime": this.uploadTime ?? currentTimeStamp,
+          "updateTime": this.updateTime ?? '',
+          "userName": ""
+        })
+        .then((value) => true)
+        .whenComplete(() => null);
   }
 
-
   fromFirebaseReference(DataSnapshot snapshot) {
-    if (snapshot == null)
-      print("SNAPSHOT NULL : ");
-    else
-      print("SNAPSHOT : " + snapshot.value.runtimeType.toString());
-    Map<dynamic, dynamic> commentSnapshot = snapshot.value;
+    Map<dynamic, dynamic> commentSnapshot = snapshot.value ?? {};
     List<CommentData> commentList = [];
     commentSnapshot.forEach((key, value) {
       commentList.add(CommentData(
@@ -109,6 +105,7 @@ class CommentData {
           textContent: value["textContent"],
           commentId: key));
     });
+    print("commentList length : ${commentList.length}");
     return commentList;
   }
 }

@@ -2,10 +2,11 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:onestep_rezero/board/AboutBoard/boardCategoryList.dart';
+import 'package:onestep_rezero/board/StateManage/Provider/boardCategoryList.dart';
 import 'package:onestep_rezero/board/Animation/Rive/AboutBoard/boardMyPostIcon.dart';
 import 'package:onestep_rezero/board/Animation/Rive/AboutBoard/randomList.dart';
 import 'package:onestep_rezero/board/declareData/boardData.dart';
+import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/search/pages/searchAllMain.dart';
 
 class BoardMain extends StatefulWidget {
@@ -60,29 +61,51 @@ class _BoardMainState extends State<BoardMain> {
     context.read(boardListProvider).fetchBoards();
     setBoardIconData();
     randomClass = CreateRandomNumberNotDuplicated(length: initIconData.length);
-    setRiveAnimationTimer();
+
     super.initState();
+  }
+
+  manageAnimationTimer(bool isStart) {
+    if (isStart) {
+      if (_updateRandomAnimationInterval == null)
+        setRiveAnimationTimer();
+      else {
+        if (!_updateRandomAnimationInterval.isActive) setRiveAnimationTimer();
+      }
+    } else {
+      if (_updateRandomAnimationInterval !=
+          null) if (_updateRandomAnimationInterval.isActive) {
+        _updateRandomAnimationInterval.cancel();
+        // if (_animationInterval != null) if (_animationInterval.isActive)
+        _animationInterval.cancel();
+        randomNuberList = [];
+        animationPivot = 0;
+      }
+    }
   }
 
   setRiveAnimationTimer() {
     //Each Animation Interval 3 seconds(Animation 1 second and 2second  waiting next animation ) * 6 Icons
     _updateRandomAnimationInterval =
         Timer.periodic(Duration(seconds: 17), (timer) {
-      animationPivot = 0;
-      randomClass =
-          CreateRandomNumberNotDuplicated(length: initIconData.length);
-      randomNuberList = randomClass.getRandomNumberList;
-      print("randomNuberList : ${randomNuberList}");
+      if (currentBottomNaviIndex == 2) {
+        randomNuberList = [];
+        animationPivot = 0;
+        randomClass =
+            CreateRandomNumberNotDuplicated(length: initIconData.length);
+        randomNuberList = randomClass.getRandomNumberList;
+      }
     });
-    _animationInterval =
-        Timer.periodic((Duration(seconds: 3)), (timer) => startAnimation());
+    _animationInterval = Timer.periodic((Duration(seconds: 3)), (timer) {
+      if (currentBottomNaviIndex == 2) startAnimation();
+    });
   }
 
-  setRandomAnimationList() {}
   startAnimation() {
     if (randomNuberList.isNotEmpty) {
       if (randomNuberList.length != 0) {
         int animationNumber = randomNuberList[animationPivot++];
+
         if (animationNumber == 0)
           streamControllerIcon1.add(true);
         else if (animationNumber == 1)
@@ -230,6 +253,8 @@ class _BoardMainState extends State<BoardMain> {
 
   @override
   Widget build(BuildContext context) {
+    int bottomNaviIndex = currentBottomNaviIndex ?? 0;
+    manageAnimationTimer(bottomNaviIndex == 2);
     double mintColorContainerHeight = deviceHeight / 10;
     // Color pColor = Color.fromRGBO(164, 227, 210, 1);
     return GestureDetector(
@@ -290,30 +315,12 @@ class _BoardMainState extends State<BoardMain> {
                 onTap: () {},
                 child: Container(
                     margin: EdgeInsets.all(deviceWidth / 50),
-                    child: BoardListRiverpod()
+                    child: BoardListRiverpod(
+                      animationStopCallback: manageAnimationTimer,
+                    )
                     // BoardNameProvider().futureConsumerWidget
                     ),
               ),
-              ElevatedButton(
-                  onPressed: () {
-                    streamControllerIcon1.add(true);
-                  },
-                  child: Text("1")),
-              ElevatedButton(
-                  onPressed: () {
-                    streamControllerIcon2.add(true);
-                  },
-                  child: Text("2")),
-              ElevatedButton(
-                  onPressed: () {
-                    streamControllerIcon3.add(true);
-                  },
-                  child: Text("3")),
-              ElevatedButton(
-                  onPressed: () {
-                    streamControllerIcon4.add(true);
-                  },
-                  child: Text("4")),
             ],
           ),
         ),
@@ -335,12 +342,7 @@ class _BoardMainState extends State<BoardMain> {
             Icons.search,
             color: Colors.black,
           ),
-          onPressed: () => {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                  builder: (context) => SearchAllMain(searchKey: 1)),
-            ),
-          },
+          onPressed: () {},
         ),
       ],
     );

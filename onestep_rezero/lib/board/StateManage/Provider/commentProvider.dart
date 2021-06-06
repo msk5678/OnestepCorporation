@@ -11,17 +11,20 @@ class CommentProvider with ChangeNotifier {
 
   fetchData(String boardId, String postId) async {
     _commentDataList = [];
+    print("BoardId : $boardId ; PostId : $postId");
     final db = FirebaseDatabase.instance;
     await db
         .reference()
         .child('board')
-        .child(boardId)
-        .child(postId)
+        .child(boardId.toString())
+        .child(postId.toString())
         .once()
         .then((DataSnapshot dataSnapshot) {
       _commentDataList = CommentData().fromFirebaseReference(dataSnapshot);
       // return CommentData().fromFirebaseReference(dataSnapshot);
+      notifyListeners();
     });
+    print("_commentDataList : ${_commentDataList.length}");
   }
 
   refresh(String boardId, String postId) {

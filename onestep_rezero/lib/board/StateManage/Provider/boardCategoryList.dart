@@ -9,19 +9,22 @@ final boardListProvider =
     ChangeNotifierProvider<BoardListProvider>((ref) => BoardListProvider());
 
 class BoardListRiverpod extends ConsumerWidget {
-  BoardListRiverpod();
+  final animationStopCallback;
+  BoardListRiverpod({this.animationStopCallback});
   @override
   Widget build(BuildContext context, watch) {
     final boardlistProvider = watch(boardListProvider).boards;
     return BoardListView(
       boardList: boardlistProvider,
+      manageAnimationTimer: animationStopCallback,
     );
   }
 }
 
 class BoardListView extends ConsumerWidget {
   final List<BoardData> boardList;
-  BoardListView({this.boardList});
+  final Function manageAnimationTimer;
+  BoardListView({this.boardList, this.manageAnimationTimer});
 
   @override
   Widget build(BuildContext context, watch) {
@@ -51,18 +54,22 @@ class BoardListView extends ConsumerWidget {
           },
         ),
         subtitle: GestureDetector(
-            onTap: () {
-              Navigator.pushNamed(context, '/PostList',
-                  arguments: {"CURRENTBOARDDATA": value});
+            onTap: () async {
+              manageAnimationTimer(false);
+              await Navigator.pushNamed(context, '/PostList',
+                      arguments: {"CURRENTBOARDDATA": value})
+                  .then((value) => manageAnimationTimer(true));
             },
             child: Container(
                 child: Text(
               value.boardExplain ?? "ERROR",
             ))),
         title: GestureDetector(
-            onTap: () {
-              Navigator.pushNamed(context, '/PostList',
-                  arguments: {"CURRENTBOARDDATA": value});
+            onTap: () async {
+              manageAnimationTimer(false);
+              await Navigator.pushNamed(context, '/PostList',
+                      arguments: {"CURRENTBOARDDATA": value})
+                  .then((value) => manageAnimationTimer(true));
             },
             child: Container(
                 child: Text(
@@ -77,11 +84,13 @@ class BoardListView extends ConsumerWidget {
             child: IconButton(
               icon: Icon(Icons.add),
               onPressed: () async {
+                manageAnimationTimer(false);
                 await Navigator.of(context)
                     .pushNamed("/BoardCreate")
                     .then((value) {
                   bool result = value ?? false;
                   if (result) context.read(boardListProvider).fetchBoards();
+                  manageAnimationTimer(true);
                 });
               },
             ),

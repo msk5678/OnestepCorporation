@@ -74,7 +74,9 @@ class PostData {
     imgUriList = await convertImage(imageCommentMap["IMAGE"]);
     imageCommentMap.update("IMAGE", (value) => imgUriList);
     return await FirebaseFirestore.instance
-        .collection("board")
+        .collection('university')
+        .doc(currentUserModel.university)
+        .collection('board')
         .doc(this.boardId ?? "boardFree")
         .collection(this.boardId ?? "boardFree")
         .doc(currentTimeStamp)

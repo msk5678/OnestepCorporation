@@ -9,7 +9,6 @@ import 'package:onestep_rezero/board/declareData/categoryManageClass.dart';
 import 'package:onestep_rezero/board/declareData/postData.dart';
 import 'package:onestep_rezero/timeUtil.dart';
 
-// ignore: must_be_immutable
 class PostList extends ConsumerWidget {
   final List<PostData> postList;
   PostList({this.postList});

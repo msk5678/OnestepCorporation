@@ -22,7 +22,7 @@ final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 Future<QuerySnapshot> categoryList;
 
 User currentUserModel;
-
+int currentBottomNaviIndex;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -359,7 +359,8 @@ class _MainPageState extends State<MainPage> {
                 currentIndex: _currentIndex,
                 onTap: (int index) {
                   if (_currentIndex != index)
-                    setState(() => _currentIndex = index);
+                    setState(
+                        () => _currentIndex = currentBottomNaviIndex = index);
                 },
                 type: BottomNavigationBarType.fixed,
                 showSelectedLabels: false,

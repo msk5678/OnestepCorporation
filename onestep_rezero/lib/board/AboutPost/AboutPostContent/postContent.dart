@@ -9,25 +9,227 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:like_button/like_button.dart';
 import 'package:onestep_rezero/board/AboutPost/AboutPostContent/postComment.dart';
-import 'package:onestep_rezero/board/StateManage/Provider/commentFutureProvider.dart';
+import 'package:onestep_rezero/board/AboutPost/AboutPostContent/postCommentSidingPanel.dart';
 import 'package:onestep_rezero/board/TipDialog/tip_dialog.dart';
 import 'package:onestep_rezero/board/declareData/postData.dart';
 import 'package:onestep_rezero/board/declareData/commentData.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/animation.dart';
-import 'package:async/async.dart';
-import 'dart:io' show Platform;
-import '../../../main.dart';
 
-class PostContent extends StatelessWidget {
-  final postData;
-  const PostContent({Key key, this.postData}) : super(key: key);
+import 'package:onestep_rezero/chat/widget/appColor.dart';
+import 'dart:io' show Platform;
+
+import 'package:sliding_up_panel/sliding_up_panel.dart';
+
+class PostContent extends StatefulWidget {
+  final PostData postData;
+  PostContent({Key key, this.postData});
+
+  @override
+  _PostContentState createState() => _PostContentState();
+}
+
+class _PostContentState extends State<PostContent> {
+  double deviceHeight;
+  double deviceWidth;
+  PanelController panelController = PanelController();
+  TextEditingController textEditingControllerComment = TextEditingController();
+  PostData currentPostData;
+  @override
+  void initState() {
+    currentPostData = widget.postData;
+    context
+        .read(commentProvider)
+        .fetchData(currentPostData.boardId, currentPostData.documentId);
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    deviceWidth = MediaQuery.of(context).size.width;
+    deviceHeight = MediaQuery.of(context).size.height;
+    super.didChangeDependencies();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+      child: Scaffold(
+        appBar: appBar(),
+        body: Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+              child: SingleChildScrollView(
+                child: Container(
+                  width: deviceWidth,
+                  child: Column(
+                    // crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          currentPostData.textContent,
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ),
+                      SizedBox(
+                        height: deviceHeight / 50,
+                      )
+                    ]
+                      ..addAll(imageCommentContainer(
+                          deviceWidth * 0.9, deviceHeight))
+                      ..add(Container(
+                        width: deviceWidth / 2,
+                        margin:
+                            EdgeInsets.symmetric(vertical: deviceHeight / 50),
+                        decoration: BoxDecoration(
+                            border: Border(
+                                top: BorderSide(
+                                    color: OnestepColors().thirdColor,
+                                    width: 2.0))),
+                      ))
+                      ..add(CommentWidget(
+                        boardId: currentPostData.boardId,
+                        postId: currentPostData.documentId,
+                        openSlidingPanelCallback: slidingUpDownMethod,
+                      )),
+                  ),
+                ),
+              ),
+            ),
+            commentSlidingPanel(),
+            TipDialogContainer(duration: const Duration(seconds: 2))
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget commentSlidingPanel() {
+    return SlidingUpPanel(
+      borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
+      minHeight: deviceWidth / 10,
+      maxHeight: deviceHeight / 3.5,
+      controller: panelController,
+      panel: Column(
+        children: [
+          Center(
+              child: Container(
+                  margin: EdgeInsets.only(top: 5, bottom: 20),
+                  height: deviceHeight / 130,
+                  width: deviceWidth / 10,
+                  decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.all(Radius.circular(5))))),
+          Center(
+            child: TextField(
+              controller: textEditingControllerComment,
+              // onChanged: (value) => saveCommentCallback(value),
+              minLines: 5,
+              maxLines: null,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: '댓글을 입력하세요.',
+              ),
+            ),
+          ),
+          ElevatedButton.icon(
+            onPressed: () async {
+              await saveComment(
+                  textEditingControllerComment.text, currentPostData);
+            },
+            label: Text(
+              "저장",
+            ),
+            icon: Icon(
+              Icons.comment,
+            ),
+            style: ElevatedButton.styleFrom(
+                elevation: 0, primary: OnestepColors().secondColor),
+          ),
+        ],
+      ),
+    );
+  }
+
+  PreferredSizeWidget appBar() {
+    return AppBar(
+      title: Text(
+        currentPostData.title,
+        style: TextStyle(color: Colors.black),
+      ),
+      elevation: 0,
+      backgroundColor: Colors.white,
+      brightness: Brightness.light, // this makes status bar text color black
+      actions: <Widget>[],
+    );
+  }
+
+  List<Widget> imageCommentContainer(double width, double height) {
+    List imageList = currentPostData.imageCommentMap["IMAGE"] ?? [];
+    List commentList = currentPostData.imageCommentMap["COMMENT"] ?? [];
+    return List<Widget>.generate(imageList.length, (index) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          GestureDetector(
+            onTap: () {},
+            child: ClipRRect(
+              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+              child: CachedNetworkImage(
+                imageUrl: imageList[index].toString(),
+                width: width,
+                height: height,
+                errorWidget: (context, url, error) =>
+                    Icon(Icons.error), // 로딩 오류 시 이미지
+
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+            alignment: Alignment.centerLeft,
+            child: Text(commentList[index], style: TextStyle(fontSize: 16)),
+          )
+        ],
+      );
+    });
+  }
+
+  void slidingUpDownMethod() {
+    if (panelController != null) if (panelController
+        .isAttached) if (panelController.isPanelOpen)
+      panelController.close();
+    else
+      panelController.open();
+  }
+
+  saveComment(String comment, PostData postData) async {
+    if (comment != "") {
+      TipDialogHelper.loading("저장 중입니다.\n 잠시만 기다려주세요.");
+      bool result = await CommentData.toRealtimeDataWithPostData(postData)
+              .toRealtimeDatabase(
+                  textContent: comment.trimRight(),
+                  commentList: postData.commentUserList) ??
+          false;
+      if (result) {
+        TipDialogHelper.dismiss();
+        TipDialogHelper.success("저장 완료!");
+        Future.delayed(Duration(seconds: 2))
+            .then((value) => Navigator.pop(context, true));
+      } else {
+        TipDialogHelper.dismiss();
+        TipDialogHelper.fail("저장 실패\n Error : CANNOT UPLOAD COMMENT");
+        Future.delayed(Duration(seconds: 2))
+            .then((value) => Navigator.pop(context, true));
+      }
+    }
   }
 }
+
 // class PostContent extends StatefulWidget {
 //   final PostData postData;
 //   PostContent({this.postData});
@@ -816,38 +1018,38 @@ class PostContent extends StatelessWidget {
 //     return isUnderComment ? who + "의 댓글달기" : "이 글에 댓글달기";
 //   }
 
-//   commentSaveMethod() async {
-//     // postData.comm
-//     //////
-//     ////
-//     ////
-//     ////
-//     ////
-//     ////
-//     ////
-//     ////
-//     ////
-//     ////
-//     ////
-//     ////
-//     ///
+// commentSaveMethod() async {
+//   // postData.comm
+//   //////
+//   ////
+//   ////
+//   ////
+//   ////
+//   ////
+//   ////
+//   ////
+//   ////
+//   ////
+//   ////
+//   ////
+//   ///
 
-//     CommentData.toRealtimeDataWithPostData(postData)
-//         .toRealtimeDatabase(
-//             textContent: _textEditingControllerComment.text.trimRight(),
-//             commentList: postData.commentUserList)
-//         .then((value) {
-//       print("DONE");
-//     });
+//   CommentData.toRealtimeDataWithPostData(postData)
+//       .toRealtimeDatabase(
+//           textContent: _textEditingControllerComment.text.trimRight(),
+//           commentList: postData.commentUserList)
+//       .then((value) {
+//     print("DONE");
+//   });
 
-//     // await Comment(
-//     //     uid: currentUID,
-//     //     boardId: currentBoardId,
-//     //     boardName: currentBoardName,
-//     //     postId: currentPostId,
-//     //     textContent: _textEditingControllerComment.text.trimRight(),userName: );
-//     // databaseRef.push().set({'name': 'hi', 'comment': 'A good season'});
-//   }
+//   // await Comment(
+//   //     uid: currentUID,
+//   //     boardId: currentBoardId,
+//   //     boardName: currentBoardName,
+//   //     postId: currentPostId,
+//   //     textContent: _textEditingControllerComment.text.trimRight(),userName: );
+//   // databaseRef.push().set({'name': 'hi', 'comment': 'A good season'});
+// }
 
 //   commentBoxHideMethod() {
 //     if (_textEditingControllerComment.text != '') {
