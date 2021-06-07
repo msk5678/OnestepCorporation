@@ -78,7 +78,9 @@ class ReportDealPage extends StatelessWidget {
               ),
             ),
             InkWell(
-              onTap: () {},
+              onTap: () {
+                reportDealController(context, 3, postUid);
+              },
               child: Padding(
                 padding: EdgeInsets.fromLTRB(
                     MediaQuery.of(context).size.width / 20,
@@ -105,7 +107,9 @@ class ReportDealPage extends StatelessWidget {
               ),
             ),
             InkWell(
-              onTap: () {},
+              onTap: () {
+                reportDealController(context, 4, postUid);
+              },
               child: Padding(
                 padding: EdgeInsets.fromLTRB(
                     MediaQuery.of(context).size.width / 20,

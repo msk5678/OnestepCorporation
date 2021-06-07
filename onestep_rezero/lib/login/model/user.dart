@@ -8,7 +8,8 @@ class User {
   final String nickName;
   final String imageUrl;
   final String email;
-  final int reportPoint;
+  final int reportState;
+  // final Timestamp reportTime;
 
   final String university;
   final String universityEmail;
@@ -22,10 +23,11 @@ class User {
     this.nickName,
     this.imageUrl,
     this.email,
-    this.reportPoint,
+    this.reportState,
     this.university,
     this.universityEmail,
     this.joinTime,
+    // this.reportTime,
   });
 
   factory User.fromDocument(DocumentSnapshot document) {
@@ -36,7 +38,8 @@ class User {
       nickName: document['nickName'],
       imageUrl: document['imageUrl'],
       email: document['email'],
-      reportPoint: document['reportPoint'],
+      reportState: document['reportState'],
+      // reportTime: document['reportTime'],
       university: document['university'],
       universityEmail: document['universityEmail'],
       joinTime: document['joinTime'],
