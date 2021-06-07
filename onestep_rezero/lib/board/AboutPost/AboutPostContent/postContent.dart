@@ -44,9 +44,15 @@ class _PostContentState extends State<PostContent> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   void didChangeDependencies() {
     deviceWidth = MediaQuery.of(context).size.width;
     deviceHeight = MediaQuery.of(context).size.height;
+
     super.didChangeDependencies();
   }
 
@@ -92,7 +98,12 @@ class _PostContentState extends State<PostContent> {
                       ..add(CommentWidget(
                         boardId: currentPostData.boardId,
                         postId: currentPostData.documentId,
+                        commentList: currentPostData.commentUserList,
+                        postWriterUID: currentPostData.uid,
                         openSlidingPanelCallback: slidingUpDownMethod,
+                      ))
+                      ..add(SizedBox(
+                        height: deviceHeight / 10,
                       )),
                   ),
                 ),
@@ -124,14 +135,17 @@ class _PostContentState extends State<PostContent> {
                       color: Colors.grey[300],
                       borderRadius: BorderRadius.all(Radius.circular(5))))),
           Center(
-            child: TextField(
-              controller: textEditingControllerComment,
-              // onChanged: (value) => saveCommentCallback(value),
-              minLines: 5,
-              maxLines: null,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: '댓글을 입력하세요.',
+            child: Container(
+              height: deviceHeight / 6,
+              child: TextField(
+                controller: textEditingControllerComment,
+                // onChanged: (value) => saveCommentCallback(value),
+                minLines: 5,
+                maxLines: null,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: '댓글을 입력하세요.',
+                ),
               ),
             ),
           ),
@@ -215,11 +229,17 @@ class _PostContentState extends State<PostContent> {
                   textContent: comment.trimRight(),
                   commentList: postData.commentUserList) ??
           false;
+      FocusScope.of(context).unfocus();
       if (result) {
         TipDialogHelper.dismiss();
         TipDialogHelper.success("저장 완료!");
-        Future.delayed(Duration(seconds: 2))
-            .then((value) => Navigator.pop(context, true));
+        Future.delayed(Duration(seconds: 2)).then((value) {
+          panelController.close();
+          textEditingControllerComment.clear();
+          context
+              .read(commentProvider)
+              .refresh(currentPostData.boardId, currentPostData.documentId);
+        });
       } else {
         TipDialogHelper.dismiss();
         TipDialogHelper.fail("저장 실패\n Error : CANNOT UPLOAD COMMENT");

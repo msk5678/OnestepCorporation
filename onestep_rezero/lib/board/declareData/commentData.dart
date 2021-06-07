@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:onestep_rezero/board/declareData/postData.dart';
+import 'package:sortedmap/sortedmap.dart';
 
 import '../../main.dart';
 
@@ -105,7 +106,8 @@ class CommentData {
           textContent: value["textContent"],
           commentId: key));
     });
-    print("commentList length : ${commentList.length}");
+    commentList.sort((a, b) => int.tryParse(a.commentId ?? 0)
+        .compareTo(int.tryParse(b.commentId ?? 0)));
     return commentList;
   }
 }

@@ -130,6 +130,8 @@ dependencies:
   flutter_fadein: ^2.0.0
   #rive Animation
   rive: ^0.7.5
+  #sortMap
+  sortedmap: ^0.5.0
   #Chat Test
   #stream_chat_flutter: ^1.5.1
 

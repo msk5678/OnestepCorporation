@@ -6,6 +6,7 @@ import 'package:onestep_rezero/board/Animation/slideUpAnimationWidget.dart';
 import 'package:onestep_rezero/board/StateManage/Provider/commentProvider.dart';
 import 'package:onestep_rezero/board/declareData/commentData.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
+import 'package:onestep_rezero/timeUtil.dart';
 
 final commentProvider =
     ChangeNotifierProvider<CommentProvider>((ref) => CommentProvider());
@@ -13,26 +14,72 @@ final commentProvider =
 class CommentWidget extends ConsumerWidget {
   final boardId;
   final postId;
+  final commentList;
+  final postWriterUID;
   final openSlidingPanelCallback;
-  CommentWidget({this.boardId, this.postId, this.openSlidingPanelCallback});
 
-  Widget commentBoxDesignMethod(int index, CommentData comment) {
-    return Container(
-      child: Column(
-        children: [
-          Container(
-            child: Text(comment.textContent ?? "NO"),
-          )
-        ],
-      ),
+  CommentWidget(
+      {this.boardId,
+      this.postId,
+      this.openSlidingPanelCallback,
+      this.commentList,
+      this.postWriterUID});
+
+  Widget commentBoxDesignMethod(
+      int index, CommentData comment, double width, double height) {
+    DateTime uploadTime = DateTime.fromMillisecondsSinceEpoch(
+        int.tryParse(comment.uploadTime ?? 0));
+    return
+        // padding: EdgeInsets.symmetric(horizontal: width / 20),
+        // width: width,
+        // height: height / 6,
+        Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          alignment: Alignment.centerLeft,
+          child: commentName(comment.uid),
+        ),
+        Container(
+          alignment: Alignment.centerLeft,
+          child: Text(comment.textContent ?? "NO"),
+        ),
+        Container(
+          alignment: Alignment.centerRight,
+          child: Text("${TimeUtil.timeAgo(date: uploadTime)}"),
+        ),
+        Container(
+          width: width / 2,
+          margin: EdgeInsets.only(bottom: height / 100),
+          decoration: BoxDecoration(
+              border: Border(
+                  bottom: BorderSide(
+                      color: OnestepColors().thirdColor.withOpacity(0.2),
+                      width: 2.0),
+                  left: BorderSide(
+                      color: OnestepColors().thirdColor.withOpacity(0.2),
+                      width: 2.0))),
+          alignment: Alignment.topLeft,
+        )
+      ],
     );
   }
 
+  Widget commentName(
+    String commentUID,
+  ) {
+    if (commentUID == postWriterUID) {
+      return Text("작성자", style: TextStyle(color: OnestepColors().secondColor));
+    }
+    return Text("hi");
+  }
+
+// TimeUtil.timeAgo(date: postData.uploadTime)
   @override
   Widget build(BuildContext context, watch) {
-    context.read(commentProvider).fetchData(boardId, postId);
+    final deviceWidth = MediaQuery.of(context).size.width;
+    final deviceHeight = MediaQuery.of(context).size.width;
     final comment = watch(commentProvider).comments;
-    print("Comment List length is : ${comment.length}");
     bool isEmpty = comment.length == 0 ? true : false;
     if (!isEmpty)
       return Container(
@@ -49,7 +96,8 @@ class CommentWidget extends ConsumerWidget {
               child: SlideAnimation(
                 verticalOffset: 50.0,
                 child: FadeInAnimation(
-                  child: commentBoxDesignMethod(index, comment[index]),
+                  child: commentBoxDesignMethod(
+                      index, comment[index], deviceWidth, deviceHeight),
                 ),
               ),
             );

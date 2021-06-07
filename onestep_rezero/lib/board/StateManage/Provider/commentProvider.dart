@@ -8,28 +8,33 @@ class CommentProvider with ChangeNotifier {
   String get errorMessage => _errorMessage;
   List<CommentData> get comments => _commentDataList;
   List<CommentData> _commentDataList = [];
-
+  bool _isFetching = false;
   fetchData(String boardId, String postId) async {
+    if (_isFetching) return;
+    _isFetching = true;
     _commentDataList = [];
-    print("BoardId : $boardId ; PostId : $postId");
     final db = FirebaseDatabase.instance;
     await db
         .reference()
         .child('board')
         .child(boardId.toString())
         .child(postId.toString())
+        .orderByKey()
+        // .orderByChild("uploadTime")
         .once()
         .then((DataSnapshot dataSnapshot) {
       _commentDataList = CommentData().fromFirebaseReference(dataSnapshot);
       // return CommentData().fromFirebaseReference(dataSnapshot);
+
       notifyListeners();
-    });
-    print("_commentDataList : ${_commentDataList.length}");
+    }).whenComplete(() => _isFetching = false);
   }
 
   refresh(String boardId, String postId) {
-    _commentDataList = [];
+    // _commentDataList = [];
     fetchData(boardId, postId);
     notifyListeners();
   }
+
+  clear() {}
 }

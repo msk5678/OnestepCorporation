@@ -50,6 +50,7 @@ class PostList extends ConsumerWidget {
         height: deviceHeight / 9.2,
         width: deviceWidth * 0.9,
         child: Card(
+          elevation: 0,
           child: Padding(
               padding: EdgeInsets.all(deviceHeight / 200),
               //Click Animation
@@ -152,7 +153,7 @@ class PostList extends ConsumerWidget {
     );
   }
 
-  thirdColumnLine(postData) {
+  thirdColumnLine(PostData postData) {
     return Container(
         padding: EdgeInsets.only(left: deviceWidth / 50),
         child: Row(children: <Widget>[
