@@ -244,13 +244,13 @@ class JoinBody extends ConsumerWidget {
                                           "reportPoint": 0,
                                           "dealCase": {
                                             'first': 0,
-                                            'seconde': 0,
+                                            'second': 0,
                                             'third': 0,
                                             'four': 0,
                                           },
                                           "userCase": {
                                             'first': 0,
-                                            'seconde': 0,
+                                            'second': 0,
                                             'third': 0,
                                             'four': 0,
                                           },

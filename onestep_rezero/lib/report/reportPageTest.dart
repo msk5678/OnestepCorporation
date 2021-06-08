@@ -23,67 +23,7 @@ class ReportPageTest extends StatelessWidget {
             Center(
               child: ElevatedButton(
                 onPressed: () async {
-                  // String count;
-                  // int countValue;
-
-                  // FirebaseDatabase.instance
-                  //     .reference()
-                  //     .child('report')
-                  //     .child(googleSignIn.currentUser.id)
-                  //     .child('deal')
-                  //     .child('post1')
-                  //     .once()
-                  //     .then((value) => {
-                  //           if (value.value == null)
-                  //             {
-                  //               FirebaseDatabase.instance
-                  //                   .reference()
-                  //                   .child('report')
-                  //                   .child(googleSignIn.currentUser.id)
-                  //                   .child('deal')
-                  //                   .child('post1')
-                  //                   .child('value')
-                  //                   .child(DateTime.now()
-                  //                       .millisecondsSinceEpoch
-                  //                       .toString())
-                  //                   .set({
-                  //                 'case': '1',
-                  //                 'content': "asdasdasd",
-                  //                 'title': "asdasd111",
-                  //                 'count': '0',
-                  //                 'reportedUid': googleSignIn.currentUser.id,
-                  //                 'time': DateTime.now()
-                  //                     .millisecondsSinceEpoch
-                  //                     .toString(),
-                  //               })
-                  //             }
-                  //           else
-                  //             {
-                  //               countValue = value.value.length,
-                  //               countValue++,
-                  //               count = countValue.toString(),
-                  //               FirebaseDatabase.instance
-                  //                   .reference()
-                  //                   .child('report')
-                  //                   .child(googleSignIn.currentUser.id)
-                  //                   .child('deal')
-                  //                   .child('post1')
-                  //                   .child('value')
-                  //                   .child(DateTime.now()
-                  //                       .millisecondsSinceEpoch
-                  //                       .toString())
-                  //                   .set({
-                  //                 'case': '3',
-                  //                 'content': "asdasdasd",
-                  //                 'title': "asdasd111",
-                  //                 'count': count,
-                  //                 'reportedUid': googleSignIn.currentUser.id,
-                  //                 'time': DateTime.now()
-                  //                     .millisecondsSinceEpoch
-                  //                     .toString(),
-                  //               })
-                  //             }
-                  //         });
+                  // uid = postUid
                   String uid;
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => ReportDealPage(uid)));
