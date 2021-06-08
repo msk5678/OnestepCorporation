@@ -450,75 +450,152 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                         Container(
                           width: MediaQuery.of(context).size.width / 1.2,
                           child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                primary: OnestepColors().mainColor),
-                            onPressed: _isEmailCheck.authFlag.isShowBtn == true
-                                ? () async {
-                                    // 5분 안에 인증해야함
-                                    if (timeOver == false &&
-                                        checkPassword ==
-                                            _authNumberController.text) {
-                                      print("성공");
-                                      // university 는 지금 계명대학교라고 줬는데, 나중에 학교이메일 판단해서 넣어줘야함
-                                      // ex) stu.kmu -> 계명대학교 이런식으로
-                                      // FirebaseFirestore.instance
-                                      //     .collection('user')
-                                      //     .doc(user.id)
-                                      //     .update({
-                                      //   "auth": 2,
-                                      //   "univerisityEmail":
-                                      //       _emailController.text,
-                                      //   "university": "kmu",
-                                      //   "authTime": DateTime.now()
-                                      //       .millisecondsSinceEpoch
-                                      // });
+                            // style: ElevatedButton.styleFrom(
+                            //     primary: OnestepColors().mainColor),
+                            // onPressed: _isEmailCheck.authFlag.isShowBtn == true
+                            //     ? () async {
+                            //         // 5분 안에 인증해야함
+                            //         if (timeOver == false &&
+                            //             checkPassword ==
+                            //                 _authNumberController.text) {
+                            //           print("성공");
+                            //           // university 는 지금 계명대학교라고 줬는데, 나중에 학교이메일 판단해서 넣어줘야함
+                            //           // ex) stu.kmu -> 계명대학교 이런식으로
+                            //           // FirebaseFirestore.instance
+                            //           //     .collection('user')
+                            //           //     .doc(user.id)
+                            //           //     .update({
+                            //           //   "auth": 2,
+                            //           //   "univerisityEmail":
+                            //           //       _emailController.text,
+                            //           //   "university": "kmu",
+                            //           //   "authTime": DateTime.now()
+                            //           //       .millisecondsSinceEpoch
+                            //           // });
 
-                                      // var time =
-                                      //     DateTime.now().microsecondsSinceEpoch;
-                                      // DocumentSnapshot userRecord =
-                                      //     await ref.doc(user.id).get();
-                                      // currentUserModel =
-                                      //     User.fromDocument(userRecord);
-                                      // ref
-                                      //     .doc(currentUserModel.uid)
-                                      //     .collection("log")
-                                      //     .doc(time.toString())
-                                      //     .set({
-                                      //   "loginTime": time,
-                                      // });
-                                      // categoryList = FirebaseFirestore.instance
-                                      //     .collection('category')
-                                      //     .get();
+                            //           // var time =
+                            //           //     DateTime.now().microsecondsSinceEpoch;
+                            //           // DocumentSnapshot userRecord =
+                            //           //     await ref.doc(user.id).get();
+                            //           // currentUserModel =
+                            //           //     User.fromDocument(userRecord);
+                            //           // ref
+                            //           //     .doc(currentUserModel.uid)
+                            //           //     .collection("log")
+                            //           //     .doc(time.toString())
+                            //           //     .set({
+                            //           //   "loginTime": time,
+                            //           // });
+                            //           // categoryList = FirebaseFirestore.instance
+                            //           //     .collection('category')
+                            //           //     .get();
 
-                                      Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  HomeMain()));
-                                    } else if (timeOver == true) {
-                                      print("time over 실패");
-                                      _isEmailCheck
-                                          .changedAuthTimeOverChecked(false);
-                                      _isEmailCheck.changedAuthNumber(true);
+                            //           Navigator.of(context).push(
+                            //               MaterialPageRoute(
+                            //                   builder: (context) =>
+                            //                       HomeMain()));
+                            //         } else if (timeOver == true) {
+                            //           print("time over 실패");
+                            //           _isEmailCheck
+                            //               .changedAuthTimeOverChecked(false);
+                            //           _isEmailCheck.changedAuthNumber(true);
+                            onPressed: () async {
+                              FirebaseFirestore.instance
+                                  .collection('user')
+                                  .doc(user.id)
+                                  .update({
+                                "auth": 2,
+                                "univerisityEmail": _emailController.text,
+                                "university": "kmu",
+                                "authTime":
+                                    DateTime.now().millisecondsSinceEpoch
+                              });
 
-                                      // setState(() {
-                                      //   _isTimeOverChecked = false;
-                                      //   _isAuthNumber = true;
-                                      // });
-                                      // print("${snapshot.data.data()['authTest']}");
-                                      // Navigator.of(context).pop();
-                                    } else {
-                                      print("인증번호 매칭 실패");
-                                      _isEmailCheck
-                                          .changedAuthTimeOverChecked(true);
-                                      _isEmailCheck.changedAuthNumber(false);
+                              var time = DateTime.now().microsecondsSinceEpoch;
+                              DocumentSnapshot userRecord =
+                                  await ref.doc(user.id).get();
+                              currentUserModel = User.fromDocument(userRecord);
+                              ref
+                                  .doc(currentUserModel.uid)
+                                  .collection("log")
+                                  .doc(time.toString())
+                                  .set({
+                                "loginTime": time,
+                              });
+                              categoryList = FirebaseFirestore.instance
+                                  .collection('category')
+                                  .get();
 
-                                      // setState(() {
-                                      //   _isTimeOverChecked = true;
-                                      //   _isAuthNumber = false;
-                                      // });
-                                    }
-                                  }
-                                : null,
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => HomeMain()));
+                            },
+                            // onPressed: _isEmailCheck.authFlag.isShowBtn == true
+                            //     ? () async {
+                            //         // 5분 안에 인증해야함
+                            //         if (timeOver == false &&
+                            //             checkPassword ==
+                            //                 _authNumberController.text) {
+                            //           print("성공");
+                            //           // university 는 지금 계명대학교라고 줬는데, 나중에 학교이메일 판단해서 넣어줘야함
+                            //           // ex) stu.kmu -> 계명대학교 이런식으로
+                            //           FirebaseFirestore.instance
+                            //               .collection('user')
+                            //               .doc(user.id)
+                            //               .update({
+                            //             "auth": 2,
+                            //             "univerisityEmail":
+                            //                 _emailController.text,
+                            //             "university": "kmu",
+                            //             "authTime": DateTime.now()
+                            //                 .millisecondsSinceEpoch
+                            //           });
+
+                            //           var time =
+                            //               DateTime.now().microsecondsSinceEpoch;
+                            //           DocumentSnapshot userRecord =
+                            //               await ref.doc(user.id).get();
+                            //           currentUserModel =
+                            //               User.fromDocument(userRecord);
+                            //           ref
+                            //               .doc(currentUserModel.uid)
+                            //               .collection("log")
+                            //               .doc(time.toString())
+                            //               .set({
+                            //             "loginTime": time,
+                            //           });
+                            //           categoryList = FirebaseFirestore.instance
+                            //               .collection('category')
+                            //               .get();
+
+                            //           Navigator.of(context).push(
+                            //               MaterialPageRoute(
+                            //                   builder: (context) =>
+                            //                       HomeMain()));
+                            //         } else if (timeOver == true) {
+                            //           print("time over 실패");
+                            //           _isEmailCheck
+                            //               .changedAuthTimeOverChecked(false);
+                            //           _isEmailCheck.changedAuthNumber(true);
+
+                            //           // setState(() {
+                            //           //   _isTimeOverChecked = false;
+                            //           //   _isAuthNumber = true;
+                            //           // });
+                            //           // print("${snapshot.data.data()['authTest']}");
+                            //           // Navigator.of(context).pop();
+                            //         } else {
+                            //           print("인증번호 매칭 실패");
+                            //           _isEmailCheck
+                            //               .changedAuthTimeOverChecked(true);
+                            //           _isEmailCheck.changedAuthNumber(false);
+
+                            //           // setState(() {
+                            //           //   _isTimeOverChecked = true;
+                            //           //   _isAuthNumber = false;
+                            //           // });
+                            //         }
+                            //       }
+                            //     : null,
                             child: Text("인증"),
                           ),
                         )

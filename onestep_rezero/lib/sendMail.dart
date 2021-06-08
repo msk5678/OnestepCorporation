@@ -31,18 +31,17 @@ sendEmailAuth([
   final message = Message()
     ..from = Address(smtpUserName)
     ..recipients
-        .add('5414030@stu.kmu.ac.kr') // 받는사람 email -> universityEmail 로 받아옴
+        .add('leedool3003@naver.com') // 받는사람 email -> universityEmail 로 받아옴
     ..subject =
         'Test Dart Mailer library :: 😀 :: ${DateTime.now().add(Duration(hours: 9))}' // title
     ..html =
         "<h1>Test</h1>\n<p>Hey! Here's some $checkPassword</p>\n본 인증 코드는 5분동안 유효합니다. "; // body of the email
   try {
     final sendReport = await send(message, _smtpServer);
-    print("cex 성공");
     print('Message sent: ' + sendReport.toString());
   } on MailerException catch (e) {
-    print("cex 실패");
     print('Message not sent.');
+    print(e.problems);
     for (var p in e.problems) {
       print('Problem: ${p.code}: ${p.msg}');
     }

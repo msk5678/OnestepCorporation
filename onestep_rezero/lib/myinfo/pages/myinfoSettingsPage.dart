@@ -7,7 +7,7 @@ class MyinfoSettingsPage extends ConsumerWidget {
   // final SharedPreferences _prefsPush;
   // final SharedPreferences _prefsMarketing;
   // MyinfoSettingsPage(this._prefsPush, this._prefsMarketing);
-  MyinfoSettingsPage();
+  // MyinfoSettingsPage();
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
@@ -20,6 +20,7 @@ class MyinfoSettingsPage extends ConsumerWidget {
           backgroundColor: Colors.white,
           iconTheme: IconThemeData(color: Colors.black),
         ),
+        // body: SettingsBody(_prefsPush, _prefsMarketing));
         body: SettingsBody());
   }
 }

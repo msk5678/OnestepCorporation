@@ -216,7 +216,8 @@ class JoinBody extends ConsumerWidget {
                                     "nickName": _nicknameController.text, // 닉네임
                                     "imageUrl": user.photoUrl, // 사진
                                     "email": _emailController.text, // 이메일
-                                    "reportPoint": 0, // 신고 점수
+                                    "reportState": 0, // 제재 확인
+                                    // "reportTime": 0, // 제재 시간
                                     "university": "", // 학교이름
                                     "universityEmail": "", // 학교이메일
                                     "joinTime": DateTime.now()
@@ -241,6 +242,29 @@ class JoinBody extends ConsumerWidget {
                                             .doc(user.id)
                                             .set({
                                           "reportPoint": 0,
+                                          "dealCase": {
+                                            'first': 0,
+                                            'second': 0,
+                                            'third': 0,
+                                            'four': 0,
+                                          },
+                                          "userCase": {
+                                            'first': 0,
+                                            'second': 0,
+                                            'third': 0,
+                                            'four': 0,
+                                          },
+                                        })
+                                      })
+                                  .whenComplete(() => {
+                                        FirebaseFirestore.instance
+                                            .collection('user')
+                                            .doc(user.id)
+                                            .collection("notification")
+                                            .doc(user.id)
+                                            .set({
+                                          "marketing": 0,
+                                          "push": 0,
                                         })
                                       });
 

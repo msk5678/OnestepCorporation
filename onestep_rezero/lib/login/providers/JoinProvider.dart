@@ -13,6 +13,7 @@ class EmailCheckProvider extends StateNotifier<bool> {
     // String email = tempEmail;
     // final bool isValid = EmailValidator.validate(email);
 
+    // if (tempEmail == "" || !isValid) {
     if (tempEmail == "") {
       state = false;
     } else {
