@@ -72,7 +72,7 @@ exports.onReportCreate = functions.database.ref('/report/{reportedUid}/deal/{pos
             })
             break;
         case '3':
-            const thirdeCase = snapshot.ref.parent.parent.child('thirdeCase')
+            const thirdeCase = snapshot.ref.parent.parent.child('thirdCase')
             await thirdeCase.transaction(count => {
                 return count + 1;
             })
