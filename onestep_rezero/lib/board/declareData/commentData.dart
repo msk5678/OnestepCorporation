@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:onestep_rezero/board/declareData/postData.dart';
-import 'package:sortedmap/sortedmap.dart';
-
 import '../../main.dart';
 
 class CommentData {
@@ -109,6 +107,48 @@ class CommentData {
     commentList.sort((a, b) => int.tryParse(a.commentId ?? 0)
         .compareTo(int.tryParse(b.commentId ?? 0)));
     return commentList;
+  }
+
+  dismissComment({CommentData comment}) {
+    final realtimeDb = FirebaseDatabase.instance.reference();
+    String currentTimeStamp = DateTime.now().millisecondsSinceEpoch.toString();
+    return realtimeDb
+        .child('board')
+        .child(this.boardId)
+        .child(this.postId)
+        .child(this.commentId)
+        .update({
+          "deleted": 'true',
+          "deletedTime": currentTimeStamp,
+        })
+        .then((value) => true)
+        .whenComplete(() => null);
+  }
+
+  addCoComment() {
+    final realtimeDb = FirebaseDatabase.instance.reference();
+    String currentTimeStamp = DateTime.now().millisecondsSinceEpoch.toString();
+    return realtimeDb
+        .child('board')
+        .child(this.boardId)
+        .child(this.postId)
+        .child(this.commentId)
+        .set({
+          "uid": this.uid,
+          "boardId": this.boardId,
+          "boardName": this.boardName,
+          "postId": this.postId,
+          "textContent": textContent ?? this.textContent ?? '',
+          "deleted": this.deleted ?? 'false',
+          "deletedTime": this.deletedTime ?? '',
+          "reported": this.reported ?? '',
+          "reportCount": this.reportCount ?? '',
+          "uploadTime": this.uploadTime ?? currentTimeStamp,
+          "updateTime": this.updateTime ?? '',
+          "userName": ""
+        })
+        .then((value) => true)
+        .whenComplete(() => null);
   }
 }
 

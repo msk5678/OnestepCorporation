@@ -66,64 +66,66 @@ class _BoardMainState extends State<BoardMain> {
   }
 
   manageAnimationTimer(bool isStart) {
-    if (isStart) {
-      if (_updateRandomAnimationInterval == null)
-        setRiveAnimationTimer();
-      else {
-        if (!_updateRandomAnimationInterval.isActive) setRiveAnimationTimer();
-      }
-    } else {
-      if (_updateRandomAnimationInterval !=
-          null) if (_updateRandomAnimationInterval.isActive) {
-        _updateRandomAnimationInterval.cancel();
-        // if (_animationInterval != null) if (_animationInterval.isActive)
-        _animationInterval.cancel();
-        randomNuberList = [];
-        animationPivot = 0;
-      }
-    }
+    // if (isStart) {
+    //   if (_updateRandomAnimationInterval == null)
+    //     setRiveAnimationTimer();
+    //   else {
+    //     if (!_updateRandomAnimationInterval.isActive) setRiveAnimationTimer();
+    //   }
+    // } else {
+    //   if (_updateRandomAnimationInterval !=
+    //       null) if (_updateRandomAnimationInterval.isActive) {
+    //     _updateRandomAnimationInterval.cancel();
+    //     // if (_animationInterval != null) if (_animationInterval.isActive)
+    //     _animationInterval.cancel();
+    //     randomNuberList = [];
+    //     animationPivot = 0;
+    //   }
+    // }
   }
 
-  setRiveAnimationTimer() {
-    //Each Animation Interval 3 seconds(Animation 1 second and 2second  waiting next animation ) * 6 Icons
-    _updateRandomAnimationInterval =
-        Timer.periodic(Duration(seconds: 17), (timer) {
-      if (currentBottomNaviIndex == 2) {
-        randomNuberList = [];
-        animationPivot = 0;
-        randomClass =
-            CreateRandomNumberNotDuplicated(length: initIconData.length);
-        randomNuberList = randomClass.getRandomNumberList;
-      }
-    });
-    _animationInterval = Timer.periodic((Duration(seconds: 3)), (timer) {
-      if (currentBottomNaviIndex == 2) startAnimation();
-    });
-  }
+  // setRiveAnimationTimer() {
+  //   //Each Animation Interval 3 seconds(Animation 1 second and 2second  waiting next animation ) * 6 Icons
 
-  startAnimation() {
-    if (randomNuberList.isNotEmpty) {
-      if (randomNuberList.length != 0) {
-        int animationNumber = randomNuberList[animationPivot++];
+  //   _updateRandomAnimationInterval =
+  //       Timer.periodic(Duration(seconds: 17), (timer) {
+  //     if (currentBottomNaviIndex == 2) {
+  //       randomNuberList = [];
+  //       animationPivot = 0;
+  //       randomClass =
+  //           CreateRandomNumberNotDuplicated(length: initIconData.length);
+  //       randomNuberList = randomClass.getRandomNumberList;
+  //     }
+  //   });
+  //   _animationInterval = Timer.periodic((Duration(seconds: 3)), (timer) {
+  //     if (currentBottomNaviIndex == 2) startAnimation();
+  //   });
+  // }
 
-        if (animationNumber == 0)
-          streamControllerIcon1.add(true);
-        else if (animationNumber == 1)
-          streamControllerIcon2.add(true);
-        else if (animationNumber == 2)
-          streamControllerIcon3.add(true);
-        else if (animationNumber == 3)
-          streamControllerIcon4.add(true);
-        else if (animationNumber == 4)
-          streamControllerIcon5.add(true);
-        else if (animationNumber == 5)
-          streamControllerIcon6.add(true);
-        else {
-          return null;
-        }
-      }
-    }
-  }
+  // startAnimation() {
+  //   print("Timer Live");
+  //   if (randomNuberList.isNotEmpty) {
+  //     if (randomNuberList.length != 0) {
+  //       int animationNumber = randomNuberList[animationPivot++];
+
+  //       if (animationNumber == 0)
+  //         streamControllerIcon1.add(true);
+  //       else if (animationNumber == 1)
+  //         streamControllerIcon2.add(true);
+  //       else if (animationNumber == 2)
+  //         streamControllerIcon3.add(true);
+  //       else if (animationNumber == 3)
+  //         streamControllerIcon4.add(true);
+  //       else if (animationNumber == 4)
+  //         streamControllerIcon5.add(true);
+  //       else if (animationNumber == 5)
+  //         streamControllerIcon6.add(true);
+  //       else {
+  //         return null;
+  //       }
+  //     }
+  //   }
+  // }
 
   setBoardIconData() {
     initIconData = [
