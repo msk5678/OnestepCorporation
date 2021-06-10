@@ -388,8 +388,6 @@ class ProductChatController {
       print("maptest1 컨텐츠저장완");
       String messageId = DateTime.now().millisecondsSinceEpoch.toString();
       print("proChatController-onSendToProductMessage 2-3. 상대방 hide true면 변경함");
-      reConnectProductChat(
-          chatId, friendId, messageId); //상대방 hide = true 면 변경하고 수신시간도 바꿈
 
       print("maptest1-1 $chatId $messageId");
 //RealTime
@@ -405,7 +403,7 @@ class ProductChatController {
         "sendTime": messageId,
         "content": content,
         "type": type,
-        "isRead": false,
+        // "isRead": false,
         //"isRead": false,
       }).whenComplete(() {
         print("proChatController-onSendToProductMessage 3. 메세지 저장 완료");
@@ -469,7 +467,8 @@ class ProductChatController {
     // //if (data['idTo'] == googleSignIn.currentUser.id.toString() && data['isRead'] == false) {}
   }
 
-  void reConnectProductChat(String chatId, String friendId, String sendTime) {
+  void reConnectProductChat(
+      String chatId, String friendId, String reConnectTime) {
     DatabaseReference productChatFriendUidRefernce =
         productChatReference.child(chatId).child("chatUsers").child(friendId);
     Map<String, dynamic> friendConnectState;
@@ -479,7 +478,7 @@ class ProductChatController {
         print("proChatContro ${snapshot.value['friendUid']}");
         friendConnectState = {
           "hide": false,
-          "connectTime": sendTime,
+          "connectTime": reConnectTime,
         };
         productChatFriendUidRefernce.update(friendConnectState);
       }
@@ -495,7 +494,7 @@ class ProductChatController {
         print("proChatContro ${snapshot.value['friendUid']}");
         myConnectState = {
           "hide": false,
-          "connectTime": sendTime,
+          "connectTime": reConnectTime,
         };
         productChatMyUidRefernce.update(myConnectState);
       }

@@ -563,7 +563,7 @@ class _LastChatState extends State<ChatScreen> {
   }
 
   _buildChatListListTileStream() {
-    //Future.delayed(const Duration(seconds: 1));
+    // Future.delayed(const Duration(seconds: 1));
     print("getc 스트림시작 $connectTime");
     return Flexible(
       fit: FlexFit.tight,
@@ -594,25 +594,26 @@ class _LastChatState extends State<ChatScreen> {
                       listProductMessage.clear();
                       DataSnapshot dataValues = snapshot.data.snapshot;
                       Map<dynamic, dynamic> values = dataValues.value;
-
+                      print(
+                          "#realpro Strmsg message id0 : ${values.toString()}");
                       values.forEach((key, values) {
-                        // print(
-                        //     "#realpro Strmsg message id : ${values["idTo"].keys.toList()[0]}");
-                        // String s = values[
-                        //     "idTo/${googleSignIn.currentUser.id.toString()}"];
-                        // print(
-                        //     "#realpro Strmsg message read : ${googleSignIn.currentUser.id.toString()} ${values["idTo/${googleSignIn.currentUser.id.toString()}"]} $s");
-                        // print(
-                        //     "#realpro Strmsg message read : ${googleSignIn.currentUser.id.toString()} ${values["idTo/TLtvLka2sHTPQE3q6U2WPxfgJ8j2"].toString()} ");
+                        print(
+                            "#realpro Strmsg message id1 : ${values["idTo"].keys.toList()[0]}");
+                        String s = values[
+                            "idTo/${googleSignIn.currentUser.id.toString()}"];
+                        print(
+                            "#realpro Strmsg message read2 : ${googleSignIn.currentUser.id.toString()} ${values["idTo/${googleSignIn.currentUser.id.toString()}"]} $s");
+                        print(
+                            "#realpro Strmsg message read3 : ${googleSignIn.currentUser.id.toString()} ${values["idTo/TLtvLka2sHTPQE3q6U2WPxfgJ8j2"].toString()} ");
 
-                        // print(
-                        //     "#realpro Strmsg message key : ${key.toString()}");
-                        // print(
-                        //     "#realpro Strmsg message value : ${values['content']}");
-                        // print(
-                        //     "#realpro Strmsg message idTo : ${values['idTo']}");
-                        // print(
-                        //     "#realpro Strmsg message idTo : ${values['idTo'].values.toList()[0]}");
+                        print(
+                            "#realpro Strmsg message key4 : ${key.toString()}");
+                        print(
+                            "#realpro Strmsg message value5 : ${values['content']}");
+                        print(
+                            "#realpro Strmsg message idTo6 : ${values['idTo']}");
+                        print(
+                            "#realpro Strmsg message idTo7 : ${values['idTo'].values.toList()[0]}");
 
                         //Message Read update
                         if (values["idTo"].keys.toList()[0] ==
@@ -1185,6 +1186,13 @@ class _LastChatState extends State<ChatScreen> {
                   color: OnestepColors().mainColor,
                   onPressed: () {
                     if (textEditingController.text.contains("[상품정보문의]")) {
+                      String reConnectTime =
+                          DateTime.now().millisecondsSinceEpoch.toString();
+
+                      ProductChatController().reConnectProductChat(
+                          chatId,
+                          friendId,
+                          reConnectTime); //상대방 hide = true 면 변경하고 수신시간도 바꿈
                       checkTheSendMessage(chatId, friendId, product, 3);
                       print("상품정보");
                     } else {
