@@ -53,14 +53,14 @@ class ProductChatController {
             "recentText": "채팅방이 생성되었습니다.",
             "chatUsers": {
               myUid: {
-                "uid": myUid,
+                "friendUid": friendUid,
                 "connectTime": nowTime,
-                "hide": false,
+                "hide": true,
               },
               friendUid: {
-                "uid": friendUid,
+                "friendUid": myUid,
                 "connectTime": nowTime,
-                "hide": false,
+                "hide": true,
               },
             },
           }).whenComplete(() {
@@ -135,7 +135,6 @@ class ProductChatController {
                   borderRadius: BorderRadius.all(Radius.circular(18.0)),
                   clipBehavior: Clip.hardEdge,
                 );
-                Text("no");
               }
           }
         });
@@ -471,31 +470,48 @@ class ProductChatController {
   }
 
   void reConnectProductChat(String chatId, String friendId, String sendTime) {
-    DatabaseReference productChatFriendRefernce =
+    DatabaseReference productChatFriendUidRefernce =
         productChatReference.child(chatId).child("chatUsers").child(friendId);
     Map<String, dynamic> friendConnectState;
-    productChatFriendRefernce.once().then((DataSnapshot snapshot) {
+    productChatFriendUidRefernce.once().then((DataSnapshot snapshot) {
       if (snapshot.value['hide'] == true) {
         print("proChatContro ${snapshot.value['hide']}");
-        print("proChatContro ${snapshot.value['uid']}");
+        print("proChatContro ${snapshot.value['friendUid']}");
         friendConnectState = {
           "hide": false,
           "connectTime": sendTime,
         };
-        productChatFriendRefernce.update(friendConnectState);
+        productChatFriendUidRefernce.update(friendConnectState);
+      }
+    });
+    DatabaseReference productChatMyUidRefernce = productChatReference
+        .child(chatId)
+        .child("chatUsers")
+        .child(googleSignIn.currentUser.id);
+    Map<String, dynamic> myConnectState;
+    productChatMyUidRefernce.once().then((DataSnapshot snapshot) {
+      if (snapshot.value['hide'] == true) {
+        print("proChatContro ${snapshot.value['hide']}");
+        print("proChatContro ${snapshot.value['friendUid']}");
+        myConnectState = {
+          "hide": false,
+          "connectTime": sendTime,
+        };
+        productChatMyUidRefernce.update(myConnectState);
       }
     });
   }
 
   void exitProductChat(String chatId) {
-    print("채팅방 나가기. hide = true, currentTime = 0");
+    print("채팅방 나가기. hide = true, currentTime = 나간시간");
+    String exitTime = DateTime.now().millisecondsSinceEpoch.toString();
     productChatReference
         .child(chatId)
         .child("chatUsers")
         .child(googleSignIn.currentUser.id)
         .update({
       "hide": true,
-      "connectTime": 0,
+      "connectTime": exitTime,
       //"111357489031227818227": true,
     });
   }

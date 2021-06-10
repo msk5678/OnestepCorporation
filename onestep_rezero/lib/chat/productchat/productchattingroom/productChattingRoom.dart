@@ -295,8 +295,8 @@ class _LastChatState extends State<ChatScreen> {
     //RealTime
 
     productChatReference
-        .orderByChild("chatUsers/${googleSignIn.currentUser.id}/hide")
-        .equalTo(false)
+        .orderByChild("chatUsers/${googleSignIn.currentUser.id}/friendUid")
+        .equalTo(friendId)
         .once()
         .then((DataSnapshot snapshot) {
       if (snapshot.value == null) {
@@ -370,7 +370,6 @@ class _LastChatState extends State<ChatScreen> {
     existChattingRoom = false;
 
     checkExistChattingRoom(); //1. 채팅방 생성 여부 확인
-    print("2. $chatId");
     print("getc init $connectTime");
   }
 
@@ -578,9 +577,9 @@ class _LastChatState extends State<ChatScreen> {
               stream: productChatReference
                   .child('$chatId/message')
                   .orderByChild("sendTime")
-                  .startAt(null) //my connectTime 이상 메세지만 가져옴
+                  .startAt(connectTime) //null or connectTime
                   //.equalTo("1621496441639")
-                  .onValue, //조건1.  타임스탬프 기준
+                  .onValue,
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 switch (snapshot.connectionState) {
                   case ConnectionState.waiting:
