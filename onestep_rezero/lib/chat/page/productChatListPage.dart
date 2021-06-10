@@ -8,6 +8,7 @@ import 'package:onestep_rezero/chat/productchat/model/productChatListCount.dart'
 import 'package:onestep_rezero/chat/widget/chatBadge.dart';
 import 'package:onestep_rezero/chat/widget/chat_list_time.dart';
 import 'package:onestep_rezero/main.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductChatListPage extends StatefulWidget {
   // static List<Asset> imageList = List<Asset>();
@@ -220,7 +221,7 @@ class _ProductChatListPageState extends State<ProductChatListPage>
                                 listProductChat[index].chatUsers.user2Uid
                             : productsUserId =
                                 listProductChat[index].chatUsers.user1Uid;
-
+                        String chatId = listProductChat[index].chatId;
                         // print(
                         //     "##dd pro $productsUserId : '${listProductChat[index].chatId.toString()}/message'");
 
@@ -231,10 +232,11 @@ class _ProductChatListPageState extends State<ProductChatListPage>
                         //         "같음 pro Id : $productsUserId // 108438757310040285856")
                         //     : print(
                         //         "다름 pro Id : $productsUserId !// 108438757310040285856");
+                        // ProductChatController().getChatUserPhotoUrl(chatId);
                         return ListTile(
                           leading: Material(
                             child: ProductChatController()
-                                .getUserImage(productsUserId),
+                                .getUserImage(chatId, productsUserId),
                             borderRadius:
                                 BorderRadius.all(Radius.circular(6.0)),
                             clipBehavior: Clip.hardEdge,

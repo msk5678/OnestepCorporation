@@ -7,6 +7,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/product/models/product.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductChatController {
   //Product Chat Count
@@ -93,7 +94,54 @@ class ProductChatController {
     return FirebaseFirestore.instance.collection('user').doc(proUserId).get();
   }
 
-  FutureBuilder getUserImage(String proUserId) {
+  _setChatUserimageUrl(String chatId, String imageUrl) async {
+    print("1. 유저 이미지 내부 저장");
+    SharedPreferences prefsChatUserImageUrls =
+        await SharedPreferences.getInstance();
+    await prefsChatUserImageUrls.setString(chatId, imageUrl);
+  }
+
+  getChatUserimageUrl(String chatId) async {
+    String imageUrl;
+    SharedPreferences prefsChatUserPhotoUrls =
+        await SharedPreferences.getInstance();
+    imageUrl = prefsChatUserPhotoUrls.getString(chatId);
+    print("2. 내부 db 값 : GetChatUserPhotoUrl : $imageUrl");
+
+    return imageUrl;
+  }
+
+  FutureBuilder getUserImagetoChatroom(String chatId) {
+    return FutureBuilder(
+        future: getChatUserimageUrl(chatId),
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+              return CircularProgressIndicator();
+            default:
+              if (snapshot.hasData == false) {
+                print("YES ${snapshot.data.toString()}");
+                return CircularProgressIndicator();
+              } else {
+                print("No ${snapshot.data.toString()}");
+                return Material(
+                  child: CachedNetworkImage(
+                    imageUrl: snapshot.data,
+                    // productMessage.content.imageUrl,
+                    fit: BoxFit.cover,
+                    height: 40,
+                    width: 40,
+                  ),
+                  borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                  clipBehavior: Clip.hardEdge,
+                );
+                Text("no");
+              }
+          }
+        });
+  }
+
+  FutureBuilder getUserImage(String chatId, String proUserId) {
     return FutureBuilder(
       future: getUserId(proUserId),
       builder: (context, snapshot) {
@@ -123,6 +171,8 @@ class ProductChatController {
                 ),
               );
             } else {
+              _setChatUserimageUrl(chatId, snapshot.data['imageUrl']);
+              print("1. 가져온 url  : ${snapshot.data['imageUrl']}");
               return Column(
                 children: [
                   Expanded(
