@@ -1,13 +1,11 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'dart:io' as io;
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
-
 import 'package:image_picker/image_picker.dart';
+import 'package:onestep_rezero/login/pages/authWaitPage.dart';
 import 'package:onestep_rezero/main.dart';
 import 'package:random_string/random_string.dart';
-
 import '../../sendMail.dart';
 
 String downloadURL = "";
@@ -25,7 +23,9 @@ void _showDialog(BuildContext context) {
           ElevatedButton(
             child: Text("확인"),
             onPressed: () {
-              Navigator.of(context).popUntil((route) => route.isFirst);
+              Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => AuthWaitPage()));
+              // Navigator.of(context).popUntil((route) => route.isFirst);
             },
           ),
         ],
@@ -116,7 +116,8 @@ class _LoginCertificatePageState extends State<LoginCertificatePage> {
                 onPressed: _image != null
                     ? () async {
                         _showDialog(context);
-                        // 증명서 storage 저장
+                        // // 증명서 storage 저장
+                        // 추후에 웹 개발되면 연동해야하는 부분 같아서 일단 보류
                         // String ramdomNum = randomAlphaNumeric(15);
                         // firebase_storage.Reference ref = firebase_storage
                         //     .FirebaseStorage.instance
@@ -130,11 +131,13 @@ class _LoginCertificatePageState extends State<LoginCertificatePage> {
                         //       sendCertificateAuth(downloadURL, ramdomNum)
                         //     });
 
-                        // 여기서 authTime이랑, university랑 업데이트 시켜줘야하는지 아니면 인증서 확인하고 다른데서 update 시켜줘야하는지 생각
                         // FirebaseFirestore.instance
                         //     .collection("user")
                         //     .doc(googleSignIn.currentUser.id)
                         //     .update({"auth": 1});
+
+                        // Navigator.of(context).push(MaterialPageRoute(
+                        //     builder: (context) => AuthWaitPage()));
                       }
                     : null,
                 child: Container(

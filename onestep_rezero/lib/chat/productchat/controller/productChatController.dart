@@ -1,10 +1,10 @@
-import 'package:async/async.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/product/models/product.dart';
 
@@ -147,18 +147,18 @@ class ProductChatController {
     );
   }
 
-  final AsyncMemoizer _memoizer = AsyncMemoizer();
+  // final AsyncMemoizer _memoizer = AsyncMemoizer();
 
-  _fetchData(String proUserId) {
-    return this._memoizer.runOnce(() async {
-      return await FirebaseFirestore.instance
-          .collection('user')
-          .doc(proUserId)
-          .get();
-    });
-  }
+  // _fetchData(String proUserId) {
+  //   return this._memoizer.runOnce(() async {
+  //     return await FirebaseFirestore.instance
+  //         .collection('user')
+  //         .doc(proUserId)
+  //         .get();
+  //   });
+  // }
 
-  FutureBuilder getProductUserNickName(String proUserId) {
+  FutureBuilder getProductUserNickName(String proUserId, double fontSize) {
     return FutureBuilder(
       future: getUserId(proUserId),
       //_fetchData(proUserId),
@@ -175,14 +175,14 @@ class ProductChatController {
               print("nick 에러.");
               return Text(
                 'Error: ${snapshot.error}',
-                style: TextStyle(fontSize: 15),
+                style: TextStyle(fontSize: fontSize), //15
               );
             } else if (snapshot.data['nickName'] == "") {
               return Text("닉오류");
             } else {
               return AutoSizeText(
                 snapshot.data.data()['nickName'],
-                style: TextStyle(fontSize: 15),
+                style: TextStyle(fontSize: fontSize), //15
                 minFontSize: 10,
                 stepGranularity: 10,
                 maxLines: 1,
@@ -222,7 +222,7 @@ class ProductChatController {
               return Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(8, 4, 0, 0),
+                    padding: const EdgeInsets.fromLTRB(12, 12, 0, 8),
                     child: Row(
                       children: <Widget>[
                         // Material(
@@ -239,30 +239,46 @@ class ProductChatController {
                         Material(
                           child: CachedNetworkImage(
                             imageUrl: snapshot.data['imagesUrl'][0],
-                            width: 55,
-                            height: 55,
+                            width: 35,
+                            height: 35,
                             fit: BoxFit.cover,
                           ),
-                          borderRadius: BorderRadius.all(Radius.circular(6.0)),
+                          //borderRadius: BorderRadius.all(Radius.circular(6.0)),
                           clipBehavior: Clip.hardEdge,
                         ),
                         SizedBox(
                           width: 10,
                           height: 10,
                         ),
-                        Column(
-                          children: <Widget>[
-                            Text(snapshot.data['title']),
-                            Text(snapshot.data['price']),
-                          ],
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 0, 0, 5),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                snapshot.data['title'],
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 3,
+                              ),
+                              Text(
+                                snapshot.data['price'],
+                                style: TextStyle(fontSize: 10),
+                              ),
+                            ],
+                          ),
                         )
                       ],
                     ),
                   ),
                   Divider(
-                    color: Colors.black,
-                    height: 10,
-                    thickness: 1,
+                    color: OnestepColors().mainColor,
+                    height: 7,
+                    thickness: 2,
                   ),
                 ],
               );
@@ -298,7 +314,10 @@ class ProductChatController {
     //type = 2 its sticker image
     //contentMsg.characters;
     var content;
-    if (contentMsg != null) {
+    if (contentMsg == "" || contentMsg == null) {
+      Fluttertoast.showToast(msg: 'Empty Message. Can not be send.');
+      return false;
+    } else if (contentMsg != null) {
       if (contentMsg.runtimeType == Product) {
         print(
             "proChatController-onSendToProductMessage 2-1. contentMsg type이 product이면 map형식 생성");
@@ -428,5 +447,85 @@ class ProductChatController {
       "connectTime": 0,
       //"111357489031227818227": true,
     });
+  }
+
+  StreamBuilder getTotalChatCountInBottomBar() {
+    return StreamBuilder<DocumentSnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('user')
+            .doc(googleSignIn.currentUser.id.toString())
+            .collection("chatCount")
+            .doc(googleSignIn.currentUser.id.toString())
+            .snapshots(),
+        builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          //return Text("dd");
+          // if (snapshot == null) {
+          //   return Text("d");
+          // } else
+          if (snapshot.hasData) {
+            print(snapshot.data.toString());
+          } else
+            return Text("error");
+
+          if (snapshot.data.data()['productChatCount'] == 0 &&
+              snapshot.data.data()['boardChatCount'] == 0) {
+            return Stack(
+              children: [
+                new Icon(
+                  Icons.notifications_none,
+                  size: 25,
+                  color: Colors.black,
+                ),
+                Positioned(
+                  top: 1,
+                  right: 1,
+                  child: Stack(
+                    children: [
+                      Container(
+                        width: 15,
+                        height: 15,
+                        decoration: BoxDecoration(),
+                        child: Center(
+                          child: Text(""),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            );
+          } else if (snapshot.data.data()['productChatCount'] > 0 ||
+              snapshot.data.data()['boardChatCount'] > 0) {
+            return Stack(
+              children: [
+                new Icon(
+                  Icons.notifications_none,
+                  size: 25,
+                  color: Colors.black,
+                ),
+                Positioned(
+                  top: 1,
+                  right: 1,
+                  child: Stack(
+                    children: [
+                      Container(
+                        width: 10,
+                        height: 10,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: OnestepColors().secondColor, //red??
+                        ),
+                        child: Center(
+                          child: Text(""),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            );
+          }
+          return Container();
+        });
   }
 }

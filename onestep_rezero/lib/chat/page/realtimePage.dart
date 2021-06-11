@@ -4,8 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:onestep_rezero/chat/boardchat/model/productChat.dart';
 import 'package:onestep_rezero/chat/boardchat/model/productChatCount.dart';
 import 'package:onestep_rezero/chat/boardchat/realtimeProductChatController.dart';
-import 'package:onestep_rezero/chat/controller/realtimeNavigationManager.dart';
-import 'package:onestep_rezero/chat/productchat/controller/productChatController.dart';
+import 'package:onestep_rezero/chat/navigator/chatNavigationManager.dart';
 import 'package:onestep_rezero/chat/widget/chatBadge.dart';
 import 'package:onestep_rezero/chat/widget/chat_list_time.dart';
 import 'package:onestep_rezero/main.dart';
@@ -278,7 +277,7 @@ class _RealTimePageState extends State<RealTimePage>
                             ),
                           ),
                           onTap: () {
-                            RealTimeChatNavigationManager
+                            ChatNavigationManager
                                 .navigateToRealTimeChattingRoom(
                               context,
                               listProductChat[index].user1,
@@ -309,201 +308,28 @@ class _RealTimePageState extends State<RealTimePage>
   //   widget.product.firestoreid,
   // );
 
-  Widget _buildChatListStream() {
-    bool userExist = false;
-    return StreamBuilder(
-      stream: databasereference
-          //.orderByChild("boardtype")
-          //.equalTo("22번")
-          .onValue, //조건1.  타임스탬프 기준
-
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if (snapshot.hasData) {
-          listProductChat.clear(); //리스트 클리어
-          DataSnapshot dataValues = snapshot.data.snapshot;
-          Map<dynamic, dynamic> values = dataValues.value;
-          print("##StrTest" + values.toString());
-          values.forEach((key, values) {
-            if (values['users'][0] == '유저11' || values['users'][1] == '유저11') {
-              userExist = true;
-              listProductChat
-                  .add(ProductChat.forMapSnapshot(values)); //조건2. 유저 포함된 것만 저장
-            }
-            print("##stream length${listProductChat.length.toString()}");
-            print(values.runtimeType);
-            print("##stream length${values.toString()}");
-
-            // print("##stream ${values.toString()}");
-            // print("##stream value${values['boardtype'].toString()}");
-
-            // print("##stream 언제찍힘? 1" + dss[0].boardType);
-            //return Text("시발");
-            // return Column(
-            //   children: [
-            //     Text(values['boardtype'].toString()),
-            //     Text(values['users'].toString()),
-            //     // Text(listProductChat[index].key.toString() + "$index"),
-            //     // Text("기여운 깡통유저 : " + snapshot.value['users'][0]),
-            //     // Text(snapshot.value['users'][1]),
-            //     // Text(snapshot2.data.toString()),
-            //     SizedBox(
-            //       height: 10,
-            //       width: 10,
-            //     ),
-            //   ],
-            // );
-          });
-
-          listProductChat.sort(
-              (a, b) => a.boardType.compareTo(b.boardType)); //정렬3. 시간 순 정렬 가능.
-          return userExist == true
-              ? ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: listProductChat.length,
-                  itemBuilder: (context, index) {
-                    return Card(
-                      child: Column(
-                        children: <Widget>[
-                          Text(listProductChat[index].boardType.toString()),
-                          Text(listProductChat[index].postId.toString()),
-                        ],
-                      ),
-                    );
-                  },
-                )
-              : Text("생성된 채팅방이 없습니다. . !");
-        } else
-          return Text(
-              "데이터 없음데이터 없음데이터 없음데이터 없음데이터 없음데이터 없음데이터 없음데이터 없음데이터 없음데이터 없음");
-      },
-    );
-  }
-
-  void initData() {
-    productChat.boardType = "2번";
-    productChat.postId = 'ㅇㄶㅁㄴㅇㅎ';
-    productChat.productImage = '경로없음';
-    productChat.recentText = '7번 추가';
-    productChat.title = '제목';
-    productChat.timeStamp = '내일';
-    productChat.user1 = '유저11';
-    productChat.user2 = '유저22';
-    //productChat.users = ['멀티1', '멀티2'];
-    print("리얼타임 이니트");
-  }
-
-  Widget _buildsave(var context) {
-    return Stack(
-      alignment: Alignment.center,
-      children: <Widget>[
-        IconButton(
-            icon: Icon(Icons.save),
-            onPressed: () {
-              initData();
-            }),
-        Positioned(
-          top: 12.0,
-          right: 10.0,
-          width: 10.0,
-          height: 10.0,
-          child: Container(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              //color: AppColors.notification,
-            ),
-          ),
-        )
-      ],
-    );
-  }
-
-  Widget _buildload(var context) {
-    return Stack(
-      alignment: Alignment.center,
-      children: <Widget>[
-        IconButton(
-            icon: Icon(Icons.read_more),
-            onPressed: () {
-              productChat.load();
-              print("불러오기");
-            }),
-        Positioned(
-          top: 12.0,
-          right: 10.0,
-          width: 10.0,
-          height: 10.0,
-          child: Container(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              //color: AppColors.notification,
-            ),
-          ),
-        )
-      ],
-    );
-  }
-
-  Widget _buildupdate(var context) {
-    return Stack(
-      alignment: Alignment.center,
-      children: <Widget>[
-        IconButton(
-            icon: Icon(Icons.read_more),
-            onPressed: () {
-              setState(() {
-                var t = {"boardtype": "멀티 3"};
-                FirebaseDatabase.instance
-                    .reference()
-                    .child("path")
-                    .child("testSS_Mul3번")
-                    .update(t);
-                print("수정하기");
-              });
-            }),
-        Positioned(
-          top: 12.0,
-          right: 10.0,
-          width: 10.0,
-          height: 10.0,
-          child: Container(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              //color: AppColors.notification,
-            ),
-          ),
-        )
-      ],
-    );
-  }
-
-  Widget _buildjson(var context) {
-    return Stack(
-      alignment: Alignment.center,
-      children: <Widget>[
-        IconButton(
-            icon: Icon(Icons.ac_unit),
-            onPressed: () {
-              //productChat.toJson();
-              print("JSON 실행");
-              productChat.createChat("testSS_Mul3");
-//              database.child("test").set(productChat.toJson());
-
-              //print(productChat.toJson());
-              print("JSON");
-            }),
-        Positioned(
-          top: 12.0,
-          right: 10.0,
-          width: 10.0,
-          height: 10.0,
-          child: Container(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              //color: AppColors.notification,
-            ),
-          ),
-        )
-      ],
-    );
-  }
+  // Widget _buildsave(var context) {
+  //   return Stack(
+  //     alignment: Alignment.center,
+  //     children: <Widget>[
+  //       IconButton(
+  //           icon: Icon(Icons.save),
+  //           onPressed: () {
+  //             initData();
+  //           }),
+  //       Positioned(
+  //         top: 12.0,
+  //         right: 10.0,
+  //         width: 10.0,
+  //         height: 10.0,
+  //         child: Container(
+  //           decoration: BoxDecoration(
+  //             shape: BoxShape.circle,
+  //             //color: AppColors.notification,
+  //           ),
+  //         ),
+  //       )
+  //     ],
+  //   );
+  // }
 }

@@ -1,17 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart' as foundation;
+import 'package:onestep_rezero/board/AboutPost/AboutPostContent/postContent.dart';
+// import 'package:flutter/foundation.dart' as foundation;
 import 'package:onestep_rezero/board/AboutPost/AboutPostListView/postListMain.dart';
 import 'package:onestep_rezero/board/AboutPost/createPost.dart';
-import 'package:onestep_rezero/board/AboutPost/postContent.dart';
-import 'package:onestep_rezero/board/boardCreate.dart';
+import 'package:onestep_rezero/board/AboutBoard/boardCreate.dart';
 import 'package:page_transition/page_transition.dart';
 
 import 'package:path/path.dart' as p;
 
 class RouteGenerator {
-  static bool _isIOS =
-      foundation.defaultTargetPlatform == foundation.TargetPlatform.iOS;
+  // static bool _isIOS =
+  //     foundation.defaultTargetPlatform == foundation.TargetPlatform.iOS;
   static Route<dynamic> generateRoute(RouteSettings settings) {
     assert(settings.name.indexOf("/") == 0,
         "[ROUTER] routing MUST Begin with '/'");
@@ -31,7 +31,6 @@ class RouteGenerator {
     var _pageName = _pathParams.isNotEmpty ? _pathParams.first : null;
     Widget _pageWidget;
     //example:
-    print("settings.name : " + settings.name.toString());
     //case에는 /를 제외하고 원하는 이름으로 설정, pushNamed할 때는 /를 포함하여 자신이 설정한 이름으로 불러옴.
     switch (_pageName) {
       case 'PostList':
@@ -64,12 +63,16 @@ class RouteGenerator {
             type: PageTransitionType.fade);
         break;
     }
-    return _isIOS
-        ? CupertinoPageRoute(
-            builder: (context) => _pageWidget,
-            settings: RouteSettings(name: settings.name.toString()))
-        : MaterialPageRoute(
-            builder: (context) => _pageWidget,
-            settings: RouteSettings(name: settings.name.toString()));
+    return PageTransition(
+        child: _pageWidget,
+        type: PageTransitionType.fade,
+        settings: RouteSettings(name: settings.name.toString()));
+    // return _isIOS
+    //     ? CupertinoPageRoute(
+    //         builder: (context) => _pageWidget,
+    //         settings: RouteSettings(name: settings.name.toString()))
+    //     : MaterialPageRoute(
+    //         builder: (context) => _pageWidget,
+    //         settings: RouteSettings(name: settings.name.toString()));
   }
 }
