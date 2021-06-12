@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/product/models/categoryItem.dart';
+import 'package:onestep_rezero/product/pages/categoryDetail.dart';
 
 final categoryStateProvider = StateProvider<bool>((ref) {
   return false;
@@ -66,9 +68,56 @@ class ProductMainHeader extends ConsumerWidget {
     );
   }
 
+  Widget categoryItem(QueryDocumentSnapshot data) {
+    return Column(
+      children: <Widget>[
+        Padding(
+            padding: EdgeInsets.only(bottom: 5.0),
+            child: Image.asset(data['image'], width: 45, height: 45)),
+        Text(data.id, style: TextStyle(fontSize: 12)),
+      ],
+    );
+  }
+
   Widget header(BuildContext context) {
-    categoryList
-        .then((value) => print("@@@@@@#### 카테고리 갯수 : ${value.docs.length}"));
+    Map<String, dynamic> a;
+
+    return FutureBuilder(
+        future: categoryList,
+        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+              return Container();
+            default:
+              return GridView.builder(
+                  physics: NeverScrollableScrollPhysics(),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 5,
+                    childAspectRatio:
+                        (MediaQuery.of(context).size.width * 0.0025),
+                    crossAxisSpacing: 1.0,
+                  ),
+                  shrinkWrap: true,
+                  itemCount: snapshot.data.docs.length,
+                  itemBuilder: (context, index) {
+                    return InkWell(
+                      splashColor: Colors.red,
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => CategoryDetail(
+                              category: snapshot.data.docs[index].id,
+                              detailCategory: snapshot.data.docs[index]
+                                  ['detail'],
+                            ),
+                          ),
+                        );
+                      },
+                      child: categoryItem(snapshot.data.docs[index]),
+                    );
+                  });
+          }
+        });
 
     return GridView(
       physics: NeverScrollableScrollPhysics(),

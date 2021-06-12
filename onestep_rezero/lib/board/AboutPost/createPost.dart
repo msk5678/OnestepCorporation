@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:multi_image_picker2/multi_image_picker2.dart';
 import 'package:onestep_rezero/board/declareData/boardData.dart';
-import 'package:sliding_up_panel/sliding_up_panel.dart';
+
 import 'package:onestep_rezero/board/declareData/postData.dart';
 import 'package:onestep_rezero/board/permissionLib.dart';
 import 'package:onestep_rezero/board/TipDialog/tip_dialog.dart';
@@ -59,7 +59,6 @@ abstract class _CreatePageParent<T extends StatefulWidget> extends State<T>
   TextEditingController textEditingControllerImage3;
   TextEditingController textEditingControllerImage4;
   TextEditingController textEditingControllerImage5;
-  PanelController panelController;
 
   ScrollController _scrollController;
   BoardData currentBoardData;
@@ -95,7 +94,6 @@ abstract class _CreatePageParent<T extends StatefulWidget> extends State<T>
     SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
     textEditingInitNDispose(true);
     _scrollController = new ScrollController();
-    panelController = new PanelController();
   }
 
   @override
@@ -116,115 +114,118 @@ abstract class _CreatePageParent<T extends StatefulWidget> extends State<T>
 
   @override
   Widget build(BuildContext context) {
-    print("CreatePost AssetThumb change to ConvertImages ");
+    // print("CreatePost AssetThumb change to ConvertImages ");
     return Stack(
       children: <Widget>[
         Scaffold(
           body: WillPopScope(
-              onWillPop: () {
-                _isDataContain()
-                    ? Navigator.pop(context)
-                    : _navigatorPopAlertDialog();
+            onWillPop: () {
+              _isDataContain()
+                  ? Navigator.pop(context)
+                  : _navigatorPopAlertDialog();
+            },
+            child: GestureDetector(
+              onTap: () {
+                FocusScope.of(context).requestFocus(FocusNode());
               },
-              child: GestureDetector(
-                onTap: () {
-                  FocusScope.of(context).requestFocus(FocusNode());
-                },
-                child: Scaffold(
-                  key: _scaffoldKey,
-                  body: SlidingUpPanel(
-                    controller: panelController,
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(10.0),
-                        topRight: Radius.circular(10.0)),
-                    minHeight: device_height / 30,
-                    maxHeight: device_height / 2.5,
-                    panel: Column(
-                      children: [
-                        //Slider Gesture Widget
-                        Center(
-                            child: Container(
-                                margin: EdgeInsets.only(top: 5),
-                                height: device_height / 130,
-                                width: device_width / 10,
-                                decoration: BoxDecoration(
-                                    color: Colors.grey[300],
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(5))))),
-                        StatefulBuilder(builder:
-                            (BuildContext context, StateSetter setState) {
-                          return Container(
-                            margin: EdgeInsets.only(left: 5, right: 5, top: 20),
-                            child: Column(children: [
-                              Container(
-                                  child: Column(
-                                children: [
-                                  Container(
-                                      child: TextField(
-                                    maxLength: 30,
-                                    onSubmitted: (value) {
-                                      if (_category != null)
-                                        panelController.close();
-                                    },
-                                    controller:
-                                        textEditingControllerBottomSheet,
-                                    decoration: InputDecoration(
-                                        border: OutlineInputBorder(),
-                                        labelText: "제목"),
-                                  )),
-                                  Text(
-                                    "앤터를 누르면 글쓰기 화면으로 전환됩니다.",
-                                    style: TextStyle(color: Colors.grey),
-                                  ),
-                                ],
-                              )),
-                              RadioListTile(
-                                  title: Text("일상"),
-                                  value: ContentCategory.SMALLTALK,
-                                  groupValue: _category,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _category = value;
-                                    });
-                                  }),
-                              RadioListTile(
-                                  title: Text("질문"),
-                                  value: ContentCategory.QUESTION,
-                                  groupValue: _category,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _category = value;
-                                    });
-                                  }),
-                            ]),
-                          );
-                        }),
-                      ],
-                    ),
-                    body: SafeArea(
-                      minimum: const EdgeInsets.all(16.0),
-                      child: Padding(
-                        padding: EdgeInsets.only(
-                            bottom: MediaQuery.of(context).viewInsets.bottom),
-                        child: SingleChildScrollView(
-                          controller: _scrollController,
-                          child: Column(
-                            children: <Widget>[
-                              firstContainer(),
-                              displayCurrentBoard(),
-                              secondContainer(),
-                              thirdContainer(),
-                              SizedBox(
-                                height: device_height / 15,
-                              ),
-                            ],
-                          ),
+              child:
+                  // Scaffold(
+                  //   key: _scaffoldKey,
+                  //   body: SlidingUpPanel(
+                  //     controller: panelController,
+                  //     borderRadius: BorderRadius.only(
+                  //         topLeft: Radius.circular(10.0),
+                  //         topRight: Radius.circular(10.0)),
+                  //     minHeight: device_height / 30,
+                  //     maxHeight: device_height / 2.5,
+                  //     panel: Column(
+                  //       children: [
+                  //         //Slider Gesture Widget
+                  //         Center(
+                  //             child: Container(
+                  //                 margin: EdgeInsets.only(top: 5),
+                  //                 height: device_height / 130,
+                  //                 width: device_width / 10,
+                  //                 decoration: BoxDecoration(
+                  //                     color: Colors.grey[300],
+                  //                     borderRadius:
+                  //                         BorderRadius.all(Radius.circular(5))))),
+                  //         StatefulBuilder(builder:
+                  //             (BuildContext context, StateSetter setState) {
+                  //           return Container(
+                  //             margin: EdgeInsets.only(left: 5, right: 5, top: 20),
+                  //             child: Column(children: [
+                  //               Container(
+                  //                   child: Column(
+                  //                 children: [
+                  //                   Container(
+                  //                       child: TextField(
+                  //                     maxLength: 30,
+                  //                     onSubmitted: (value) {
+                  //                       if (_category != null)
+                  //                         panelController.close();
+                  //                     },
+                  //                     controller:
+                  //                         textEditingControllerBottomSheet,
+                  //                     decoration: InputDecoration(
+                  //                         border: OutlineInputBorder(),
+                  //                         labelText: "제목"),
+                  //                   )),
+                  //                   Text(
+                  //                     "앤터를 누르면 글쓰기 화면으로 전환됩니다.",
+                  //                     style: TextStyle(color: Colors.grey),
+                  //                   ),
+                  //                 ],
+                  //               )),
+                  //               RadioListTile(
+                  //                   title: Text("일상"),
+                  //                   value: ContentCategory.SMALLTALK,
+                  //                   groupValue: _category,
+                  //                   onChanged: (value) {
+                  //                     setState(() {
+                  //                       _category = value;
+                  //                     });
+                  //                   }),
+                  //               RadioListTile(
+                  //                   title: Text("질문"),
+                  //                   value: ContentCategory.QUESTION,
+                  //                   groupValue: _category,
+                  //                   onChanged: (value) {
+                  //                     setState(() {
+                  //                       _category = value;
+                  //                     });
+                  //                   }),
+                  //             ]),
+                  //           );
+                  //         }),
+                  //       ],
+                  //     ),
+                  // body:
+                  SafeArea(
+                minimum: const EdgeInsets.all(16.0),
+                child: Padding(
+                  padding: EdgeInsets.only(
+                      bottom: MediaQuery.of(context).viewInsets.bottom),
+                  child: SingleChildScrollView(
+                    controller: _scrollController,
+                    child: Column(
+                      children: <Widget>[
+                        firstContainer(),
+                        displayCurrentBoard(),
+                        setPostName(),
+                        secondContainer(),
+                        thirdContainer(),
+                        SizedBox(
+                          height: device_height / 15,
                         ),
-                      ),
+                      ],
                     ),
                   ),
                 ),
-              )),
+              ),
+            ),
+          ),
+          // )),
         ),
         TipDialogContainer(duration: const Duration(seconds: 2))
       ],
@@ -233,6 +234,7 @@ abstract class _CreatePageParent<T extends StatefulWidget> extends State<T>
 
   displayCurrentBoard() {
     return Container(
+        margin: EdgeInsets.only(top: 10),
         alignment: Alignment.centerLeft,
         child: Row(
           children: [
@@ -245,13 +247,46 @@ abstract class _CreatePageParent<T extends StatefulWidget> extends State<T>
         ));
   }
 
+  setPostName() {
+    return Container(
+      margin: EdgeInsets.only(top: 10),
+      height: device_height / 20,
+      child: TextField(
+        controller: textEditingControllerBottomSheet,
+        decoration: InputDecoration(
+          border: OutlineInputBorder(),
+          labelText: '제목을 입력하세요.',
+        ),
+      ),
+    );
+    // return GestureDetector(
+    //   onTap: () async {
+    //     // if (panelController.isPanelOpen) {
+    //     //   panelController.close();
+    //     //   FocusScope.of(context).unfocus();
+    //     // } else
+    //     //   panelController.open();
+    //   },
+    //   child: Container(
+    //     child: Text(
+    //       textEditingControllerBottomSheet.text == ''
+    //           ? "제목을 입력하세요."
+    //           : textEditingControllerBottomSheet.text,
+    //       maxLines: 1,
+    //       overflow: TextOverflow.ellipsis,
+    //       style: TextStyle(fontSize: 15),
+    //     ),
+    //   ),
+    // );
+  }
+
   firstContainer() {
-    TextStyle _textStyle =
-        TextStyle(color: Colors.black, fontWeight: FontWeight.bold);
+    TextStyle _textStyle = TextStyle(
+        color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16);
     return Container(
       padding: EdgeInsets.only(top: 15),
-      decoration: BoxDecoration(
-          border: Border(bottom: BorderSide(color: Colors.grey, width: 1.0))),
+      // decoration: BoxDecoration(
+      //     border: Border(bottom: BorderSide(color: Colors.grey, width: 1.0))),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -265,27 +300,6 @@ abstract class _CreatePageParent<T extends StatefulWidget> extends State<T>
               child: Container(
                 child: Text(
                   "취소",
-                  style: _textStyle,
-                ),
-              ),
-            ),
-          ),
-          Flexible(
-            child: GestureDetector(
-              onTap: () async {
-                if (panelController.isPanelOpen) {
-                  panelController.close();
-                  FocusScope.of(context).unfocus();
-                } else
-                  panelController.open();
-              },
-              child: Container(
-                child: Text(
-                  textEditingControllerBottomSheet.text == ''
-                      ? "제목을 입력하세요."
-                      : textEditingControllerBottomSheet.text,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
                   style: _textStyle,
                 ),
               ),
@@ -369,9 +383,6 @@ abstract class _CreatePageParent<T extends StatefulWidget> extends State<T>
     return Container(
       padding: EdgeInsets.symmetric(vertical: 8.0),
       child: TextField(
-        onTap: () {
-          if (panelController.isPanelOpen) panelController.close();
-        },
         controller: textEditingControllerContent,
         minLines: 20,
         maxLines: null,

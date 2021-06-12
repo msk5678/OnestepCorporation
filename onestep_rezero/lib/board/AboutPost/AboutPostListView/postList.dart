@@ -4,47 +4,25 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:onestep_rezero/board/AboutPost/AboutPostListView/listRiverpod.dart';
 
-import 'package:onestep_rezero/board/StateManage/Provider/postListProvider.dart';
+// import 'package:onestep_rezero/board/StateManage/Provider/postListProvider.dart';
 import 'package:onestep_rezero/board/declareData/categoryManageClass.dart';
 import 'package:onestep_rezero/board/declareData/postData.dart';
+import 'package:onestep_rezero/timeUtil.dart';
 
-abstract class AbstractPostListView extends ConsumerWidget {
-  List<PostData> postList;
+class PostList extends ConsumerWidget {
+  final List<PostData> postList;
+  PostList({this.postList});
   double deviceHeight;
   double deviceWidth;
 
-  // firstColumnLine(postData);
-  // secondColumnLine(postData);
-  // thirdColumnLine(postData);
-  setPostList();
-  setDeviceHeightWidth(context);
-}
-
-class PostList extends AbstractPostListView {
-  List<PostData> postlist;
-
-  PostList({this.postlist});
-  @override
-  setDeviceHeightWidth(context) {
-    deviceHeight = MediaQuery.of(context).size.height;
-    deviceWidth = MediaQuery.of(context).size.width;
-  }
-
-  @override
-  setPostList() {
-    postList = postlist;
-  }
-
   @override
   Widget build(BuildContext context, ScopedReader watch) {
-    setPostList();
-    setDeviceHeightWidth(context);
-    // @override
-    // Widget build(BuildContext context) {
+    deviceHeight = MediaQuery.of(context).size.height;
+    deviceWidth = MediaQuery.of(context).size.width;
     return Container(
       child: AnimationLimiter(
         child: ListView.builder(
-          key: PageStorageKey<String>("value"),
+          key: PageStorageKey<String>("commentList"),
           physics: NeverScrollableScrollPhysics(),
           shrinkWrap: true,
           itemCount: postList.length,
@@ -63,38 +41,6 @@ class PostList extends AbstractPostListView {
         ),
       ),
     );
-
-    // setDeviceHeightWidth(context);
-    // setPostList();
-    // Widget scaffoldBody;
-    // if (postList != null) {
-    //   if (postList.isNotEmpty) {
-    //     scaffoldBody = Container(
-    //         child: ListView.builder(
-    // physics: NeverScrollableScrollPhysics(),
-    // shrinkWrap: true,
-    //             //PageStorageKey is Keepping ListView scroll position when switching pageview
-    //             key: PageStorageKey<String>("value"),
-    //             //Bottom Padding
-    //             padding: const EdgeInsets.only(
-    //                 bottom: kFloatingActionButtonMargin + 60),
-    // itemCount: postList.length,
-    //             itemBuilder: (context, index) {
-    //               // final currentRow = (index + 1) ~/ FETCH_ROW;
-    //               // if (_lastRow != currentRow) {
-    //               //   _lastRow = currentRow;
-    //               // }
-    //               return _buildListCard(context, index, postList[index]);
-    //             }));
-    //   } else {
-    //     return Center(child: CupertinoActivityIndicator());
-    //   }
-    //   //This part setting
-    //   // scaffoldBody = Center(child: Text("새 게시글로 시작해보세요!"));
-    // } else {
-    //   scaffoldBody = Center(child: Text(PostListProvider().errorMessage));
-    // }
-    // return scaffoldBody;
   }
 
   Widget _buildListCard(BuildContext context, int index, var postData) {
@@ -104,6 +50,7 @@ class PostList extends AbstractPostListView {
         height: deviceHeight / 9.2,
         width: deviceWidth * 0.9,
         child: Card(
+          elevation: 0,
           child: Padding(
               padding: EdgeInsets.all(deviceHeight / 200),
               //Click Animation
@@ -147,7 +94,7 @@ class PostList extends AbstractPostListView {
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
                   color: Colors.black,
-                  fontSize: 18,
+                  fontSize: 17,
                   fontWeight: FontWeight.bold),
             )),
         // titleContainerMethod(title: postData.title ?? ""),
@@ -171,14 +118,16 @@ class PostList extends AbstractPostListView {
     // }
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Container(
           padding: EdgeInsets.only(left: deviceWidth / 50),
         ),
         Container(
             height: deviceHeight / 27 * 0.6,
+            alignment: Alignment.center,
             decoration: BoxDecoration(
-                color: Colors.grey[300],
+                color: Colors.grey[200],
                 borderRadius: BorderRadius.all(Radius.circular(3.0))),
             child: Center(
               child: Text(
@@ -190,21 +139,21 @@ class PostList extends AbstractPostListView {
               ),
             )),
         Container(
-          height: deviceHeight / 27,
-          alignment: Alignment.centerLeft,
-          child: Container(
+            height: deviceHeight / 27 * 0.6,
+            alignment: Alignment.centerLeft,
+            child: Container(
               margin: EdgeInsets.only(left: deviceWidth / 50),
               width: deviceWidth * 0.8,
               child: Text(postData.textContent ?? "",
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: Colors.black, fontSize: 13))),
-        ),
+                  style: TextStyle(color: Colors.black, fontSize: 13)),
+            )),
       ],
     );
   }
 
-  thirdColumnLine(postData) {
+  thirdColumnLine(PostData postData) {
     return Container(
         padding: EdgeInsets.only(left: deviceWidth / 50),
         child: Row(children: <Widget>[
@@ -233,7 +182,7 @@ class PostList extends AbstractPostListView {
                     fontWeight: FontWeight.bold),
               ),
               Container(
-                child: _setDateTimeText(postData.uploadTime, postData),
+                child: Text('${TimeUtil.timeAgo(date: postData.uploadTime)}'),
               ),
               Spacer(),
               Container(
@@ -251,31 +200,5 @@ class PostList extends AbstractPostListView {
             // Icon(Icons.favorite), child: Text('Date')
           )),
         ]));
-  }
-
-  _setDateTimeText(DateTime dateTime, var boardData) {
-    String resultText;
-    DateTime today = DateTime.now();
-    today =
-        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
-    DateTime setUTC9 = dateTime;
-    var _dateDifference = DateTime(setUTC9.year, setUTC9.month, setUTC9.day)
-        .difference(today)
-        .inDays;
-    if (_dateDifference == 0 || _dateDifference == -1) {
-      var _date = setUTC9.toString().split(' ')[1].split('.')[0];
-      if (_dateDifference == 0) {
-        resultText = "오늘 " + _date;
-      } else {
-        resultText = "어제 " + _date;
-      }
-    } else {
-      var _date = dateTime.toString().split('');
-      int _dateLength = dateTime.toString().split('').length;
-      _date.removeRange(_dateLength - 10, _dateLength);
-      resultText = _date.join();
-    }
-
-    return Text(resultText);
   }
 }

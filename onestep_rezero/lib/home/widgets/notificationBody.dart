@@ -2,7 +2,6 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:onestep_rezero/home/models/notification.dart';
 import 'package:intl/intl.dart';
-import 'package:onestep_rezero/main.dart';
 
 class NotificationBody extends StatefulWidget {
   @override

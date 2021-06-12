@@ -18,7 +18,7 @@ class ListRiverPod extends ConsumerWidget {
 
     if (boardCategory == BoardCategory.POST) {
       return PostList(
-        postlist: listprovider,
+        postList: listprovider,
       );
     } else if (boardCategory == BoardCategory.PICTURE) {
       return PhotoList(
