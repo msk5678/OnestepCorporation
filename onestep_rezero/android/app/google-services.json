@@ -145,14 +145,6 @@
           }
         },
         {
-          "client_id": "1033641848196-45rdli83rk08h3vgqalm7h30d47562bi.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.onestep_rezero",
-            "certificate_hash": "8901278bb595e64efb2b6b4e2169729f7f961e01"
-          }
-        },
-        {
           "client_id": "1033641848196-8pe2vavnvf716lpc07hmidhgf26cv0da.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
