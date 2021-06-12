@@ -13,10 +13,9 @@ import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 String downloadURL = "";
 
 class SettingsBody extends ConsumerWidget {
-  // final SharedPreferences _prefsPush;
-  // final SharedPreferences _prefsMarketing;
-  // SettingsBody(this._prefsPush, this._prefsMarketing);
-  SettingsBody();
+  final SharedPreferences _prefsPush;
+  final SharedPreferences _prefsMarketing;
+  SettingsBody(this._prefsPush, this._prefsMarketing);
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
@@ -53,15 +52,15 @@ class SettingsBody extends ConsumerWidget {
                       style: TextStyle(fontSize: 15),
                     ),
                   ),
-                  // Switch(
-                  //   value: _isSwitchCheckPush,
-                  //   onChanged: (value) {
-                  //     context.read(switchCheckPush).changeSwitch(value);
-                  //     _prefsPush.setBool('value', value);
-                  //   },
-                  //   activeTrackColor: Colors.lightGreenAccent,
-                  //   activeColor: Colors.green,
-                  // ),
+                  Switch(
+                    value: _isSwitchCheckPush,
+                    onChanged: (value) {
+                      context.read(switchCheckPush).changeSwitch(value);
+                      _prefsPush.setBool('value', value);
+                    },
+                    activeTrackColor: Colors.lightGreenAccent,
+                    activeColor: Colors.green,
+                  ),
                 ],
               ),
             ),
@@ -80,15 +79,15 @@ class SettingsBody extends ConsumerWidget {
                       style: TextStyle(fontSize: 15),
                     ),
                   ),
-                  // Switch(
-                  //   value: _isSwitchCheckMarketing,
-                  //   onChanged: (value) {
-                  //     context.read(switchCheckMarketing).changeSwitch(value);
-                  //     _prefsMarketing.setBool('value', value);
-                  //   },
-                  //   activeTrackColor: Colors.lightGreenAccent,
-                  //   activeColor: Colors.green,
-                  // ),
+                  Switch(
+                    value: _isSwitchCheckMarketing,
+                    onChanged: (value) {
+                      context.read(switchCheckMarketing).changeSwitch(value);
+                      _prefsMarketing.setBool('value', value);
+                    },
+                    activeTrackColor: Colors.lightGreenAccent,
+                    activeColor: Colors.green,
+                  ),
                 ],
               ),
             ),

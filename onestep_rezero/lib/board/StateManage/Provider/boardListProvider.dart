@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:onestep_rezero/board/declareData/boardData.dart';
-import 'package:onestep_rezero/main.dart';
 
 // final futureBoardProvider = FutureProvider<Map<String, String>>((ref) async {
 //   Map<String, String> boardList = {};
@@ -15,7 +15,7 @@ import 'package:onestep_rezero/main.dart';
 
 class BoardListProvider with ChangeNotifier {
   // final boardName;
-  final _boardsSnapshot = <DocumentSnapshot>[];
+  final _productsSnapshot = <DocumentSnapshot>[];
   String _errorMessage = "Board Provider RuntimeError";
   int documentLimit = 15;
   bool _hasNext = true;
@@ -25,7 +25,7 @@ class BoardListProvider with ChangeNotifier {
   String get errorMessage => _errorMessage;
   bool get hasNext => _hasNext;
 
-  List<BoardData> get boards => _boardsSnapshot.map((snap) {
+  List<BoardData> get boards => _productsSnapshot.map((snap) {
         return BoardData.fromFireStore(snap);
       }).toList();
 
@@ -36,9 +36,10 @@ class BoardListProvider with ChangeNotifier {
     try {
       final snap = await BoardFirebaseApi.getAllPost(
         documentLimit,
-        startAfter: _boardsSnapshot.isNotEmpty ? _boardsSnapshot.last : null,
+        startAfter:
+            _productsSnapshot.isNotEmpty ? _productsSnapshot.last : null,
       );
-      _boardsSnapshot.addAll(snap.docs);
+      _productsSnapshot.addAll(snap.docs);
 
       if (snap.docs.length < documentLimit) _hasNext = false;
       notifyListeners();
@@ -56,12 +57,12 @@ class BoardListProvider with ChangeNotifier {
     _isFetching = true;
     _hasNext = true;
 
-    _boardsSnapshot.clear();
+    _productsSnapshot.clear();
     try {
       print("In try ");
       final snap =
           await BoardFirebaseApi.getAllPost(documentLimit, startAfter: null);
-      _boardsSnapshot.addAll(snap.docs);
+      _productsSnapshot.addAll(snap.docs);
 
       if (snap.docs.length < documentLimit) _hasNext = false;
     } catch (error) {}
@@ -82,11 +83,7 @@ class BoardFirebaseApi {
     DocumentSnapshot startAfter,
   }) async {
     var refProducts;
-    refProducts = FirebaseFirestore.instance
-        .collection('university')
-        .doc(currentUserModel.university)
-        .collection('board')
-        .limit(limit);
+    refProducts = FirebaseFirestore.instance.collection('board').limit(limit);
 
     if (startAfter == null) {
       return refProducts.get();

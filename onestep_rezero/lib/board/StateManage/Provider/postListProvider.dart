@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:onestep_rezero/board/declareData/postData.dart';
-import 'package:onestep_rezero/main.dart';
 
 class PostListProvider with ChangeNotifier {
   // final boardName;
@@ -25,8 +25,8 @@ class PostListProvider with ChangeNotifier {
 
     try {
       final snap = await PostFirebaseApi.getAllPost(
-        boardName,
         documentLimit,
+        boardId: boardName,
         startAfter:
             _productsSnapshot.isNotEmpty ? _productsSnapshot.last : null,
       );
@@ -51,11 +51,8 @@ class PostListProvider with ChangeNotifier {
     _productsSnapshot.clear();
     try {
       print("In try ");
-      final snap = await PostFirebaseApi.getAllPost(
-        boardId,
-        documentLimit,
-        startAfter: null,
-      );
+      final snap = await PostFirebaseApi.getAllPost(documentLimit,
+          startAfter: null, boardId: boardId);
       _productsSnapshot.addAll(snap.docs);
 
       if (snap.docs.length < documentLimit) _hasNext = false;
@@ -64,24 +61,19 @@ class PostListProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // static Future<QuerySnapshot> getBoardCategory(
-  //     // Get Board Category List
-  //     ) async {
-  //   return FirebaseFirestore.instance.collection('board').get();
-  // }
+  static Future<QuerySnapshot> getBoardCategory(
+      // Get Board Category List
+      ) async {
+    return FirebaseFirestore.instance.collection('board').get();
+  }
 }
 
 class PostFirebaseApi {
-  static Future<QuerySnapshot> getAllPost(
-    String boardId,
-    int limit, {
-    DocumentSnapshot startAfter,
-  }) async {
+  static Future<QuerySnapshot> getAllPost(int limit,
+      {DocumentSnapshot startAfter, String boardId}) async {
     var refProducts;
     refProducts = FirebaseFirestore.instance
-        .collection('university')
-        .doc(currentUserModel.university)
-        .collection("board")
+        .collection('board')
         .doc(boardId)
         .collection(boardId)
         .orderBy("uploadTime", descending: true)

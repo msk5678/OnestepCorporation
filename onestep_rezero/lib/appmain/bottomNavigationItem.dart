@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:onestep_rezero/board/boardMain.dart';
-import 'package:onestep_rezero/chat/productchat/controller/productChatController.dart';
 import 'package:onestep_rezero/home/homeMain.dart';
-import 'package:onestep_rezero/login/pages/loginAuthPage.dart';
 import 'package:onestep_rezero/myinfo/pages/myinfoMain.dart';
 // import 'package:onestep_rezero/notification/page/chatMain.dart';
 import 'package:onestep_rezero/chat/page/chatMain.dart';
@@ -38,8 +36,7 @@ class BottomNavigationItem {
         ),
         BottomNavigationItem(
           page: ChatMainPage(),
-          icon: ProductChatController().getTotalChatCountInBottomBar(),
-          //Icon(Icons.chat_outlined),
+          icon: Icon(Icons.chat_outlined),
           title: "알림",
         ),
         BottomNavigationItem(

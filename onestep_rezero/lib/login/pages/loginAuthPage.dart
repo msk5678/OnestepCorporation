@@ -3,13 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:onestep_rezero/chat/widget/appColor.dart';
-import 'package:onestep_rezero/home/homeMain.dart';
-import 'package:onestep_rezero/login/model/user.dart';
 import 'package:onestep_rezero/login/providers/providers.dart';
-
-import '../../main.dart';
+import 'package:onestep_rezero/main.dart';
 
 String _tempEmail;
 bool _firstEmailEnter;
@@ -72,18 +67,12 @@ void init() {
 }
 
 class LoginAuthPage extends StatefulWidget {
-  final GoogleSignInAccount user;
-  LoginAuthPage(this.user);
-
   @override
-  _LoginAuthPageState createState() => _LoginAuthPageState(user);
+  _LoginAuthPageState createState() => _LoginAuthPageState();
 }
 
 class _LoginAuthPageState extends State<LoginAuthPage>
     with TickerProviderStateMixin {
-  final GoogleSignInAccount user;
-  _LoginAuthPageState(this.user);
-
   @override
   void initState() {
     super.initState();
@@ -127,7 +116,7 @@ class _LoginAuthPageState extends State<LoginAuthPage>
             appBar: AppBar(
               backgroundColor: Colors.white,
               title: Text(
-                "학교인증",
+                "이메일인증",
                 style: TextStyle(color: Colors.black),
               ),
               leading: IconButton(
@@ -164,19 +153,19 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                       children: [
                         Container(
                           child: Text(
-                            "한발자국 거리의",
+                            "OneStep 과 함께",
                             style: TextStyle(fontSize: 30),
                           ),
                         ),
                         Container(
                           child: Text(
-                            "캠퍼스 내에서",
+                            "즐거운 대학생활을",
                             style: TextStyle(fontSize: 30),
                           ),
                         ),
                         Container(
                           child: Text(
-                            "즐거운 중고거래!",
+                            "지금 바로 RUN",
                             style: TextStyle(fontSize: 30),
                           ),
                         ),
@@ -300,8 +289,6 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                           child: Container(
                               width: MediaQuery.of(context).size.width / 1.2,
                               child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                    primary: OnestepColors().mainColor),
                                 onPressed: (_isEmailCheck
                                                 .authFlag.isEmailChecked ==
                                             true &&
@@ -412,8 +399,6 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                           child: Container(
                             width: MediaQuery.of(context).size.width / 1.2,
                             child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                  primary: OnestepColors().mainColor),
                               onPressed: _isEmailCheck.authFlag.isShowBtn ==
                                       true
                                   ? () async {
@@ -450,10 +435,8 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                         Container(
                           width: MediaQuery.of(context).size.width / 1.2,
                           child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                primary: OnestepColors().mainColor),
                             onPressed: _isEmailCheck.authFlag.isShowBtn == true
-                                ? () async {
+                                ? () {
                                     // 5분 안에 인증해야함
                                     if (timeOver == false &&
                                         checkPassword ==
@@ -463,37 +446,17 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                       // ex) stu.kmu -> 계명대학교 이런식으로
                                       // FirebaseFirestore.instance
                                       //     .collection('user')
-                                      //     .doc(user.id)
+                                      //     .doc(googleSignIn.currentUser.id)
                                       //     .update({
                                       //   "auth": 2,
                                       //   "univerisityEmail":
                                       //       _emailController.text,
-                                      //   "university": "kmu",
+                                      //   "university": "계명대학교",
                                       //   "authTime": DateTime.now()
                                       //       .millisecondsSinceEpoch
                                       // });
 
-                                      // var time =
-                                      //     DateTime.now().microsecondsSinceEpoch;
-                                      // DocumentSnapshot userRecord =
-                                      //     await ref.doc(user.id).get();
-                                      // currentUserModel =
-                                      //     User.fromDocument(userRecord);
-                                      // ref
-                                      //     .doc(currentUserModel.uid)
-                                      //     .collection("log")
-                                      //     .doc(time.toString())
-                                      //     .set({
-                                      //   "loginTime": time,
-                                      // });
-                                      // categoryList = FirebaseFirestore.instance
-                                      //     .collection('category')
-                                      //     .get();
-
-                                      Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  HomeMain()));
+                                      // Navigator.of(context).pop();
                                     } else if (timeOver == true) {
                                       print("time over 실패");
                                       _isEmailCheck

@@ -9,16 +9,16 @@ class FullPhoto extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   backgroundColor: Colors.pink,
-      //   iconTheme: IconThemeData(color: Colors.pinkAccent),
-      //   title: Text(
-      //     "Full Image" + url,
-      //     style: TextStyle(
-      //         color: Colors.white, fontWeight: FontWeight.bold, fontSize: 10),
-      //   ),
-      //   centerTitle: true,
-      // ),
+      appBar: AppBar(
+        backgroundColor: Colors.pink,
+        iconTheme: IconThemeData(color: Colors.pinkAccent),
+        title: Text(
+          "Full Image" + url,
+          style: TextStyle(
+              color: Colors.white, fontWeight: FontWeight.bold, fontSize: 10),
+        ),
+        centerTitle: true,
+      ),
       body: FullPhotoScreen(url: url),
     );
   }
@@ -39,6 +39,7 @@ class FullPhotoScreenState extends State<FullPhotoScreen> {
   FullPhotoScreenState({Key key, this.url});
   @override
   void initState() {
+    // TODO: implement initState
     super.initState();
   }
 

@@ -1,9 +1,12 @@
 import 'dart:math';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:http/http.dart';
 import 'package:onestep_rezero/main.dart';
+import 'package:onestep_rezero/myinfo/providers/providers.dart';
 
 class UserProfileBody extends ConsumerWidget {
   Widget getUserName() {
@@ -116,13 +119,13 @@ class UserProfileBody extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ScopedReader watch) {
     // final test2 = watch(progressValueProvider2);
-    // final progressValue = watch(progressValueProvider.state);
-    // final test = watch(testContaierPadding);
-    // final a = watch(progressValueProvider3);
+    final progressValue = watch(progressValueProvider.state);
+    final test = watch(testContaierPadding);
+    final a = watch(progressValueProvider3);
 
-    // String _image = 'images/person_walking.gif';
-    // double _pointerValue = 0;
-    // final Brightness _brightness = Theme.of(context).brightness;
+    String _image = 'images/person_walking.gif';
+    double _pointerValue = 0;
+    final Brightness _brightness = Theme.of(context).brightness;
 
     return Column(
       children: <Widget>[

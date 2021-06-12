@@ -8,18 +8,17 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:onestep_rezero/chat/productchat/controller/productChatController.dart';
+import 'package:onestep_rezero/chat/productchat/model/productChatMenuItem.dart';
 import 'package:onestep_rezero/chat/productchat/model/productChatMessage.dart';
 import 'package:onestep_rezero/chat/widget/FullmageWidget.dart';
-import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/chat/widget/message_list_time.dart';
 import 'package:onestep_rezero/chat/widget/productChatMenu.dart';
+import 'package:onestep_rezero/chat/widget/productMenuItems.dart';
 import 'package:onestep_rezero/main.dart';
 
 import 'dart:io' as io;
 
 import 'package:onestep_rezero/product/models/product.dart';
-import 'package:onestep_rezero/product/pages/productDetail.dart';
-import 'package:onestep_rezero/product/widgets/detail/productDetailBody.dart';
 
 class ProductChattingRoomPage extends StatefulWidget {
   final String myUid;
@@ -131,39 +130,72 @@ class _ProductChattingRoomPageState extends State<ProductChattingRoomPage> {
     );
   }
 
-//   Widget _buildjson(var context) {
+  Widget _buildjson(var context) {
+    return Stack(
+      alignment: Alignment.center,
+      children: <Widget>[
+        IconButton(
+            icon: Icon(Icons.ac_unit),
+            onPressed: () {
+              //productChat.toJson();
+              print("JSON 실행");
+              flags % 2 == 0
+                  ? streamController.sink.add(++flags)
+                  : streamController.sink.add(--flags);
+//              database.child("test").set(productChat.toJson());
+
+              //print(productChat.toJson());
+            }),
+        Positioned(
+          // top: 12.0,
+          // right: 10.0,
+          // width: 10.0,
+          // height: 10.0,
+          left: 300,
+          child: Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              //color: AppColors.notification,
+            ),
+          ),
+        )
+      ],
+    );
+  }
+}
+
+//  Widget _deleteChattingRoom(var context) {
 //     return Stack(
 //       alignment: Alignment.center,
 //       children: <Widget>[
 //         IconButton(
-//             icon: Icon(Icons.ac_unit),
+//             icon: Icon(Icons.delete),
 //             onPressed: () {
-//               //productChat.toJson();
-//               print("JSON 실행");
-//               flags % 2 == 0
-//                   ? streamController.sink.add(++flags)
-//                   : streamController.sink.add(--flags);
-// //              database.child("test").set(productChat.toJson());
+//               try {
+//                 FirebaseFirestore.instance
+//                     .collection("chat")
+//                     .doc(copy)
+//                     .collection('message')
+//                     .get()
+//                     .then((snapshot) {
+//                   for (DocumentSnapshot ds in snapshot.docs) {
+//                     ds.reference.delete();
+//                   }
+//                 });
+//                 FirebaseFirestore.instance
+//                     .collection("chat")
+//                     .doc(chat)
+//                     .delete();
 
-//               //print(productChat.toJson());
+//                 Navigator.of(context).pop();
+//                 print("삭제 되었습니다." + chattingRoomId);
+//               } catch (e) {
+//                 print(e.message);
+//               }
 //             }),
-//         Positioned(
-//           // top: 12.0,
-//           // right: 10.0,
-//           // width: 10.0,
-//           // height: 10.0,
-//           left: 300,
-//           child: Container(
-//             decoration: BoxDecoration(
-//               shape: BoxShape.circle,
-//               //color: AppColors.notification,
-//             ),
-//           ),
-//         )
 //       ],
 //     );
 //   }
-}
 
 class ChatScreen extends StatefulWidget {
   final String myUid;
@@ -189,7 +221,7 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _LastChatState extends State<ChatScreen> {
-  final String myId;
+  final String myId; // uid 받음
   final String friendId;
   final String postId;
   final Product product;
@@ -325,8 +357,8 @@ class _LastChatState extends State<ChatScreen> {
               print(
                   "proChat-checkExistChattingRoom 1-3. 만약 장터에서 왔으면 초기 메세지 생성");
 
-              //장터에서 온게 맞으면 텍스트 필드에 물품정보 생성
-              setTextFieldtoProductInfo(product);
+              //장터에서 온게 맞으면
+              checkTheSendMessage(chatId, friendId, product, 3);
             }
             print(
                 "#realpro Data strmsg second 채팅방 있음 22 myid $myId / fid $friendId / post $postId / chatId $chatId");
@@ -346,11 +378,6 @@ class _LastChatState extends State<ChatScreen> {
       setState(() {});
     } //than
             );
-  }
-
-  void setTextFieldtoProductInfo(Product product) {
-    String title = product.title;
-    textEditingController.text = "[상품정보문의]안녕하세요. [$title] 보고 문의드립니다.";
   }
 
   @override
@@ -406,14 +433,9 @@ class _LastChatState extends State<ChatScreen> {
             //mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               AppBar(
-                backgroundColor: OnestepColors().thirdColor,
-                title: Center(
-                  child: ProductChatController()
-                      .getProductUserNickName(friendId, 20),
-                  // Text("ge"),
-                ),
+                title: Text("ge"),
                 actions: [
-                  ProductChatMenu().getProductMenu(context, chatId, friendId),
+                  ProductChatMenu().getProductMenu(context, chatId),
                 ],
               ),
               //Text("con $connectTime"),
@@ -719,14 +741,14 @@ class _LastChatState extends State<ChatScreen> {
                         productMessage.content.title,
                         maxLines: 2,
                         style: TextStyle(
-                          color: Colors.black,
+                          color: Colors.white,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
                       padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
                       //width: 150.0,
                       decoration: BoxDecoration(
-                          color: OnestepColors().fifColor,
+                          color: Colors.lightBlueAccent,
                           borderRadius: BorderRadius.circular(8.0)),
                       margin: EdgeInsets.only(
                           //textmargin
@@ -745,7 +767,7 @@ class _LastChatState extends State<ChatScreen> {
                                 placeholder: (context, url) => Container(
                                   child: CircularProgressIndicator(
                                     valueColor: AlwaysStoppedAnimation<Color>(
-                                        (OnestepColors().mainColor)),
+                                        (Colors.lightBlueAccent)),
                                   ),
                                   width: 200.0,
                                   height: 200.0,
@@ -811,10 +833,10 @@ class _LastChatState extends State<ChatScreen> {
                           : Container(
                               padding:
                                   EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
-                              //width: 200.0,
+                              // width: 150.0,
                               //height: 150,
                               decoration: BoxDecoration(
-                                  color: OnestepColors().fifColor,
+                                  color: Colors.yellow,
                                   borderRadius: BorderRadius.circular(8.0)),
                               child: Column(
                                 children: [
@@ -834,6 +856,15 @@ class _LastChatState extends State<ChatScreen> {
                                             Radius.circular(8.0)),
                                         clipBehavior: Clip.hardEdge,
                                       ),
+
+                                      // child: ExtendedImage.network(
+                                      //   snapshot.data['imageUrl'],
+                                      //   fit: BoxFit.cover,
+                                      //   height: 50,
+                                      //   width: 50,
+                                      //   cache: true,
+                                      // ),
+                                      // ),
                                       SizedBox(
                                         width: 15,
                                       ),
@@ -856,39 +887,19 @@ class _LastChatState extends State<ChatScreen> {
                                     padding:
                                         const EdgeInsets.fromLTRB(5, 5, 5, 0),
                                     child: ElevatedButton(
-                                      style: ButtonStyle(
-                                        backgroundColor:
-                                            MaterialStateProperty.all(
-                                                OnestepColors().mainColor),
-                                        elevation: MaterialStateProperty.all(0),
-                                        // hoverElevation: 0,
-                                        // focusElevation: 0,
-                                        // highlightElevation: 0,
-                                      ),
                                       onPressed: () {
                                         print("장터게시판 이동");
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    (ProductDetail(
-                                                        docId:
-                                                            widget.postId))));
                                       },
                                       child: Container(
                                           alignment: Alignment.center,
                                           width: 100,
                                           height: 30,
-                                          child: Text("상세보기")),
+                                          child: Text("구매하기")),
                                     ),
                                   ),
                                 ],
                               ),
-                              margin: EdgeInsets.only(
-                                  top: 10,
-                                  bottom: isLastMsgRight(index) ? 20.0 : 10.0,
-                                  right: 10.0),
-                            ),
+                            )
               // GetTime(document), //채팅 우측 시간출력
             ],
             mainAxisAlignment: MainAxisAlignment.end,
@@ -1114,7 +1125,7 @@ class _LastChatState extends State<ChatScreen> {
               margin: EdgeInsets.symmetric(horizontal: 1.0),
               child: IconButton(
                 icon: Icon(Icons.image),
-                color: OnestepColors().mainColor,
+                color: Colors.lightBlueAccent,
                 onPressed: getImage, //getImageFromGallery,
               ),
             ),
@@ -1127,7 +1138,7 @@ class _LastChatState extends State<ChatScreen> {
               margin: EdgeInsets.symmetric(horizontal: 1.0),
               child: IconButton(
                 icon: Icon(Icons.face),
-                color: OnestepColors().mainColor,
+                color: Colors.lightBlueAccent,
                 onPressed: getSticker, //getImageFromGallery,
               ),
             ),
@@ -1139,7 +1150,6 @@ class _LastChatState extends State<ChatScreen> {
             child: TextField(
               style: TextStyle(color: Colors.black, fontSize: 15.0),
               controller: textEditingController,
-              maxLines: null,
               decoration: InputDecoration.collapsed(
                   hintText: "Write here...,",
                   hintStyle: TextStyle(color: Colors.grey)),
@@ -1155,17 +1165,13 @@ class _LastChatState extends State<ChatScreen> {
               ),
               child: IconButton(
                   icon: Icon(Icons.send),
-                  color: OnestepColors().mainColor,
+                  color: Colors.lightBlueAccent,
                   onPressed: () {
-                    if (textEditingController.text.contains("[상품정보문의]")) {
-                      checkTheSendMessage(chatId, friendId, product, 3);
-                      print("상품정보");
-                    } else {
-                      print(
-                          "#realpro myid $myId / fid $friendId / chatId $chatId");
-                      checkTheSendMessage(
-                          chatId, friendId, textEditingController.text, 0);
-                    }
+                    print(
+                        "#realpro myid $myId / fid $friendId / chatId $chatId");
+                    checkTheSendMessage(
+                        chatId, friendId, textEditingController.text, 0);
+                    //onSendToProductMessage(textEditingController.text, 0);
                   }),
               color: Colors.white,
             ),

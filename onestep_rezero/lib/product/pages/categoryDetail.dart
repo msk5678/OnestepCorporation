@@ -1,25 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:onestep_rezero/product/models/categoryItem.dart';
 
 class CategoryDetail extends StatefulWidget {
   final String category;
-  final Map<String, dynamic> detailCategory;
-  CategoryDetail(
-      {Key key, @required this.category, @required this.detailCategory})
-      : super(key: key);
+  CategoryDetail({Key key, this.category}) : super(key: key);
 
   @override
   _CategoryDetailState createState() => _CategoryDetailState();
 }
 
 class _CategoryDetailState extends State<CategoryDetail> {
-  int _headerindex;
-  @override
-  void initState() {
-    _headerindex = 0;
-
-    super.initState();
-  }
-
   Widget renderHeader() {
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -30,12 +20,15 @@ class _CategoryDetailState extends State<CategoryDetail> {
           child: ListView.builder(
             padding: EdgeInsets.all(5.0),
             physics: ClampingScrollPhysics(),
-            shrinkWrap: true,
+            // shrinkWrap: true,
             scrollDirection: Axis.horizontal,
-            itemCount: widget.detailCategory.length,
+            itemCount: CategoryItem.test[widget.category]["list"].length,
             itemBuilder: (BuildContext context, int index) {
               return Card(
-                color: _headerindex == index ? Colors.black : Colors.white,
+                color:
+                    //  _headerindex == index ?
+                    // Colors.black,
+                    Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15.0),
                 ),
@@ -50,23 +43,25 @@ class _CategoryDetailState extends State<CategoryDetail> {
                     child: Align(
                       alignment: Alignment.center,
                       child: Text(
-                        widget.detailCategory.keys.elementAt(index),
+                        CategoryItem.test[widget.category]["list"][index],
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 12,
-                          color: _headerindex == index
-                              ? Colors.white
-                              : Colors.black,
+                          color:
+                              // _headerindex == index
+                              // ?
+                              // Colors.white
+                              Colors.black,
                         ),
                       ),
                     ),
                   ),
                   onTap: () {
-                    setState(() {
-                      _headerindex = index;
-                      //   widget.productProvider.fetchProducts(
-                      //       _category.getCategoryItems()[_headerindex]);
-                    });
+                    // setState(() {
+                    //   _headerindex = index;
+                    //   widget.productProvider.fetchProducts(
+                    //       _category.getCategoryItems()[_headerindex]);
+                    // });
                   },
                 ),
               );

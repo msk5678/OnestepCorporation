@@ -199,18 +199,18 @@ class _ProductMainState extends State<ProductMain> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                // ProductMainHeader(),
+                ProductMainHeader(),
                 SizedBox(
                     height: 10,
                     child: Container(color: Color.fromRGBO(240, 240, 240, 1))),
-                // Align(
-                //   alignment: Alignment.centerLeft,
-                //   child: Padding(
-                //       padding: EdgeInsets.only(top: 10, left: 15),
-                //       child: Text("오늘의 상품",
-                //           style: TextStyle(
-                //               fontSize: 15, fontWeight: FontWeight.w600))),
-                // ),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                      padding: EdgeInsets.only(top: 10, left: 15),
+                      child: Text("오늘의 상품",
+                          style: TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.w600))),
+                ),
                 ProductMainBody(),
               ],
             ),

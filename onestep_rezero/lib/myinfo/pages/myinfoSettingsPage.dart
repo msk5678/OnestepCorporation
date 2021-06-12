@@ -4,10 +4,9 @@ import 'package:onestep_rezero/myinfo/widgets/settingsBody.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MyinfoSettingsPage extends ConsumerWidget {
-  // final SharedPreferences _prefsPush;
-  // final SharedPreferences _prefsMarketing;
-  // MyinfoSettingsPage(this._prefsPush, this._prefsMarketing);
-  MyinfoSettingsPage();
+  final SharedPreferences _prefsPush;
+  final SharedPreferences _prefsMarketing;
+  MyinfoSettingsPage(this._prefsPush, this._prefsMarketing);
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
@@ -20,6 +19,6 @@ class MyinfoSettingsPage extends ConsumerWidget {
           backgroundColor: Colors.white,
           iconTheme: IconThemeData(color: Colors.black),
         ),
-        body: SettingsBody());
+        body: SettingsBody(_prefsPush, _prefsMarketing));
   }
 }

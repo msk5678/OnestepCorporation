@@ -1,8 +1,15 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'dart:io' as io;
+import 'package:image_picker/image_picker.dart';
 import 'package:onestep_rezero/main.dart';
+import 'package:onestep_rezero/myinfo/pages/myinfoSettingsPage.dart';
+import 'package:onestep_rezero/myinfo/providers/providers.dart';
+import 'package:random_string/random_string.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 String downloadURL = "";
 

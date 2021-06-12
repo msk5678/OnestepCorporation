@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:onestep_rezero/home/pages/homeNotificationPage.dart';
+import 'package:onestep_rezero/report/reportPageTest.dart';
 import 'package:onestep_rezero/search/pages/searchAllMain.dart';
 
 class HomeMain extends StatefulWidget {

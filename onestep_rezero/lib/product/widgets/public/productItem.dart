@@ -99,7 +99,7 @@ class _ProductItemState extends State<ProductItem> {
     );
   }
 
-  Widget image() {
+  Widget getImage() {
     Size size = MediaQuery.of(context).size;
     return CachedNetworkImage(
       imageUrl: widget.product.imagesUrl[0],
@@ -136,7 +136,7 @@ class _ProductItemState extends State<ProductItem> {
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) =>
-                ProductDetail(docId: widget.product.firestoreid),
+                ClothDetail(docId: widget.product.firestoreid),
           ),
         );
       },
@@ -149,7 +149,7 @@ class _ProductItemState extends State<ProductItem> {
                 child: Stack(
                   fit: StackFit.expand,
                   children: <Widget>[
-                    image(),
+                    getImage(),
                     productState(),
                     setFavorite(),
                   ].where((item) => item != null).toList(),

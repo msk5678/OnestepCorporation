@@ -1,9 +1,11 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_fadein/flutter_fadein.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onestep_rezero/board/AboutPost/AboutPostListView/listRiverpod.dart';
+import 'package:onestep_rezero/board/AboutPost/AboutPostListView/photoList.dart';
+import 'package:onestep_rezero/board/AboutPost/AboutPostListView/postList.dart';
 import 'package:onestep_rezero/board/declareData/boardData.dart';
 import 'package:onestep_rezero/board/declareData/categoryManageClass.dart';
 
@@ -28,8 +30,6 @@ class _PostListWidget extends State<PostListMain> {
   bool _isVisibility = false;
   BoardData currentBoardData;
   BoardCategory currentBoardCategory;
-  double deviceWidth;
-  double deviceHeight;
   @override
   void initState() {
     currentBoardData = widget.currentBoardData;
@@ -74,43 +74,15 @@ class _PostListWidget extends State<PostListMain> {
   }
 
   @override
-  void didChangeDependencies() {
-    deviceHeight = MediaQuery.of(context).size.height;
-    deviceWidth = MediaQuery.of(context).size.width;
-    super.didChangeDependencies();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          backgroundColor: Colors.white,
-          title: FadeIn(
-            child: Row(
-              children: [
-                Container(
-                  margin: EdgeInsets.only(
-                      left: deviceWidth / 200, right: deviceWidth / 250),
-                  child: IconButton(
-                      onPressed: () => Navigator.pop(context),
-                      icon: Icon(
-                        currentBoardCategory.categoryData.icon,
-                        color: Colors.indigo,
-                      )),
-                ),
-                Text(
-                  currentBoardData.boardName,
-                  style: TextStyle(color: Colors.black),
-                ),
-              ],
-            ),
-            curve: Curves.easeIn,
-            duration: Duration(milliseconds: 300),
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(50.0),
+          child: AppBar(
+            backgroundColor: Colors.white,
           ),
         ),
-        // ),
         body: RefreshIndicator(
           onRefresh: _refreshPage,
           child: SingleChildScrollView(
@@ -125,7 +97,7 @@ class _PostListWidget extends State<PostListMain> {
         floatingActionButton: Stack(
           children: <Widget>[
             Align(
-              alignment: Alignment(0.1, 1.0),
+              alignment: Alignment.bottomCenter,
               child: productAddFLoatingActionButton(),
             ),
             Align(

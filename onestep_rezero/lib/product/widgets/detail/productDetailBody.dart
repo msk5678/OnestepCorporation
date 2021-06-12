@@ -7,14 +7,13 @@ import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:onestep_rezero/animation/favoriteAnimation.dart';
 import 'package:onestep_rezero/favorite/utils/favoriteFirebaseApi.dart';
 import 'package:onestep_rezero/main.dart';
-import 'package:onestep_rezero/chat/navigator/chatNavigationManager.dart';
+import 'package:onestep_rezero/chat/controller/realtimeNavigationManager.dart';
 import 'package:onestep_rezero/product/models/product.dart';
 import 'package:onestep_rezero/product/pages/productBump.dart';
 import 'package:onestep_rezero/product/pages/productEdit.dart';
 import 'package:onestep_rezero/product/widgets/detail/imagesFullViewer.dart';
 import 'package:onestep_rezero/product/widgets/public/productItem.dart';
 import 'package:onestep_rezero/timeUtil.dart';
-import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
 class ProductDetailBody extends StatefulWidget {
   final Product product;
@@ -251,7 +250,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
       child: Stack(
         children: [
           Swiper(
-            onTap: (index) async {
+            onTap: (index) {
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -271,14 +270,17 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
             itemCount: widget.product.imagesUrl.length,
             itemBuilder: (BuildContext context, int index) {
               return Container(
-                child: CachedNetworkImage(
-                  imageUrl: widget.product.imagesUrl[index],
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height,
-                  errorWidget: (context, url, error) =>
-                      Icon(Icons.error), // 로딩 오류 시 이미지
+                child: Hero(
+                  tag: widget.product.imagesUrl[index],
+                  child: CachedNetworkImage(
+                    imageUrl: widget.product.imagesUrl[index],
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height,
+                    errorWidget: (context, url, error) =>
+                        Icon(Icons.error), // 로딩 오류 시 이미지
 
-                  fit: BoxFit.cover,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               );
             },
@@ -714,7 +716,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
             print(widget.product.uid);
             print(widget.product.firestoreid);
             print(widget.product);
-            ChatNavigationManager.navigateProductToProductChat(
+            RealTimeChatNavigationManager.navigateProductToProductChat(
                 context,
                 googleSignIn.currentUser.id,
                 widget.product.uid,

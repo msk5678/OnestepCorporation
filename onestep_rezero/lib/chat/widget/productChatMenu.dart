@@ -3,12 +3,11 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onestep_rezero/chat/productchat/controller/productChatController.dart';
 import 'package:onestep_rezero/chat/productchat/model/productChatMenuItem.dart';
 import 'package:onestep_rezero/chat/widget/productMenuItems.dart';
-import 'package:onestep_rezero/chat/productchat/controller/chatBlockController.dart';
 
 class ProductChatMenu {
-  Widget getProductMenu(BuildContext context, String chatId, String friendId) {
+  Widget getProductMenu(BuildContext context, String chatId) {
     return PopupMenuButton<ProductChatMenuItem>(
-      onSelected: (item) => onSelected(context, item, chatId, friendId),
+      onSelected: (item) => onSelected(context, item, chatId),
       itemBuilder: (context) => [
         ...ProductChatMenuItems.itemsFirst.map(buildItem).toList(),
         PopupMenuDivider(),
@@ -30,17 +29,16 @@ class ProductChatMenu {
             ],
           ));
 
-  void onSelected(BuildContext context, ProductChatMenuItem item, String chatId,
-      String friendId) {
+  void onSelected(
+      BuildContext context, ProductChatMenuItem item, String chatId) {
     switch (item) {
       case ProductChatMenuItems.itemSettings:
         Fluttertoast.showToast(msg: "미구현");
         print("widget메뉴-설정");
         break;
-      case ProductChatMenuItems.itemBlock:
-        // Fluttertoast.showToast(msg: "미구현");
-        ChatBlockController().blockToUser(friendId);
-        print("widget메뉴-차단");
+      case ProductChatMenuItems.itemShare:
+        Fluttertoast.showToast(msg: "미구현");
+        print("widget메뉴-공유");
         break;
 
       case ProductChatMenuItems.itemExit:

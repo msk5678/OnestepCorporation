@@ -49,7 +49,7 @@ packages:
       name: async
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.5.0"
+    version: "2.6.1"
   auto_size_text:
     dependency: "direct main"
     description:
@@ -260,20 +260,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.1"
-  extended_image:
-    dependency: transitive
-    description:
-      name: extended_image
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "4.1.0"
-  extended_image_library:
-    dependency: transitive
-    description:
-      name: extended_image_library
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "3.1.0"
   fake_async:
     dependency: transitive
     description:
@@ -322,21 +308,21 @@ packages:
       name: firebase_core
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.2.0"
+    version: "1.0.2"
   firebase_core_platform_interface:
     dependency: transitive
     description:
       name: firebase_core_platform_interface
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.0.1"
+    version: "4.0.0"
   firebase_core_web:
     dependency: transitive
     description:
       name: firebase_core_web
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.1.0"
+    version: "1.0.2"
   firebase_database:
     dependency: "direct main"
     description:
@@ -357,21 +343,21 @@ packages:
       name: firebase_messaging
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "10.0.0"
+    version: "9.0.1"
   firebase_messaging_platform_interface:
     dependency: transitive
     description:
       name: firebase_messaging_platform_interface
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.0"
+    version: "2.0.1"
   firebase_messaging_web:
     dependency: transitive
     description:
       name: firebase_messaging_web
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.0"
+    version: "1.0.2"
   firebase_storage:
     dependency: "direct main"
     description:
@@ -419,13 +405,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.2"
-  flutter_fadein:
-    dependency: "direct main"
-    description:
-      name: flutter_fadein
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.0.0"
   flutter_native_admob:
     dependency: "direct main"
     description:
@@ -454,13 +433,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.13.1+1"
-  flutter_slidable:
-    dependency: "direct main"
-    description:
-      name: flutter_slidable
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.6.0"
   flutter_staggered_animations:
     dependency: "direct main"
     description:
@@ -468,13 +440,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.0"
-  flutter_staggered_grid_view:
-    dependency: "direct main"
-    description:
-      name: flutter_staggered_grid_view
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.4.0"
   flutter_swiper:
     dependency: "direct main"
     description:
@@ -555,13 +520,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.13.1"
-  http_client_helper:
-    dependency: transitive
-    description:
-      name: http_client_helper
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.0.2"
   http_multi_server:
     dependency: transitive
     description:
@@ -605,7 +563,7 @@ packages:
     source: hosted
     version: "2.0.1"
   intl:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: intl
       url: "https://pub.dartlang.org"
@@ -709,13 +667,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "5.0.00"
-  nested:
-    dependency: transitive
-    description:
-      name: nested
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.0"
   octo_image:
     dependency: transitive
     description:
@@ -821,13 +772,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.0.2"
-  photo_manager:
-    dependency: transitive
-    description:
-      name: photo_manager
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.2.1"
   photo_view:
     dependency: "direct main"
     description:
@@ -863,13 +807,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.2.1"
-  provider:
-    dependency: transitive
-    description:
-      name: provider
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "5.0.0"
   pub_semver:
     dependency: transitive
     description:
@@ -905,13 +842,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.1"
-  rive:
-    dependency: "direct main"
-    description:
-      name: rive
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.7.6"
   riverpod:
     dependency: transitive
     description:
@@ -994,13 +924,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.0+1"
-  sortedmap:
-    dependency: "direct main"
-    description:
-      name: sortedmap
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.5.0"
   source_gen:
     dependency: transitive
     description:
@@ -1014,7 +937,7 @@ packages:
       name: source_span
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.8.0"
+    version: "1.8.1"
   sqflite:
     dependency: transitive
     description:
@@ -1098,7 +1021,7 @@ packages:
       name: test_api
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.2.19"
+    version: "0.3.0"
   timeago:
     dependency: "direct main"
     description:
@@ -1120,13 +1043,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.1.6"
-  transparent_image:
-    dependency: "direct main"
-    description:
-      name: transparent_image
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.0.0"
   typed_data:
     dependency: transitive
     description:
@@ -1155,27 +1071,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.0"
-  video_player:
-    dependency: transitive
-    description:
-      name: video_player
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.1.4"
-  video_player_platform_interface:
-    dependency: transitive
-    description:
-      name: video_player_platform_interface
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "4.1.0"
-  video_player_web:
-    dependency: transitive
-    description:
-      name: video_player_web
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.0.0"
   watcher:
     dependency: transitive
     description:
@@ -1190,15 +1085,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.0"
-  wechat_assets_picker:
-    dependency: "direct main"
-    description:
-      path: "."
-      ref: master
-      resolved-ref: "3d97b0bb23fcf46cc7ef16cbe41ff7e6c76343dd"
-      url: "https://github.com/honghoker/flutter_wechat_assets_picker.git"
-    source: git
-    version: "5.5.3+1"
   win32:
     dependency: transitive
     description:
@@ -1229,4 +1115,4 @@ packages:
     version: "3.1.0"
 sdks:
   dart: ">=2.12.0 <3.0.0"
-  flutter: ">=2.0.0"
+  flutter: ">=1.24.0-10.2.pre"

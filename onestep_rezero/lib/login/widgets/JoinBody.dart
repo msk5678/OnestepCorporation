@@ -1,9 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:onestep_rezero/login/pages/choiceAuthWayPage.dart';
 import 'package:onestep_rezero/login/providers/providers.dart';
+import 'package:onestep_rezero/main.dart';
 
 String _tempEmail = "";
 String _tempNickName = "";
@@ -11,9 +10,6 @@ bool _firstEmailEnter = true;
 bool _firstNickNameEnter = true;
 
 class JoinBody extends ConsumerWidget {
-  final GoogleSignInAccount user;
-  JoinBody(this.user);
-
   @override
   Widget build(BuildContext context, ScopedReader watch) {
     final TextEditingController _emailController =
@@ -43,19 +39,19 @@ class JoinBody extends ConsumerWidget {
               children: [
                 Container(
                   child: Text(
-                    "한발자국 거리의",
+                    "OneStep 과 함께",
                     style: TextStyle(fontSize: 30),
                   ),
                 ),
                 Container(
                   child: Text(
-                    "캠퍼스 내에서",
+                    "즐거운 대학생활을",
                     style: TextStyle(fontSize: 30),
                   ),
                 ),
                 Container(
                   child: Text(
-                    "즐거운 중고거래!",
+                    "지금 바로 RUN",
                     style: TextStyle(fontSize: 30),
                   ),
                 ),
@@ -76,7 +72,7 @@ class JoinBody extends ConsumerWidget {
                         _tempEmail = text;
                       },
                       decoration: InputDecoration(
-                        hintText: "아이디",
+                        hintText: "이메일",
                         enabledBorder: UnderlineInputBorder(
                             borderSide: BorderSide(
                                 color: _firstEmailEnter == true ||
@@ -202,51 +198,20 @@ class JoinBody extends ConsumerWidget {
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(primary: Colors.white70),
                     onPressed: _isEmailCheck == true && _isNickNameCheck == true
-                        ? () async {
+                        ? () {
                             if (_isEmailCheck == true &&
                                 _isNickNameCheck == true) {
-                              await FirebaseFirestore.instance
-                                  .collection('user')
-                                  .doc(user.id)
-                                  .set({
-                                    "auth":
-                                        0, // 대학인증여부 0 : 안됨, 1 : 인증대기중, 2 : 인증 완료
-                                    "authTime": 0, // 학교 인증시간
-                                    "uid": user.id, // uid
-                                    "nickName": _nicknameController.text, // 닉네임
-                                    "imageUrl": user.photoUrl, // 사진
-                                    "email": _emailController.text, // 이메일
-                                    "reportPoint": 0, // 신고 점수
-                                    "university": "", // 학교이름
-                                    "universityEmail": "", // 학교이메일
-                                    "joinTime": DateTime.now()
-                                        .microsecondsSinceEpoch, // 가입시간
-                                  })
-                                  .whenComplete(() => {
-                                        FirebaseFirestore.instance
-                                            .collection('user')
-                                            .doc(user.id)
-                                            .collection("chatCount")
-                                            .doc(user.id)
-                                            .set({
-                                          "productChatCount": 0,
-                                          "boardChatCount": 0,
-                                        })
-                                      })
-                                  .whenComplete(() => {
-                                        FirebaseFirestore.instance
-                                            .collection('user')
-                                            .doc(user.id)
-                                            .collection("report")
-                                            .doc(user.id)
-                                            .set({
-                                          "reportPoint": 0,
-                                        })
-                                      });
+                              // FirebaseFirestore.instance
+                              //             .collection('user')
+                              //             .doc(googleSignIn.currentUser.id)
+                              //             .update({
+                              //           "nickName": _nicknameController.text,
+                              //           "email":
+                              //               _emailController.text,
+                              //         });
 
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) =>
-                                      ChoiceAuthWayPage(user)));
+                              // Navigator.of(context).push(MaterialPageRoute(
+                              //     builder: (context) => ChoiceAuthWayPage()));
                             }
                           }
                         : null,

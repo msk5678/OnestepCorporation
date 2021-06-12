@@ -33,7 +33,7 @@ dependencies:
   firebase_core: ^1.0.1
   cloud_firestore: ^1.0.1
   firebase_storage: ^8.0.0
-  firebase_messaging: ^10.0.0
+  firebase_messaging: ^9.0.0
   firebase_auth: ^1.0.1
   firebase_dynamic_links: ^0.8.0
   google_sign_in: ^5.0.0
@@ -48,16 +48,7 @@ dependencies:
   photo_view: ^0.11.1          # image fullViewer
   flutter_swiper: ^1.1.6       # image slider
   carousel_slider: ^3.0.0      # new image slider
-  wechat_assets_picker: #^5.5.3 # new image picker
-    git: 
-      url: 'https://github.com/honghoker/flutter_wechat_assets_picker.git'
-      ref: master
-
   ###########
-
-  #intl
-  intl: ^0.17.0
-  #####
 
   #formatter
   pattern_formatter: ^2.0.0         # 숫자, 날짜 format 라이브러리
@@ -122,18 +113,9 @@ dependencies:
   page_transition: ^2.0.2
   #flutter List Animation
   flutter_staggered_animations: "^1.0.0"
-  flutter_staggered_grid_view: ^0.4.0
-  #list swipe Menu
-  flutter_slidable: ^0.6.0
   #Cache Manager
   flutter_cache_manager: ^3.0.2
-  #Image FadeIn Animation
-  transparent_image: ^2.0.0
-  flutter_fadein: ^2.0.0
-  #rive Animation
-  rive: ^0.7.5
-  #sortMap
-  sortedmap: ^0.5.0
+
   #Chat Test
   #stream_chat_flutter: ^1.5.1
 
@@ -168,7 +150,6 @@ flutter:
   assets:
     - icons/category/
     - images/   
-    - rives/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 
@@ -180,27 +161,17 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  fonts:
-    - family: Ubuntu
-      fonts:
-        # - asset: fonts/Ubuntu-Bold.ttf
-        # - asset: fonts/Ubuntu-BoldItalic.ttf
-        # - asset: fonts/Ubuntu-Italic.ttf
-        # - asset: fonts/Ubuntu-Light.ttf
-        # # - asset: fonts/Ubuntu-LightItalic
-        # - asset: fonts/Ubuntu-Medium.ttf
-        # - asset: fonts/Ubuntu-MediumItalic.ttf
-        - asset: fonts/Ubuntu-Regular.ttf
-    - family: GamjaFlower
-      fonts:
-        - asset: fonts/GamjaFlower-Regular.ttf 
-
-          # style: italic
-    # - family: Trajan Pro
-    #   fonts:
-    #     - asset: fonts/TrajanPro.ttf
-    #     - asset: fonts/TrajanPro_Bold.ttf
-    #       weight: 700
+  # fonts:
+  #   - family: Schyler
+  #     fonts:
+  #       - asset: fonts/Schyler-Regular.ttf
+  #       - asset: fonts/Schyler-Italic.ttf
+  #         style: italic
+  #   - family: Trajan Pro
+  #     fonts:
+  #       - asset: fonts/TrajanPro.ttf
+  #       - asset: fonts/TrajanPro_Bold.ttf
+  #         weight: 700
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
