@@ -41,7 +41,7 @@ class PhotoList extends ConsumerWidget {
   Widget buildPhotoGridView(PostData postData) {
     String imageURL =
         postData.imageCommentMap.values.toList()[0].toString() ?? "";
-    // return DefaultCacheManager().getImageFile(imageURL, withProgress: true);
+    return DefaultCacheManager().getImageFile(imageURL, withProgress: true);
   }
 
   Future getImage(String url) async {
