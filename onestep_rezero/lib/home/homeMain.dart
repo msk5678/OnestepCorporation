@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:onestep_rezero/search/pages/searchAllMain.dart';
+import 'package:onestep_rezero/search/pages/searchMain.dart';
 
 class HomeMain extends StatefulWidget {
   HomeMain({Key key}) : super(key: key);
@@ -23,7 +23,7 @@ class _HomeMainState extends State<HomeMain> {
                 onPressed: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                        builder: (context) => SearchAllMain(searchKey: 0)),
+                        builder: (context) => SearchMain(searchKey: 0)),
                   );
                 },
               ),

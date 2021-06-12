@@ -1,44 +1,58 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:onestep_rezero/chat/widget/appColor.dart';
+import 'package:onestep_rezero/search/pages/searchMain.dart';
 import 'package:onestep_rezero/search/widgets/product/searchProductBody.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class SearchAllMain extends StatefulWidget {
+class SearchContent extends StatefulWidget {
   final int searchKey;
-  SearchAllMain({Key key, @required this.searchKey}) : super(key: key);
+  final String searchText;
+  SearchContent({Key key, @required this.searchKey, this.searchText})
+      : super(key: key);
 
   @override
-  _SearchAllMainState createState() => _SearchAllMainState();
+  _SearchContentState createState() => _SearchContentState();
 }
 
-class _SearchAllMainState extends State<SearchAllMain> {
+class _SearchContentState extends State<SearchContent> {
   TextEditingController _textController;
   final ScrollController _productScrollController = ScrollController();
   final ScrollController _boardScrollController = ScrollController();
 
   final StreamController<bool> _streamController = StreamController<bool>();
+
+  TabController ctr;
+
   String _searchText;
-  bool _isSearchMode;
+  FocusNode _focus = new FocusNode();
+
+  void _onFocusChange() {
+    print("@@@@ Focus : ${_focus.hasFocus}");
+
+    if (_focus.hasFocus) {
+      setState(() {});
+    }
+  }
 
   @override
   void initState() {
     context.read(searchProductProvider).clearList();
+    _searchContent(widget.searchText);
+    _focus.addListener(_onFocusChange);
 
     // if (context.read(searchProductProvider.state).isNotEmpty)
     //   context
     //       .read(searchProductProvider.state)
     //       .clear(); // board provider list 초기화 필요
 
-    _textController = TextEditingController(text: "");
+    _textController = TextEditingController(text: widget.searchText);
+    _searchText = widget.searchText;
 
     _productScrollController.addListener(productScrollListener);
     _boardScrollController.addListener(boardScrollListener);
-
-    _searchText = "";
-    _isSearchMode = false;
-
     super.initState();
   }
 
@@ -66,7 +80,7 @@ class _SearchAllMainState extends State<SearchAllMain> {
     }
   }
 
-  _setLatestSearch(String text) async {
+  _addLatestSearch(String text) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     List<String> search = (prefs.getStringList('latestSearch') ?? []);
 
@@ -80,7 +94,7 @@ class _SearchAllMainState extends State<SearchAllMain> {
     if (text.trim().length >= 2) {
       _searchText = text;
 
-      _setLatestSearch(_searchText); // 검색어 내부 DB 저장
+      _addLatestSearch(_searchText); // 검색어 내부 DB 저장
 
       switch (this.widget.searchKey) {
         case 0:
@@ -101,75 +115,93 @@ class _SearchAllMainState extends State<SearchAllMain> {
 
   Widget appBar() {
     return AppBar(
-      titleSpacing: 0,
-      backgroundColor: Colors.white,
-      iconTheme: IconThemeData(color: Colors.black),
-      title: Row(
-        children: [
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.only(right: 10),
-              child: Container(
-                height: 50,
-                child: TextField(
-                  onTap: () {
-                    setState(() {
-                      _isSearchMode = true;
-                    });
-                  },
-                  // autofocus: _isSearchMode == true ? true : false,
-                  controller: _textController,
-                  onSubmitted: (text) {
-                    _searchContent(text);
-                  },
-                  textAlignVertical: TextAlignVertical.center,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.black)),
-                    prefixIcon: Padding(
-                      padding: const EdgeInsets.only(bottom: 3),
-                      child: Icon(Icons.search),
+        elevation: 0.5,
+        titleSpacing: 0,
+        backgroundColor: Colors.white,
+        iconTheme: IconThemeData(color: Colors.black),
+        title: Row(
+          children: [
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.only(right: 10),
+                child: Container(
+                  height: 50,
+                  child: TextField(
+                    focusNode: _focus,
+                    onTap: () {
+                      Navigator.pop(context);
+
+                      Navigator.pushReplacement(
+                        context,
+                        PageRouteBuilder(
+                          pageBuilder: (context, animation1, animation2) =>
+                              SearchMain(
+                                  searchKey: widget.searchKey,
+                                  searchText: _textController.text),
+                          transitionDuration: Duration(seconds: 0),
+                        ),
+                      );
+                    },
+                    autofocus: false,
+                    controller: _textController,
+                    onSubmitted: (text) {
+                      _searchContent(text);
+                    },
+                    textAlignVertical: TextAlignVertical.center,
+                    decoration: InputDecoration(
+                      enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: OnestepColors().mainColor, width: 2.0)),
+                      focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: OnestepColors().mainColor, width: 2.0)),
+                      prefixIcon: Padding(
+                        padding: const EdgeInsets.only(bottom: 3),
+                        child: Icon(
+                          Icons.search,
+                          color: OnestepColors().mainColor,
+                        ),
+                      ),
+                      suffixIcon: _textController.text != ""
+                          ? IconButton(
+                              icon: Icon(Icons.clear,
+                                  color: OnestepColors().mainColor),
+                              onPressed: () {
+                                _textController.clear();
+                              },
+                            )
+                          : null,
+                      contentPadding: EdgeInsets.all(10.0),
+                      hintText: "검색어를 입력해주세요.",
                     ),
-                    suffixIcon: _textController.text != ""
-                        ? IconButton(
-                            icon: Icon(Icons.clear),
-                            onPressed: () {
-                              _textController.clear();
-                            },
-                          )
-                        : null,
-                    contentPadding: EdgeInsets.all(10.0),
-                    hintText: "찾고 싶은 상품을 검색해보세요.",
                   ),
                 ),
               ),
             ),
-          ),
-        ],
-      ),
-      bottom: _isSearchMode ? appBarBottom() : null,
-    );
+          ],
+        ),
+        bottom: appBarBottom());
   }
 
   Widget appBarBottom() {
-    return widget.searchKey == 0
-        ? TabBar(
-            tabs: [
-              Tab(
-                child: Text(
-                  "장터",
-                  style: TextStyle(color: Colors.black),
-                ),
-              ),
-              Tab(
-                child: Text(
-                  "게시판",
-                  style: TextStyle(color: Colors.black),
-                ),
-              ),
-            ],
-          )
-        : null;
+    if (_focus.hasFocus || widget.searchKey != 0) return null;
+    return TabBar(
+      indicatorColor: OnestepColors().mainColor,
+      tabs: [
+        Tab(
+          child: Text(
+            "장터",
+            style: TextStyle(color: Colors.black),
+          ),
+        ),
+        Tab(
+          child: Text(
+            "게시판",
+            style: TextStyle(color: Colors.black),
+          ),
+        ),
+      ],
+    );
   }
 
   Widget allBody() {
@@ -256,92 +288,6 @@ class _SearchAllMainState extends State<SearchAllMain> {
     );
   }
 
-  Widget aaBody() {
-    return FutureBuilder(
-        future: SharedPreferences.getInstance(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            List<String> search =
-                (snapshot.data.getStringList('latestSearch') ?? []);
-            return Padding(
-              padding: const EdgeInsets.only(top: 10),
-              child: SizedBox(
-                height: 50,
-                child: ListView.builder(
-                  itemCount: search.length,
-                  physics: ClampingScrollPhysics(),
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Card(
-                      color: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15.0),
-                      ),
-                      child: InkWell(
-                        child: Padding(
-                          padding: EdgeInsets.only(
-                            left: 10,
-                            right: 10,
-                            top: 5,
-                            bottom: 5,
-                          ),
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Text("${search[index]}",
-                                style: TextStyle(),
-                                textAlign: TextAlign.center),
-                          ),
-                        ),
-                        onTap: () {
-                          _searchContent(search[index]);
-                          setState(() {
-                            _isSearchMode = false;
-                          });
-                        },
-                      ),
-                    );
-                  },
-                ),
-              ),
-            );
-          } else {
-            return Container();
-          }
-        });
-  }
-
-  Widget aa() {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(15, 15, 15, 0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                child: Text("최근 검색어"),
-              ),
-              GestureDetector(
-                onTap: () {
-                  // Provider.of<AppDatabase>(context, listen: false)
-                  //     .searchsDao
-                  //     .deleteAllSearch();
-                  // setState(() {
-                  //   _textController.clear();
-                  // });
-                },
-                child: Container(
-                  child: Text("모두 삭제"),
-                ),
-              ),
-            ],
-          ),
-        ),
-        aaBody(),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     bool chk = widget.searchKey == 0;
@@ -351,11 +297,11 @@ class _SearchAllMainState extends State<SearchAllMain> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: appBar(),
-        body: _isSearchMode
-            ? chk
+        body: _focus.hasFocus
+            ? Container()
+            : chk
                 ? allBody()
-                : singleBody()
-            : aa(),
+                : singleBody(),
         floatingActionButton: floatingButton(),
       ),
     );

@@ -9,7 +9,7 @@ import 'package:onestep_rezero/product/pages/productAdd.dart';
 
 import 'package:onestep_rezero/product/widgets/main/productMainBody.dart';
 import 'package:onestep_rezero/product/widgets/main/productMainHeader.dart';
-import 'package:onestep_rezero/search/pages/searchAllMain.dart';
+import 'package:onestep_rezero/search/pages/searchMain.dart';
 
 class ProductMain extends StatefulWidget {
   @override
@@ -95,8 +95,7 @@ class _ProductMainState extends State<ProductMain> {
           ),
           onPressed: () => {
             Navigator.of(context).push(
-              MaterialPageRoute(
-                  builder: (context) => SearchAllMain(searchKey: 1)),
+              MaterialPageRoute(builder: (context) => SearchMain(searchKey: 1)),
             ),
           },
         ),

@@ -31,16 +31,29 @@ class _CategoryDetailState extends State<CategoryDetail> {
             case ConnectionState.waiting:
               return Container();
             default:
-              Map<String, dynamic> _detailCategory =
-                  snapshot.data['detail']; // value 내림차순 sort
+              Map<String, dynamic> _detailCategory = snapshot.data['detail'];
+
               _detailCategory.addAll({"전체": snapshot.data['total']});
-              var sortedKeys = _detailCategory.keys.toList(growable: false)
-                ..sort((k1, k2) =>
-                    _detailCategory[k2].compareTo(_detailCategory[k1]));
-              LinkedHashMap sortedMap = new LinkedHashMap.fromIterable(
-                  sortedKeys,
-                  key: (k) => k,
-                  value: (k) => _detailCategory[k]);
+
+              var mapEntries = _detailCategory.entries.toList()
+                ..sort((a, b) => a.value.compareTo(b.value));
+
+              LinkedHashMap sortedMap = (_detailCategory
+                ..clear()
+                ..addAll({"전체": snapshot.data['total']})
+                ..addEntries(mapEntries)) as LinkedHashMap;
+
+              // List<String> sortedKeys = _detailCategory.keys
+              //     .toList(growable: false)
+              //       ..sort((k1, k2) =>
+              //           _detailCategory[k2].compareTo(_detailCategory[k1]));
+
+              // sortedKeys.insert(0, "전체");
+
+              // LinkedHashMap sortedMap = new LinkedHashMap.fromIterable(
+              //     sortedKeys,
+              //     key: (k) => k,
+              //     value: (k) => _detailCategory[k]);
 
               return Column(
                 mainAxisSize: MainAxisSize.min,
