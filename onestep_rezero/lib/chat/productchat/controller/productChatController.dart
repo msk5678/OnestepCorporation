@@ -7,6 +7,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/product/models/product.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductChatController {
   //Product Chat Count
@@ -52,14 +53,14 @@ class ProductChatController {
             "recentText": "채팅방이 생성되었습니다.",
             "chatUsers": {
               myUid: {
-                "uid": myUid,
+                "friendUid": friendUid,
                 "connectTime": nowTime,
-                "hide": false,
+                "hide": true,
               },
               friendUid: {
-                "uid": friendUid,
+                "friendUid": myUid,
                 "connectTime": nowTime,
-                "hide": false,
+                "hide": true,
               },
             },
           }).whenComplete(() {
@@ -93,7 +94,53 @@ class ProductChatController {
     return FirebaseFirestore.instance.collection('user').doc(proUserId).get();
   }
 
-  FutureBuilder getUserImage(String proUserId) {
+  _setChatUserimageUrl(String chatId, String imageUrl) async {
+    print("1. 유저 이미지 내부 저장");
+    SharedPreferences prefsChatUserImageUrls =
+        await SharedPreferences.getInstance();
+    await prefsChatUserImageUrls.setString(chatId, imageUrl);
+  }
+
+  getChatUserimageUrl(String chatId) async {
+    String imageUrl;
+    SharedPreferences prefsChatUserPhotoUrls =
+        await SharedPreferences.getInstance();
+    imageUrl = prefsChatUserPhotoUrls.getString(chatId);
+    print("2. 내부 db 값 : GetChatUserPhotoUrl : $imageUrl");
+
+    return imageUrl;
+  }
+
+  FutureBuilder getUserImagetoChatroom(String chatId) {
+    return FutureBuilder(
+        future: getChatUserimageUrl(chatId),
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+              return CircularProgressIndicator();
+            default:
+              if (snapshot.hasData == false) {
+                print("YES ${snapshot.data.toString()}");
+                return CircularProgressIndicator();
+              } else {
+                print("No ${snapshot.data.toString()}");
+                return Material(
+                  child: CachedNetworkImage(
+                    imageUrl: snapshot.data,
+                    // productMessage.content.imageUrl,
+                    fit: BoxFit.cover,
+                    height: 40,
+                    width: 40,
+                  ),
+                  borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                  clipBehavior: Clip.hardEdge,
+                );
+              }
+          }
+        });
+  }
+
+  FutureBuilder getUserImage(String chatId, String proUserId) {
     return FutureBuilder(
       future: getUserId(proUserId),
       builder: (context, snapshot) {
@@ -123,6 +170,8 @@ class ProductChatController {
                 ),
               );
             } else {
+              _setChatUserimageUrl(chatId, snapshot.data['imageUrl']);
+              print("1. 가져온 url  : ${snapshot.data['imageUrl']}");
               return Column(
                 children: [
                   Expanded(
@@ -339,8 +388,6 @@ class ProductChatController {
       print("maptest1 컨텐츠저장완");
       String messageId = DateTime.now().millisecondsSinceEpoch.toString();
       print("proChatController-onSendToProductMessage 2-3. 상대방 hide true면 변경함");
-      reConnectProductChat(
-          chatId, friendId, messageId); //상대방 hide = true 면 변경하고 수신시간도 바꿈
 
       print("maptest1-1 $chatId $messageId");
 //RealTime
@@ -356,7 +403,7 @@ class ProductChatController {
         "sendTime": messageId,
         "content": content,
         "type": type,
-        "isRead": false,
+        // "isRead": false,
         //"isRead": false,
       }).whenComplete(() {
         print("proChatController-onSendToProductMessage 3. 메세지 저장 완료");
@@ -420,32 +467,50 @@ class ProductChatController {
     // //if (data['idTo'] == googleSignIn.currentUser.id.toString() && data['isRead'] == false) {}
   }
 
-  void reConnectProductChat(String chatId, String friendId, String sendTime) {
-    DatabaseReference productChatFriendRefernce =
+  void reConnectProductChat(
+      String chatId, String friendId, String reConnectTime) {
+    DatabaseReference productChatFriendUidRefernce =
         productChatReference.child(chatId).child("chatUsers").child(friendId);
     Map<String, dynamic> friendConnectState;
-    productChatFriendRefernce.once().then((DataSnapshot snapshot) {
+    productChatFriendUidRefernce.once().then((DataSnapshot snapshot) {
       if (snapshot.value['hide'] == true) {
         print("proChatContro ${snapshot.value['hide']}");
-        print("proChatContro ${snapshot.value['uid']}");
+        print("proChatContro ${snapshot.value['friendUid']}");
         friendConnectState = {
           "hide": false,
-          "connectTime": sendTime,
+          "connectTime": reConnectTime,
         };
-        productChatFriendRefernce.update(friendConnectState);
+        productChatFriendUidRefernce.update(friendConnectState);
+      }
+    });
+    DatabaseReference productChatMyUidRefernce = productChatReference
+        .child(chatId)
+        .child("chatUsers")
+        .child(googleSignIn.currentUser.id);
+    Map<String, dynamic> myConnectState;
+    productChatMyUidRefernce.once().then((DataSnapshot snapshot) {
+      if (snapshot.value['hide'] == true) {
+        print("proChatContro ${snapshot.value['hide']}");
+        print("proChatContro ${snapshot.value['friendUid']}");
+        myConnectState = {
+          "hide": false,
+          "connectTime": reConnectTime,
+        };
+        productChatMyUidRefernce.update(myConnectState);
       }
     });
   }
 
   void exitProductChat(String chatId) {
-    print("채팅방 나가기. hide = true, currentTime = 0");
+    print("채팅방 나가기. hide = true, currentTime = 나간시간");
+    String exitTime = DateTime.now().millisecondsSinceEpoch.toString();
     productChatReference
         .child(chatId)
         .child("chatUsers")
         .child(googleSignIn.currentUser.id)
         .update({
       "hide": true,
-      "connectTime": 0,
+      "connectTime": exitTime,
       //"111357489031227818227": true,
     });
   }

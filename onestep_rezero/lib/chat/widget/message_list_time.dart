@@ -22,12 +22,37 @@ Widget getMessageDate(String timestamp) {
   ; //chattingRoom
 
   var resultTime = nowTimeList[0] + dayoftheweek;
-  return Text(
-    resultTime,
-    style: TextStyle(
-      color: Colors.grey,
-      fontSize: 12.0,
-      //  fontStyle: FontStyle.italic,
+  return Container(
+    padding: EdgeInsets.only(
+      bottom: 8,
+    ),
+    child: Row(
+      children: [
+        Expanded(
+          child: new Container(
+              margin: const EdgeInsets.only(left: 10.0, right: 10.0),
+              child: Divider(
+                color: Colors.black,
+                height: 36,
+              )),
+        ),
+        Text(
+          resultTime,
+          style: TextStyle(
+            color: Colors.grey,
+            fontSize: 12.0,
+            //  fontStyle: FontStyle.italic,
+          ),
+        ),
+        Expanded(
+          child: new Container(
+              margin: const EdgeInsets.only(left: 10.0, right: 10.0),
+              child: Divider(
+                color: Colors.black,
+                height: 36,
+              )),
+        ),
+      ],
     ),
   );
 }
@@ -80,12 +105,41 @@ Widget compareToProductMessageDate(
   if (pastTimeList[0] == nextTimeList[0]) {
     return Container();
   } else
-    return Text(
-      resultTime,
-      style: TextStyle(
-        color: Colors.grey,
-        fontSize: 12.0,
-        //  fontStyle: FontStyle.italic,
+    return Container(
+      padding: EdgeInsets.only(
+        bottom: 8,
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: new Container(
+                margin: const EdgeInsets.only(left: 10.0, right: 10.0),
+                child: Divider(
+                  color: Colors.black,
+                  height: 36,
+                )),
+          ),
+          Text(
+            resultTime,
+            style: TextStyle(
+              color: Colors.grey,
+              fontSize: 12.0,
+              //  fontStyle: FontStyle.italic,
+            ),
+          ),
+          Expanded(
+            child: new Container(
+                margin: const EdgeInsets.only(left: 10.0, right: 10.0),
+                child: Divider(
+                  color: Colors.black,
+                  height: 36,
+                )),
+          ),
+          // Divider(
+          //   color: Colors.black,
+          //   height: 36,
+          // ),
+        ],
       ),
     );
 }

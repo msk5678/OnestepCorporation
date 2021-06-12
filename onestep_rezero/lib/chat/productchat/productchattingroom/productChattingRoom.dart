@@ -5,6 +5,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:onestep_rezero/chat/productchat/controller/productChatController.dart';
@@ -19,7 +20,6 @@ import 'dart:io' as io;
 
 import 'package:onestep_rezero/product/models/product.dart';
 import 'package:onestep_rezero/product/pages/productDetail.dart';
-import 'package:onestep_rezero/product/widgets/detail/productDetailBody.dart';
 
 class ProductChattingRoomPage extends StatefulWidget {
   final String myUid;
@@ -47,9 +47,26 @@ class _ProductChattingRoomPageState extends State<ProductChattingRoomPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    // print("채팅방 입장");
+  }
+
+  @override
   Widget build(BuildContext context) {
     print("포커스 빌드 다시됨");
-    return Scaffold(
+
+    return
+        // WillPopScope(
+        //   onWillPop:
+        //       // onBackPress,
+
+        //       () {
+        //     print("키보드 상단 해제");
+        //     return Future(() => false);
+        //   },
+        //   child:
+        Scaffold(
       // appBar: AppBar(
       //   backgroundColor: Colors.lightBlue,
       //   actions: <Widget>[
@@ -129,6 +146,7 @@ class _ProductChattingRoomPageState extends State<ProductChattingRoomPage> {
         postId: widget.postId,
         product: widget.product,
       ),
+      // ),
     );
   }
 
@@ -164,6 +182,7 @@ class _ProductChattingRoomPageState extends State<ProductChattingRoomPage> {
 //       ],
 //     );
 //   }
+
 }
 
 class ChatScreen extends StatefulWidget {
@@ -217,7 +236,6 @@ class _LastChatState extends State<ChatScreen> {
 
   //SharedPreferences preferences;
   //String id; //내아이디
-  var listMessage;
   //채팅방 생성 판별
   String chatId; //채팅방 있으면 새로만들고 없으면 기존 채팅아이디
   bool existChattingRoom; //채팅방
@@ -277,8 +295,8 @@ class _LastChatState extends State<ChatScreen> {
     //RealTime
 
     productChatReference
-        .orderByChild("chatUsers/${googleSignIn.currentUser.id}/hide")
-        .equalTo(false)
+        .orderByChild("chatUsers/${googleSignIn.currentUser.id}/friendUid")
+        .equalTo(friendId)
         .once()
         .then((DataSnapshot snapshot) {
       if (snapshot.value == null) {
@@ -307,6 +325,9 @@ class _LastChatState extends State<ChatScreen> {
             existChattingRoom = true;
             chatId = key.toString();
             connectTime = values['chatUsers'][myId]['connectTime'];
+            print("2.-1. $chatId");
+            ProductChatController().getChatUserimageUrl(chatId);
+
             print("getc 커넥타임 $connectTime ");
             // getConnectTime(chatId);
 
@@ -339,7 +360,6 @@ class _LastChatState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
-    print("포커스 ㅇㅇ");
     focusNode.hasFocus;
     focusNode.addListener(() {
       onFocusChange();
@@ -457,13 +477,26 @@ class _LastChatState extends State<ChatScreen> {
   }
 
   Future<bool> onBackPress() {
+    print("키보드 백 기본");
     if (isDisplaySticker) {
+      print("키보드 이모티콘 떠있네여");
       setState(() {
         isDisplaySticker = false;
       });
-    } else {
+    }
+    // else if (focusNode.) {
+    //   print("키보드 떠있네여");
+    // }
+    // else if (focusNode.hasFocus) {
+    //   print("키보드 떠있네여");
+    //   // SystemChannels.textInput.invokeMethod('TextInput.hide');
+    //   // FocusScope.of(context).requestFocus(new FocusNode());
+    //   // focusNode.dispose();
+    // }
+    else {
+      print("키보드 없음");
       Navigator.pop(context);
-      //print('뒤로감');
+      //   //print('뒤로감');
     }
     return Future.value(false);
   }
@@ -530,7 +563,7 @@ class _LastChatState extends State<ChatScreen> {
   }
 
   _buildChatListListTileStream() {
-    //Future.delayed(const Duration(seconds: 1));
+    // Future.delayed(const Duration(seconds: 1));
     print("getc 스트림시작 $connectTime");
     return Flexible(
       fit: FlexFit.tight,
@@ -544,59 +577,48 @@ class _LastChatState extends State<ChatScreen> {
               stream: productChatReference
                   .child('$chatId/message')
                   .orderByChild("sendTime")
-                  .startAt(null) //my connectTime 이상 메세지만 가져옴
+                  .startAt(connectTime) //null or connectTime
                   //.equalTo("1621496441639")
-                  .onValue, //조건1.  타임스탬프 기준
+                  .onValue,
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 switch (snapshot.connectionState) {
                   case ConnectionState.waiting:
                     return Container();
                   //CircularProgressIndicator();
                   default:
-                    print(
-                        "#proChatRoom-_buildChatListListTileStream 1. Top $chatId");
                     if (snapshot == null ||
                         !snapshot.hasData ||
                         snapshot.data.snapshot.value == null) {
-                      print(
-                          "stream values if0 null : ${snapshot.data.snapshot.value}");
                       return Container();
                     } else if (snapshot.hasData) {
-                      print("#realpro Strmsg top 값 있음");
-                      listProductMessage.clear(); //리스트 클리어
+                      listProductMessage.clear();
                       DataSnapshot dataValues = snapshot.data.snapshot;
                       Map<dynamic, dynamic> values = dataValues.value;
-                      print("#realpro Strmsg top value : " + values.toString());
-                      print("#realpro Strmsg keys : ${values.keys.toString()}");
-                      print("#realpro Strmsg top con : " +
-                          values['content'].toString());
-
+                      print(
+                          "#realpro Strmsg message id0 : ${values.toString()}");
                       values.forEach((key, values) {
                         print(
-                            "#realpro Strmsg message id : ${values["idTo"].keys.toList()[0]}");
+                            "#realpro Strmsg message id1 : ${values["idTo"].keys.toList()[0]}");
                         String s = values[
                             "idTo/${googleSignIn.currentUser.id.toString()}"];
                         print(
-                            "#realpro Strmsg message read : ${googleSignIn.currentUser.id.toString()} ${values["idTo/${googleSignIn.currentUser.id.toString()}"]} $s");
+                            "#realpro Strmsg message read2 : ${googleSignIn.currentUser.id.toString()} ${values["idTo/${googleSignIn.currentUser.id.toString()}"]} $s");
                         print(
-                            "#realpro Strmsg message read : ${googleSignIn.currentUser.id.toString()} ${values["idTo/TLtvLka2sHTPQE3q6U2WPxfgJ8j2"].toString()} ");
+                            "#realpro Strmsg message read3 : ${googleSignIn.currentUser.id.toString()} ${values["idTo/TLtvLka2sHTPQE3q6U2WPxfgJ8j2"].toString()} ");
 
                         print(
-                            "#realpro Strmsg message key : ${key.toString()}");
+                            "#realpro Strmsg message key4 : ${key.toString()}");
                         print(
-                            "#realpro Strmsg message value : ${values['content']}");
+                            "#realpro Strmsg message value5 : ${values['content']}");
                         print(
-                            "#realpro Strmsg message idTo : ${values['idTo']}");
+                            "#realpro Strmsg message idTo6 : ${values['idTo']}");
                         print(
-                            "#realpro Strmsg message idTo : ${values['idTo'].values.toList()[0]}");
+                            "#realpro Strmsg message idTo7 : ${values['idTo'].values.toList()[0]}");
 
                         //Message Read update
                         if (values["idTo"].keys.toList()[0] ==
                                 googleSignIn.currentUser.id.toString() &&
                             values['idTo'].values.toList()[0] == false) {
-                          print(
-                              "안읽은 메세지, idTo : ${values["idTo"].keys.toList()[0]} // bool : ${values['idTo'].values.toList()[0]} // vals : $values");
-
                           ProductChatController()
                               .updateReadMessage(chatId, key);
 
@@ -609,8 +631,6 @@ class _LastChatState extends State<ChatScreen> {
                       });
                       listProductMessage.sort((b, a) =>
                           a.sendTime.compareTo(b.sendTime)); //정렬3. 시간 순 정렬
-                      print("#realpro Strmsg top list index : " +
-                          listProductMessage.length.toString());
                       return listProductMessage.length > 0
                           ? ListView.builder(
                               padding: EdgeInsets.all(10.0),
@@ -619,25 +639,33 @@ class _LastChatState extends State<ChatScreen> {
                               controller: listScrollController,
                               itemCount: listProductMessage.length,
                               itemBuilder: (context, index) {
-                                return Column(
-                                  children: [
-                                    //Text("jo"),
-                                    if (index == listProductMessage.length - 1)
-                                      createMessageDate(
-                                          index,
-                                          listProductMessage.length,
-                                          listProductMessage[index],
-                                          listProductMessage[index])
-                                    else
-                                      createMessageDate(
-                                          index,
-                                          listProductMessage.length,
-                                          listProductMessage[index],
-                                          listProductMessage[index + 1]),
-
-                                    createMessage(
-                                        index, listProductMessage[index]),
-                                  ],
+                                return Container(
+                                  padding: EdgeInsets.only(
+                                    bottom: 5,
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Column(
+                                        children: [
+                                          if (index ==
+                                              listProductMessage.length - 1)
+                                            createMessageDate(
+                                                index,
+                                                listProductMessage.length,
+                                                listProductMessage[index],
+                                                listProductMessage[index])
+                                          else
+                                            createMessageDate(
+                                                index,
+                                                listProductMessage.length,
+                                                listProductMessage[index],
+                                                listProductMessage[index + 1]),
+                                        ],
+                                      ),
+                                      createMessage(
+                                          index, listProductMessage[index]),
+                                    ],
+                                  ),
                                 );
                               },
                             )
@@ -648,30 +676,6 @@ class _LastChatState extends State<ChatScreen> {
               },
             ), //플렉시블
     );
-  }
-
-  bool isLastMsgLeft(int index) {
-    //얘는 falst 반환
-    if ((index > 0 &&
-            listMessage != null &&
-            listMessage[index - 1]["idFrom"] == receiveId) ||
-        index == 0) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  bool isLastMsgRight(int index) {
-    //얘는 트루 반환함
-    if ((index > 0 &&
-            listMessage != null &&
-            listMessage[index - 1]["idFrom"] != receiveId) ||
-        index == 0) {
-      return true;
-    } else {
-      return false;
-    }
   }
 
   Widget createMessageDate(
@@ -695,226 +699,210 @@ class _LastChatState extends State<ChatScreen> {
   }
 
   Widget createMessage(int index, ProductChatMessage productMessage) {
-    //My messages - Right Side
-    // var chatTime = DateFormat("yyyy-MM-dd").format(
-    //     DateTime.fromMillisecondsSinceEpoch(int.parse(document["timestamp"])));
-    // var nextchatTime = DateFormat("yyyy-MM-dd").format(
-    //     DateTime.fromMillisecondsSinceEpoch(
-    //         int.parse(datedocument["timestamp"])));
     if (productMessage.idFrom == myId) {
       senderId = myId;
       receiveId = friendId;
       //내가 보냈을 경우
-      return Column(
-        //요기
+      return Container(
+          // margin: EdgeInsets.only(top: 8.0),
+          child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: <Widget>[
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: <Widget>[
-                    productMessage.isRead == false ? Text("1") : Text(""),
-                    getMessageTime(productMessage.sendTime),
-                  ],
-                ),
-              ),
-              SizedBox(width: 5, height: 10),
-              productMessage.type == 0
-                  //Text Msg
-                  ? Container(
-                      child: Text(
-                        productMessage.content.title,
-                        maxLines: 2,
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.w500,
-                        ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: <Widget>[
+                productMessage.isRead == false ? Text("1") : Text(""),
+                getMessageTime(productMessage.sendTime),
+              ],
+            ),
+          ),
+          SizedBox(width: 5, height: 10),
+          productMessage.type == 0
+              //Text Msg
+              ? Container(
+                  child: Text(
+                    productMessage.content.title,
+                    maxLines: 2,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
+                  //width: 150.0,
+                  decoration: BoxDecoration(
+                      color: OnestepColors().fifColor,
+                      borderRadius: BorderRadius.circular(8.0)),
+                  margin: EdgeInsets.only(
+                      //textmargin
+                      // top: 8,
+                      // bottom: 5,
+                      // isLastMsgRight(index) ? 0.0 : 0.0,
+                      // right: 10.0,
                       ),
-                      padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
-                      //width: 150.0,
-                      decoration: BoxDecoration(
-                          color: OnestepColors().fifColor,
-                          borderRadius: BorderRadius.circular(8.0)),
-                      margin: EdgeInsets.only(
-                          //textmargin
-                          top: 10,
-                          bottom: isLastMsgRight(index) ? 0.0 : 0.0,
-                          right: 10.0),
-                    )
-                  //Image Msg
-                  : productMessage.type == 1
-                      ?
-                      //Text(productMessage.content.imageUrl.toString())
-                      Container(
-                          child: TextButton(
-                            child: Material(
-                              child: CachedNetworkImage(
-                                placeholder: (context, url) => Container(
-                                  child: CircularProgressIndicator(
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                        (OnestepColors().mainColor)),
-                                  ),
-                                  width: 200.0,
-                                  height: 200.0,
-                                  padding: EdgeInsets.all(70.0),
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey,
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(8.0)),
-                                  ),
-                                ),
-                                errorWidget: (context, url, error) => Material(
-                                  child: Text("err"),
-                                  // Image.asset("images/mimi1.gif",
-                                  //     width: 200.0,
-                                  //     height: 200.0,
-                                  //     fit: BoxFit.cover),
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(8.0)),
-                                  clipBehavior: Clip.hardEdge,
-                                ),
-                                imageUrl: productMessage.content.imageUrl,
-                                width: 200.0,
-                                height: 200.0,
-                                fit: BoxFit.cover,
+                )
+              //Image Msg
+              : productMessage.type == 1
+                  ?
+                  //Text(productMessage.content.imageUrl.toString())
+                  Container(
+                      child: TextButton(
+                        child: Material(
+                          child: CachedNetworkImage(
+                            placeholder: (context, url) => Container(
+                              child: CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                    (OnestepColors().mainColor)),
                               ),
+                              width: 200.0,
+                              height: 200.0,
+                              padding: EdgeInsets.all(70.0),
+                              decoration: BoxDecoration(
+                                color: Colors.grey,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(8.0)),
+                              ),
+                            ),
+                            errorWidget: (context, url, error) => Material(
+                              child: Text("err"),
+                              // Image.asset("images/mimi1.gif",
+                              //     width: 200.0,
+                              //     height: 200.0,
+                              //     fit: BoxFit.cover),
                               borderRadius:
                                   BorderRadius.all(Radius.circular(8.0)),
                               clipBehavior: Clip.hardEdge,
                             ),
-                            onPressed: () {
-                              // print("pic click " +
-                              //     document["content"] +
-                              //     'index : ' +
-                              //     index.toString());
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => FullPhoto(
-                                          url: productMessage
-                                              .content.imageUrl)));
-                            },
+                            imageUrl: productMessage.content.imageUrl,
+                            width: 200.0,
+                            height: 200.0,
+                            fit: BoxFit.cover,
+                          ),
+                          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                          clipBehavior: Clip.hardEdge,
+                        ),
+                        onPressed: () {
+                          // print("pic click " +
+                          //     document["content"] +
+                          //     'index : ' +
+                          //     index.toString());
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => FullPhoto(
+                                      url: productMessage.content.imageUrl)));
+                        },
+                      ),
+                      margin: EdgeInsets.only(
+                          //image margin
+                          // top: 8,
+                          // bottom: isLastMsgRight(index) ? 0.0 : 0.0,
+                          // right: 0.0,
+                          ),
+                    )
+                  //Sticker . gif Msg
+                  : productMessage.type == 2
+                      ? Container(
+                          child: Image.asset(
+                            "images/${productMessage.content}.gif",
+                            width: 100.0,
+                            height: 100.0,
+                            fit: BoxFit.cover,
                           ),
                           margin: EdgeInsets.only(
-                              //image margin
-                              top: 10,
-                              bottom: isLastMsgRight(index) ? 0.0 : 0.0,
-                              right: 0.0),
-                        )
-                      //Sticker . gif Msg
-                      : productMessage.type == 2
-                          ? Container(
-                              child: Image.asset(
-                                "images/${productMessage.content}.gif",
-                                width: 100.0,
-                                height: 100.0,
-                                fit: BoxFit.cover,
+                              // top: 8,
+                              // bottom: isLastMsgRight(index) ? 20.0 : 0.0,
+                              // right: 10.0,
                               ),
-                              margin: EdgeInsets.only(
-                                  bottom: isLastMsgRight(index) ? 20.0 : 0.0,
-                                  right: 10.0),
-                            )
-                          //inMessage
-                          : Container(
-                              padding:
-                                  EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 8.0),
-                              // width: 150.0,
-                              //height: 150,
-                              decoration: BoxDecoration(
-                                  color: OnestepColors().fifColor,
-                                  borderRadius: BorderRadius.circular(8.0)),
-                              child: Column(
+                        )
+                      //Product Info Message
+                      : Container(
+                          padding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 8.0),
+                          // width: 150.0,
+                          //height: 150,
+                          decoration: BoxDecoration(
+                              color: OnestepColors().fifColor,
+                              borderRadius: BorderRadius.circular(8.0)),
+                          child: Column(
+                            // crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Row(
+                                  // Expanded(
+                                  //child:
+                                  Material(
+                                    child: CachedNetworkImage(
+                                      imageUrl: productMessage.content.imageUrl,
+                                      fit: BoxFit.cover,
+                                      height: 50,
+                                      width: 50,
+                                    ),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                    clipBehavior: Clip.hardEdge,
+                                  ),
+                                  SizedBox(
+                                    width: 15,
+                                  ),
+                                  Column(
                                     crossAxisAlignment:
-                                        CrossAxisAlignment.center,
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      // Expanded(
-                                      //child:
-                                      Material(
-                                        child: CachedNetworkImage(
-                                          imageUrl:
-                                              productMessage.content.imageUrl,
-                                          fit: BoxFit.cover,
-                                          height: 50,
-                                          width: 50,
+                                      Container(
+                                        width: 140,
+                                        child: Text(
+                                          productMessage.content.title,
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                          overflow: TextOverflow.ellipsis,
                                         ),
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(8.0)),
-                                        clipBehavior: Clip.hardEdge,
                                       ),
                                       SizedBox(
-                                        width: 15,
+                                        height: 8,
                                       ),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            width: 200,
-                                            child: Text(
-                                              productMessage.content.title,
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold),
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            height: 8,
-                                          ),
-                                          Text(
-                                            productMessage.content.price + "원",
-                                          ),
-                                        ],
+                                      Text(
+                                        productMessage.content.price + "원",
                                       ),
                                     ],
                                   ),
-                                  Padding(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(5, 5, 5, 0),
-                                    child: ElevatedButton(
-                                      style: ButtonStyle(
-                                        backgroundColor:
-                                            MaterialStateProperty.all(
-                                                OnestepColors().mainColor),
-                                        elevation: MaterialStateProperty.all(0),
-                                        // hoverElevation: 0,
-                                        // focusElevation: 0,
-                                        // highlightElevation: 0,
-                                      ),
-                                      onPressed: () {
-                                        print("장터게시판 이동");
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    (ProductDetail(
-                                                        docId:
-                                                            widget.postId))));
-                                      },
-                                      child: Container(
-                                          alignment: Alignment.center,
-                                          width: 100,
-                                          height: 30,
-                                          child: Text("상세보기")),
-                                    ),
-                                  ),
                                 ],
                               ),
-                              margin: EdgeInsets.only(
-                                  top: 10,
-                                  bottom: isLastMsgRight(index) ? 20.0 : 0.0,
-                                  right: 10.0),
-                            ),
-              // GetTime(document), //채팅 우측 시간출력
-            ],
-            mainAxisAlignment: MainAxisAlignment.end,
-          )
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+                                child: ElevatedButton(
+                                  style: ButtonStyle(
+                                    backgroundColor: MaterialStateProperty.all(
+                                        OnestepColors().mainColor),
+                                    elevation: MaterialStateProperty.all(0),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                (ProductDetail(
+                                                    docId: widget.postId))));
+                                  },
+                                  child: Container(
+                                      alignment: Alignment.center,
+                                      width: 60,
+                                      height: 30,
+                                      child: Text("상세보기")),
+                                ),
+                              ),
+                            ],
+                          ),
+                          margin: EdgeInsets.only(
+                              // top: 8,
+
+                              ),
+                        ),
         ],
-      );
+        mainAxisAlignment: MainAxisAlignment.end,
+      ));
     } //if My messages - Right Side
 
     //Receiver Messages - Left Side
@@ -922,45 +910,16 @@ class _LastChatState extends State<ChatScreen> {
       //상대가 보냈을 경우
 
       return Container(
-        child: Column(
-          children: <Widget>[
+        // margin: EdgeInsets.only(top: 8.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+                margin: EdgeInsets.only(right: 6.0),
+                child: ProductChatController().getUserImagetoChatroom(chatId)),
             Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
-                isLastMsgLeft(index)
-                    ? Material(
-                        //display receiver profile image
-                        child: CachedNetworkImage(
-                          imageUrl:
-                              "https://firebasestorage.googleapis.com/v0/b/onestep-project.appspot.com/o/productimage%2FNNGS4k93wiSum1S?alt=media&token=0229cb9e-9f48-4d89-aac4-fb8ebb2ed386",
-                          fit: BoxFit.cover,
-                          height: 50,
-                          width: 50,
-                        ),
-                        // CachedNetworkImage(
-                        //   placeholder: (context, url) => Container(
-                        //     child: CircularProgressIndicator(
-                        //       valueColor: AlwaysStoppedAnimation<Color>(
-                        //           (Colors.lightBlueAccent)),
-                        //     ),
-                        //     width: 35.0,
-                        //     height: 35.0,
-                        //     padding: EdgeInsets.all(10.0),
-                        //   ),
-                        //   imageUrl:
-                        //       "https://firebasestorage.googleapis.com/v0/b/onestep-project.appspot.com/o/productimage%2FNNGS4k93wiSum1S?alt=media&token=0229cb9e-9f48-4d89-aac4-fb8ebb2ed386",
-                        //   //  "images/st.gif",
-                        // ),
-
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(50.0),
-                        ),
-                        clipBehavior: Clip.hardEdge,
-                      )
-                    : Container(
-                        child: Icon(Icons.person),
-                        width: 35.0,
-                      ),
                 //displayMessages
                 productMessage.type == 0
                     //Text Msg
@@ -969,7 +928,9 @@ class _LastChatState extends State<ChatScreen> {
                           productMessage.content.title,
                           maxLines: 2,
                           style: TextStyle(
-                              color: Colors.black, fontWeight: FontWeight.w400),
+                            color: Colors.black,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                         padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
                         //width: 150.0,
@@ -977,7 +938,11 @@ class _LastChatState extends State<ChatScreen> {
                             color: Colors.grey[200],
                             borderRadius: BorderRadius.circular(8.0)),
                         margin: EdgeInsets.only(
-                            left: 10.0, right: 10.0, top: 5), //상대 텍스트 마진
+                          //top: 8,
+
+                          // left: 10.0,
+                          right: 5.0,
+                        ), //상대 텍스트 마진
                       )
                     : productMessage.type == 1
                         ? Container(
@@ -1038,20 +1003,23 @@ class _LastChatState extends State<ChatScreen> {
                                   fit: BoxFit.cover,
                                 ),
                                 margin: EdgeInsets.only(
-                                    bottom: isLastMsgLeft(index) ? 20.0 : 10.0,
+                                    //bottom: isLastMsgLeft(index) ? 20.0 : 10.0,
                                     right: 10.0),
                               )
+                            //Product Info Message
                             : Container(
                                 padding:
                                     EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
                                 // width: 150.0,
                                 //height: 150,
                                 decoration: BoxDecoration(
-                                    color: Colors.yellow,
+                                    color: Colors.grey[200],
                                     borderRadius: BorderRadius.circular(8.0)),
                                 child: Column(
                                   children: [
                                     Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
                                       children: [
                                         // Expanded(
                                         //child:
@@ -1060,8 +1028,8 @@ class _LastChatState extends State<ChatScreen> {
                                             imageUrl:
                                                 productMessage.content.imageUrl,
                                             fit: BoxFit.cover,
-                                            height: 70,
-                                            width: 70,
+                                            height: 50,
+                                            width: 50,
                                           ),
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(8.0)),
@@ -1083,15 +1051,22 @@ class _LastChatState extends State<ChatScreen> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            Text(
-                                              productMessage.content.title,
+                                            Container(
+                                              width: 140,
+                                              child: Text(
+                                                productMessage.content.title,
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
                                             ),
                                             SizedBox(
-                                              height: 15,
+                                              height: 8,
                                             ),
                                             Text(
                                               productMessage.content.price +
-                                                  "ㄴㄴㄴㄴ원",
+                                                  "원",
                                             ),
                                           ],
                                         ),
@@ -1101,25 +1076,47 @@ class _LastChatState extends State<ChatScreen> {
                                       padding:
                                           const EdgeInsets.fromLTRB(5, 5, 5, 0),
                                       child: ElevatedButton(
+                                        style: ButtonStyle(
+                                          backgroundColor:
+                                              MaterialStateProperty.all(
+                                            Colors.grey[400],
+                                          ),
+                                          elevation:
+                                              MaterialStateProperty.all(0),
+                                          // hoverElevation: 0,
+                                          // focusElevation: 0,
+                                          // highlightElevation: 0,
+                                        ),
                                         onPressed: () {
-                                          print("장터게시판 이동");
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      (ProductDetail(
+                                                          docId:
+                                                              widget.postId))));
                                         },
                                         child: Container(
                                             alignment: Alignment.center,
-                                            width: 100,
+                                            width: 60,
                                             height: 30,
-                                            child: Text("구매하기")),
+                                            child: Text("상세보기")),
                                       ),
                                     ),
                                   ],
                                 ),
+                                margin: EdgeInsets.only(
+                                    //top: 8,
+                                    // bottom: isLastMsgRight(index) ? 20.0 : 0.0,
+                                    right: 10.0),
                               ),
                 //GetTime(document),
                 getMessageTime(productMessage.sendTime),
               ],
             ),
-
-            //Msg time 하단이라 지움
+          ],
+        ),
+        //Msg time 하단이라 지움
 /*
             isLastMsgLeft(index)
                 ? Container(
@@ -1130,10 +1127,6 @@ class _LastChatState extends State<ChatScreen> {
                     child: Text(' 텍스트?'),
                   )
                   */
-          ],
-          crossAxisAlignment: CrossAxisAlignment.start,
-        ),
-        margin: EdgeInsets.only(bottom: 10.0),
       );
     } //else 상대방 Receiver Messages - Left Side
   }
@@ -1193,6 +1186,13 @@ class _LastChatState extends State<ChatScreen> {
                   color: OnestepColors().mainColor,
                   onPressed: () {
                     if (textEditingController.text.contains("[상품정보문의]")) {
+                      String reConnectTime =
+                          DateTime.now().millisecondsSinceEpoch.toString();
+
+                      ProductChatController().reConnectProductChat(
+                          chatId,
+                          friendId,
+                          reConnectTime); //상대방 hide = true 면 변경하고 수신시간도 바꿈
                       checkTheSendMessage(chatId, friendId, product, 3);
                       print("상품정보");
                     } else {
