@@ -39,12 +39,13 @@ class PhotoList extends ConsumerWidget {
   }
 
   Widget buildPhotoGridView(PostData postData) {
-    String imageURL =
-        postData.imageCommentMap.values.toList()[0].toString() ?? "";
-    return DefaultCacheManager().getImageFile(imageURL, withProgress: true);
+    return Container();
+    // String imageURL =
+    //     postData.imageCommentMap.values.toList()[0].toString() ?? "";
+    // return DefaultCacheManager().getImageFile(imageURL, withProgress: true);
   }
 
-  Future getImage(String url) async {
-    var file = DefaultCacheManager().getImageFile(url);
-  }
+  // Future getImage(String url) async {
+  //   var file = DefaultCacheManager().getImageFile(url);
+  // }
 }
