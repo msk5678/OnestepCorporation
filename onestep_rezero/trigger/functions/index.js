@@ -49,7 +49,7 @@ exports.deleteProduct = functions.firestore.document('university/{universityId}/
 // {} 있는거랑 없는거 차이는 없는거는 예를 들어 report 는 이름이 report 인 친구들을 찾는거고
 // {reportedUid}, reportedUid는 아무런 의미가 없고(아무거나 써도 ㄱㅊ), report 다음에 있는 모든 애들을 가르킴 
 // report 안에 있는 모든 유저 대상
-exports.onReportCreate = functions.database.ref('/report/{reportedUid}/deal/{postUid}/value/{timestamp}').onCreate(async (snapshot, context) => {
+exports.onReportCreate = functions.database.ref('/report/{reportedUid}/{firstReportTime}}/deal/{postUid}/value/{timestamp}').onCreate(async (snapshot, context) => {
     const countValue = snapshot.val();
     var postReportPoint;
     var postFirstCasePoint;

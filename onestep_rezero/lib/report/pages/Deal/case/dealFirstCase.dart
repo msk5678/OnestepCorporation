@@ -82,68 +82,90 @@ class DealFirstCase extends StatelessWidget {
                   child: ElevatedButton(
                       onPressed: () {
                         print("제출하기 click");
-                        String count;
-                        int countValue;
+                        // String count;
+                        // int countValue;
+                        int count = 0;
+
+                        Map<dynamic, dynamic> values;
 
                         FirebaseDatabase.instance
                             .reference()
                             .child('report')
                             .child(googleSignIn.currentUser.id)
-                            .child('deal')
-                            .child('post1')
                             .once()
                             .then((value) => {
                                   if (value.value == null)
-                                    {
-                                      FirebaseDatabase.instance
-                                          .reference()
-                                          .child('report')
-                                          .child(googleSignIn.currentUser.id)
-                                          .child('deal')
-                                          .child('post1')
-                                          .child('value')
-                                          .child(DateTime.now()
-                                              .millisecondsSinceEpoch
-                                              .toString())
-                                          .set({
-                                        'case': '1',
-                                        'content': myController.text.toString(),
-                                        'title': "case first",
-                                        'count': '0',
-                                        'reportedUid':
-                                            googleSignIn.currentUser.id,
-                                        'time': DateTime.now()
-                                            .millisecondsSinceEpoch
-                                            .toString(),
-                                      })
-                                    }
+                                    // 아예 신고가 처음일때
+                                    {}
                                   else
                                     {
-                                      countValue = value.value.length,
-                                      countValue++,
-                                      count = countValue.toString(),
-                                      FirebaseDatabase.instance
-                                          .reference()
-                                          .child('report')
-                                          .child(googleSignIn.currentUser.id)
-                                          .child('deal')
-                                          .child('post1')
-                                          .child('value')
-                                          .child(DateTime.now()
-                                              .millisecondsSinceEpoch
-                                              .toString())
-                                          .set({
-                                        'case': '1',
-                                        'content': myController.text.toString(),
-                                        'title': "case first",
-                                        'count': count,
-                                        'reportedUid':
-                                            googleSignIn.currentUser.id,
-                                        'time': DateTime.now()
-                                            .millisecondsSinceEpoch
-                                            .toString(),
+                                      values = value.value,
+                                      values.forEach((key, value) {
+                                        count++;
+                                        // 최초신고 timestamp 마지막 꺼 확인해서 value['reportCount'] 이용 25 면 꽉 찬거고 25 아니면 ++
+                                        if (count == value.length) {
+                                          print('key = ${key}');
+                                          print(
+                                              'value = ${value['reportCount']}');
+                                        }
                                       })
                                     }
+                                  // Map<dynamic, dynamic> values = value.value,
+                                  // 첫 신고
+
+                                  // if (value.value == null)
+                                  //   {
+                                  //     FirebaseDatabase.instance
+                                  //         .reference()
+                                  //         .child('report')
+                                  //         .child(googleSignIn.currentUser.id)
+                                  //         .child('처음신고 시간')
+                                  //         .child('deal')
+                                  //         .child('post1')
+                                  //         .child('value')
+                                  //         .child(DateTime.now()
+                                  //             .millisecondsSinceEpoch
+                                  //             .toString())
+                                  //         .set({
+                                  //       'case': '1',
+                                  //       'content': myController.text.toString(),
+                                  //       'title': "case first",
+                                  //       // 'count': '0',
+                                  //       'reportedUid':
+                                  //           googleSignIn.currentUser.id,
+                                  //       'time': DateTime.now()
+                                  //           .millisecondsSinceEpoch
+                                  //           .toString(),
+                                  //     })
+                                  //   }
+                                  // else
+                                  //   {
+                                  // countValue = value.value.length,
+                                  //     // countValue++,
+                                  //     // count = countValue.toString(),
+                                  //     FirebaseDatabase.instance
+                                  //         .reference()
+                                  //         .child('report')
+                                  //         .child(googleSignIn.currentUser.id)
+                                  //         .child('처음신고 시간')
+                                  //         .child('deal')
+                                  //         .child('post1')
+                                  //         .child('value')
+                                  //         .child(DateTime.now()
+                                  //             .millisecondsSinceEpoch
+                                  //             .toString())
+                                  //         .set({
+                                  //       'case': '1',
+                                  //       'content': myController.text.toString(),
+                                  //       'title': "case first",
+                                  //       // 'count': count,
+                                  //       'reportedUid':
+                                  //           googleSignIn.currentUser.id,
+                                  //       'time': DateTime.now()
+                                  //           .millisecondsSinceEpoch
+                                  //           .toString(),
+                                  //     })
+                                  //   }
                                 });
                       },
                       child: Container(
