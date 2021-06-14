@@ -175,6 +175,8 @@ class CommentWidget extends ConsumerWidget implements Comment {
           caption: '댓글달기',
           color: Colors.black45,
           icon: Icons.add_comment,
+          onTap: () {}
+          ,
         ),
         isWritter
             ? IconSlideAction(
@@ -182,7 +184,6 @@ class CommentWidget extends ConsumerWidget implements Comment {
                 color: Colors.red,
                 icon: Icons.delete,
                 onTap: () async {
-                  print("HELLO");
                   bool result = await comment.dismissComment() ?? false;
                   if (result)
                     context.read(commentProvider).refresh(boardId, postId);
