@@ -9,22 +9,6 @@ import 'package:onestep_rezero/board/TipDialog/tip_dialog.dart';
 
 enum ContentCategory { SMALLTALK, QUESTION }
 
-// extension ContentCategoryExtension on ContentCategory {
-//   String get category {
-//     switch (this) {
-//       case ContentCategory.QUESTION:
-//         return "질문";
-//       case ContentCategory.SMALLTALK:
-//         return "일상";
-//       default:
-//         return throw CategoryException(
-//             "Enum Category Error, Please Update Enum ContentCategory in parentState.dart");
-//     }
-//   }
-// }
-
-const int MAX_IMAGE_COUNT = 5;
-
 class CreatePost extends StatefulWidget {
   final currentBoardData;
   CreatePost({Key key, this.currentBoardData}) : super(key: key);
@@ -49,6 +33,7 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
     with OneStepPermission {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   // CustomSlideDialog customSlideDialog;
+  final int maxImageCount = 5;
   double device_height;
   double device_width;
   ContentCategory _category;
@@ -122,8 +107,8 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
             onWillPop: () {
               isDataContain()
                   ? Navigator.pop(context)
-                  : navigatorPopAlertDialog();return null;
-                  
+                  : navigatorPopAlertDialog();
+              return null;
             },
             child: GestureDetector(
               onTap: () {
@@ -215,7 +200,7 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
                         displayCurrentBoard(currentBoardData.boardName),
                         setPostName(),
                         secondContainer(),
-                        thirdContainer(),
+                        thirdContainer(imageCommentMap),
                         SizedBox(
                           height: device_height / 15,
                         ),
@@ -436,7 +421,7 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
           title: Text('작성 중'),
           content: Text("변경된 내용은 저장이 되지 않습니다."),
           actions: <Widget>[
-            FlatButton(
+            ElevatedButton(
               child: Text('나가기'),
               onPressed: () {
                 // Navigator.of(context)
@@ -445,7 +430,7 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
                 Navigator.of(context).popUntil((_) => count++ >= 2);
               },
             ),
-            FlatButton(
+            ElevatedButton(
               child: Text('유지'),
               onPressed: () {
                 Navigator.pop(context);
@@ -474,19 +459,19 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
                       title: Text('사진 작성 중'),
                       content: Text("작성중인 사진 및 설명이 있습니다. 초기화 하시겠습니까?"),
                       actions: <Widget>[
-                        FlatButton(
+                        ElevatedButton(
                           child: Text('초기화'),
                           onPressed: () {
                             Navigator.pop(context, true);
                           },
                         ),
-                        FlatButton(
+                        ElevatedButton(
                           child: Text('유지'),
                           onPressed: () {
                             Navigator.pop(context, false);
                           },
                         ),
-                        FlatButton(
+                        ElevatedButton(
                           child: Text('취소'),
                           onPressed: () {
                             Navigator.pop(context);
@@ -621,7 +606,7 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
                     labelText: "사진${index + 1}의 설명",
                     hintText: "내용을 입력하세요",
                   ),
-                  controller: _getTextEditingImageTextField(index)),
+                  controller: getTextEditingImageTextField(index)),
             ),
           )
         ],
@@ -629,7 +614,7 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
     );
   }
 
-  _imageContainer({int index, Asset imageAsset}) {
+  imageContainer({int index, Asset imageAsset, String comment}) {
     return imageAsset != null
         ? Container(
             padding: EdgeInsets.only(top: 5.0),
@@ -650,13 +635,13 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
                                   title: Text('사진 삭제'),
                                   content: Text("사진 및 설명이 삭제됩니다."),
                                   actions: <Widget>[
-                                    FlatButton(
+                                    ElevatedButton(
                                       child: Text('삭제'),
                                       onPressed: () {
                                         Navigator.pop(context, true);
                                       },
                                     ),
-                                    FlatButton(
+                                    ElevatedButton(
                                       child: Text('유지'),
                                       onPressed: () {
                                         Navigator.pop(context, false);
@@ -734,7 +719,8 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
                           labelText: "사진${index + 1}의 설명",
                           hintText: "내용을 입력하세요",
                         ),
-                        controller: _getTextEditingImageTextField(index)),
+                        controller: getTextEditingImageTextField(index,
+                            initComment: comment)),
                   ),
                 )
               ],
@@ -756,19 +742,19 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
                             title: Text('사진 작성 중'),
                             content: Text("작성중인 사진 및 설명이 있습니다. 초기화 하시겠습니까?"),
                             actions: <Widget>[
-                              FlatButton(
+                              ElevatedButton(
                                 child: Text('초기화'),
                                 onPressed: () {
                                   Navigator.pop(context, true);
                                 },
                               ),
-                              FlatButton(
+                              ElevatedButton(
                                 child: Text('유지'),
                                 onPressed: () {
                                   Navigator.pop(context, false);
                                 },
                               ),
-                              FlatButton(
+                              ElevatedButton(
                                 child: Text('취소'),
                                 onPressed: () {
                                   Navigator.pop(context);
@@ -827,50 +813,56 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
         !isSave ? MAX_IMAGE_COUNT : imageCommentMap["IMAGE"].length;
     if (isMapSet) {
       for (int i = 0; i < mapSetLength; i++) {
-        _tempTextEditing.add(_getTextEditingImageTextField(i).text.trim());
+        _tempTextEditing
+            .add(getTextEditingImageTextField(i, initComment: "").text.trim());
       }
       imageCommentMap["COMMENT"].clear();
       imageCommentMap["COMMENT"].addAll(_tempTextEditing);
     } else {
       for (int i = 0; i < MAX_IMAGE_COUNT; i++) {
-        _getTextEditingImageTextField(i)..text = imageCommentMap["COMMENT"][i];
+        getTextEditingImageTextField(i,
+            initComment: imageCommentMap["COMMENT"][i]);
       }
     }
   }
 
-  TextEditingController _getTextEditingImageTextField(
-    int index,
-  ) {
+  getTextEditingImageTextField(int index, {String initComment}) {
+    String initCom = initComment ?? "";
     switch (index) {
       case 0:
-        return textEditingControllerImage1;
+        return textEditingControllerImage1..text = initCom;
 
       case 1:
-        return textEditingControllerImage2;
+        return textEditingControllerImage2..text = initCom;
       case 2:
-        return textEditingControllerImage3;
+        return textEditingControllerImage3..text = initCom;
       case 3:
-        return textEditingControllerImage4;
+        return textEditingControllerImage4..text = initCom;
       case 4:
-        return textEditingControllerImage5;
+        return textEditingControllerImage5..text = initCom;
+      default:
+        return null;
     }
   }
 
-  thirdContainer({Widget popUpMenu}) {
+  thirdContainer(Map<String, dynamic> imgCommMap, {Widget popUpMenu}) {
     List<Widget> _imageWidget = [];
     List<Widget> _emptyWidget = [];
     int containImageCount =
-        imageCommentMap["IMAGE"] != null ? imageCommentMap["IMAGE"].length : 0;
+        imgCommMap["IMAGE"] != null ? imgCommMap["IMAGE"].length : 0;
 
     for (int i = 0; i < containImageCount; i++) {
-      if (imageCommentMap["IMAGE"][i].runtimeType == String) {
+      if (imgCommMap["IMAGE"][i].runtimeType == String) {
+        //Continue Check Plz
         continue;
       }
-      _imageWidget.add(
-          _imageContainer(index: i, imageAsset: imageCommentMap["IMAGE"][i]));
+      _imageWidget.add(imageContainer(
+        index: i,
+        imageAsset: imgCommMap["IMAGE"][i],
+      ));
     }
     for (int i = 0; i < 5 - containImageCount; i++) {
-      _emptyWidget.add(_imageContainer());
+      _emptyWidget.add(imageContainer());
     }
     return Container(
       child: Column(

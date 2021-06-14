@@ -1,6 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:onestep_rezero/board/AboutPost/createPost.dart';
 import 'package:onestep_rezero/board/TipDialog/tip_dialog.dart';
+import 'package:onestep_rezero/board/declareData/boardData.dart';
 import 'package:onestep_rezero/board/declareData/postData.dart';
 
 class AlterPost extends StatefulWidget {
@@ -26,8 +28,8 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
 
   @override
   setBoardData() {
-    // TODO: implement setBoardData
-    throw UnimplementedError();
+    currentBoardData = new BoardData(
+        boardId: alterPostData.boardId, boardName: alterPostData.boardName);
   }
 
   @override
@@ -47,80 +49,7 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
               onTap: () {
                 FocusScope.of(context).requestFocus(FocusNode());
               },
-              child:
-                  // Scaffold(
-                  //   key: _scaffoldKey,
-                  //   body: SlidingUpPanel(
-                  //     controller: panelController,
-                  //     borderRadius: BorderRadius.only(
-                  //         topLeft: Radius.circular(10.0),
-                  //         topRight: Radius.circular(10.0)),
-                  //     minHeight: device_height / 30,
-                  //     maxHeight: device_height / 2.5,
-                  //     panel: Column(
-                  //       children: [
-                  //         //Slider Gesture Widget
-                  //         Center(
-                  //             child: Container(
-                  //                 margin: EdgeInsets.only(top: 5),
-                  //                 height: device_height / 130,
-                  //                 width: device_width / 10,
-                  //                 decoration: BoxDecoration(
-                  //                     color: Colors.grey[300],
-                  //                     borderRadius:
-                  //                         BorderRadius.all(Radius.circular(5))))),
-                  //         StatefulBuilder(builder:
-                  //             (BuildContext context, StateSetter setState) {
-                  //           return Container(
-                  //             margin: EdgeInsets.only(left: 5, right: 5, top: 20),
-                  //             child: Column(children: [
-                  //               Container(
-                  //                   child: Column(
-                  //                 children: [
-                  //                   Container(
-                  //                       child: TextField(
-                  //                     maxLength: 30,
-                  //                     onSubmitted: (value) {
-                  //                       if (_category != null)
-                  //                         panelController.close();
-                  //                     },
-                  //                     controller:
-                  //                         textEditingControllerBottomSheet,
-                  //                     decoration: InputDecoration(
-                  //                         border: OutlineInputBorder(),
-                  //                         labelText: "제목"),
-                  //                   )),
-                  //                   Text(
-                  //                     "앤터를 누르면 글쓰기 화면으로 전환됩니다.",
-                  //                     style: TextStyle(color: Colors.grey),
-                  //                   ),
-                  //                 ],
-                  //               )),
-                  //               RadioListTile(
-                  //                   title: Text("일상"),
-                  //                   value: ContentCategory.SMALLTALK,
-                  //                   groupValue: _category,
-                  //                   onChanged: (value) {
-                  //                     setState(() {
-                  //                       _category = value;
-                  //                     });
-                  //                   }),
-                  //               RadioListTile(
-                  //                   title: Text("질문"),
-                  //                   value: ContentCategory.QUESTION,
-                  //                   groupValue: _category,
-                  //                   onChanged: (value) {
-                  //                     setState(() {
-                  //                       _category = value;
-                  //                     });
-                  //                   }),
-                  //             ]),
-                  //           );
-                  //         }),
-                  //       ],
-                  //     ),
-                  // body:
-                  SafeArea(
+              child: SafeArea(
                 minimum: const EdgeInsets.all(16.0),
                 child: Padding(
                   padding: EdgeInsets.only(
@@ -130,7 +59,7 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
                     child: Column(
                       children: <Widget>[
                         firstContainer(),
-                        displayCurrentBoard(currentBoardData.boardName),
+                        displayCurrentBoard(alterPostData.boardName),
                         setPostName(),
                         secondContainer(),
                         thirdContainer(),
@@ -149,5 +78,26 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
         TipDialogContainer(duration: const Duration(seconds: 2))
       ],
     );
+  }
+
+  @override
+  thirdContainer(Map<String, dynamic> imgCommMap, {Widget popUpMenu}) {
+    List<Widget> _imageWidget = [];
+    List<Widget> _emptyWidget = [];
+    int containImageCount =
+        imgCommMap["IMAGE"] != null ? imageCommentMap["IMAGE"].length : 0;
+    for (int i = 0; i < containImageCount; i++) {
+      if (imgCommMap["IMAGE"][i].runtimeType == String) {
+        continue;
+      }
+      _imageWidget.add(cachedImgWidget(imgCommMap["IMAGE"][i]));
+    }
+    for (int i = 0; i < 5 - containImageCount; i++) {
+      _emptyWidget.add(imageContainer());
+    }
+  }
+
+  cachedImgWidget(String imageURL) {
+    return CachedNetworkImage(imageUrl: imageURL);
   }
 }
