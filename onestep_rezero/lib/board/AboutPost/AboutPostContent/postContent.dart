@@ -16,6 +16,7 @@ import 'package:onestep_rezero/board/declareData/commentData.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:onestep_rezero/chat/widget/appColor.dart';
+import 'package:onestep_rezero/main.dart';
 import 'dart:io' show Platform;
 
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -37,10 +38,28 @@ class _PostContentState extends State<PostContent> {
   @override
   void initState() {
     currentPostData = widget.postData;
+    updateViewers(currentUserModel.uid);
     context
         .read(commentProvider)
         .fetchData(currentPostData.boardId, currentPostData.documentId);
+
     super.initState();
+  }
+
+  updateViewers(String uid) {
+    if (!currentPostData.views.containsKey(uid)) {
+      final db = FirebaseFirestore.instance;
+      Map<String, dynamic> updatedViews = currentPostData.views
+        ..addAll({uid: true});
+      db
+          .collection('university')
+          .doc(currentUserModel.university)
+          .collection('board')
+          .doc(currentPostData.boardId)
+          .collection(currentPostData.boardId)
+          .doc(currentPostData.documentId)
+          .update({"views": updatedViews});
+    }
   }
 
   @override
