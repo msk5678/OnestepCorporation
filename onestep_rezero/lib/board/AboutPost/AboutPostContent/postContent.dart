@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:like_button/like_button.dart';
+import 'package:onestep_rezero/board/AboutPost/AboutPostContent/postCoComment.dart';
 import 'package:onestep_rezero/board/AboutPost/AboutPostContent/postComment.dart';
 import 'package:onestep_rezero/board/AboutPost/AboutPostContent/postCommentSidingPanel.dart';
 import 'package:onestep_rezero/board/TipDialog/tip_dialog.dart';
@@ -30,11 +31,16 @@ class PostContent extends StatefulWidget {
 }
 
 class _PostContentState extends State<PostContent> {
+  final String currentUid = currentUserModel.uid;
   double deviceHeight;
   double deviceWidth;
   PanelController panelController = PanelController();
   TextEditingController textEditingControllerComment = TextEditingController();
   PostData currentPostData;
+
+  bool flag = false; //Distint about upload comment or coComment
+  CommentData aboutCoComment;
+
   @override
   void initState() {
     currentPostData = widget.postData;
@@ -120,6 +126,7 @@ class _PostContentState extends State<PostContent> {
                         commentList: currentPostData.commentUserList,
                         postWriterUID: currentPostData.uid,
                         openSlidingPanelCallback: slidingUpDownMethod,
+                        coCommentCallback: coCommentCallback,
                       ))
                       ..add(SizedBox(
                         height: deviceHeight / 10,
@@ -128,7 +135,8 @@ class _PostContentState extends State<PostContent> {
                 ),
               ),
             ),
-            commentSlidingPanel(),
+            commentSlidingPanel(currentUid, currentPostData.uid,
+                currentPostData.commentUserList),
             TipDialogContainer(duration: const Duration(seconds: 2))
           ],
         ),
@@ -136,7 +144,9 @@ class _PostContentState extends State<PostContent> {
     );
   }
 
-  Widget commentSlidingPanel() {
+  Widget commentSlidingPanel(String wirtterName, String currentPostUid,
+      Map<String, dynamic> commentList,
+      {String commName, String commentContext}) {
     return SlidingUpPanel(
       borderRadius: BorderRadius.only(
           topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
@@ -145,6 +155,7 @@ class _PostContentState extends State<PostContent> {
       controller: panelController,
       panel: Column(
         children: [
+          //Sliding Button
           Center(
               child: Container(
                   margin: EdgeInsets.only(top: 5, bottom: 20),
@@ -153,9 +164,14 @@ class _PostContentState extends State<PostContent> {
                   decoration: BoxDecoration(
                       color: Colors.grey[300],
                       borderRadius: BorderRadius.all(Radius.circular(5))))),
+          Container(
+            child: Text("SHOW WHERE COMMENT"),
+          ),
+
           Center(
             child: Container(
-              height: deviceHeight / 6,
+              margin: EdgeInsets.all(5),
+              height: deviceHeight / 8,
               child: TextField(
                 controller: textEditingControllerComment,
                 // onChanged: (value) => saveCommentCallback(value),
@@ -168,19 +184,39 @@ class _PostContentState extends State<PostContent> {
               ),
             ),
           ),
-          ElevatedButton.icon(
-            onPressed: () async {
-              await saveComment(
-                  textEditingControllerComment.text, currentPostData);
-            },
-            label: Text(
-              "저장",
-            ),
-            icon: Icon(
-              Icons.comment,
-            ),
-            style: ElevatedButton.styleFrom(
-                elevation: 0, primary: OnestepColors().secondColor),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                margin: EdgeInsets.only(left: 10),
+                child: ElevatedButton.icon(
+                  onPressed: () async {
+                    if (flag) {
+                      await saveCoComment(
+                          textEditingControllerComment.text, aboutCoComment);
+                    } else
+                      await saveComment(
+                          textEditingControllerComment.text, currentPostData);
+                  },
+                  label: Text(
+                    "저장",
+                  ),
+                  icon: Icon(
+                    Icons.comment,
+                  ),
+                  style: ElevatedButton.styleFrom(
+                      elevation: 0, primary: OnestepColors().secondColor),
+                ),
+              ),
+              Container(
+                alignment: Alignment.topRight,
+                margin: EdgeInsets.only(left: 5),
+                child: Text("'"
+                    '${commentName(wirtterName, currentPostUid, commentList)}'
+                    "'로 댓글이 작성됩니다."),
+              ),
+            ],
           ),
         ],
       ),
@@ -242,29 +278,78 @@ class _PostContentState extends State<PostContent> {
 
   saveComment(String comment, PostData postData) async {
     if (comment != "") {
-      TipDialogHelper.loading("저장 중입니다.\n 잠시만 기다려주세요.");
-      bool result = await CommentData.toRealtimeDataWithPostData(postData)
-              .toRealtimeDatabase(
-                  textContent: comment.trimRight(),
-                  commentList: postData.commentUserList) ??
-          false;
-      FocusScope.of(context).unfocus();
-      if (result) {
-        TipDialogHelper.dismiss();
-        TipDialogHelper.success("저장 완료!");
-        Future.delayed(Duration(seconds: 2)).then((value) {
-          panelController.close();
-          textEditingControllerComment.clear();
-          context
-              .read(commentProvider)
-              .refresh(currentPostData.boardId, currentPostData.documentId);
-        });
-      } else {
-        TipDialogHelper.dismiss();
-        TipDialogHelper.fail("저장 실패\n Error : CANNOT UPLOAD COMMENT");
-        Future.delayed(Duration(seconds: 2))
-            .then((value) => Navigator.pop(context, true));
+      loadingDialogTipDialog(
+          CommentData.toRealtimeDataWithPostData(postData).toRealtimeDatabase(
+              textContent: comment.trimRight(),
+              commentList: postData.commentUserList), thenFunction: (value) {
+        panelController.close();
+        textEditingControllerComment.clear();
+        context
+            .read(commentProvider)
+            .refresh(currentPostData.boardId, currentPostData.documentId);
+      }, errorFunction: () {
+        Navigator.pop(context, true);
+      }, unFocusing: true);
+    }
+  }
+
+  commentName(String uid, String thisPostUID, commentList) {
+    Map<String, dynamic> commentUserMap = commentList ?? {};
+    List commentUserList = commentUserMap.keys.toList();
+    if (uid == thisPostUID) {
+      return "작성자";
+    } else {
+      for (int i = 0; i < commentUserList.length; i++) {
+        if (commentUserList[i].toString() == uid) {
+          return "익명 ${i + 1}";
+        } else {
+          return "ERROR";
+        }
       }
+    }
+  }
+
+  coCommentCallback(CommentData commentData) async {
+    aboutCoComment = commentData;
+    panelController.open();
+    switchingFlag();
+    // saveCoComment(textEditingControllerComment.text, commentData);
+  }
+
+  void switchingFlag() {
+    flag = !flag;
+  }
+
+  saveCoComment(String comment, CommentData commentData) async {
+    if (comment != "") {
+      loadingDialogTipDialog(commentData.addCoComment(comment),
+          thenFunction: (value) {
+        panelController.close();
+        textEditingControllerComment.clear();
+        context
+            .read(commentProvider)
+            .refresh(currentPostData.boardId, currentPostData.documentId);
+        switchingFlag();
+        aboutCoComment = null;
+      }, errorFunction: () {
+        Navigator.pop(context, true);
+      }, unFocusing: true);
+    }
+  }
+
+  loadingDialogTipDialog(Future futureFunction,
+      {bool unFocusing, Function thenFunction, Function errorFunction}) async {
+    unFocusing = unFocusing ?? false;
+    if (unFocusing) FocusScope.of(context).unfocus();
+    bool result = await futureFunction ?? false;
+    if (result) {
+      TipDialogHelper.dismiss();
+      TipDialogHelper.success("저장 완료!");
+      Future.delayed(Duration(seconds: 2)).then((value) => thenFunction(value));
+    } else {
+      TipDialogHelper.dismiss();
+      TipDialogHelper.fail("저장 실패\n Error : CANNOT UPLOAD COMMENT");
+      Future.delayed(Duration(seconds: 2)).then((value) => errorFunction);
     }
   }
 }

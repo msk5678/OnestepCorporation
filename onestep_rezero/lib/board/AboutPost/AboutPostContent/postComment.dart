@@ -1,7 +1,9 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:onestep_rezero/board/AboutPost/AboutPostContent/postCoComment.dart';
 import 'package:onestep_rezero/board/Animation/slideUpAnimationWidget.dart';
 import 'package:onestep_rezero/board/StateManage/Provider/commentProvider.dart';
 import 'package:onestep_rezero/board/declareData/commentData.dart';
@@ -15,11 +17,8 @@ final commentProvider =
 abstract class Comment {
   commentBoxDesignMethod(
       int index, CommentData comment, double deviceWidth, double deviceHeight);
-  checkCommentDeleted(
-    CommentData comment,
-  );
 
-  commentName(commentUID, commentList);
+  commentName(String commentUID, String postWriterUid, commentList);
   animationLimiterListView(
       List comment, double deviceWidth, double deviceHeight);
   commentListEmptyWidget();
@@ -32,6 +31,7 @@ class CommentWidget extends ConsumerWidget implements Comment {
   final commentList;
   final postWriterUID;
   final openSlidingPanelCallback;
+  final coCommentCallback;
   final SlidableController slidableController = SlidableController();
 
   CommentWidget(
@@ -39,26 +39,25 @@ class CommentWidget extends ConsumerWidget implements Comment {
       this.postId,
       this.openSlidingPanelCallback,
       this.commentList,
-      this.postWriterUID});
+      this.postWriterUID,
+      this.coCommentCallback});
 
   @override
   Widget commentBoxDesignMethod(
       int index, CommentData comment, double deviceWidth, double deviceHeight) {
     //Check Deleted
-    if (checkCommentDeleted(comment)) {
+    if (comment.deleted)
       return deletedCommentWidget(index, comment, deviceWidth, deviceHeight);
-    } else {
+    else
       //is deleted
-
       return commentWidget(index, comment, deviceWidth, deviceHeight);
-    }
   }
 
   @override
-  commentName(commentUID, commentList) {
+  commentName(commentUID, postWriterUid, commentList) {
     Map<String, dynamic> commentUserMap = commentList ?? {};
     List commentUserList = commentUserMap.keys.toList();
-    if (commentUID.toString() == postWriterUID) {
+    if (commentUID.toString() == postWriterUid) {
       return Text("작성자",
           style: TextStyle(color: OnestepColors().secondColor, fontSize: 13));
     } else {
@@ -107,14 +106,16 @@ class CommentWidget extends ConsumerWidget implements Comment {
             child: SlideAnimation(
               verticalOffset: 50.0,
               child: FadeInAnimation(
-                child: commentListSwipeMenu(
-                  comment[index],
-                  context,
-                  slidableKey: Key(comment[index].commentId),
-                  child: commentBoxDesignMethod(
-                      index, comment[index], deviceWidth, deviceHeight),
-                ),
-              ),
+                  child: !comment[index].deleted
+                      ? commentListSwipeMenu(
+                          comment[index],
+                          context,
+                          slidableKey: Key(comment[index].commentId),
+                          child: commentBoxDesignMethod(
+                              index, comment[index], deviceWidth, deviceHeight),
+                        )
+                      : commentBoxDesignMethod(
+                          index, comment[index], deviceWidth, deviceHeight)),
             ),
           );
         },
@@ -124,7 +125,7 @@ class CommentWidget extends ConsumerWidget implements Comment {
 
   @override
   commentListEmptyWidget() {
-    Column(
+    return Column(
       children: [
         ShowUp(
           delay: 300,
@@ -156,27 +157,28 @@ class CommentWidget extends ConsumerWidget implements Comment {
       key: key,
       actionPane: SlidableDrawerActionPane(),
       child: childWidget,
-      actions: <Widget>[
-        IconSlideAction(
-          caption: 'Archive',
-          color: Colors.blue,
-          icon: Icons.archive,
-          // onTap: () => _showSnackBar('Archive'),
-        ),
-        IconSlideAction(
-          caption: 'Share',
-          color: Colors.indigo,
-          icon: Icons.share,
-          // onTap: () => _showSnackBar('Share'),
-        ),
-      ],
+      // actions: <Widget>[
+      //   IconSlideAction(
+      //     caption: 'Archive',
+      //     color: Colors.blue,
+      //     icon: Icons.archive,
+      //     // onTap: () => _showSnackBar('Archive'),
+      //   ),
+      //   IconSlideAction(
+      //     caption: 'Share',
+      //     color: Colors.indigo,
+      //     icon: Icons.share,
+      //     // onTap: () => _showSnackBar('Share'),
+      //   ),
+      // ],
       secondaryActions: <Widget>[
         IconSlideAction(
           caption: '댓글달기',
           color: Colors.black45,
           icon: Icons.add_comment,
-          onTap: () {}
-          ,
+          onTap: () {
+            coCommentCallback(comment);
+          },
         ),
         isWritter
             ? IconSlideAction(
@@ -196,11 +198,6 @@ class CommentWidget extends ConsumerWidget implements Comment {
               ),
       ],
     );
-  }
-
-  @override
-  checkCommentDeleted(CommentData comment) {
-    return comment.deleted.toLowerCase() == "true";
   }
 
   deletedCommentWidget(
@@ -226,95 +223,91 @@ class CommentWidget extends ConsumerWidget implements Comment {
             : Text(
                 "삭제되었습니다.",
                 style: TextStyle(color: Colors.redAccent),
-              )
-        // StatefulBuilder(
-        //   builder: (BuildContext context, setState) {
-        //     bool animated = false;
-        //     String textField = "삭제되었습니다.";
-        //     showText() {
-        //       if (animated) {
-        //         textField = comment.textContent;
-        //       } else {
-        //         textField = "삭제되었습니다.";
-        //       }
-        //       animated = !animated;
-        //     }
-
-        //     return GestureDetector(
-        //       onLongPress: () {
-        //         setState(() {
-        //           print("hi");
-        //           // showText();
-        //           animated = !animated;
-        //           textField = "HIHIHIH";
-        //         });
-        //       },
-        //       child:
-        //           // AnimatedDefaultTextStyle(
-        //           //   duration: Duration(milliseconds: 200),
-        //           //   style: animated
-        //           //       ? TextStyle(
-        //           //           color: Colors.blue,
-        //           //           fontSize: 26,
-        //           //           fontWeight: FontWeight.w800,
-        //           //           letterSpacing: 4,
-        //           //         )
-        //           //       : TextStyle(
-        //           //           color: Colors.grey,
-        //           //           fontWeight: FontWeight.w100,
-        //           //           fontSize: 14,
-        //           //           letterSpacing: 1,
-        //           //         ),
-        //           //   curve: Curves.elasticOut,
-        //           //   child:
-        //           Text(textField),
-        //       // ),
-        //     );
-        //   },
-        // ),
-        );
+              ));
   }
 
   commentWidget(
       int index, CommentData comment, double deviceWidth, double deviceHeight) {
+    final dbReference = FirebaseDatabase.instance.reference();
     DateTime uploadTime = DateTime.fromMillisecondsSinceEpoch(
         int.tryParse(comment.uploadTime ?? 0) ?? 0);
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(padding: EdgeInsets.only(top: deviceHeight / 30)),
-        Container(
-          alignment: Alignment.centerLeft,
-          child: commentName(comment.uid, commentList),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(padding: EdgeInsets.only(top: deviceHeight / 30)),
+            Container(
+              alignment: Alignment.centerLeft,
+              child: commentName(comment.uid, postWriterUID, commentList),
+            ),
+            Container(
+              padding: EdgeInsets.only(
+                left: 8,
+                top: 5,
+              ),
+              alignment: Alignment.centerLeft,
+              child: Text(comment.textContent ?? "NO"),
+            ),
+            Container(
+              alignment: Alignment.centerRight,
+              child: Text(
+                "${TimeUtil.timeAgo(date: uploadTime)}",
+                style: TextStyle(color: Colors.grey, fontSize: 10),
+              ),
+            ),
+            Container(
+              width: deviceWidth / 2,
+              margin: EdgeInsets.only(bottom: deviceHeight / 100),
+              decoration: BoxDecoration(
+                  border: Border(
+                      bottom: BorderSide(
+                          color: OnestepColors().thirdColor.withOpacity(0.2),
+                          width: 2.0),
+                      left: BorderSide(
+                          color: OnestepColors().thirdColor.withOpacity(0.2),
+                          width: 2.0))),
+              alignment: Alignment.topLeft,
+            )
+          ],
         ),
-        Container(
-          padding: EdgeInsets.only(
-            left: 8,
-            top: 5,
-          ),
-          alignment: Alignment.centerLeft,
-          child: Text(comment.textContent ?? "NO"),
-        ),
-        Container(
-          alignment: Alignment.centerRight,
-          child: Text(
-            "${TimeUtil.timeAgo(date: uploadTime)}",
-            style: TextStyle(color: Colors.grey, fontSize: 10),
-          ),
-        ),
-        Container(
-          width: deviceWidth / 2,
-          margin: EdgeInsets.only(bottom: deviceHeight / 100),
-          decoration: BoxDecoration(
-              border: Border(
-                  bottom: BorderSide(
-                      color: OnestepColors().thirdColor.withOpacity(0.2),
-                      width: 2.0),
-                  left: BorderSide(
-                      color: OnestepColors().thirdColor.withOpacity(0.2),
-                      width: 2.0))),
-          alignment: Alignment.topLeft,
-        )
+        comment.haveChildComment
+            ? FutureBuilder<DataSnapshot>(
+                future: dbReference
+                    .child('board')
+                    .child(boardId.toString())
+                    .child(postId.toString())
+                    .child(comment.commentId)
+                    .child("CoComment")
+                    .once(),
+                builder: (context, snapshot) {
+                  CommentData().fromFirebaseReference(snapshot.data);
+
+                  // print("runtime Type : ${snapshot.data}");
+                  // List<CommentData> _commentDataList =
+                  //     CommentData().fromFirebaseReference(snapshot.data());
+                  return Container(
+                    child: Text("hi"),
+                  );
+                }
+                //   if (!snapshot.hasError) {
+                //     if (snapshot.hasData) {
+                //       return Container(
+                //         child: Text("HaveData : "),
+                //       );
+                //     } else {
+                //       return Container(
+                //         child: Text("Empty"),
+                //       );
+                //     }
+                //   } else {
+                //     return Container(
+                //       child: Text("Error"),
+                //     );
+                //   }
+                // },
+                )
+            : Container()
       ],
     );
   }

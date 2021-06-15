@@ -1,22 +1,25 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:onestep_rezero/board/AboutPost/AboutPostContent/postCoComment.dart';
 import 'package:onestep_rezero/board/declareData/postData.dart';
 import '../../main.dart';
 
 class CommentData {
-  final String uid;
-  final String boardId;
-  final String boardName;
-  final String postId;
-  final String textContent;
-  final String deleted;
-  final String deletedTime;
-  final String reported;
-  final String reportCount;
-  final String uploadTime;
-  final String updateTime;
-  final String userName;
-  final String commentId;
+  final uid;
+  final boardId;
+  final boardName;
+  final postId;
+  final textContent;
+  final deleted;
+  final deletedTime;
+  final reported;
+  final reportCount;
+  final uploadTime;
+  final updateTime;
+  final userName;
+  final commentId;
+  final haveChildComment;
+  final parentCommentId;
   CommentData(
       {this.uid,
       this.boardId,
@@ -30,7 +33,9 @@ class CommentData {
       this.userName,
       this.deleted,
       this.deletedTime,
-      this.commentId});
+      this.commentId,
+      this.haveChildComment,
+      this.parentCommentId});
   factory CommentData.toRealtimeDataWithPostData(PostData postData) {
     String currentTimeStamp = DateTime.now().millisecondsSinceEpoch.toString();
     return CommentData(
@@ -38,12 +43,13 @@ class CommentData {
       boardId: postData.boardId,
       boardName: postData.boardName,
       postId: postData.documentId,
-      deleted: "false",
+      deleted: false,
       deletedTime: "",
       reportCount: "",
       reported: "",
       updateTime: "",
       uploadTime: currentTimeStamp,
+      userName: "",
     );
   }
   Future toRealtimeDatabase(
@@ -69,41 +75,50 @@ class CommentData {
         .child(postId)
         .child(currentTimeStamp)
         .set({
-          "uid": this.uid,
-          "boardId": this.boardId,
-          "boardName": this.boardName,
-          "postId": this.postId,
-          "textContent": textContent ?? this.textContent ?? '',
-          "deleted": this.deleted ?? 'false',
-          "deletedTime": this.deletedTime ?? '',
-          "reported": this.reported ?? '',
-          "reportCount": this.reportCount ?? '',
-          "uploadTime": this.uploadTime ?? currentTimeStamp,
-          "updateTime": this.updateTime ?? '',
-          "userName": ""
+          "uid": this.uid.toString(),
+          "boardId": this.boardId.toString(),
+          "boardName": this.boardName.toString(),
+          "postId": this.postId.toString(),
+          "textContent":
+              textContent.toString() ?? this.textContent.toString() ?? '',
+          "deleted": this.deleted.toString() ?? 'false',
+          "deletedTime": this.deletedTime.toString() ?? '',
+          "reported": this.reported.toString() ?? '0',
+          "reportCount": this.reportCount.toString() ?? '',
+          "uploadTime": this.uploadTime.toString() ?? currentTimeStamp,
+          "updateTime": this.updateTime.toString() ?? '',
+          "userName": "",
+          "haveChildComment": "false",
+          "parentCommentId": ""
         })
         .then((value) => true)
         .whenComplete(() => null);
   }
 
   fromFirebaseReference(DataSnapshot snapshot) {
-    Map<dynamic, dynamic> commentSnapshot = snapshot.value ?? {};
+    Map<dynamic, dynamic> commentSnapshot =
+        Map<dynamic, dynamic>.from(snapshot.value) ?? {};
+
     List<CommentData> commentList = [];
     commentSnapshot.forEach((key, value) {
-      commentList.add(CommentData(
+      commentList.add(new CommentData(
           uid: value["uid"],
           boardId: value["boardId"],
           boardName: value["boardName"],
           postId: value["postId"],
-          deleted: value["deleted"],
+          deleted: value["deleted"].toString() == 'true' ? true : false,
           deletedTime: value["deletedTime"],
-          reportCount: value["reportCount"],
-          reported: value['reported'],
+          reportCount: int.tryParse(value["reportCount"]) ?? 0,
+          reported: value['reported'].toString() == 'true' ? true : false,
           updateTime: value["updateTime"],
           uploadTime: value["uploadTime"],
-          textContent: value["textContent"],
+          textContent: value["textContent"].toString(),
+          haveChildComment:
+              value["haveChildComment"].toString() == 'true' ? true : false,
+          parentCommentId: value["parentCommentId"] ?? "",
           commentId: key));
     });
+
     commentList.sort((a, b) => int.tryParse(a.commentId ?? 0)
         .compareTo(int.tryParse(b.commentId ?? 0)));
     return commentList;
@@ -125,30 +140,75 @@ class CommentData {
         .whenComplete(() => null);
   }
 
-  addCoComment() {
+  addCoComment(String comment) async {
     final realtimeDb = FirebaseDatabase.instance.reference();
     String currentTimeStamp = DateTime.now().millisecondsSinceEpoch.toString();
-    return realtimeDb
+    bool isDone = await realtimeDb
         .child('board')
         .child(this.boardId)
         .child(this.postId)
         .child(this.commentId)
-        .set({
-          "uid": this.uid,
-          "boardId": this.boardId,
-          "boardName": this.boardName,
-          "postId": this.postId,
-          "textContent": textContent ?? this.textContent ?? '',
-          "deleted": this.deleted ?? 'false',
-          "deletedTime": this.deletedTime ?? '',
-          "reported": this.reported ?? '',
-          "reportCount": this.reportCount ?? '',
-          "uploadTime": this.uploadTime ?? currentTimeStamp,
-          "updateTime": this.updateTime ?? '',
-          "userName": ""
+        .update({
+          "haveChildComment": 'true',
         })
         .then((value) => true)
         .whenComplete(() => null);
+    return isDone
+        ? realtimeDb
+            .child('board')
+            .child(this.boardId)
+            .child(this.postId)
+            .child(this.commentId)
+            .child("CoComment")
+            .child(currentTimeStamp)
+            .set({
+              "uid": this.uid,
+              "boardId": this.boardId.toString(),
+              "boardName": this.boardName.toString(),
+              "postId": this.postId.toString(),
+              "textContent": comment.toString() ?? "Co Comment ERROR" ?? '',
+              "deleted": this.deleted.toString() ?? 'false',
+              "deletedTime": this.deletedTime.toString() ?? '',
+              "reported": this.reported.toString() ?? '',
+              "reportCount": this.reportCount.toString() ?? '',
+              "uploadTime": this.uploadTime.toString() ?? currentTimeStamp,
+              "updateTime": this.updateTime.toString() ?? '',
+              "userName": "",
+              "haveChildComment": "false",
+              "parentCommentId": "${this.commentId}"
+            })
+            .then((value) => true)
+            .whenComplete(() => null)
+        : false;
+  }
+
+  coCommentFromFirebaseReference(DataSnapshot snapshot) {
+    Map<dynamic, dynamic> commentSnapshot =
+        Map<dynamic, dynamic>.from(snapshot.value) ?? {};
+    List<CommentData> commentList = [];
+
+    commentSnapshot.forEach((key, value) {
+      commentList.add(new CommentData(
+          uid: value["uid"],
+          boardId: value["boardId"],
+          boardName: value["boardName"],
+          postId: value["postId"],
+          deleted: value["deleted"].toString() == 'true' ? true : false,
+          deletedTime: value["deletedTime"],
+          reportCount: int.tryParse(value["reportCount"]) ?? 0,
+          reported: value['reported'].toString() == 'true' ? true : false,
+          updateTime: value["updateTime"],
+          uploadTime: value["uploadTime"],
+          textContent: value["textContent"].toString(),
+          haveChildComment:
+              value["haveChildComment"].toString() == 'true' ? true : false,
+          parentCommentId: value["parentCommentId"] ?? "",
+          commentId: key));
+    });
+
+    commentList.sort((a, b) => int.tryParse(a.commentId ?? 0)
+        .compareTo(int.tryParse(b.commentId ?? 0)));
+    return commentList;
   }
 }
 

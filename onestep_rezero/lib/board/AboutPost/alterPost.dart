@@ -62,7 +62,7 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
                         displayCurrentBoard(alterPostData.boardName),
                         setPostName(),
                         secondContainer(),
-                        thirdContainer(),
+                        thirdContainer(imageCommentMap),
                         SizedBox(
                           height: device_height / 15,
                         ),
@@ -81,7 +81,7 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
   }
 
   @override
-  thirdContainer(Map<String, dynamic> imgCommMap, {Widget popUpMenu}) {
+  thirdContainer(Map<String, dynamic> imgCommMap) {
     List<Widget> _imageWidget = [];
     List<Widget> _emptyWidget = [];
     int containImageCount =
@@ -92,8 +92,8 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
       }
       _imageWidget.add(cachedImgWidget(imgCommMap["IMAGE"][i]));
     }
-    for (int i = 0; i < 5 - containImageCount; i++) {
-      _emptyWidget.add(imageContainer());
+    for (int i = 0; i < maxImageCount - containImageCount; i++) {
+      _emptyWidget.add(emptyImageWidget(imgCommMap));
     }
   }
 

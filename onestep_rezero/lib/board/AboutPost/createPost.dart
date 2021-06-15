@@ -114,80 +114,7 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
               onTap: () {
                 FocusScope.of(context).requestFocus(FocusNode());
               },
-              child:
-                  // Scaffold(
-                  //   key: _scaffoldKey,
-                  //   body: SlidingUpPanel(
-                  //     controller: panelController,
-                  //     borderRadius: BorderRadius.only(
-                  //         topLeft: Radius.circular(10.0),
-                  //         topRight: Radius.circular(10.0)),
-                  //     minHeight: device_height / 30,
-                  //     maxHeight: device_height / 2.5,
-                  //     panel: Column(
-                  //       children: [
-                  //         //Slider Gesture Widget
-                  //         Center(
-                  //             child: Container(
-                  //                 margin: EdgeInsets.only(top: 5),
-                  //                 height: device_height / 130,
-                  //                 width: device_width / 10,
-                  //                 decoration: BoxDecoration(
-                  //                     color: Colors.grey[300],
-                  //                     borderRadius:
-                  //                         BorderRadius.all(Radius.circular(5))))),
-                  //         StatefulBuilder(builder:
-                  //             (BuildContext context, StateSetter setState) {
-                  //           return Container(
-                  //             margin: EdgeInsets.only(left: 5, right: 5, top: 20),
-                  //             child: Column(children: [
-                  //               Container(
-                  //                   child: Column(
-                  //                 children: [
-                  //                   Container(
-                  //                       child: TextField(
-                  //                     maxLength: 30,
-                  //                     onSubmitted: (value) {
-                  //                       if (_category != null)
-                  //                         panelController.close();
-                  //                     },
-                  //                     controller:
-                  //                         textEditingControllerBottomSheet,
-                  //                     decoration: InputDecoration(
-                  //                         border: OutlineInputBorder(),
-                  //                         labelText: "제목"),
-                  //                   )),
-                  //                   Text(
-                  //                     "앤터를 누르면 글쓰기 화면으로 전환됩니다.",
-                  //                     style: TextStyle(color: Colors.grey),
-                  //                   ),
-                  //                 ],
-                  //               )),
-                  //               RadioListTile(
-                  //                   title: Text("일상"),
-                  //                   value: ContentCategory.SMALLTALK,
-                  //                   groupValue: _category,
-                  //                   onChanged: (value) {
-                  //                     setState(() {
-                  //                       _category = value;
-                  //                     });
-                  //                   }),
-                  //               RadioListTile(
-                  //                   title: Text("질문"),
-                  //                   value: ContentCategory.QUESTION,
-                  //                   groupValue: _category,
-                  //                   onChanged: (value) {
-                  //                     setState(() {
-                  //                       _category = value;
-                  //                     });
-                  //                   }),
-                  //             ]),
-                  //           );
-                  //         }),
-                  //       ],
-                  //     ),
-                  // body:
-                  SafeArea(
+              child: SafeArea(
                 minimum: const EdgeInsets.all(16.0),
                 child: Padding(
                   padding: EdgeInsets.only(
@@ -245,25 +172,6 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
         ),
       ),
     );
-    // return GestureDetector(
-    //   onTap: () async {
-    //     // if (panelController.isPanelOpen) {
-    //     //   panelController.close();
-    //     //   FocusScope.of(context).unfocus();
-    //     // } else
-    //     //   panelController.open();
-    //   },
-    //   child: Container(
-    //     child: Text(
-    //       textEditingControllerBottomSheet.text == ''
-    //           ? "제목을 입력하세요."
-    //           : textEditingControllerBottomSheet.text,
-    //       maxLines: 1,
-    //       overflow: TextOverflow.ellipsis,
-    //       style: TextStyle(fontSize: 15),
-    //     ),
-    //   ),
-    // );
   }
 
   firstContainer() {
@@ -271,8 +179,6 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
         color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16);
     return Container(
       padding: EdgeInsets.only(top: 15),
-      // decoration: BoxDecoration(
-      //     border: Border(bottom: BorderSide(color: Colors.grey, width: 1.0))),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -342,7 +248,7 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
   }
 
   Future saveData() async {
-    _getterSetterImageComment(isMapSet: true, isSave: true);
+    setterImgCommentFromMapToTextEditingControl(imageCommentMap);
 
     PostData _postData = PostData(
         title: textEditingControllerBottomSheet.text,
@@ -487,13 +393,14 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
                       imageCommentMap["IMAGE"].clear();
                       imageCommentMap["COMMENT"].clear();
                       imageCommentMap["COMMENT"].addAll(_initCommentList);
-                      _getterSetterImageComment(isMapSet: false);
+                      getterImgCommentFromMapToTextEditingControl(
+                          imageCommentMap);
                     });
                   }
-                  checkCamStorePermission(getImage);
+                  checkCamStorePermission(_getImage);
                 }
               } else {
-                checkCamStorePermission(getImage);
+                checkCamStorePermission(_getImage);
               }
             },
             child: Container(
@@ -542,7 +449,8 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
                           );
                         });
                     if (result) {
-                      _getterSetterImageComment(isMapSet: true);
+                      setterImgCommentFromMapToTextEditingControl(
+                          imageCommentMap);
                       Asset _undoImage = imageCommentMap["IMAGE"][value];
                       String _undoComment = imageCommentMap["COMMENT"][value];
                       setState(() {
@@ -550,7 +458,8 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
                         imageCommentMap["COMMENT"].removeAt(value);
                         textEditingControllerImage5..text = '';
                         imageCommentMap["COMMENT"].add('');
-                        _getterSetterImageComment(isMapSet: false);
+                        getterImgCommentFromMapToTextEditingControl(
+                            imageCommentMap);
                         // images.removeAt(value);
                       });
                       _scaffoldKey.currentState.showSnackBar(showSnackBar(
@@ -561,13 +470,15 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
                               onPressed: () {
                                 setState(() {
                                   // images.insert(index, _undoImage);
-                                  _getterSetterImageComment(isMapSet: true);
+                                  setterImgCommentFromMapToTextEditingControl(
+                                      imageCommentMap);
                                   imageCommentMap["IMAGE"]
                                       .insert(value, _undoImage);
                                   imageCommentMap["COMMENT"]
                                       .insert(value, _undoComment);
                                   imageCommentMap["COMMENT"].removeLast();
-                                  _getterSetterImageComment(isMapSet: false);
+                                  getterImgCommentFromMapToTextEditingControl(
+                                      imageCommentMap);
                                 });
                               })));
                     }
@@ -614,136 +525,28 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
     );
   }
 
-  imageContainer({int index, Asset imageAsset, String comment}) {
-    return imageAsset != null
-        ? Container(
-            padding: EdgeInsets.only(top: 5.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                SizedBox(
-                  height: 80,
-                  width: 80,
-                  child: Container(
-                    child: PopupMenuButton<int>(
-                        onSelected: (value) async {
-                          bool result = await showDialog(
-                              context: context,
-                              barrierDismissible: true,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: Text('사진 삭제'),
-                                  content: Text("사진 및 설명이 삭제됩니다."),
-                                  actions: <Widget>[
-                                    ElevatedButton(
-                                      child: Text('삭제'),
-                                      onPressed: () {
-                                        Navigator.pop(context, true);
-                                      },
-                                    ),
-                                    ElevatedButton(
-                                      child: Text('유지'),
-                                      onPressed: () {
-                                        Navigator.pop(context, false);
-                                      },
-                                    ),
-                                  ],
-                                );
-                              });
-                          if (result) {
-                            _getterSetterImageComment(isMapSet: true);
-                            Asset _undoImage = imageCommentMap["IMAGE"][value];
-                            String _undoComment =
-                                imageCommentMap["COMMENT"][value];
-                            setState(() {
-                              imageCommentMap["IMAGE"].removeAt(value);
-                              imageCommentMap["COMMENT"].removeAt(value);
-                              textEditingControllerImage5..text = '';
-                              imageCommentMap["COMMENT"].add('');
-                              _getterSetterImageComment(isMapSet: false);
-                              // images.removeAt(value);
-                            });
-                            _scaffoldKey.currentState.showSnackBar(showSnackBar(
-                                textMessage:
-                                    Text("${value + 1}번째 이미지가 삭제되었습니다."),
-                                duration: Duration(milliseconds: 1500),
-                                snackBarAction: SnackBarAction(
-                                    label: "되돌리기",
-                                    onPressed: () {
-                                      setState(() {
-                                        // images.insert(index, _undoImage);
-                                        _getterSetterImageComment(
-                                            isMapSet: true);
-                                        imageCommentMap["IMAGE"]
-                                            .insert(value, _undoImage);
-                                        imageCommentMap["COMMENT"]
-                                            .insert(value, _undoComment);
-                                        imageCommentMap["COMMENT"].removeLast();
-                                        _getterSetterImageComment(
-                                            isMapSet: false);
-                                      });
-                                    })));
-                          }
-                        },
-                        itemBuilder: (context) => [
-                              PopupMenuItem(
-                                value: index,
-                                child: Text(
-                                  "삭제",
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w700),
-                                ),
-                              ),
-                            ],
-                        child: Container(
-                            child: AssetThumb(
-                          asset: imageAsset,
-                          height: 200,
-                          width: 200,
-                        ))),
-                  ),
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.vertical,
-                    reverse: true,
-                    child: TextField(
-                        keyboardType: TextInputType.multiline,
-                        minLines: 2,
-                        maxLines: null,
-                        decoration: InputDecoration(
-                          contentPadding: EdgeInsets.symmetric(
-                              vertical: 20.0, horizontal: 5.0),
-                          border: OutlineInputBorder(),
-                          labelText: "사진${index + 1}의 설명",
-                          hintText: "내용을 입력하세요",
-                        ),
-                        controller: getTextEditingImageTextField(index,
-                            initComment: comment)),
-                  ),
-                )
-              ],
-            ),
-          )
-        : Container(
-            padding: EdgeInsets.all(5.0),
-            child: SizedBox(
-              height: 50,
-              width: 50,
-              child: GestureDetector(
-                  onTap: () async {
-                    if (imageCommentMap["IMAGE"].isNotEmpty) {
-                      bool isInit = await showDialog(
+  imageContainer(int index, Asset imageAsset, String comment) {
+    return Container(
+      padding: EdgeInsets.only(top: 5.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          SizedBox(
+            height: 80,
+            width: 80,
+            child: Container(
+              child: PopupMenuButton<int>(
+                  onSelected: (value) async {
+                    bool result = await showDialog(
                         context: context,
                         barrierDismissible: true,
                         builder: (BuildContext context) {
                           return AlertDialog(
-                            title: Text('사진 작성 중'),
-                            content: Text("작성중인 사진 및 설명이 있습니다. 초기화 하시겠습니까?"),
+                            title: Text('사진 삭제'),
+                            content: Text("사진 및 설명이 삭제됩니다."),
                             actions: <Widget>[
                               ElevatedButton(
-                                child: Text('초기화'),
+                                child: Text('삭제'),
                                 onPressed: () {
                                   Navigator.pop(context, true);
                                 },
@@ -754,42 +557,152 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
                                   Navigator.pop(context, false);
                                 },
                               ),
-                              ElevatedButton(
-                                child: Text('취소'),
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                              ),
                             ],
                           );
-                        },
-                      );
-                      if (isInit != null) {
-                        if (isInit) {
-                          setState(() {
-                            imageCommentMap["IMAGE"].clear();
-                            imageCommentMap["COMMENT"].clear();
-                            imageCommentMap["COMMENT"].addAll(_initCommentList);
-                            _getterSetterImageComment(isMapSet: false);
-                          });
-                        }
-                        checkCamStorePermission(getImage);
-                      }
-                    } else {
-                      checkCamStorePermission(getImage);
+                        });
+                    if (result) {
+                      //Deleted
+                      imageDismiss(imageCommentMap, value);
                     }
                   },
+                  itemBuilder: (context) => [
+                        PopupMenuItem(
+                          value: index,
+                          child: Text(
+                            "삭제",
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w700),
+                          ),
+                        ),
+                      ],
                   child: Container(
-                    child: Icon(Icons.add),
-                    decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey),
-                        borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                  )),
+                      child: AssetThumb(
+                    asset: imageAsset,
+                    height: 200,
+                    width: 200,
+                  ))),
             ),
-          );
+          ),
+          Expanded(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              reverse: true,
+              child: TextField(
+                  keyboardType: TextInputType.multiline,
+                  minLines: 2,
+                  maxLines: null,
+                  decoration: InputDecoration(
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 20.0, horizontal: 5.0),
+                    border: OutlineInputBorder(),
+                    labelText: "사진${index + 1}의 설명",
+                    hintText: "내용을 입력하세요",
+                  ),
+                  controller: getTextEditingImageTextField(index,
+                      initComment: comment)),
+            ),
+          )
+        ],
+      ),
+    );
   }
 
-  getImage() async {
+  imageDismiss(Map<String, dynamic> imgCommMap, int selectedIndex) {
+    setterImgCommentFromMapToTextEditingControl(imageCommentMap);
+    Asset _undoImage = imgCommMap["IMAGE"][selectedIndex];
+    String _undoComment = imgCommMap["COMMENT"][selectedIndex];
+    setState(() {
+      imageCommentMap["IMAGE"].removeAt(selectedIndex);
+      imageCommentMap["COMMENT"].removeAt(selectedIndex);
+      textEditingControllerImage5..text = '';
+      imageCommentMap["COMMENT"].add('');
+      getterImgCommentFromMapToTextEditingControl(imageCommentMap);
+      // images.removeAt(value);
+    });
+    _scaffoldKey.currentState.showSnackBar(showSnackBar(
+        textMessage: Text("${selectedIndex + 1}번째 이미지가 삭제되었습니다."),
+        duration: Duration(milliseconds: 1500),
+        snackBarAction: SnackBarAction(
+            label: "되돌리기",
+            onPressed: () {
+              setState(() {
+                // images.insert(index, _undoImage);
+                setterImgCommentFromMapToTextEditingControl(imageCommentMap);
+                imageCommentMap["IMAGE"].insert(selectedIndex, _undoImage);
+                imageCommentMap["COMMENT"].insert(selectedIndex, _undoComment);
+                imageCommentMap["COMMENT"].removeLast();
+                getterImgCommentFromMapToTextEditingControl(imageCommentMap);
+              });
+            })));
+  }
+
+  emptyImageWidget(Map<String, dynamic> imgCommMap) {
+    return Container(
+      padding: EdgeInsets.all(5.0),
+      child: SizedBox(
+        height: 50,
+        width: 50,
+        child: GestureDetector(
+            onTap: () async {
+              if (imgCommMap["IMAGE"].isNotEmpty) {
+                bool isInit = await showDialog(
+                  context: context,
+                  barrierDismissible: true,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('사진 작성 중'),
+                      content: Text("작성중인 사진 및 설명이 있습니다. 초기화 하시겠습니까?"),
+                      actions: <Widget>[
+                        ElevatedButton(
+                          child: Text('초기화'),
+                          onPressed: () {
+                            Navigator.pop(context, true);
+                          },
+                        ),
+                        ElevatedButton(
+                          child: Text('유지'),
+                          onPressed: () {
+                            Navigator.pop(context, false);
+                          },
+                        ),
+                        ElevatedButton(
+                          child: Text('취소'),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+                if (isInit != null) {
+                  if (isInit) {
+                    setState(() {
+                      imageCommentMap["IMAGE"].clear();
+                      imageCommentMap["COMMENT"].clear();
+                      imageCommentMap["COMMENT"].addAll(_initCommentList);
+                      getterImgCommentFromMapToTextEditingControl(
+                          imageCommentMap);
+                    });
+                  }
+                  checkCamStorePermission(_getImage);
+                }
+              } else {
+                checkCamStorePermission(_getImage);
+              }
+            },
+            child: Container(
+              child: Icon(Icons.add),
+              decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.all(Radius.circular(5.0))),
+            )),
+      ),
+    );
+  }
+
+  _getImage() async {
     List<Asset> resultList = [];
     if (imageCommentMap["IMAGE"].isNotEmpty) {
       for (var image in imageCommentMap["IMAGE"]) {
@@ -806,24 +719,56 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
     });
   }
 
-  _getterSetterImageComment({@required bool isMapSet, bool isSave}) {
-    List<String> _tempTextEditing = [];
-    isSave = isSave ?? false;
-    int mapSetLength =
-        !isSave ? MAX_IMAGE_COUNT : imageCommentMap["IMAGE"].length;
-    if (isMapSet) {
-      for (int i = 0; i < mapSetLength; i++) {
-        _tempTextEditing
-            .add(getTextEditingImageTextField(i, initComment: "").text.trim());
+  thirdContainer(Map<String, dynamic> imgCommMap) {
+    List<Widget> _imageWidget = [];
+    List<Widget> _emptyWidget = [];
+    int containImageCount =
+        imgCommMap["IMAGE"] != null ? imgCommMap["IMAGE"].length : 0;
+
+    for (int i = 0; i < containImageCount; i++) {
+      if (imgCommMap["IMAGE"][i].runtimeType == String) {
+        print("imgComment Map : ${imgCommMap["IMAGE"][i]}");
+        //Continue Check Plz
+        continue;
       }
-      imageCommentMap["COMMENT"].clear();
-      imageCommentMap["COMMENT"].addAll(_tempTextEditing);
-    } else {
-      for (int i = 0; i < MAX_IMAGE_COUNT; i++) {
-        getTextEditingImageTextField(i,
-            initComment: imageCommentMap["COMMENT"][i]);
-      }
+      _imageWidget.add(imageContainer(
+        i,
+        imgCommMap["IMAGE"][i],
+        imgCommMap["COMMENT"][i],
+      ));
     }
+    for (int i = 0; i < 5 - containImageCount; i++) {
+      _emptyWidget.add(emptyImageWidget(imgCommMap));
+    }
+    return Container(
+      child: Column(
+        children: _imageWidget
+          ..add(Row(
+            children: _emptyWidget,
+          )),
+      ),
+    );
+  }
+
+  getterImgCommentFromMapToTextEditingControl(
+    Map<String, dynamic> imgCommMap,
+  ) {
+    for (int i = 0; i < maxImageCount; i++) {
+      getTextEditingImageTextField(i, initComment: imgCommMap["COMMENT"][i]);
+    }
+  }
+
+  setterImgCommentFromMapToTextEditingControl(
+    Map<String, dynamic> imgCommMap,
+  ) {
+    List<String> _tempTextEditing = [];
+    int mapSetLength = imgCommMap["IMAGE"].length;
+
+    for (int i = 0; i < mapSetLength; i++) {
+      _tempTextEditing.add(getTextEditingImageTextField(i).text.trim());
+    }
+    imageCommentMap["COMMENT"].clear();
+    imageCommentMap["COMMENT"].addAll(_tempTextEditing);
   }
 
   getTextEditingImageTextField(int index, {String initComment}) {
@@ -831,7 +776,6 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
     switch (index) {
       case 0:
         return textEditingControllerImage1..text = initCom;
-
       case 1:
         return textEditingControllerImage2..text = initCom;
       case 2:
@@ -843,34 +787,5 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
       default:
         return null;
     }
-  }
-
-  thirdContainer(Map<String, dynamic> imgCommMap, {Widget popUpMenu}) {
-    List<Widget> _imageWidget = [];
-    List<Widget> _emptyWidget = [];
-    int containImageCount =
-        imgCommMap["IMAGE"] != null ? imgCommMap["IMAGE"].length : 0;
-
-    for (int i = 0; i < containImageCount; i++) {
-      if (imgCommMap["IMAGE"][i].runtimeType == String) {
-        //Continue Check Plz
-        continue;
-      }
-      _imageWidget.add(imageContainer(
-        index: i,
-        imageAsset: imgCommMap["IMAGE"][i],
-      ));
-    }
-    for (int i = 0; i < 5 - containImageCount; i++) {
-      _emptyWidget.add(imageContainer());
-    }
-    return Container(
-      child: Column(
-        children: _imageWidget
-          ..add(Row(
-            children: _emptyWidget,
-          )),
-      ),
-    );
   }
 }
