@@ -49,103 +49,114 @@ exports.deleteProduct = functions.firestore.document('university/{universityId}/
 // {} 있는거랑 없는거 차이는 없는거는 예를 들어 report 는 이름이 report 인 친구들을 찾는거고
 // {reportedUid}, reportedUid는 아무런 의미가 없고(아무거나 써도 ㄱㅊ), report 다음에 있는 모든 애들을 가르킴 
 // report 안에 있는 모든 유저 대상
-exports.onReportCreate = functions.database.ref('/report/{reportedUid}/deal/{postUid}/value/{timestamp}').onCreate(async (snapshot, context) => {
+exports.onReportCreate = functions.database.ref('/report/{reportedUid}/{firstReportTime}}/deal/{postUid}/value/{timestamp}').onCreate(async (snapshot, context) => {
     const countValue = snapshot.val();
+    var ReportPoint;
     var postReportPoint;
-    var postFirstCasePoint;
-    var postSecondCasePoint;
-    var postThirdCasePoint;
-    var postFourCasePoint;
     
-    // 들어온 신고 case 뭔지 파악해서 case count
-    switch (countValue.case) {
-        case '1':
-            const firstCase = snapshot.ref.parent.parent.child('firstCase')
-            await firstCase.transaction(count => {
-                return count + 1;
-            })
-            break;
-        case '2':
-            const secondeCase = snapshot.ref.parent.parent.child('secondCase')
-            await secondeCase.transaction(count => {
-                return count + 1;
-            })
-            break;
-        case '3':
-            const thirdeCase = snapshot.ref.parent.parent.child('thirdCase')
-            await thirdeCase.transaction(count => {
-                return count + 1;
-            })
-        break;
-        case '4':
-            const fourCase = snapshot.ref.parent.parent.child('fourCase')
-            await fourCase.transaction(count => {
-                return count + 1;
-            })
-            break;
-        default:
-            break;
-    }
+    // // 들어온 신고 case 뭔지 파악해서 case count
+    // switch (countValue.case) {
+    //     case '1':
+    //         const firstCase = snapshot.ref.parent.parent.child('firstCase')
+    //         await firstCase.transaction(count => {
+    //             return count + 1;
+    //         })
+    //         break;
+    //     case '2':
+    //         const secondeCase = snapshot.ref.parent.parent.child('secondCase')
+    //         await secondeCase.transaction(count => {
+    //             return count + 1;
+    //         })
+    //         break;
+    //     case '3':
+    //         const thirdeCase = snapshot.ref.parent.parent.child('thirdeCase')
+    //         await thirdeCase.transaction(count => {
+    //             return count + 1;
+    //         })
+    //     break;
+    //     case '4':
+    //         const fourCase = snapshot.ref.parent.parent.child('fourCase')
+    //         await fourCase.transaction(count => {
+    //             return count + 1;
+    //         })
+    //         break;
+    //     default:
+    //         break;
+    // }
 
     // report 총 몇갠지 count
     // parent 할때마다 위에서 접근한 경로 ('/report/{reportedUid}/deal/{postUid}/value/{timestamp}')
     // 뒤에서 한칸씩 올라가는거 같음
-    const countRef = snapshot.ref.parent.parent.child('reportCount')
+
+    const countRef = snapshot.ref.parent.parent.parent.parent.child('reportCount')
     await countRef.transaction(count => {
+        ReportPoint = count + 1;
+        return ReportPoint;
+    })
+
+    const countRef1 = snapshot.ref.parent.parent.child('postReportCount')
+    await countRef1.transaction(count => {
         postReportPoint = count + 1;
         return postReportPoint;
     })
 
-    // case count
-    postFirstCasePoint = (await snapshot.ref.parent.parent.child('firstCase').get()).val();
-    postSecondCasePoint = (await snapshot.ref.parent.parent.child('secondCase').get()).val();
-    postThirdCasePoint = (await snapshot.ref.parent.parent.child('thirdCase').get()).val();
-    postFourCasePoint = (await snapshot.ref.parent.parent.child('fourCase').get()).val();
+
+    // // case count
+    // postFirstCasePoint = (await snapshot.ref.parent.parent.child('firstCase').get()).val();
+    // postSecondCasePoint = (await snapshot.ref.parent.parent.child('secondCase').get()).val();
+    // postThirdCasePoint = (await snapshot.ref.parent.parent.child('thirdCase').get()).val();
+    // postFourCasePoint = (await snapshot.ref.parent.parent.child('fourCase').get()).val();
 
 
-    // post 신고가 들어왔는데 그게 그 post의 5번째 신고다 -> user report ++
-    if (postReportPoint === 5) {
-        await databaseTest.collection('user').doc(countValue.reportedUid).collection('report').doc(countValue.reportedUid).get().then(value => {
-            realTimeCountTest = value.data()['reportPoint'];
-            postFirstCasePoint += value.data()['dealCase']['first'];
-            postSecondCasePoint += value.data()['dealCase']['second'];
-            postThirdCasePoint += value.data()['dealCase']['third'];
-            postFourCasePoint += value.data()['dealCase']['four'];
+    // // post 신고가 들어왔는데 그게 그 post의 5번째 신고다 -> user report ++
+    if (ReportPoint === 25) {
+        await databaseTest.doc('user/' + countValue.reportedUid).update({
+            // reprt 컬렉션 -> point -> reportPoint 안에 필드 두개 같이 두고 싶은데 그럼 무한루프돔 
+            "reportState": 1,
+            "reportTime" : admin.firestore.Timestamp.now(),
         })
-        realTimeCountTest += 1;
-        await databaseTest.doc('user/' + countValue.reportedUid+'/report/'+countValue.reportedUid).update({
-            "reportPoint": realTimeCountTest,
-            "dealCase.first": postFirstCasePoint,
-            "dealCase.second": postSecondCasePoint,
-            "dealCase.third": postThirdCasePoint,
-            "dealCase.four": postFourCasePoint,
-        })
+        // await databaseTest.collection('user').doc(countValue.reportedUid).collection('report').doc(countValue.reportedUid).get().then(value => {
+        //     realTimeCountTest = value.data()['reportPoint'];
+        //     postFirstCasePoint += value.data()['dealCase']['first'];
+        //     postSecondCasePoint += value.data()['dealCase']['second'];
+        //     postThirdCasePoint += value.data()['dealCase']['third'];
+        //     postFourCasePoint += value.data()['dealCase']['four'];
+        // })
+        // realTimeCountTest += 1;
+        // await databaseTest.doc('user/' + countValue.reportedUid+'/report/'+countValue.reportedUid).update({
+        //     "reportPoint": realTimeCountTest,
+        //     "dealCase.first": postFirstCasePoint,
+        //     "dealCase.second": postSecondCasePoint,
+        //     "dealCase.third": postThirdCasePoint,
+        //     "dealCase.four": postFourCasePoint,
+        // })
     }
 });
 
 // realTime에서 post 5번 신고 먹어서 user에 reportPoint 1개 올라가면 일로옴 (update)
 // update 하고 나서 reportPoint 가 5면 제재
 // 일정시간 지나면 다시 되돌리는거 해야함
-exports.onUpdateReportPoint = functions.firestore.document('user/{userId}/report/{reportId}').onUpdate(async (snapshot, context) =>{
-    const afterReportPointValue = snapshot.after.data();
-    const beforeReportPointValue = snapshot.before.data();
-    console.log('after ' + afterReportPointValue.reportPoint)
-    console.log('before ' + beforeReportPointValue.reportPoint)
+// exports.onUpdateReportPoint = functions.firestore.document('user/{userId}/report/{reportId}').onUpdate(async (snapshot, context) =>{
+//     const afterReportPointValue = snapshot.after.data();
+//     const beforeReportPointValue = snapshot.before.data();
+//     console.log('after ' + afterReportPointValue.reportPoint)
+//     console.log('before ' + beforeReportPointValue.reportPoint)
 
-    if (afterReportPointValue.reportPoint === 5) {
+//     if (afterReportPointValue.reportPoint === 5) {
         
-        await databaseTest.doc('user/' + context.params.userId).update({
-            // reprt 컬렉션 -> point -> reportPoint 안에 필드 두개 같이 두고 싶은데 그럼 무한루프돔 
-            "reportState": 1,
-            "reportTime" : admin.firestore.Timestamp.now(),
-        })
-    }
-    }
-);
+//         await databaseTest.doc('user/' + context.params.userId).update({
+//             // reprt 컬렉션 -> point -> reportPoint 안에 필드 두개 같이 두고 싶은데 그럼 무한루프돔 
+//             "reportState": 1,
+//             "reportTime" : admin.firestore.Timestamp.now(),
+//         })
+//     }
+//     }
+// );
 
 // 'every 1 minutes' -> 1분마다 확인 -> 비효율 -> 이야기해보고 하루 기준으로 확인하면 될듯?
 // ex) 신고 제재 기간이 1주일이면 그 기간이 지날때 자동으로 제재 해제하기 위한 트리거
 // 604800000 -> 1주일을 ms 로 변경한 값
+// every 24 hours
 exports.checkReportTime = functions.pubsub.schedule('every 1 minutes').onRun(async (context) => {
     const query = await databaseTest.collection('user').get();
     query.forEach(async eachGroup => {

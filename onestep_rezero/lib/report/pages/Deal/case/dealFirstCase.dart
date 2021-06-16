@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../main.dart';
@@ -6,6 +8,109 @@ import '../../../../main.dart';
 final myController = TextEditingController();
 
 // Navigator.of(context).popUntil((route) => route.isFirst);
+
+void report() {
+  Map<dynamic, dynamic> values;
+
+  // 중복신고 방지
+  FirebaseDatabase.instance
+      .reference()
+      .child('reportUser')
+      .child(googleSignIn.currentUser.id)
+      .set({'postUid': true});
+
+  FirebaseDatabase.instance
+      .reference()
+      .child('report')
+      .child(googleSignIn.currentUser.id)
+      .once()
+      .then((value) => {
+            if (value.value == null)
+              // 아예 신고가 처음일때
+              {
+                FirebaseDatabase.instance
+                    .reference()
+                    .child('report')
+                    .child('reportedUid')
+                    .child('처음신고 시간')
+                    .child('deal')
+                    .child('postUid')
+                    .child('value')
+                    .child(DateTime.now().millisecondsSinceEpoch.toString())
+                    .set({
+                  'case': '1',
+                  'content': myController.text.toString(),
+                  'title': "case first",
+                  'reportedUid': googleSignIn.currentUser.id,
+                  'time': DateTime.now().millisecondsSinceEpoch.toString(),
+                })
+              }
+            else
+              {
+                // 같은 post 인지 확인
+                values = value.value,
+                values.forEach((key, value) {
+                  // 최초신고 timestamp 마지막 꺼 확인해서 value['reportCount'] 이용 25 면 꽉 찬거고 25 아니면 ++
+                  if (value['reportCount'] == 25) {
+                    FirebaseDatabase.instance
+                        .reference()
+                        .child('report')
+                        .child('reportedUid')
+                        .child('처음신고 시간2')
+                        .child('deal')
+                        .child('postUid')
+                        .child('value')
+                        .child(DateTime.now().millisecondsSinceEpoch.toString())
+                        .set({
+                      'case': '1',
+                      'content': myController.text.toString(),
+                      'title': "case first",
+                      'reportedUid': googleSignIn.currentUser.id,
+                      'time': DateTime.now().millisecondsSinceEpoch.toString(),
+                    });
+                  } else {
+                    FirebaseDatabase.instance
+                        .reference()
+                        .child('report')
+                        .child('reportedUid')
+                        .child(key.toString())
+                        .child('deal')
+                        .child('postUid')
+                        .child('value')
+                        .child(DateTime.now().millisecondsSinceEpoch.toString())
+                        .set({
+                      'case': '1',
+                      'content': myController.text.toString(),
+                      'title': "case first",
+                      'reportedUid': googleSignIn.currentUser.id,
+                      'time': DateTime.now().millisecondsSinceEpoch.toString(),
+                    });
+                  }
+                })
+              }
+          });
+}
+
+void _showDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      // return object of type Dialog
+      return AlertDialog(
+        title: Text("이미 신고한 게시물입니다."),
+        content: Text("이미 신고한 게시물입니다."),
+        actions: <Widget>[
+          ElevatedButton(
+            child: Text("확인"),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
 
 class DealFirstCase extends StatelessWidget {
   final String postUid;
@@ -62,7 +167,6 @@ class DealFirstCase extends StatelessWidget {
                     style: TextStyle(fontSize: 40),
                   ),
                 ),
-                // 이거 고려 아직 안함
                 Container(
                   height: 150,
                   padding: EdgeInsets.all(15.0),
@@ -80,71 +184,45 @@ class DealFirstCase extends StatelessWidget {
                 ),
                 Center(
                   child: ElevatedButton(
-                      onPressed: () {
-                        print("제출하기 click");
-                        String count;
-                        int countValue;
+                      onPressed: () async {
+                        report();
+                        // Map<dynamic, dynamic> values;
+                        // bool flag = false;
 
-                        FirebaseDatabase.instance
-                            .reference()
-                            .child('report')
-                            .child(googleSignIn.currentUser.id)
-                            .child('deal')
-                            .child('post1')
-                            .once()
-                            .then((value) => {
-                                  if (value.value == null)
-                                    {
-                                      FirebaseDatabase.instance
-                                          .reference()
-                                          .child('report')
-                                          .child(googleSignIn.currentUser.id)
-                                          .child('deal')
-                                          .child('post1')
-                                          .child('value')
-                                          .child(DateTime.now()
-                                              .millisecondsSinceEpoch
-                                              .toString())
-                                          .set({
-                                        'case': '1',
-                                        'content': myController.text.toString(),
-                                        'title': "case first",
-                                        'count': '0',
-                                        'reportedUid':
-                                            googleSignIn.currentUser.id,
-                                        'time': DateTime.now()
-                                            .millisecondsSinceEpoch
-                                            .toString(),
-                                      })
-                                    }
-                                  else
-                                    {
-                                      countValue = value.value.length,
-                                      countValue++,
-                                      count = countValue.toString(),
-                                      FirebaseDatabase.instance
-                                          .reference()
-                                          .child('report')
-                                          .child(googleSignIn.currentUser.id)
-                                          .child('deal')
-                                          .child('post1')
-                                          .child('value')
-                                          .child(DateTime.now()
-                                              .millisecondsSinceEpoch
-                                              .toString())
-                                          .set({
-                                        'case': '1',
-                                        'content': myController.text.toString(),
-                                        'title': "case first",
-                                        'count': count,
-                                        'reportedUid':
-                                            googleSignIn.currentUser.id,
-                                        'time': DateTime.now()
-                                            .millisecondsSinceEpoch
-                                            .toString(),
-                                      })
-                                    }
-                                });
+                        // await FirebaseDatabase.instance
+                        //     .reference()
+                        //     .child('reportUser')
+                        //     .once()
+                        //     .then((value) => {
+                        //           if (value.value == null)
+                        //             {
+                        //               flag = false,
+                        //             }
+                        //           else
+                        //             {
+                        //               values = value.value,
+                        //               values.forEach((key, value) {
+                        //                 // 한번이라도 신고한적이 있다
+                        //                 if (key ==
+                        //                     googleSignIn.currentUser.id) {
+                        //                   // 같은 글을 신고한다
+                        //                   if (value['postUid1'] == true) {
+                        //                     flag = true;
+                        //                     print("중복신고");
+                        //                     _showDialog(context);
+                        //                   }
+                        //                   // 신고를 한적이 있는데 같은 글이 아니다
+                        //                   else {
+                        //                     flag = false;
+                        //                   }
+                        //                 }
+                        //               })
+                        //             }
+                        //         });
+                        // // 처음 신고한다
+                        // if (flag == false) {
+                        //   report();
+                        // }
                       },
                       child: Container(
                         width: MediaQuery.of(context).size.width / 1.5,

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 class ReportUserPage extends StatelessWidget {
+  final String uid;
+  ReportUserPage(this.uid);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

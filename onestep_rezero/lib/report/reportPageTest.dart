@@ -33,13 +33,9 @@ class ReportPageTest extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                // FirebaseFirestore.instance
-                //     .collection('users')
-                //     .doc(FirebaseApi.getId())
-                //     .update({"userScore": 1});
-
-                // Navigator.of(context).push(
-                //     MaterialPageRoute(builder: (context) => ReportUserPage()));
+                String uid;
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => ReportUserPage(uid)));
               },
               child: Text("사용자신고"),
             ),

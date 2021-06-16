@@ -238,28 +238,6 @@ class JoinBody extends ConsumerWidget {
                                         FirebaseFirestore.instance
                                             .collection('user')
                                             .doc(user.id)
-                                            .collection("report")
-                                            .doc(user.id)
-                                            .set({
-                                          "reportPoint": 0,
-                                          "dealCase": {
-                                            'first': 0,
-                                            'second': 0,
-                                            'third': 0,
-                                            'four': 0,
-                                          },
-                                          "userCase": {
-                                            'first': 0,
-                                            'second': 0,
-                                            'third': 0,
-                                            'four': 0,
-                                          },
-                                        })
-                                      })
-                                  .whenComplete(() => {
-                                        FirebaseFirestore.instance
-                                            .collection('user')
-                                            .doc(user.id)
                                             .collection("notification")
                                             .doc(user.id)
                                             .set({
