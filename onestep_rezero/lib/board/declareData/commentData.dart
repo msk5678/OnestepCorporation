@@ -98,6 +98,7 @@ class CommentData {
   fromFirebaseReference(DataSnapshot snapshot) {
     Map<dynamic, dynamic> commentSnapshot =
         Map<dynamic, dynamic>.from(snapshot.value) ?? {};
+    print("commentSnapshot : $commentSnapshot");
 
     List<CommentData> commentList = [];
     commentSnapshot.forEach((key, value) {

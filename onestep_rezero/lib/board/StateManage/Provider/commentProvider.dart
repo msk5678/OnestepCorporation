@@ -25,7 +25,7 @@ class CommentProvider with ChangeNotifier {
         .then((DataSnapshot dataSnapshot) {
       _commentDataList = CommentData().fromFirebaseReference(dataSnapshot);
       // return CommentData().fromFirebaseReference(dataSnapshot);
-
+      print("_commentDataList : $_commentDataList");
       notifyListeners();
     }).whenComplete(() => _isFetching = false);
   }

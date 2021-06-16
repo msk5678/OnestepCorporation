@@ -23,6 +23,10 @@ abstract class Comment {
       List comment, double deviceWidth, double deviceHeight);
   commentListEmptyWidget();
   commentListSwipeMenu(comment, BuildContext context, {Widget child});
+  deletedCommentWidget(
+      int index, CommentData comment, double deviceWidth, double deviceHeight);
+  commentWidget(
+      int index, CommentData comment, double deviceWidth, double deviceHeight);
 }
 
 class CommentWidget extends ConsumerWidget implements Comment {
@@ -106,16 +110,34 @@ class CommentWidget extends ConsumerWidget implements Comment {
             child: SlideAnimation(
               verticalOffset: 50.0,
               child: FadeInAnimation(
-                  child: !comment[index].deleted
-                      ? commentListSwipeMenu(
-                          comment[index],
-                          context,
-                          slidableKey: Key(comment[index].commentId),
-                          child: commentBoxDesignMethod(
-                              index, comment[index], deviceWidth, deviceHeight),
-                        )
-                      : commentBoxDesignMethod(
-                          index, comment[index], deviceWidth, deviceHeight)),
+                child: Column(
+                  children: [
+                    !comment[index].deleted
+                        ?
+                        //  commentListSwipeMenu(
+                        //     comment[index],
+                        //     context,
+                        //     slidableKey: Key(comment[index].commentId),
+                        //     child:
+                        //      commentBoxDesignMethod(index, comment[index],
+                        //         deviceWidth, deviceHeight),
+                        //   )
+                        Dismissible(
+                            onDismissed: (direction) {},
+                            key: ValueKey<String>(comment[index].commentId),
+                            background: Container(
+                              color: Colors.green,
+                            ),
+                            child: commentBoxDesignMethod(index, comment[index],
+                                deviceWidth, deviceHeight),
+                          )
+                        : commentBoxDesignMethod(
+                            index, comment[index], deviceWidth, deviceHeight),
+                    coCommentWidget(
+                        comment[index].haveChildComment, comment[index])
+                  ],
+                ),
+              ),
             ),
           );
         },
@@ -200,6 +222,7 @@ class CommentWidget extends ConsumerWidget implements Comment {
     );
   }
 
+  @override
   deletedCommentWidget(
       int index, CommentData comment, double deviceWidth, double deviceHeight) {
     DateTime deleteTime = DateTime.fromMillisecondsSinceEpoch(
@@ -226,9 +249,62 @@ class CommentWidget extends ConsumerWidget implements Comment {
               ));
   }
 
+  coCommentWidget(bool haveChildComment, CommentData comment) {
+    final dbReference = FirebaseDatabase.instance.reference();
+    if (haveChildComment) {
+      return FutureBuilder<DataSnapshot>(
+          future: dbReference
+              .child('board')
+              .child(boardId.toString())
+              .child(postId.toString())
+              .child(comment.commentId)
+              .child("CoComment")
+              .once(),
+          builder: (context, snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.none:
+              case ConnectionState.waiting:
+                return Container();
+              default:
+                if (snapshot.hasError || !snapshot.hasData) {
+                  return Center(
+                      child: Column(
+                    children: [
+                      Text("Error"),
+                      IconButton(
+                          icon: Icon(Icons.refresh),
+                          onPressed: () {
+                            context
+                                .read(commentProvider)
+                                .refresh(boardId, postId);
+                          })
+                    ],
+                  ));
+                } else {
+                  List<CommentData> _commentDataList = [];
+                  _commentDataList =
+                      CommentData().fromFirebaseReference(snapshot.data);
+                  return CoComment(
+                    boardId: boardId,
+                    commentMap: commentList,
+                    coCommentCallback: coCommentCallback,
+                    coCommentList: _commentDataList,
+                    openSlidingPanelCallback: openSlidingPanelCallback,
+                    postId: postId,
+                    postWriterUID: postWriterUID,
+                    slidableController: slidableController,
+                  );
+                }
+            }
+          });
+    } else {
+      return Container();
+    }
+  }
+
+  @override
   commentWidget(
       int index, CommentData comment, double deviceWidth, double deviceHeight) {
-    final dbReference = FirebaseDatabase.instance.reference();
     DateTime uploadTime = DateTime.fromMillisecondsSinceEpoch(
         int.tryParse(comment.uploadTime ?? 0) ?? 0);
     return Column(
@@ -271,43 +347,6 @@ class CommentWidget extends ConsumerWidget implements Comment {
             )
           ],
         ),
-        comment.haveChildComment
-            ? FutureBuilder<DataSnapshot>(
-                future: dbReference
-                    .child('board')
-                    .child(boardId.toString())
-                    .child(postId.toString())
-                    .child(comment.commentId)
-                    .child("CoComment")
-                    .once(),
-                builder: (context, snapshot) {
-                  CommentData().fromFirebaseReference(snapshot.data);
-
-                  // print("runtime Type : ${snapshot.data}");
-                  // List<CommentData> _commentDataList =
-                  //     CommentData().fromFirebaseReference(snapshot.data());
-                  return Container(
-                    child: Text("hi"),
-                  );
-                }
-                //   if (!snapshot.hasError) {
-                //     if (snapshot.hasData) {
-                //       return Container(
-                //         child: Text("HaveData : "),
-                //       );
-                //     } else {
-                //       return Container(
-                //         child: Text("Empty"),
-                //       );
-                //     }
-                //   } else {
-                //     return Container(
-                //       child: Text("Error"),
-                //     );
-                //   }
-                // },
-                )
-            : Container()
       ],
     );
   }

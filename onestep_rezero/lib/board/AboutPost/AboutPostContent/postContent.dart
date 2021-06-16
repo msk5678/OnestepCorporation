@@ -83,6 +83,7 @@ class _PostContentState extends State<PostContent> {
 
   @override
   Widget build(BuildContext context) {
+    print("Start State, Builder");
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
       child: Scaffold(
