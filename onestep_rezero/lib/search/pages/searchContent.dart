@@ -27,21 +27,11 @@ class _SearchContentState extends State<SearchContent> {
   TabController ctr;
 
   String _searchText;
-  FocusNode _focus = new FocusNode();
-
-  void _onFocusChange() {
-    print("@@@@ Focus : ${_focus.hasFocus}");
-
-    if (_focus.hasFocus) {
-      setState(() {});
-    }
-  }
 
   @override
   void initState() {
     context.read(searchProductProvider).clearList();
     _searchContent(widget.searchText);
-    _focus.addListener(_onFocusChange);
 
     // if (context.read(searchProductProvider.state).isNotEmpty)
     //   context
@@ -127,7 +117,6 @@ class _SearchContentState extends State<SearchContent> {
                 child: Container(
                   height: 50,
                   child: TextField(
-                    focusNode: _focus,
                     onTap: () {
                       Navigator.pop(context);
 
@@ -184,7 +173,7 @@ class _SearchContentState extends State<SearchContent> {
   }
 
   Widget appBarBottom() {
-    if (_focus.hasFocus || widget.searchKey != 0) return null;
+    if (widget.searchKey != 0) return null;
     return TabBar(
       indicatorColor: OnestepColors().mainColor,
       tabs: [
@@ -297,11 +286,7 @@ class _SearchContentState extends State<SearchContent> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: appBar(),
-        body: _focus.hasFocus
-            ? Container()
-            : chk
-                ? allBody()
-                : singleBody(),
+        body: chk ? allBody() : singleBody(),
         floatingActionButton: floatingButton(),
       ),
     );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-
-import 'package:onestep_rezero/product/widgets/categoryDetail/header.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:onestep_rezero/product/widgets/categoryDetail/categoryDetailBody.dart';
+import 'package:onestep_rezero/product/widgets/categoryDetail/categoryDetailHeader.dart';
 
 class CategoryDetail extends StatefulWidget {
   final String category;
@@ -14,6 +15,9 @@ class CategoryDetail extends StatefulWidget {
 class _CategoryDetailState extends State<CategoryDetail> {
   @override
   void initState() {
+    context
+        .read(categoryProvider)
+        .fetchProducts(category: widget.category, detailCategory: null);
     super.initState();
   }
 
@@ -42,9 +46,8 @@ class _CategoryDetailState extends State<CategoryDetail> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              // this.renderHeader(),
               CategoryDetailHeader(category: widget.category),
-              // this.renderBody(),
+              CategoryDetailBody(),
             ],
           ),
         ),

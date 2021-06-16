@@ -6,7 +6,7 @@ import 'package:onestep_rezero/animation/favoriteAnimation.dart';
 import 'package:onestep_rezero/favorite/utils/favoriteFirebaseApi.dart';
 import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/product/models/product.dart';
-import 'package:onestep_rezero/product/pages/productDetail.dart';
+import 'package:onestep_rezero/product/pages/product/productDetail.dart';
 import 'package:onestep_rezero/timeUtil.dart';
 
 class ProductItem extends StatefulWidget {

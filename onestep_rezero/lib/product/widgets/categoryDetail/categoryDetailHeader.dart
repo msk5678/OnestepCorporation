@@ -1,8 +1,9 @@
 import 'dart:async';
 import 'dart:collection';
-
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:onestep_rezero/product/widgets/categoryDetail/categoryDetailBody.dart';
 import 'package:rxdart/rxdart.dart';
 
 class CategoryDetailHeader extends StatefulWidget {
@@ -14,7 +15,6 @@ class CategoryDetailHeader extends StatefulWidget {
 }
 
 class _CategoryDetailHeaderState extends State<CategoryDetailHeader> {
-  int _headerindex = 0;
   StreamController _streamController = BehaviorSubject();
 
   @override
@@ -35,11 +35,14 @@ class _CategoryDetailHeaderState extends State<CategoryDetailHeader> {
           .collection("category")
           .doc(widget.category)
           .get(),
-      builder: (context, AsyncSnapshot snapshot) {
+      builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.waiting:
             return Container();
           default:
+            if (!snapshot.data.data().keys.contains('detail'))
+              return Container();
+
             Map<String, dynamic> _detailCategory = snapshot.data['detail'];
             int total = snapshot.data['total'];
 
@@ -59,7 +62,6 @@ class _CategoryDetailHeaderState extends State<CategoryDetailHeader> {
                     key: (k) => k,
                     value: (k) => _detailCategory[k]);
 
-                print("sortedMap : $sortedMap");
                 return Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
@@ -103,11 +105,12 @@ class _CategoryDetailHeaderState extends State<CategoryDetailHeader> {
                                 ),
                               ),
                               onTap: () {
-                                // setState(() {
                                 _streamController.sink.add(index);
-                                //   widget.productProvider.fetchProducts(
-                                //       _category.getCategoryItems()[_headerindex]);
-                                // });
+                                context.read(categoryProvider).fetchProducts(
+                                    category: widget.category,
+                                    detailCategory: index == 0
+                                        ? null
+                                        : sortedMap.keys.elementAt(index));
                               },
                             ),
                           );
