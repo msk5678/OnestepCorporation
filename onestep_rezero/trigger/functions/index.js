@@ -49,7 +49,7 @@ exports.deleteProduct = functions.firestore.document('university/{universityId}/
 // {} 있는거랑 없는거 차이는 없는거는 예를 들어 report 는 이름이 report 인 친구들을 찾는거고
 // {reportedUid}, reportedUid는 아무런 의미가 없고(아무거나 써도 ㄱㅊ), report 다음에 있는 모든 애들을 가르킴 
 // report 안에 있는 모든 유저 대상
-exports.onReportCreate = functions.database.ref('/report/{reportedUid}/{firstReportTime}}/deal/{postUid}/value/{timestamp}').onCreate(async (snapshot, context) => {
+exports.onDealReportCreate = functions.database.ref('/report/{reportedUid}/{firstReportTime}}/deal/{postUid}/value/{timestamp}').onCreate(async (snapshot, context) => {
     const countValue = snapshot.val();
     var ReportPoint;
     var postReportPoint;
@@ -130,6 +130,27 @@ exports.onReportCreate = functions.database.ref('/report/{reportedUid}/{firstRep
         //     "dealCase.third": postThirdCasePoint,
         //     "dealCase.four": postFourCasePoint,
         // })
+    }
+});
+
+exports.onUserReportCreate = functions.database.ref('/report/{reportedUid}/{firstReportTime}}/user/{postUid}/value/{timestamp}').onCreate(async (snapshot, context) => {
+    const countValue = snapshot.val();
+    var ReportPoint;
+    
+
+    const countRef = snapshot.ref.parent.parent.parent.parent.child('reportCount')
+    await countRef.transaction(count => {
+        ReportPoint = count + 1;
+        return ReportPoint;
+    })
+
+    // // post 신고가 들어왔는데 그게 그 post의 5번째 신고다 -> user report ++
+    if (ReportPoint === 25) {
+        await databaseTest.doc('user/' + countValue.reportedUid).update({
+            // reprt 컬렉션 -> point -> reportPoint 안에 필드 두개 같이 두고 싶은데 그럼 무한루프돔 
+            "reportState": 1,
+            "reportTime" : admin.firestore.Timestamp.now(),
+        })
     }
 });
 

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'User/reportUserController.dart';
+
 class ReportUserPage extends StatelessWidget {
   final String uid;
   ReportUserPage(this.uid);
@@ -19,7 +21,9 @@ class ReportUserPage extends StatelessWidget {
         child: Column(
           children: [
             InkWell(
-              onTap: () {},
+              onTap: () {
+                reportUserController(context, 1);
+              },
               child: Padding(
                 padding: EdgeInsets.fromLTRB(
                     MediaQuery.of(context).size.width / 20,
@@ -37,7 +41,9 @@ class ReportUserPage extends StatelessWidget {
                     ),
                     IconButton(
                       icon: Icon(Icons.keyboard_arrow_right),
-                      onPressed: () {},
+                      onPressed: () {
+                        reportUserController(context, 1);
+                      },
                     )
                   ],
                 ),

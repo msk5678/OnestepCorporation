@@ -114,7 +114,8 @@ void _showDialog(BuildContext context) {
 
 class DealFirstCase extends StatelessWidget {
   final String postUid;
-  DealFirstCase(this.postUid);
+  final String reportedUid;
+  DealFirstCase(this.postUid, this.reportedUid);
 
   @override
   Widget build(BuildContext context) {
@@ -127,7 +128,7 @@ class DealFirstCase extends StatelessWidget {
       child: Scaffold(
           appBar: AppBar(
             title: Text(
-              'case one',
+              'deal case one',
               style: TextStyle(color: Colors.black),
             ),
             backgroundColor: Colors.white,
@@ -206,7 +207,7 @@ class DealFirstCase extends StatelessWidget {
                         //                 if (key ==
                         //                     googleSignIn.currentUser.id) {
                         //                   // 같은 글을 신고한다
-                        //                   if (value['postUid1'] == true) {
+                        //                   if (value['postUid'] == true) {
                         //                     flag = true;
                         //                     print("중복신고");
                         //                     _showDialog(context);
