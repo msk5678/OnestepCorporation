@@ -22,7 +22,7 @@ class BottomNavigationItem {
   static List<BottomNavigationItem> get items => [
         BottomNavigationItem(
           page: ProductMain(),
-          icon: Icon(Icons.shopping_cart),
+          icon: Icon(Icons.home),
           title: "홈",
         ),
         BottomNavigationItem(
