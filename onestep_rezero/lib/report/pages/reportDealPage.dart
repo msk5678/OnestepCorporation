@@ -3,7 +3,8 @@ import 'package:onestep_rezero/report/pages/Deal/reportDealController.dart';
 
 class ReportDealPage extends StatelessWidget {
   final String postUid;
-  ReportDealPage(this.postUid);
+  final String reportedUid;
+  ReportDealPage(this.postUid, this.reportedUid);
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +22,7 @@ class ReportDealPage extends StatelessWidget {
           children: [
             InkWell(
               onTap: () {
-                reportDealController(context, 1, postUid);
+                reportDealController(context, 1, postUid, reportedUid);
               },
               child: Padding(
                 padding: EdgeInsets.fromLTRB(
@@ -41,7 +42,7 @@ class ReportDealPage extends StatelessWidget {
                     IconButton(
                       icon: Icon(Icons.keyboard_arrow_right),
                       onPressed: () {
-                        reportDealController(context, 1, postUid);
+                        reportDealController(context, 1, postUid, reportedUid);
                       },
                     )
                   ],
@@ -49,9 +50,7 @@ class ReportDealPage extends StatelessWidget {
               ),
             ),
             InkWell(
-              onTap: () {
-                reportDealController(context, 2, postUid);
-              },
+              onTap: () {},
               child: Padding(
                 padding: EdgeInsets.fromLTRB(
                     MediaQuery.of(context).size.width / 20,
@@ -69,18 +68,14 @@ class ReportDealPage extends StatelessWidget {
                     ),
                     IconButton(
                       icon: Icon(Icons.keyboard_arrow_right),
-                      onPressed: () {
-                        reportDealController(context, 2, postUid);
-                      },
+                      onPressed: () {},
                     )
                   ],
                 ),
               ),
             ),
             InkWell(
-              onTap: () {
-                reportDealController(context, 3, postUid);
-              },
+              onTap: () {},
               child: Padding(
                 padding: EdgeInsets.fromLTRB(
                     MediaQuery.of(context).size.width / 20,
@@ -98,18 +93,14 @@ class ReportDealPage extends StatelessWidget {
                     ),
                     IconButton(
                       icon: Icon(Icons.keyboard_arrow_right),
-                      onPressed: () {
-                        reportDealController(context, 3, postUid);
-                      },
+                      onPressed: () {},
                     )
                   ],
                 ),
               ),
             ),
             InkWell(
-              onTap: () {
-                reportDealController(context, 4, postUid);
-              },
+              onTap: () {},
               child: Padding(
                 padding: EdgeInsets.fromLTRB(
                     MediaQuery.of(context).size.width / 20,
@@ -127,9 +118,7 @@ class ReportDealPage extends StatelessWidget {
                     ),
                     IconButton(
                       icon: Icon(Icons.keyboard_arrow_right),
-                      onPressed: () {
-                        reportDealController(context, 4, postUid);
-                      },
+                      onPressed: () {},
                     )
                   ],
                 ),

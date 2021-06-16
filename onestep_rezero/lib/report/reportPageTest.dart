@@ -23,19 +23,21 @@ class ReportPageTest extends StatelessWidget {
             Center(
               child: ElevatedButton(
                 onPressed: () async {
-                  // uid = postUid
+                  // postUid
                   String uid;
+                  // 신고 당한 사람 uid
+                  String reportedUid;
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => ReportDealPage(uid)));
+                      builder: (context) => ReportDealPage(uid, reportedUid)));
                 },
                 child: Text("거래신고"),
               ),
             ),
             ElevatedButton(
               onPressed: () {
-                String uid;
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => ReportUserPage(uid)));
+                // String uid;
+                // Navigator.of(context).push(MaterialPageRoute(
+                //     builder: (context) => ReportUserPage(uid)));
               },
               child: Text("사용자신고"),
             ),

@@ -114,7 +114,8 @@ void _showDialog(BuildContext context) {
 
 class DealFirstCase extends StatelessWidget {
   final String postUid;
-  DealFirstCase(this.postUid);
+  final String reportedUid;
+  DealFirstCase(this.postUid, this.reportedUid);
 
   @override
   Widget build(BuildContext context) {
