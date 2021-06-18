@@ -60,11 +60,11 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
                       children: <Widget>[
                         firstContainer(),
                         displayCurrentBoard(alterPostData.boardName),
-                        setPostName(),
+                        setPostName(deviceHeight),
                         secondContainer(),
                         thirdContainer(imageCommentMap),
                         SizedBox(
-                          height: device_height / 15,
+                          height: deviceHeight / 15,
                         ),
                       ],
                     ),

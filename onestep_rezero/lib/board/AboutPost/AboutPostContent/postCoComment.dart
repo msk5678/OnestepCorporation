@@ -6,34 +6,44 @@ import 'package:onestep_rezero/board/AboutPost/AboutPostContent/postComment.dart
 import 'package:onestep_rezero/board/declareData/commentData.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
+import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/timeUtil.dart';
 
-class CoComment extends StatelessWidget implements Comment {
-  final boardId;
-  final postId;
+class ChildComment extends StatelessWidget implements Comment {
   final postWriterUID;
   final openSlidingPanelCallback;
   final coCommentCallback;
-  final coCommentList;
+  final childCommentList;
   final commentMap;
+  final refreshCallback;
+  final boardId;
+  final postId;
   final SlidableController slidableController;
-  CoComment(
-      {this.boardId,
-      this.postId,
-      this.coCommentCallback,
+
+  ChildComment(
+      {this.coCommentCallback,
       this.openSlidingPanelCallback,
       this.postWriterUID,
       this.commentMap,
-      this.coCommentList,
-      this.slidableController});
+      this.childCommentList,
+      this.slidableController,
+      this.refreshCallback,
+      this.postId,
+      this.boardId});
   @override
   Widget build(
     BuildContext context,
   ) {
     final deviceWidth = MediaQuery.of(context).size.width;
     final deviceHeight = MediaQuery.of(context).size.width;
-
-    bool isEmpty = coCommentList.length == 0 ? true : false;
+    if (childCommentList == null) {
+      return Center(
+        child: IconButton(
+            icon: Icon(Icons.refresh),
+            onPressed: () => refreshCallback(context, boardId, postId)),
+      );
+    }
+    bool isEmpty = childCommentList.length == 0 ? true : false;
     if (!isEmpty)
       return Container(
           // decoration: BoxDecoration(
@@ -51,7 +61,7 @@ class CoComment extends StatelessWidget implements Comment {
           margin: EdgeInsets.only(left: 10),
           padding: EdgeInsets.only(left: 5),
           child: animationLimiterListView(
-              coCommentList, deviceWidth, deviceHeight));
+              childCommentList, deviceWidth, deviceHeight));
     else
       return Container();
   }
@@ -77,22 +87,44 @@ class CoComment extends StatelessWidget implements Comment {
         shrinkWrap: true,
         itemCount: comment.length,
         itemBuilder: (BuildContext context, int index) {
+          CommentData currentIndexCommentData = comment[index];
+          currentIndexCommentData
+            ..userName = commentName(
+                currentIndexCommentData.uid, postWriterUID, commentMap);
           return AnimationConfiguration.staggeredList(
             position: index,
             duration: const Duration(milliseconds: 375),
             child: SlideAnimation(
               verticalOffset: 50.0,
               child: FadeInAnimation(
-                  child: !comment[index].deleted
-                      ? commentListSwipeMenu(
-                          comment[index],
-                          context,
-                          slidableKey: Key(comment[index].commentId),
-                          child: commentBoxDesignMethod(
-                              index, comment[index], deviceWidth, deviceHeight),
-                        )
-                      : commentBoxDesignMethod(
-                          index, comment[index], deviceWidth, deviceHeight)),
+                child: Column(
+                  children: [
+                    !comment[index].deleted
+                        ? commentListSwipeMenu(
+                            currentIndexCommentData,
+                            context,
+                            currentUserModel.uid,
+                            slidableKey: Key(currentIndexCommentData.commentId),
+                            child: commentBoxDesignMethod(
+                                index,
+                                currentIndexCommentData,
+                                deviceWidth,
+                                deviceHeight),
+                          )
+                        // Dismissible(
+                        //     onDismissed: (direction) {},
+                        //     key: ValueKey<String>(comment[index].commentId),
+                        //     background: Container(
+                        //       color: Colors.green,
+                        //     ),
+                        //     child: commentBoxDesignMethod(index, comment[index],
+                        //         deviceWidth, deviceHeight),
+                        //   )
+                        : commentBoxDesignMethod(index, currentIndexCommentData,
+                            deviceWidth, deviceHeight),
+                  ],
+                ),
+              ),
             ),
           );
         },
@@ -104,10 +136,11 @@ class CoComment extends StatelessWidget implements Comment {
   commentListEmptyWidget() {}
 
   @override
-  commentListSwipeMenu(comment, context, {Widget child, Key slidableKey}) {
+  commentListSwipeMenu(comment, context, currentLogInUid,
+      {Widget child, Key slidableKey}) {
     Widget childWidget = child ?? Container();
 
-    bool isWritter = comment.uid == postWriterUID;
+    bool isWritter = comment.uid == currentLogInUid;
     Key key = slidableKey ?? null;
     return Slidable(
       controller: slidableController,
@@ -120,7 +153,7 @@ class CoComment extends StatelessWidget implements Comment {
           color: Colors.black45,
           icon: Icons.add_comment,
           onTap: () {
-            coCommentCallback(comment);
+            coCommentCallback(comment..isUnderComment = true);
           },
         ),
         isWritter
@@ -131,7 +164,9 @@ class CoComment extends StatelessWidget implements Comment {
                 onTap: () async {
                   bool result = await comment.dismissComment() ?? false;
                   if (result)
-                    context.read(commentProvider).refresh(boardId, postId);
+                    context
+                        .read(commentProvider)
+                        .refresh(comment.boardId, comment.postId);
                 },
               )
             : IconSlideAction(
@@ -148,21 +183,16 @@ class CoComment extends StatelessWidget implements Comment {
     Map<String, dynamic> commentUserMap = commentList ?? {};
     List commentUserList = commentUserMap.keys.toList();
     if (commentUID.toString() == postWriterUid) {
-      return Text("작성자",
-          style: TextStyle(color: OnestepColors().secondColor, fontSize: 13));
+      return "작성자";
     } else {
       for (int i = 0; i < commentUserList.length; i++) {
-        if (commentUserList[i].toString() == commentUID) {
-          return Text("익명 ${i + 1}",
-              style:
-                  TextStyle(color: OnestepColors().secondColor, fontSize: 13));
-        } else {
-          return Text("ERROR",
-              style:
-                  TextStyle(color: OnestepColors().secondColor, fontSize: 13));
-        }
+        if (commentUserList[i].toString() == commentUID)
+          return "익명 ${i + 1}";
+        else
+          return "익명 ${commentUserList.length + 1}";
       }
     }
+    return "";
   }
 
   @override
@@ -203,7 +233,7 @@ class CoComment extends StatelessWidget implements Comment {
         Padding(padding: EdgeInsets.only(top: deviceHeight / 30)),
         Container(
           alignment: Alignment.centerLeft,
-          child: commentName(comment.uid, postWriterUID, commentMap),
+          child: Text(comment.userName),
         ),
         Container(
           padding: EdgeInsets.only(
@@ -235,5 +265,11 @@ class CoComment extends StatelessWidget implements Comment {
         )
       ],
     );
+  }
+
+  @override
+  stackFavoriteIcon({Widget child}) {
+    // TODO: implement stackFavoriteIcon
+    throw UnimplementedError();
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -30,7 +32,8 @@ class PostContent extends StatefulWidget {
   _PostContentState createState() => _PostContentState();
 }
 
-class _PostContentState extends State<PostContent> {
+class _PostContentState extends State<PostContent>
+    with TickerProviderStateMixin {
   final String currentUid = currentUserModel.uid;
   double deviceHeight;
   double deviceWidth;
@@ -38,8 +41,13 @@ class _PostContentState extends State<PostContent> {
   TextEditingController textEditingControllerComment = TextEditingController();
   PostData currentPostData;
 
-  bool flag = false; //Distint about upload comment or coComment
+  //Distint about upload comment or coComment
+  bool commentFlag = false;
+
   CommentData aboutCoComment;
+
+  Animation _arrowAnimation;
+  AnimationController _arrowAnimationController;
 
   @override
   void initState() {
@@ -48,6 +56,12 @@ class _PostContentState extends State<PostContent> {
     context
         .read(commentProvider)
         .fetchData(currentPostData.boardId, currentPostData.documentId);
+
+    _arrowAnimationController =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 300))
+          ..forward();
+    _arrowAnimation =
+        Tween(begin: 0.0, end: pi).animate(_arrowAnimationController);
 
     super.initState();
   }
@@ -124,7 +138,7 @@ class _PostContentState extends State<PostContent> {
                       ..add(CommentWidget(
                         boardId: currentPostData.boardId,
                         postId: currentPostData.documentId,
-                        commentList: currentPostData.commentUserList,
+                        commentMap: currentPostData.commentUserList,
                         postWriterUID: currentPostData.uid,
                         openSlidingPanelCallback: slidingUpDownMethod,
                         coCommentCallback: coCommentCallback,
@@ -151,9 +165,11 @@ class _PostContentState extends State<PostContent> {
     return SlidingUpPanel(
       borderRadius: BorderRadius.only(
           topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
-      minHeight: deviceWidth / 10,
-      maxHeight: deviceHeight / 3.5,
+      minHeight: deviceWidth / 6,
+      maxHeight: deviceHeight / 3,
       controller: panelController,
+      onPanelClosed: () => _arrowAnimationController.forward(),
+      onPanelOpened: () => _arrowAnimationController.reverse(),
       panel: Column(
         children: [
           //Sliding Button
@@ -166,7 +182,8 @@ class _PostContentState extends State<PostContent> {
                       color: Colors.grey[300],
                       borderRadius: BorderRadius.all(Radius.circular(5))))),
           Container(
-            child: Text("SHOW WHERE COMMENT"),
+            child: whereSaveComment(aboutCoComment),
+            margin: EdgeInsets.only(bottom: 10),
           ),
 
           Center(
@@ -193,9 +210,10 @@ class _PostContentState extends State<PostContent> {
                 margin: EdgeInsets.only(left: 10),
                 child: ElevatedButton.icon(
                   onPressed: () async {
-                    if (flag) {
-                      await saveCoComment(
-                          textEditingControllerComment.text, aboutCoComment);
+                    if (commentFlag) {
+                      await saveComment(
+                          textEditingControllerComment.text, currentPostData,
+                          commentData: aboutCoComment);
                     } else
                       await saveComment(
                           textEditingControllerComment.text, currentPostData);
@@ -211,12 +229,9 @@ class _PostContentState extends State<PostContent> {
                 ),
               ),
               Container(
-                alignment: Alignment.topRight,
-                margin: EdgeInsets.only(left: 5),
-                child: Text("'"
-                    '${commentName(wirtterName, currentPostUid, commentList)}'
-                    "'로 댓글이 작성됩니다."),
-              ),
+                  alignment: Alignment.topRight,
+                  margin: EdgeInsets.only(right: 10),
+                  child: commentName(wirtterName, currentPostUid, commentList)),
             ],
           ),
         ],
@@ -272,70 +287,168 @@ class _PostContentState extends State<PostContent> {
   void slidingUpDownMethod() {
     if (panelController != null) if (panelController
         .isAttached) if (panelController.isPanelOpen)
-      panelController.close();
+      _panelOpen(false);
     else
-      panelController.open();
+      _panelOpen(true);
   }
 
-  saveComment(String comment, PostData postData) async {
-    if (comment != "") {
+  saveComment(String comment, PostData postData,
+      {CommentData commentData}) async {
+    if (comment != "") if (!commentFlag) {
+      textEditingControllerComment.clear();
       loadingDialogTipDialog(
           CommentData.toRealtimeDataWithPostData(postData).toRealtimeDatabase(
               textContent: comment.trimRight(),
               commentList: postData.commentUserList), thenFunction: (value) {
-        panelController.close();
-        textEditingControllerComment.clear();
+        _panelOpen(false);
         context
             .read(commentProvider)
             .refresh(currentPostData.boardId, currentPostData.documentId);
       }, errorFunction: () {
         Navigator.pop(context, true);
       }, unFocusing: true);
+    } else {
+      if (!commentData.isUnderComment) {
+        textEditingControllerComment.clear();
+        loadingDialogTipDialog(
+            commentData.addCoComment(comment, postData.commentUserList),
+            thenFunction: (value) {
+          _panelOpen(false);
+          context
+              .read(commentProvider)
+              .refresh(currentPostData.boardId, currentPostData.documentId);
+          switchingFlag();
+          aboutCoComment = null;
+        }, errorFunction: () {
+          Navigator.pop(context, true);
+        }, unFocusing: true);
+      } else {
+        textEditingControllerComment.clear();
+        loadingDialogTipDialog(
+            CommentData.toRealtimeDataWithPostData(postData)
+                .addCoCoComment(comment, commentData, postData.commentUserList),
+            thenFunction: (value) {
+          _panelOpen(false);
+          context
+              .read(commentProvider)
+              .refresh(currentPostData.boardId, currentPostData.documentId);
+          switchingFlag();
+          aboutCoComment = null;
+        }, errorFunction: () {
+          Navigator.pop(context, true);
+        }, unFocusing: true);
+      }
     }
   }
 
-  commentName(String uid, String thisPostUID, commentList) {
+  // saveCoComment(String comment, CommentData commentData) async {
+  //   if (comment != "") {
+  //     textEditingControllerComment.clear();
+  //     loadingDialogTipDialog(commentData.addCoComment(comment),
+  //         thenFunction: (value) {
+  //       _panelOpen(false);
+  //       context
+  //           .read(commentProvider)
+  //           .refresh(currentPostData.boardId, currentPostData.documentId);
+  //       switchingFlag();
+  //       aboutCoComment = null;
+  //     }, errorFunction: () {
+  //       Navigator.pop(context, true);
+  //     }, unFocusing: true);
+  //   }
+  // }
+
+  Widget whereSaveComment(CommentData commentData) {
+    return Row(
+      children: [
+        commentFlag
+            ? IconButton(
+                icon: Icon(
+                  Icons.cancel_presentation,
+                  color: OnestepColors().secondColor,
+                  size: 20,
+                ),
+                onPressed: () {
+                  setState(() {
+                    commentFlag = false;
+                    aboutCoComment = null;
+                  });
+                })
+            : GestureDetector(
+                onTap: () {
+                  if (_arrowAnimationController.isCompleted) {
+                    panelController.open();
+                    _arrowAnimationController.reverse();
+                  } else {
+                    panelController.close();
+                    _arrowAnimationController.forward();
+                  }
+                },
+                child: AnimatedBuilder(
+                  animation: _arrowAnimationController,
+                  builder: (context, child) => Transform.rotate(
+                    angle: _arrowAnimation.value,
+                    child: Icon(
+                      Icons.expand_more,
+                      size: 50.0,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+              ),
+        commentFlag
+            ? Text("${commentData.userName}에 댓글달기")
+            : Text("이 게시글에 댓글달기"),
+      ],
+    );
+  }
+
+  commentName(commentUID, postWriterUid, commentList) {
     Map<String, dynamic> commentUserMap = commentList ?? {};
     List commentUserList = commentUserMap.keys.toList();
-    if (uid == thisPostUID) {
-      return "작성자";
+    if (commentUID.toString() == postWriterUid) {
+      return Text("'" '작성자' "'로 댓글이 작성됩니다." "",
+          style: TextStyle(color: OnestepColors().secondColor, fontSize: 13));
     } else {
       for (int i = 0; i < commentUserList.length; i++) {
-        if (commentUserList[i].toString() == uid) {
-          return "익명 ${i + 1}";
+        if (commentUserList[i].toString() == commentUID) {
+          return Text(" '" '익명 ${i + 1}' "'로 댓글이 작성됩니다." "",
+              style:
+                  TextStyle(color: OnestepColors().secondColor, fontSize: 13));
         } else {
-          return "ERROR";
+          return Text(" '" '익명 ${commentUserList.length + 1}' "' 로 댓글이 작성됩니다.",
+              style:
+                  TextStyle(color: OnestepColors().secondColor, fontSize: 13));
         }
       }
     }
   }
 
-  coCommentCallback(CommentData commentData) async {
-    aboutCoComment = commentData;
-    panelController.open();
-    switchingFlag();
-    // saveCoComment(textEditingControllerComment.text, commentData);
-  }
-
-  void switchingFlag() {
-    flag = !flag;
-  }
-
-  saveCoComment(String comment, CommentData commentData) async {
-    if (comment != "") {
-      loadingDialogTipDialog(commentData.addCoComment(comment),
-          thenFunction: (value) {
-        panelController.close();
-        textEditingControllerComment.clear();
-        context
-            .read(commentProvider)
-            .refresh(currentPostData.boardId, currentPostData.documentId);
-        switchingFlag();
-        aboutCoComment = null;
-      }, errorFunction: () {
-        Navigator.pop(context, true);
-      }, unFocusing: true);
+  _panelOpen(bool open) {
+    if (open) {
+      panelController.open();
+      _arrowAnimationController.reverse();
+    } else {
+      panelController.close();
+      _arrowAnimationController.forward();
     }
+  }
+
+  coCommentCallback(CommentData commentData) async {
+    _panelOpen(true);
+    switchingFlag(to: true);
+    setState(() {
+      print(commentData.userName);
+      aboutCoComment = commentData;
+    });
+  }
+
+  void switchingFlag({bool to}) {
+    to = to ?? false;
+    if (to) {
+      commentFlag = to;
+    } else
+      commentFlag = !commentFlag;
   }
 
   loadingDialogTipDialog(Future futureFunction,

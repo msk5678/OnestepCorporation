@@ -107,10 +107,10 @@ class PostList extends ConsumerWidget {
     String _checkCate = postData.contentCategory.split('.')[1];
     String category;
     if (_checkCate == ContentCategory.QUESTION.toString().split('.')[1]) {
-      category = ContentCategory.QUESTION.category;
+      category = ContentCategory.QUESTION.categoryData.title;
     } else if (_checkCate ==
         ContentCategory.SMALLTALK.toString().split('.')[1]) {
-      category = ContentCategory.SMALLTALK.category;
+      category = ContentCategory.SMALLTALK.categoryData.title;
     }
     // else if (kReleaseMode) {
     //   throw new CategoryException(

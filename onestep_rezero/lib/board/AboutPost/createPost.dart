@@ -1,13 +1,14 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:multi_image_picker2/multi_image_picker2.dart';
 import 'package:onestep_rezero/board/declareData/boardData.dart';
+import 'package:onestep_rezero/board/declareData/categoryManageClass.dart';
 
 import 'package:onestep_rezero/board/declareData/postData.dart';
 import 'package:onestep_rezero/board/permissionLib.dart';
 import 'package:onestep_rezero/board/TipDialog/tip_dialog.dart';
-
-enum ContentCategory { SMALLTALK, QUESTION }
+import 'package:onestep_rezero/chat/widget/appColor.dart';
 
 class CreatePost extends StatefulWidget {
   final currentBoardData;
@@ -34,8 +35,8 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   // CustomSlideDialog customSlideDialog;
   final int maxImageCount = 5;
-  double device_height;
-  double device_width;
+  double deviceHeight;
+  double deviceWidth;
   ContentCategory _category;
   TextEditingController textEditingControllerBottomSheet;
   TextEditingController textEditingControllerContent;
@@ -46,6 +47,7 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
   TextEditingController textEditingControllerImage5;
 
   ScrollController scrollController;
+  FixedExtentScrollController categoryPickerController;
   BoardData currentBoardData;
   setBoardData();
   List<String> _initCommentList = ['', '', '', '', ''];
@@ -76,7 +78,6 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
     imageCommentMap["COMMENT"].addAll(_initCommentList);
     super.initState();
     setBoardData();
-    SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
     textEditingInitNDispose(true);
     scrollController = new ScrollController();
   }
@@ -84,8 +85,8 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    device_width = MediaQuery.of(context).size.width;
-    device_height = MediaQuery.of(context).size.height;
+    deviceWidth = MediaQuery.of(context).size.width;
+    deviceHeight = MediaQuery.of(context).size.height;
   }
 
   @override
@@ -116,23 +117,26 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
               },
               child: SafeArea(
                 minimum: const EdgeInsets.all(16.0),
-                child: Padding(
-                  padding: EdgeInsets.only(
-                      bottom: MediaQuery.of(context).viewInsets.bottom),
-                  child: SingleChildScrollView(
-                    controller: scrollController,
-                    child: Column(
-                      children: <Widget>[
-                        firstContainer(),
-                        displayCurrentBoard(currentBoardData.boardName),
-                        setPostName(),
-                        secondContainer(),
-                        thirdContainer(imageCommentMap),
-                        SizedBox(
-                          height: device_height / 15,
-                        ),
-                      ],
-                    ),
+                child: SingleChildScrollView(
+                  controller: scrollController,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      firstContainer(),
+                      displayCurrentBoard(currentBoardData.boardName),
+                      Container(
+                          padding: EdgeInsets.symmetric(vertical: 3),
+                          alignment: Alignment.bottomLeft,
+                          width: deviceWidth / 3,
+                          child: postCategory(
+                              ContentCategory.values, deviceHeight, _category)),
+                      setPostName(deviceHeight),
+                      secondContainer(),
+                      thirdContainer(imageCommentMap),
+                      SizedBox(
+                        height: deviceHeight / 15,
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -143,6 +147,52 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
         TipDialogContainer(duration: const Duration(seconds: 2))
       ],
     );
+  }
+
+  postCategory(List<ContentCategory> category, double deviceheight, initData) {
+    if (initData == null) _category = category[0];
+    return CupertinoPicker(
+      // scrollController: FixedExtentScrollController(initialItem: 0),
+      itemExtent: deviceheight / 20,
+      children: <Widget>[
+        for (int i = 0; i < category.length; i++)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Icon(category[i].categoryData.icon),
+              Padding(
+                padding: EdgeInsets.only(left: 10),
+                child: Text(
+                  category[i].categoryData.title,
+                  style: TextStyle(color: OnestepColors().mainColor),
+                ),
+              )
+            ],
+          ),
+      ],
+      onSelectedItemChanged: (int index) => _category = category[index],
+      looping: true,
+    );
+
+    // return CupertinoPicker(
+    //     itemExtent: category.length.toDouble(),
+    //     onSelectedItemChanged: (int index) {},
+    //     children: [
+    //       for (int i = 0; i < category.length; i++)
+    //         Row(
+    //           mainAxisAlignment: MainAxisAlignment.center,
+    //           children: <Widget>[
+    //             // BuildingProblem.problemListIcons[i],
+    //             Padding(
+    //               padding: EdgeInsets.only(left: 10),
+    //               child: Text(
+    //                 category[i].toString(),
+    //                 style: TextStyle(color: Colors.white70),
+    //               ),
+    //             )
+    //           ],
+    //         ),
+    //     ]);
   }
 
   displayCurrentBoard(String name) {
@@ -160,10 +210,10 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
         ));
   }
 
-  setPostName() {
+  setPostName(double deviceHeight) {
     return Container(
       margin: EdgeInsets.only(top: 10),
-      height: device_height / 20,
+      height: deviceHeight / 20,
       child: TextField(
         controller: textEditingControllerBottomSheet,
         decoration: InputDecoration(
@@ -209,16 +259,18 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
                   print(_result);
                   switch (_result.toString()) {
                     case "CONTENT":
-                      _scaffoldKey.currentState.showSnackBar(
+                      ScaffoldMessenger.of(context).showSnackBar(
                           showSnackBar(textMessage: Text("내용을 입력하세요.")));
                       break;
                     case "CATEGORY":
-                      _scaffoldKey.currentState.showSnackBar(
+                      ScaffoldMessenger.of(context).showSnackBar(
                           showSnackBar(textMessage: Text("카테고리 분류를 입력하세요.")));
                       break;
                     case "TITLE":
-                      _scaffoldKey.currentState.showSnackBar(
+                      ScaffoldMessenger.of(context).showSnackBar(
                           showSnackBar(textMessage: Text("제목을 입력하세요.")));
+                      // _scaffoldKey.currentState.showSnackBar(
+                      // showSnackBar(textMessage: Text("제목을 입력하세요.")));
                       break;
                   }
                 }
@@ -319,7 +371,7 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
   }
 
   navigatorPopAlertDialog() async {
-    String result = await showDialog(
+    await showDialog(
       context: context,
       barrierDismissible: true,
       builder: (BuildContext context) {
@@ -328,6 +380,8 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
           content: Text("변경된 내용은 저장이 되지 않습니다."),
           actions: <Widget>[
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  elevation: 0, primary: OnestepColors().secondColor),
               child: Text('나가기'),
               onPressed: () {
                 // Navigator.of(context)
@@ -337,6 +391,8 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
               },
             ),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  elevation: 0, primary: OnestepColors().secondColor),
               child: Text('유지'),
               onPressed: () {
                 Navigator.pop(context);
@@ -627,7 +683,6 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
             label: "되돌리기",
             onPressed: () {
               setState(() {
-                // images.insert(index, _undoImage);
                 setterImgCommentFromMapToTextEditingControl(imageCommentMap);
                 imageCommentMap["IMAGE"].insert(selectedIndex, _undoImage);
                 imageCommentMap["COMMENT"].insert(selectedIndex, _undoComment);
@@ -788,4 +843,9 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
         return null;
     }
   }
+}
+
+class BuildingProblem {
+  static List<Icon> problemListIcons = [];
+  static List<String> problemListNames = [];
 }

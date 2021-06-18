@@ -14,7 +14,8 @@ class CommentProvider with ChangeNotifier {
     _isFetching = true;
     _commentDataList = [];
     final db = FirebaseDatabase.instance;
-    await db
+
+    _commentDataList = await db
         .reference()
         .child('board')
         .child(boardId.toString())
@@ -23,11 +24,13 @@ class CommentProvider with ChangeNotifier {
         // .orderByChild("uploadTime")
         .once()
         .then((DataSnapshot dataSnapshot) {
-      _commentDataList = CommentData().fromFirebaseReference(dataSnapshot);
-      // return CommentData().fromFirebaseReference(dataSnapshot);
-      print("_commentDataList : $_commentDataList");
-      notifyListeners();
-    }).whenComplete(() => _isFetching = false);
+      return CommentData().fromFirebaseReference(dataSnapshot);
+    }).whenComplete(() {
+      _isFetching = false;
+    });
+
+    _isFetching = false;
+    notifyListeners();
   }
 
   refresh(String boardId, String postId) {

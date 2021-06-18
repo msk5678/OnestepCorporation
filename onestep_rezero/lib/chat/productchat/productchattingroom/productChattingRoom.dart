@@ -408,10 +408,10 @@ class _LastChatState extends State<ChatScreen> {
               AppBar(
                 backgroundColor: OnestepColors().thirdColor,
                 title: Center(
-                  child: ProductChatController()
-                      .getProductUserNickName(friendId, 20),
-                  // Text("ge"),
-                ),
+                    // child: ProductChatController()
+                    //     .getProductUserNickName(friendId, 20),
+                    // Text("ge"),
+                    ),
                 actions: [
                   ProductChatMenu().getProductMenu(context, chatId, friendId),
                 ],
