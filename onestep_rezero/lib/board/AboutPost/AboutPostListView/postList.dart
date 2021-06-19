@@ -3,22 +3,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:onestep_rezero/board/AboutPost/AboutPostListView/listRiverpod.dart';
-
-// import 'package:onestep_rezero/board/StateManage/Provider/postListProvider.dart';
 import 'package:onestep_rezero/board/declareData/categoryManageClass.dart';
 import 'package:onestep_rezero/board/declareData/postData.dart';
+import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/timeUtil.dart';
 
 class PostList extends ConsumerWidget {
   final List<PostData> postList;
-  PostList({this.postList});
-  double deviceHeight;
-  double deviceWidth;
+  final customPostListCallback;
+  PostList({this.postList, this.customPostListCallback});
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
-    deviceHeight = MediaQuery.of(context).size.height;
-    deviceWidth = MediaQuery.of(context).size.width;
+    double deviceHeight = MediaQuery.of(context).size.height;
+
+    double deviceWidth = MediaQuery.of(context).size.width;
+
     return Container(
       child: AnimationLimiter(
         child: ListView.builder(
@@ -33,7 +33,8 @@ class PostList extends ConsumerWidget {
               child: SlideAnimation(
                 verticalOffset: 50.0,
                 child: FadeInAnimation(
-                  child: _buildListCard(context, index, postList[index]),
+                  child: _buildListCard(context, index, postList[index],
+                      deviceHeight, deviceWidth),
                 ),
               ),
             );
@@ -43,7 +44,14 @@ class PostList extends ConsumerWidget {
     );
   }
 
-  Widget _buildListCard(BuildContext context, int index, var postData) {
+  postClickEvent(BuildContext context, PostData postData) async {
+    await Navigator.of(context).pushNamed('/PostContent', arguments: {
+      "CURRENTBOARDDATA": postData
+    }).then((value) => context.read(listProvider).fetchPosts(postData.boardId));
+  }
+
+  Widget _buildListCard(BuildContext context, int index, var postData,
+      double deviceHeight, double deviceWidth) {
     bool isDeleted = postData.deleted ?? false;
     if (!isDeleted)
       return SizedBox(
@@ -59,19 +67,18 @@ class PostList extends ConsumerWidget {
                   splashColor: Colors.grey,
                   //Click Event
                   onTap: () async {
-                    await Navigator.of(context).pushNamed('/PostContent',
-                        arguments: {
-                          "CURRENTBOARDDATA": postData
-                        }).then((value) => context
-                        .read(listProvider)
-                        .fetchPosts(postData.boardId));
+                    if (customPostListCallback == null)
+                      postClickEvent(context, postData);
+                    else
+                      customPostListCallback(
+                          context, postData, currentUserModel.uid);
                   },
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      firstColumnLine(postData),
-                      secondColumnLine(postData),
-                      thirdColumnLine(postData)
+                      firstColumnLine(postData, deviceHeight, deviceWidth),
+                      secondColumnLine(postData, deviceHeight, deviceWidth),
+                      thirdColumnLine(postData, deviceHeight, deviceWidth)
                     ],
                   ))),
         ),
@@ -80,7 +87,7 @@ class PostList extends ConsumerWidget {
       return Container();
   }
 
-  firstColumnLine(postData) {
+  firstColumnLine(postData, double deviceHeight, double deviceWidth) {
     return Container(
         child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -103,7 +110,7 @@ class PostList extends ConsumerWidget {
     ));
   }
 
-  secondColumnLine(postData) {
+  secondColumnLine(postData, double deviceHeight, double deviceWidth) {
     String _checkCate = postData.contentCategory.split('.')[1];
     String category;
     if (_checkCate == ContentCategory.QUESTION.toString().split('.')[1]) {
@@ -153,7 +160,7 @@ class PostList extends ConsumerWidget {
     );
   }
 
-  thirdColumnLine(PostData postData) {
+  thirdColumnLine(PostData postData, double deviceHeight, double deviceWidth) {
     return Container(
         padding: EdgeInsets.only(left: deviceWidth / 50),
         child: Row(children: <Widget>[

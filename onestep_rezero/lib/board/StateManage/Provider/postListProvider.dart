@@ -64,11 +64,22 @@ class PostListProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // static Future<QuerySnapshot> getBoardCategory(
-  //     // Get Board Category List
-  //     ) async {
-  //   return FirebaseFirestore.instance.collection('board').get();
-  // }
+  Future fetchUserPosting(String currentUid) async {
+    if (_isFetching) return;
+    _isFetching = true;
+    _hasNext = true;
+
+    _productsSnapshot.clear();
+    try {
+      print("In try ");
+      final docList = await PostFirebaseApi.getAllUserPostingList(currentUid);
+      _productsSnapshot.addAll(docList);
+
+      // if (snap.docs.length < documentLimit) _hasNext = false;
+    } catch (error) {}
+    _isFetching = false;
+    notifyListeners();
+  }
 }
 
 class PostFirebaseApi {
@@ -92,5 +103,34 @@ class PostFirebaseApi {
     } else {
       return refProducts.startAfterDocument(startAfter).get();
     }
+  }
+
+  static Future<List<DocumentSnapshot>> getAllUserPostingList(
+    String uid,
+  ) async {
+    List<DocumentSnapshot> userAllPosting = [];
+
+    QuerySnapshot boardList = await FirebaseFirestore.instance
+        .collection('university')
+        .doc(currentUserModel.university)
+        .collection("board")
+        .get();
+
+    await Future.forEach(boardList.docs, (DocumentSnapshot element) async {
+      String boardId = element.id;
+      QuerySnapshot postQuerySnapshot = await FirebaseFirestore.instance
+          .collection('university')
+          .doc(currentUserModel.university)
+          .collection("board")
+          .doc(boardId)
+          .collection(boardId)
+          .where("uid", isEqualTo: uid)
+          .get();
+
+      // return userAllPosting.addAll(postQuerySnapshot.docs);
+      userAllPosting.addAll(postQuerySnapshot.docs);
+    });
+
+    return userAllPosting;
   }
 }

@@ -6,8 +6,10 @@ import 'package:onestep_rezero/board/StateManage/Provider/boardCategoryList.dart
 import 'package:onestep_rezero/board/Animation/Rive/AboutBoard/boardMyPostIcon.dart';
 import 'package:onestep_rezero/board/Animation/Rive/AboutBoard/randomList.dart';
 import 'package:onestep_rezero/board/declareData/boardData.dart';
+import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/search/pages/searchAllMain.dart';
+import "dart:math" as math;
 
 class BoardMain extends StatefulWidget {
   BoardMain({
@@ -60,7 +62,7 @@ class _BoardMainState extends State<BoardMain> {
     animationPivot = 0;
     context.read(boardListProvider).fetchBoards();
     setBoardIconData();
-    randomClass = CreateRandomNumberNotDuplicated(length: initIconData.length);
+    // randomClass = CreateRandomNumberNotDuplicated(length: initIconData.length);
 
     super.initState();
   }
@@ -127,121 +129,208 @@ class _BoardMainState extends State<BoardMain> {
   //   }
   // }
 
+  // setBoardIconData() {
+  //   initIconData = [
+  //     BoardInitData(
+  //         icons: MyBoardCategoryIcon(
+  //           riveFileData: RiveFileData(
+  //               riveFile: 'rives/20210601.riv',
+  //               riveStateMachine: "StateMachine"),
+  //           stream: streamControllerIcon1.stream,
+  //         ),
+  //         explain: "나의 글"),
+  //     BoardInitData(
+  //         icons: MyBoardCategoryIcon(
+  //           height: 50,
+  //           width: 50,
+  //           riveFileData: RiveFileData(
+  //               riveFile: 'rives/20210601.riv',
+  //               riveStateMachine: "StateMachine"),
+  //           stream: streamControllerIcon2.stream,
+  //         ),
+  //         explain: "나의 댓글"),
+  //     BoardInitData(
+  //         // icons: Icon(
+  //         //   Icons.book_rounded,
+  //         //   size: 30,
+  //         //   color: Colors.yellow[600],
+  //         // ),
+  //         icons: MyBoardCategoryIcon(
+  //           riveFileData: RiveFileData(
+  //               riveFile: 'rives/20210601.riv',
+  //               riveStateMachine: "StateMachine"),
+  //           stream: streamControllerIcon3.stream,
+  //         ),
+  //         explain: "나의 스크랩"),
+  //     BoardInitData(
+  //         // icons: Icon(
+  //         //   Icons.favorite,
+  //         //   size: 30,
+  //         //   color: Colors.redAccent[100],
+  //         // ),
+  //         icons: MyBoardCategoryIcon(
+  //           riveFileData: RiveFileData(
+  //               riveFile: 'rives/new_file.riv',
+  //               riveStateMachine: "StateMachine"),
+  //           stream: streamControllerIcon4.stream,
+  //         ),
+  //         explain: "인기글"),
+  //     BoardInitData(
+  //         icons: MyBoardCategoryIcon(
+  //           riveFileData: RiveFileData(
+  //               riveFile: 'rives/new_file.riv',
+  //               riveStateMachine: "StateMachine"),
+  //           stream: streamControllerIcon5.stream,
+  //         ),
+  //         // icons:
+  //         //  Container(
+  //         //     child: Stack(children: [
+  //         //   Container(
+  //         //       child: Transform(
+  //         //           alignment: Alignment.center,
+  //         //           transform: Matrix4.rotationY(math.pi),
+  //         //           child: Icon(
+  //         //             Icons.mode_comment,
+  //         //             color: Colors.red[100],
+  //         //           )
+  //         //           )),
+  //         //   Container(
+  //         //       margin: EdgeInsets.all(3),
+  //         //       child: Icon(
+  //         //         Icons.mode_comment,
+  //         //         color: Colors.blue[100],
+  //         //       )),
+  //         //   Container(
+  //         //       margin: EdgeInsets.all(6),
+  //         //       child: Transform(
+  //         //           alignment: Alignment.center,
+  //         //           transform: Matrix4.rotationY(math.pi),
+  //         //           child: Icon(Icons.mode_comment, color: Colors.red[100]))),
+  //         //   Container(
+  //         //       margin: EdgeInsets.only(left: 9, right: 9, top: 9),
+  //         //       child: Icon(Icons.mode_comment, color: Colors.blue[100])),
+  //         // ])
+  //         // ),
+  //         explain: "댓글 수"),
+  //     BoardInitData(
+  //         icons: MyBoardCategoryIcon(
+  //           riveFileData: RiveFileData(
+  //               riveFile: 'rives/new_file.riv',
+  //               riveStateMachine: "StateMachine"),
+  //           stream: streamControllerIcon6.stream,
+  //         ),
+  //         // icons: Container(
+  //         //     child: Stack(
+  //         //   children: [
+  //         //     Container(
+  //         //       margin: EdgeInsets.only(top: 5),
+  //         //       child: Icon(
+  //         //         Icons.shopping_cart,
+  //         //         size: 30,
+  //         //         color: Colors.red[200],
+  //         //       ),
+  //         //     ),
+  //         //     Container(
+  //         //       margin: EdgeInsets.only(left: 6),
+  //         //       child: Transform.rotate(
+  //         //         angle: math.pi / 4,
+  //         //         child: Icon(
+  //         //           Icons.card_giftcard,
+  //         //           size: 20,
+  //         //           color: Colors.red[200],
+  //         //         ),
+  //         //       ),
+  //         //     ),
+  //         //   ],
+  //         // )
+  //         // ),
+  //         explain: "공동구매"),
+  //   ];
+  // }
+
   setBoardIconData() {
     initIconData = [
       BoardInitData(
-          icons: MyBoardCategoryIcon(
-            riveFileData: RiveFileData(
-                riveFile: 'rives/20210601.riv',
-                riveStateMachine: "StateMachine"),
-            stream: streamControllerIcon1.stream,
+          icons: Icon(
+            Icons.escalator_warning_outlined,
+            size: 30,
+            color: OnestepColors().mainColor,
           ),
           explain: "나의 글"),
       BoardInitData(
-          icons: MyBoardCategoryIcon(
-            height: 50,
-            width: 50,
-            riveFileData: RiveFileData(
-                riveFile: 'rives/20210601.riv',
-                riveStateMachine: "StateMachine"),
-            stream: streamControllerIcon2.stream,
+          icons: Icon(
+            Icons.insert_comment_outlined,
+            size: 30,
+            color: OnestepColors().secondColor,
           ),
           explain: "나의 댓글"),
       BoardInitData(
-          // icons: Icon(
-          //   Icons.book_rounded,
-          //   size: 30,
-          //   color: Colors.yellow[600],
-          // ),
-          icons: MyBoardCategoryIcon(
-            riveFileData: RiveFileData(
-                riveFile: 'rives/20210601.riv',
-                riveStateMachine: "StateMachine"),
-            stream: streamControllerIcon3.stream,
+          icons: Icon(
+            Icons.book_rounded,
+            size: 30,
+            color: Colors.yellow[600],
           ),
           explain: "나의 스크랩"),
       BoardInitData(
-          // icons: Icon(
-          //   Icons.favorite,
-          //   size: 30,
-          //   color: Colors.redAccent[100],
-          // ),
-          icons: MyBoardCategoryIcon(
-            riveFileData: RiveFileData(
-                riveFile: 'rives/new_file.riv',
-                riveStateMachine: "StateMachine"),
-            stream: streamControllerIcon4.stream,
+          icons: Icon(
+            Icons.favorite,
+            size: 30,
+            color: Colors.redAccent[100],
           ),
           explain: "인기글"),
       BoardInitData(
-          icons: MyBoardCategoryIcon(
-            riveFileData: RiveFileData(
-                riveFile: 'rives/new_file.riv',
-                riveStateMachine: "StateMachine"),
-            stream: streamControllerIcon5.stream,
-          ),
-          // icons:
-          //  Container(
-          //     child: Stack(children: [
-          //   Container(
-          //       child: Transform(
-          //           alignment: Alignment.center,
-          //           transform: Matrix4.rotationY(math.pi),
-          //           child: Icon(
-          //             Icons.mode_comment,
-          //             color: Colors.red[100],
-          //           )
-          //           )),
-          //   Container(
-          //       margin: EdgeInsets.all(3),
-          //       child: Icon(
-          //         Icons.mode_comment,
-          //         color: Colors.blue[100],
-          //       )),
-          //   Container(
-          //       margin: EdgeInsets.all(6),
-          //       child: Transform(
-          //           alignment: Alignment.center,
-          //           transform: Matrix4.rotationY(math.pi),
-          //           child: Icon(Icons.mode_comment, color: Colors.red[100]))),
-          //   Container(
-          //       margin: EdgeInsets.only(left: 9, right: 9, top: 9),
-          //       child: Icon(Icons.mode_comment, color: Colors.blue[100])),
-          // ])
-          // ),
+          icons: Container(
+              child: Stack(children: [
+            Container(
+                child: Transform(
+                    alignment: Alignment.center,
+                    transform: Matrix4.rotationY(math.pi),
+                    child: Icon(
+                      Icons.mode_comment,
+                      color: Colors.red[100],
+                    ))),
+            Container(
+                margin: EdgeInsets.all(3),
+                child: Icon(
+                  Icons.mode_comment,
+                  color: Colors.blue[100],
+                )),
+            Container(
+                margin: EdgeInsets.all(6),
+                child: Transform(
+                    alignment: Alignment.center,
+                    transform: Matrix4.rotationY(math.pi),
+                    child: Icon(Icons.mode_comment, color: Colors.red[100]))),
+            Container(
+                margin: EdgeInsets.only(left: 9, right: 9, top: 9),
+                child: Icon(Icons.mode_comment, color: Colors.blue[100])),
+          ])),
           explain: "댓글 수"),
       BoardInitData(
-          icons: MyBoardCategoryIcon(
-            riveFileData: RiveFileData(
-                riveFile: 'rives/new_file.riv',
-                riveStateMachine: "StateMachine"),
-            stream: streamControllerIcon6.stream,
-          ),
-          // icons: Container(
-          //     child: Stack(
-          //   children: [
-          //     Container(
-          //       margin: EdgeInsets.only(top: 5),
-          //       child: Icon(
-          //         Icons.shopping_cart,
-          //         size: 30,
-          //         color: Colors.red[200],
-          //       ),
-          //     ),
-          //     Container(
-          //       margin: EdgeInsets.only(left: 6),
-          //       child: Transform.rotate(
-          //         angle: math.pi / 4,
-          //         child: Icon(
-          //           Icons.card_giftcard,
-          //           size: 20,
-          //           color: Colors.red[200],
-          //         ),
-          //       ),
-          //     ),
-          //   ],
-          // )
-          // ),
+          icons: Container(
+              child: Stack(
+            children: [
+              Container(
+                margin: EdgeInsets.only(top: 5),
+                child: Icon(
+                  Icons.shopping_cart,
+                  size: 30,
+                  color: Colors.red[200],
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.only(left: 6),
+                child: Transform.rotate(
+                  angle: math.pi / 4,
+                  child: Icon(
+                    Icons.card_giftcard,
+                    size: 20,
+                    color: Colors.red[200],
+                  ),
+                ),
+              ),
+            ],
+          )),
           explain: "공동구매"),
     ];
   }
@@ -259,72 +348,85 @@ class _BoardMainState extends State<BoardMain> {
     manageAnimationTimer(bottomNaviIndex == 2);
     double mintColorContainerHeight = deviceHeight / 10;
     // Color pColor = Color.fromRGBO(164, 227, 210, 1);
-    return GestureDetector(
-      onTap: () {
-        FocusScope.of(context).requestFocus(FocusNode());
-      },
-      child: Scaffold(
-        appBar: appBar(),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(
-                height: mintColorContainerHeight -
-                    (mintColorContainerHeight / 2 +
-                        mintColorContainerHeight / 4),
+    return Scaffold(
+      appBar: appBar(),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            SizedBox(
+              height: mintColorContainerHeight -
+                  (mintColorContainerHeight / 2 + mintColorContainerHeight / 4),
+            ),
+            Container(
+              padding: EdgeInsets.only(
+                left: 20,
               ),
-              Container(
-                padding: EdgeInsets.only(
-                  left: 20,
-                ),
-                alignment: Alignment.centerLeft,
-              ),
-              Container(
-                padding: EdgeInsets.only(
-                    left: deviceWidth / 10,
-                    right: deviceWidth / 10,
-                    bottom: 10,
-                    top: deviceHeight / 150),
-                child: GridView.count(
-                  shrinkWrap: true,
-                  crossAxisSpacing: 0.1,
-                  mainAxisSpacing: 0.1,
-                  crossAxisCount: 3,
-                  childAspectRatio: 1,
-                  children: List.generate(initIconData.length, (index) {
-                    return Card(
+              alignment: Alignment.centerLeft,
+            ),
+            Container(
+              padding: EdgeInsets.only(
+                  left: deviceWidth / 10,
+                  right: deviceWidth / 10,
+                  bottom: 10,
+                  top: deviceHeight / 150),
+              child: GridView.count(
+                shrinkWrap: true,
+                crossAxisSpacing: 0.1,
+                mainAxisSpacing: 0.1,
+                crossAxisCount: 3,
+                childAspectRatio: 1,
+                children: List.generate(initIconData.length, (index) {
+                  return GestureDetector(
+                    onTap: () {
+                      String pageName = "";
+                      Map<String, dynamic> arg = {
+                        "DASHBOARDDATA": initIconData[index]
+                      };
+                      if (index == 0) {
+                        pageName = "/UserPostingList";
+                      } else if (index == 1) {
+                        pageName = "/UserWrittenCommentList";
+                      }
+                      if (pageName != "")
+                        Navigator.pushNamed(context, pageName, arguments: arg);
+                    },
+                    child: Card(
                       elevation: 0,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8)),
-                      child: Center(
-                        child: initIconData[index].icons,
-                        // Container(
-                        //   padding: EdgeInsets.only(top: 5),
-                        //   child: Text(
-                        //     "${initIconData[index].explain}",
-                        //   ),
-                        // )
-                      ),
-                    );
-                  }),
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.only(left: 20),
-                alignment: Alignment.centerLeft,
-              ),
-              GestureDetector(
-                onTap: () {},
-                child: Container(
-                    margin: EdgeInsets.all(deviceWidth / 50),
-                    child: BoardListRiverpod(
-                      animationStopCallback: manageAnimationTimer,
-                    )
-                    // BoardNameProvider().futureConsumerWidget
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Center(
+                              child: initIconData[index].icons,
+                            ),
+                            Container(
+                              padding: EdgeInsets.only(top: 5),
+                              child: Text(
+                                "${initIconData[index].explain}",
+                              ),
+                            )
+                          ]),
                     ),
+                  );
+                }),
               ),
-            ],
-          ),
+            ),
+            Container(
+              padding: EdgeInsets.only(left: 20),
+              alignment: Alignment.centerLeft,
+            ),
+            GestureDetector(
+              onTap: () {},
+              child: Container(
+                  margin: EdgeInsets.all(deviceWidth / 50),
+                  child: BoardListRiverpod(
+                    animationStopCallback: manageAnimationTimer,
+                  )
+                  // BoardNameProvider().futureConsumerWidget
+                  ),
+            ),
+          ],
         ),
       ),
     );

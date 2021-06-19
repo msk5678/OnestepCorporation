@@ -20,8 +20,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/main.dart';
-import 'dart:io' show Platform;
-
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class PostContent extends StatefulWidget {

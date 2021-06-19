@@ -266,10 +266,4 @@ class ChildComment extends StatelessWidget implements Comment {
       ],
     );
   }
-
-  @override
-  stackFavoriteIcon({Widget child}) {
-    // TODO: implement stackFavoriteIcon
-    throw UnimplementedError();
-  }
 }

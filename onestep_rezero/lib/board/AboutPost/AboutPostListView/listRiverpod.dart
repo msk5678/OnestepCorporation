@@ -11,26 +11,34 @@ final listProvider =
 
 class ListRiverPod extends ConsumerWidget {
   final boardCategory;
-  ListRiverPod({this.boardCategory});
+  final customPostListCallback;
+  ListRiverPod({this.boardCategory, this.customPostListCallback});
   @override
   Widget build(BuildContext context, watch) {
     final listprovider = watch(listProvider).posts;
-
-    if (boardCategory == BoardCategory.POST) {
+    if (boardCategory != null) {
+      if (boardCategory == BoardCategory.POST) {
+        return PostList(
+          postList: listprovider,
+        );
+      } else if (boardCategory == BoardCategory.PICTURE) {
+        return PhotoList(
+          photoList: listprovider,
+        );
+      } else if (boardCategory == BoardCategory.VOTE) {
+        return Container();
+      } else {
+        return Container(
+          child: Center(
+            child: Text("Post List Error "),
+          ),
+        );
+      }
+    } else {
+      //This class is userPost list
       return PostList(
         postList: listprovider,
-      );
-    } else if (boardCategory == BoardCategory.PICTURE) {
-      return PhotoList(
-        photoList: listprovider,
-      );
-    } else if (boardCategory == BoardCategory.VOTE) {
-      return Container();
-    } else {
-      return Container(
-        child: Center(
-          child: Text("Post List Error "),
-        ),
+        customPostListCallback: customPostListCallback,
       );
     }
   }

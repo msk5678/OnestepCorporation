@@ -33,6 +33,28 @@ class CommentProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  fetchUserWrittenComment(String uid) async {
+    if (_isFetching) return;
+    _isFetching = true;
+    _commentDataList = [];
+    final db = FirebaseDatabase.instance;
+
+    _commentDataList = await db
+        .reference()
+        .child('board')
+        // .orderByChild("uploadTime")
+        .once()
+        .then((DataSnapshot dataSnapshot) {
+      print("dataSnapshot : ${dataSnapshot.value}");
+      // return CommentData().fromFirebaseReference(dataSnapshot);
+    }).whenComplete(() {
+      _isFetching = false;
+    });
+
+    _isFetching = false;
+    notifyListeners();
+  }
+
   refresh(String boardId, String postId) {
     // _commentDataList = [];
     fetchData(boardId, postId);

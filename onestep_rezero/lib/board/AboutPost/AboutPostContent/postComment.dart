@@ -29,10 +29,9 @@ abstract class Comment {
       int index, CommentData comment, double deviceWidth, double deviceHeight);
   commentWidget(
       int index, CommentData comment, double deviceWidth, double deviceHeight);
-  stackFavoriteIcon({Widget child});
 }
 
-class CommentWidget extends ConsumerWidget implements Comment {
+class CommentWidget extends CommentParent {
   final boardId;
   final postId;
   final commentMap;
@@ -42,6 +41,24 @@ class CommentWidget extends ConsumerWidget implements Comment {
   final SlidableController slidableController = SlidableController();
 
   CommentWidget(
+      {this.boardId,
+      this.postId,
+      this.openSlidingPanelCallback,
+      this.commentMap,
+      this.postWriterUID,
+      this.coCommentCallback});
+}
+
+abstract class CommentParent extends ConsumerWidget implements Comment {
+  final boardId;
+  final postId;
+  final commentMap;
+  final postWriterUID;
+  final openSlidingPanelCallback;
+  final coCommentCallback;
+  final SlidableController slidableController = SlidableController();
+
+  CommentParent(
       {this.boardId,
       this.postId,
       this.openSlidingPanelCallback,
@@ -114,7 +131,7 @@ class CommentWidget extends ConsumerWidget implements Comment {
   }
 
   @override
-  stackFavoriteIcon({Widget child}) {
+  stackFavoriteIcon(bool wasFavorite, {Widget child}) {
     return GestureDetector(
       child: Stack(
         alignment: Alignment.center,
@@ -122,7 +139,7 @@ class CommentWidget extends ConsumerWidget implements Comment {
           Center(
             child: Icon(
               Icons.favorite,
-              color: Colors.red,
+              color: wasFavorite ? Colors.grey : OnestepColors().mainColor,
             ),
           ),
           child
@@ -163,13 +180,11 @@ class CommentWidget extends ConsumerWidget implements Comment {
                             context,
                             currentUserModel.uid,
                             slidableKey: Key(currentIndexCommentData.commentId),
-                            child: stackFavoriteIcon(
-                              child: commentBoxDesignMethod(
-                                  index,
-                                  currentIndexCommentData,
-                                  deviceWidth,
-                                  deviceHeight),
-                            ),
+                            child: commentBoxDesignMethod(
+                                index,
+                                currentIndexCommentData,
+                                deviceWidth,
+                                deviceHeight),
                           )
                         // Dismissible(
                         //     onDismissed: (direction) {},

@@ -7,23 +7,25 @@ import 'package:onestep_rezero/board/AboutPost/AboutPostListView/listRiverpod.da
 import 'package:onestep_rezero/board/declareData/boardData.dart';
 import 'package:onestep_rezero/board/declareData/categoryManageClass.dart';
 
-class PostListMain extends StatefulWidget {
-  final currentBoardData;
-
-  const PostListMain({
-    Key key,
-    this.currentBoardData,
-  }) : super(key: key);
-
-  @override
-  _PostListWidget createState() => _PostListWidget();
+abstract class PostListInterface {
+  setProductScroll(StreamController productAddStreamController,
+      ScrollController scrollController);
+  setTopToScroll(StreamController scrollToTopController,
+      ScrollController scrollController);
+  productAddFLoatingActionButton(
+      BoardData currentBoard, StreamController productAddStreamController);
+  scrollToTopFloatingActionButton(StreamController scrollToTopController);
+  getPostList(BoardData currentBoard);
+  postListMainWidget(BoardCategory currentCategory);
+  setCurrentBoardDataCategory(BoardData boardData, BoardCategory boardCategory);
 }
 
-class _PostListWidget extends State<PostListMain> {
-  final ScrollController _scrollController = ScrollController();
-  final StreamController<bool> _scrollToTopstreamController =
+abstract class PostListParentWidget<T extends StatefulWidget> extends State<T>
+    implements PostListInterface {
+  final ScrollController scrollController = ScrollController();
+  final StreamController<bool> scrollToTopstreamController =
       StreamController<bool>();
-  final StreamController<bool> _productAddstreamController =
+  final StreamController<bool> productAddstreamController =
       StreamController<bool>()..add(true);
   bool _isVisibility = false;
   BoardData currentBoardData;
@@ -31,46 +33,58 @@ class _PostListWidget extends State<PostListMain> {
   double deviceWidth;
   double deviceHeight;
   @override
+  setCurrentBoardDataCategory(BoardData boardData, BoardCategory boardCategory);
+  @override
   void initState() {
-    currentBoardData = widget.currentBoardData;
-    currentBoardCategory = currentBoardData.boardCategory;
-    _scrollController.addListener(scrollListenerScroll);
-    context.read(listProvider).fetchPosts(currentBoardData.boardId);
-    // context.read(postListProvider).fetchNextProducts(widget.boardName);
+    scrollController.addListener(scrollListenerScroll);
+    getPostList(currentBoardData);
     super.initState();
   }
 
   @override
+  getPostList(BoardData currentBoard) {
+    context.read(listProvider).fetchPosts(currentBoard.boardId);
+  }
+
+  @override
   void dispose() {
-    _scrollController.dispose();
-    _scrollToTopstreamController.close();
-    _productAddstreamController.close();
+    scrollController.dispose();
+    scrollToTopstreamController.close();
+    productAddstreamController.close();
     super.dispose();
   }
 
-  void scrollListenerScroll() {
-    if (_scrollController.position.userScrollDirection ==
+  @override
+  setProductScroll(StreamController productAddStreamController,
+      ScrollController scrollController) {
+    if (scrollController.position.userScrollDirection ==
         ScrollDirection.forward) {
-      _productAddstreamController.sink.add(true);
-    } else if (_scrollController.position.userScrollDirection ==
+      productAddStreamController.sink.add(true);
+    } else if (scrollController.position.userScrollDirection ==
         ScrollDirection.reverse) {
-      _productAddstreamController.sink.add(false);
+      productAddStreamController.sink.add(false);
     }
-    if ((_scrollController.position.maxScrollExtent * 0.7) <
-        _scrollController.position.pixels) {
-      context.read(listProvider).fetchNextProducts(currentBoardData.boardId);
-    }
-    if (_scrollController.offset >= 600) {
+  }
+
+  @override
+  setTopToScroll(StreamController scrollToTopController,
+      ScrollController scrollController) {
+    if (scrollController.offset >= 600) {
       if (!_isVisibility) {
         _isVisibility = true;
-        _scrollToTopstreamController.sink.add(true);
+        scrollToTopController.sink.add(true);
       }
-    } else if (_scrollController.offset < 600) {
+    } else if (scrollController.offset < 600) {
       if (_isVisibility) {
         _isVisibility = false;
-        _scrollToTopstreamController.sink.add(false);
+        scrollToTopController.sink.add(false);
       }
     }
+  }
+
+  void scrollListenerScroll() {
+    setProductScroll(productAddstreamController, scrollController);
+    setTopToScroll(scrollToTopstreamController, scrollController);
   }
 
   @override
@@ -112,25 +126,22 @@ class _PostListWidget extends State<PostListMain> {
         ),
         // ),
         body: RefreshIndicator(
-          onRefresh: _refreshPage,
+          onRefresh: () => refreshPage(currentBoardData),
           child: SingleChildScrollView(
-            child: Column(children: [
-              ListRiverPod(
-                boardCategory: currentBoardCategory,
-              ),
-            ]),
-            controller: _scrollController,
+            child: Column(children: [postListMainWidget(currentBoardCategory)]),
+            controller: scrollController,
           ),
         ),
         floatingActionButton: Stack(
           children: <Widget>[
             Align(
-              alignment: Alignment(0.1, 1.0),
-              child: productAddFLoatingActionButton(),
-            ),
+                alignment: Alignment(0.1, 1.0),
+                child: productAddFLoatingActionButton(
+                    currentBoardData, productAddstreamController)),
             Align(
               alignment: Alignment.bottomRight,
-              child: scrollToTopFloatingActionButton(),
+              child:
+                  scrollToTopFloatingActionButton(scrollToTopstreamController),
             ),
           ],
         ),
@@ -138,9 +149,18 @@ class _PostListWidget extends State<PostListMain> {
     );
   }
 
-  Widget productAddFLoatingActionButton() {
+  @override
+  postListMainWidget(BoardCategory currentCategory) {
+    return ListRiverPod(
+      boardCategory: currentCategory,
+    );
+  }
+
+  @override
+  Widget productAddFLoatingActionButton(
+      BoardData currentBoard, StreamController productAddStreamController) {
     return StreamBuilder<bool>(
-        stream: _productAddstreamController.stream,
+        stream: productAddStreamController.stream,
         initialData: false,
         builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
           return Visibility(
@@ -151,11 +171,11 @@ class _PostListWidget extends State<PostListMain> {
                   heroTag: null,
                   onPressed: () async {
                     await Navigator.pushNamed(context, "/CreatePost",
-                            arguments: {"CURRENTBOARDDATA": currentBoardData})
+                            arguments: {"CURRENTBOARDDATA": currentBoard})
                         .then((value) {
                       context
                           .read(listProvider)
-                          .fetchPosts(currentBoardData.boardId);
+                          .fetchPosts(currentBoard.boardId);
                     });
                   },
                   backgroundColor: Colors.white,
@@ -179,9 +199,11 @@ class _PostListWidget extends State<PostListMain> {
         });
   }
 
-  Widget scrollToTopFloatingActionButton() {
+  @override
+  Widget scrollToTopFloatingActionButton(
+      StreamController scrollToTopController) {
     return StreamBuilder<bool>(
-      stream: _scrollToTopstreamController.stream,
+      stream: scrollToTopController.stream,
       initialData: false,
       builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
         return Visibility(
@@ -193,7 +215,7 @@ class _PostListWidget extends State<PostListMain> {
               child: FloatingActionButton(
                 heroTag: null,
                 onPressed: () {
-                  _scrollController.position
+                  scrollController.position
                       .moveTo(0.5, duration: Duration(milliseconds: 200));
                 },
                 child:
@@ -209,26 +231,42 @@ class _PostListWidget extends State<PostListMain> {
     );
   }
 
-  Future<void> _refreshPage() async {
-    context.read(listProvider).fetchPosts(currentBoardData.boardId);
+  @override
+  Future<void> refreshPage(BoardData currentBoard) async {
+    context.read(listProvider).fetchPosts(currentBoard.boardId);
+  }
+}
+
+class PostListMain extends StatefulWidget {
+  final currentBoardData;
+
+  const PostListMain({
+    Key key,
+    this.currentBoardData,
+  }) : super(key: key);
+
+  @override
+  _PostListWidget createState() => _PostListWidget();
+}
+
+class _PostListWidget extends PostListParentWidget<PostListMain> {
+  @override
+  setCurrentBoardDataCategory(
+      BoardData boardData, BoardCategory boardCategory) {
+    currentBoardData = widget.currentBoardData;
+    currentBoardCategory = currentBoardData.boardCategory;
   }
 
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Scaffold(
-  //     body: Center(
-  //       child: Text("hi"),
-  //     ),
-  //     floatingActionButton: FloatingActionButton(
-  //       child: Icon(Icons.terrain),
-  //       onPressed: () {
-  //         context.read(postListProvider).fetchNextProducts(widget.boardName);
-  //         print("context.read(postListProvider).boards.length" +
-  //             context.read(postListProvider).boards.length.toString());
-  //       },
-  //     ),
-  //   );
-  // }
+  @override
+  void initState() {
+    setCurrentBoardDataCategory(null, null);
+    super.initState();
+  }
+
+  @override
+  getPostList(BoardData currentBoard) {
+    return super.getPostList(currentBoard);
+  }
 }
 
 // class PostList extends ConsumerWidget {
