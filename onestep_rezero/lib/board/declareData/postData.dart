@@ -77,8 +77,8 @@ class PostData {
         .collection('university')
         .doc(currentUserModel.university)
         .collection('board')
-        .doc(this.boardId ?? "boardFree")
-        .collection(this.boardId ?? "boardFree")
+        .doc(this.boardId)
+        .collection(this.boardId)
         .doc(currentTimeStamp)
         .set({
           "uid": googleSignIn.currentUser.id,
@@ -137,5 +137,34 @@ class PostData {
           ? postData["commentUserList"].length
           : 0,
     );
+  }
+  Future<bool> updateFavorite(String uid) async {
+    print("1");
+    final db = FirebaseFirestore.instance
+        .collection('university')
+        .doc(currentUserModel.university)
+        .collection('board')
+        .doc(this.boardId)
+        .collection(this.boardId)
+        .doc(this.documentId);
+    print("2");
+    DocumentSnapshot getLatestDb =
+        await db.get().onError((error, stackTrace) => null);
+    print("3");
+    if (getLatestDb != null) {
+      print("4");
+      Map<String, dynamic> latestFavoriteUserMap =
+          getLatestDb.data()["favoriteUserList"];
+      print("5");
+      return await db
+          .update({
+            "favoriteUserList": latestFavoriteUserMap..addAll({uid: true})
+          })
+          .then((value) => true)
+          .onError((error, stackTrace) => false);
+    } else {
+      print("6");
+      return false;
+    }
   }
 }

@@ -15,30 +15,54 @@ class ListRiverPod extends ConsumerWidget {
   ListRiverPod({this.boardCategory, this.customPostListCallback});
   @override
   Widget build(BuildContext context, watch) {
-    final listprovider = watch(listProvider).posts;
+    double deviceHeight = MediaQuery.of(context).size.height;
+    double deviceWidth = MediaQuery.of(context).size.width;
+    final listprovider = watch(listProvider);
+    bool isFetching = listprovider.isFetch;
+
     if (boardCategory != null) {
-      if (boardCategory == BoardCategory.POST) {
-        return PostList(
-          postList: listprovider,
-        );
-      } else if (boardCategory == BoardCategory.PICTURE) {
-        return PhotoList(
-          photoList: listprovider,
-        );
-      } else if (boardCategory == BoardCategory.VOTE) {
-        return Container();
+      if (!isFetching) {
+        if (boardCategory == BoardCategory.POST) {
+          return PostList(
+            postList: listprovider.posts,
+          );
+        } else if (boardCategory == BoardCategory.PICTURE) {
+          return PhotoList(
+            photoList: listprovider.posts,
+          );
+        } else if (boardCategory == BoardCategory.VOTE) {
+          return Container();
+        } else {
+          return Container(
+            child: Center(
+              child: Text("Post List Error "),
+            ),
+          );
+        }
       } else {
         return Container(
+          height: deviceHeight,
+          width: deviceWidth,
           child: Center(
-            child: Text("Post List Error "),
+            child: CupertinoActivityIndicator(),
           ),
         );
       }
     } else {
       //This class is userPost list
-      return PostList(
-        postList: listprovider,
-        customPostListCallback: customPostListCallback,
+
+      return Column(
+        children: [
+          PostList(
+            postList: listprovider.posts,
+            customPostListCallback: customPostListCallback,
+          ),
+          isFetching
+              ? Center(
+                  child: CupertinoActivityIndicator(),
+                )
+              : Container(),
+        ],
       );
     }
   }

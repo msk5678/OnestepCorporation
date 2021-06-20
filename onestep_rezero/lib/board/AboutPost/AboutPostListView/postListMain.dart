@@ -128,7 +128,9 @@ abstract class PostListParentWidget<T extends StatefulWidget> extends State<T>
         body: RefreshIndicator(
           onRefresh: () => refreshPage(currentBoardData),
           child: SingleChildScrollView(
-            child: Column(children: [postListMainWidget(currentBoardCategory)]),
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [postListMainWidget(currentBoardCategory)]),
             controller: scrollController,
           ),
         ),
@@ -170,13 +172,13 @@ abstract class PostListParentWidget<T extends StatefulWidget> extends State<T>
               child: FloatingActionButton.extended(
                   heroTag: null,
                   onPressed: () async {
-                    await Navigator.pushNamed(context, "/CreatePost",
-                            arguments: {"CURRENTBOARDDATA": currentBoard})
-                        .then((value) {
+                    bool result = await Navigator.pushNamed(
+                        context, "/CreatePost",
+                        arguments: {"CURRENTBOARDDATA": currentBoard});
+                    if (result)
                       context
                           .read(listProvider)
                           .fetchPosts(currentBoard.boardId);
-                    });
                   },
                   backgroundColor: Colors.white,
                   // icon: Icon(

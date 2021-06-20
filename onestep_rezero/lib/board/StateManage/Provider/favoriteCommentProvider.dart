@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:onestep_rezero/board/declareData/commentData.dart';
 
-class CommentProvider with ChangeNotifier {
-  String _errorMessage = "Comment Provider RuntimeError";
+class FavoriteCommentProvider with ChangeNotifier {
+  String _errorMessage = "FavoriteComment Provider RuntimeError";
   String get errorMessage => _errorMessage;
   List<CommentData> get comments => _commentDataList;
   bool get isFetching => _isFetching;

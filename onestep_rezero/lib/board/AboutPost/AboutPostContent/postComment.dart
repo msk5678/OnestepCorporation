@@ -115,19 +115,24 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
     return "";
   }
 
-// TimeUtil.timeAgo(date: postData.uploadTime)
   @override
   Widget build(BuildContext context, watch) {
     final deviceWidth = MediaQuery.of(context).size.width;
-    final deviceHeight = MediaQuery.of(context).size.width;
-    final comment = watch(commentProvider).comments;
-
-    bool isEmpty = comment.length == 0 ? true : false;
-    if (!isEmpty)
-      return Container(
-          child: animationLimiterListView(comment, deviceWidth, deviceHeight));
-    else
-      return Container(child: commentListEmptyWidget());
+    final deviceHeight = MediaQuery.of(context).size.height;
+    final commentprovider = watch(commentProvider);
+    bool isFetch = commentprovider.isFetching;
+    print("isFetch : $isFetch");
+    if (isFetch) {
+      return CupertinoActivityIndicator();
+    } else {
+      bool isEmpty = commentprovider.comments.length == 0 ? true : false;
+      if (!isEmpty)
+        return Container(
+            child: animationLimiterListView(
+                commentprovider.comments, deviceWidth, deviceHeight));
+      else
+        return Container(child: commentListEmptyWidget());
+    }
   }
 
   @override

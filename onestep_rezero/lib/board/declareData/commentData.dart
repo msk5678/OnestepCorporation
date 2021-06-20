@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:onestep_rezero/board/AboutPost/AboutPostContent/postCoComment.dart';
 import 'package:onestep_rezero/board/declareData/postData.dart';
 import '../../main.dart';
 
@@ -50,6 +49,20 @@ class CommentData {
       uploadTime: currentTimeStamp,
     );
   }
+  _increaseCommentCount() {
+    final firestoreDb = FirebaseFirestore.instance;
+    firestoreDb
+        .collection('university')
+        .doc(currentUserModel.university)
+        .collection('board')
+        .doc(this.boardId)
+        .collection(this.boardId)
+        .doc(this.postId)
+        .update({
+      "commentCount": {googleSignIn.currentUser.id: true}
+    });
+  }
+
   Future toRealtimeDatabase(
       {String textContent, Map<String, dynamic> commentList}) async {
     final realtimeDb = FirebaseDatabase.instance.reference();

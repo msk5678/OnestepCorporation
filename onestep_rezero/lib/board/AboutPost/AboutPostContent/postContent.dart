@@ -20,6 +20,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/main.dart';
+import 'package:onestep_rezero/timeUtil.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class PostContent extends StatefulWidget {
@@ -37,6 +38,7 @@ class _PostContentState extends State<PostContent>
   double deviceWidth;
   PanelController panelController = PanelController();
   TextEditingController textEditingControllerComment = TextEditingController();
+  ScrollController postScrollController = ScrollController();
   PostData currentPostData;
 
   //Distint about upload comment or coComment
@@ -95,66 +97,205 @@ class _PostContentState extends State<PostContent>
 
   @override
   Widget build(BuildContext context) {
-    print("Start State, Builder");
-    return GestureDetector(
-      onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
-      child: Scaffold(
-        appBar: appBar(),
-        body: Stack(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-              child: SingleChildScrollView(
-                child: Container(
-                  width: deviceWidth,
-                  child: Column(
-                    // crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Container(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          currentPostData.textContent,
-                          style: TextStyle(fontSize: 16),
+    return WillPopScope(
+      onWillPop: () async {
+        if (panelController.isPanelOpen) {
+          panelController.close();
+        } else if (textEditingControllerComment.text != "") {
+          if (await navigatorPopAlertDialog()) Navigator.of(context).pop(false);
+        } else {
+          Navigator.of(context).pop(false);
+        }
+
+        return Future(() => false);
+      },
+      child: GestureDetector(
+        onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+        child: Scaffold(
+          appBar: appBar(),
+          body: Stack(
+            children: [
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+                child: SingleChildScrollView(
+                  controller: postScrollController,
+                  child: Container(
+                    width: deviceWidth,
+                    child: Column(
+                      // crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        postStatusBar(currentPostData, currentUid),
+                        Container(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            currentPostData.textContent,
+                            style: TextStyle(fontSize: 16),
+                          ),
                         ),
-                      ),
-                      SizedBox(
-                        height: deviceHeight / 50,
-                      )
-                    ]
-                      ..addAll(imageCommentContainer(
-                          deviceWidth * 0.9, deviceHeight))
-                      ..add(Container(
-                        width: deviceWidth / 2,
-                        margin:
-                            EdgeInsets.symmetric(vertical: deviceHeight / 50),
-                        decoration: BoxDecoration(
-                            border: Border(
-                                top: BorderSide(
-                                    color: OnestepColors().thirdColor,
-                                    width: 2.0))),
-                      ))
-                      ..add(CommentWidget(
-                        boardId: currentPostData.boardId,
-                        postId: currentPostData.documentId,
-                        commentMap: currentPostData.commentUserList,
-                        postWriterUID: currentPostData.uid,
-                        openSlidingPanelCallback: slidingUpDownMethod,
-                        coCommentCallback: coCommentCallback,
-                      ))
-                      ..add(SizedBox(
-                        height: deviceHeight / 10,
-                      )),
+                        SizedBox(
+                          height: deviceHeight / 50,
+                        )
+                      ]
+                        ..addAll(imageCommentContainer(
+                            deviceWidth * 0.9, deviceHeight))
+                        ..add(Container(
+                          width: deviceWidth / 2,
+                          margin:
+                              EdgeInsets.symmetric(vertical: deviceHeight / 50),
+                          decoration: BoxDecoration(
+                              border: Border(
+                                  top: BorderSide(
+                                      color: OnestepColors().thirdColor,
+                                      width: 2.0))),
+                        ))
+                        ..add(likeScrabButton(deviceWidth, deviceHeight,
+                            currentPostData, currentUid))
+                        ..add(CommentWidget(
+                          boardId: currentPostData.boardId,
+                          postId: currentPostData.documentId,
+                          commentMap: currentPostData.commentUserList,
+                          postWriterUID: currentPostData.uid,
+                          openSlidingPanelCallback: slidingUpDownMethod,
+                          coCommentCallback: coCommentCallback,
+                        ))
+                        ..add(SizedBox(
+                          height: deviceHeight / 10,
+                        )),
+                    ),
                   ),
                 ),
               ),
-            ),
-            commentSlidingPanel(currentUid, currentPostData.uid,
-                currentPostData.commentUserList),
-            TipDialogContainer(duration: const Duration(seconds: 2))
-          ],
+              commentSlidingPanel(currentUid, currentPostData.uid,
+                  currentPostData.commentUserList),
+              TipDialogContainer(duration: const Duration(seconds: 2))
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  clickedFavorite(PostData currentPost, String uid) async {
+    return await currentPost.updateFavorite(uid);
+  }
+
+  postStatusBar(PostData currentPost, String uid) {
+    bool userLiked = currentPost.favoriteUserList.containsKey(uid);
+    bool userWrittenComment = currentPost.commentUserList.containsKey(uid);
+    return Container(
+      margin: EdgeInsets.only(bottom: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.watch_later_outlined,
+                size: 20,
+                color: OnestepColors().mainColor,
+              ),
+              Container(
+                margin: EdgeInsets.only(right: 5),
+                child: Text(
+                  "${TimeUtil.timeAgo(date: currentPost.uploadTime)}",
+                  style: TextStyle(color: Colors.grey, fontSize: 10),
+                ),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              Icon(
+                //foot icon
+                userWrittenComment ? Icons.comment : Icons.comment_outlined,
+                size: 20,
+                color: OnestepColors().mainColor,
+              ),
+              Container(
+                margin: EdgeInsets.only(right: 5),
+                child: Text("${currentPost.commentCount}",
+                    style: TextStyle(color: Colors.grey, fontSize: 10)),
+              ),
+              Icon(
+                //foot icon
+                userLiked ? Icons.favorite : Icons.favorite_border,
+                size: 20,
+                color: OnestepColors().mainColor,
+              ),
+              Container(
+                margin: EdgeInsets.only(right: 5),
+                child: Text("${currentPost.favoriteUserList.keys.length}",
+                    style: TextStyle(color: Colors.grey, fontSize: 10)),
+              ),
+              Icon(
+                //foot icon
+                Icons.remove_red_eye,
+                size: 20,
+                color: OnestepColors().mainColor,
+              ),
+              Container(
+                margin: EdgeInsets.only(right: 5),
+                child: Text("${currentPost.views.keys.length}",
+                    style: TextStyle(color: Colors.grey, fontSize: 10)),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget likeScrabButton(double deviceWidth, double deviceHeight,
+      PostData currentPost, String uid) {
+    return Container(
+      width: deviceWidth,
+      height: deviceHeight / 12,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          GestureDetector(
+            onTap: () async => await currentPost.updateFavorite(uid),
+            child: Container(
+              width: deviceWidth / 2.5,
+              color: Colors.grey,
+              child: Center(
+                  child: IconButton(
+                      icon: Icon(Icons.favorite_border), onPressed: () {})),
+            ),
+          ),
+          Container(
+            width: deviceWidth / 2.5,
+            color: Colors.white70,
+            child: Center(
+                child: IconButton(
+                    icon: Icon(Icons.bookmark_border), onPressed: () {})),
+          )
+        ],
+      ),
+    );
+  }
+
+  navigatorPopAlertDialog() async {
+    return await showDialog(
+        context: context,
+        barrierDismissible: true,
+        builder: (BuildContext context) => AlertDialog(
+              title: Text('댓글 중'),
+              content: Text("작성중인 내용은 저장이 되지 않습니다."),
+              actions: <Widget>[
+                ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        elevation: 0, primary: OnestepColors().secondColor),
+                    child: Text('나가기'),
+                    onPressed: () => Navigator.of(context).pop(true)),
+                ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        elevation: 0, primary: OnestepColors().secondColor),
+                    child: Text('유지'),
+                    onPressed: () => Navigator.of(context).pop(false)),
+              ],
+            ));
   }
 
   Widget commentSlidingPanel(String wirtterName, String currentPostUid,
@@ -239,9 +380,15 @@ class _PostContentState extends State<PostContent>
 
   PreferredSizeWidget appBar() {
     return AppBar(
-      title: Text(
-        currentPostData.title,
-        style: TextStyle(color: Colors.black),
+      title: GestureDetector(
+        onTap: () {
+          postScrollController.position
+              .moveTo(0.5, duration: Duration(milliseconds: 200));
+        },
+        child: Text(
+          currentPostData.title,
+          style: TextStyle(color: Colors.black),
+        ),
       ),
       elevation: 0,
       backgroundColor: Colors.white,

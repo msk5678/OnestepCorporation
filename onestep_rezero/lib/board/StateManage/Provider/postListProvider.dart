@@ -14,6 +14,7 @@ class PostListProvider with ChangeNotifier {
 
   String get errorMessage => _errorMessage;
   bool get hasNext => _hasNext;
+  bool get isFetch => _isFetching;
 
   List<PostData> get posts => _productsSnapshot.map((snap) {
         return PostData.fromFireStore(snap);
@@ -50,7 +51,6 @@ class PostListProvider with ChangeNotifier {
 
     _productsSnapshot.clear();
     try {
-      print("In try ");
       final snap = await PostFirebaseApi.getAllPost(
         boardId,
         documentLimit,
@@ -71,14 +71,42 @@ class PostListProvider with ChangeNotifier {
 
     _productsSnapshot.clear();
     try {
-      print("In try ");
-      final docList = await PostFirebaseApi.getAllUserPostingList(currentUid);
-      _productsSnapshot.addAll(docList);
+      // final docList =
+      await getAllUserPostingList(currentUid);
+      // _productsSnapshot.addAll(docList);
 
       // if (snap.docs.length < documentLimit) _hasNext = false;
     } catch (error) {}
     _isFetching = false;
     notifyListeners();
+  }
+
+  getAllUserPostingList(
+    String uid,
+  ) async {
+    QuerySnapshot boardList = await FirebaseFirestore.instance
+        .collection('university')
+        .doc(currentUserModel.university)
+        .collection("board")
+        .get();
+
+    await Future.forEach(boardList.docs, (DocumentSnapshot element) async {
+      String boardId = element.id;
+      QuerySnapshot postQuerySnapshot = await FirebaseFirestore.instance
+          .collection('university')
+          .doc(currentUserModel.university)
+          .collection("board")
+          .doc(boardId)
+          .collection(boardId)
+          .where("uid", isEqualTo: uid)
+          .get();
+
+      // return userAllPosting.addAll(postQuerySnapshot.docs);
+      _productsSnapshot.addAll(postQuerySnapshot.docs);
+      notifyListeners();
+    });
+
+    // return userAllPosting;
   }
 }
 
