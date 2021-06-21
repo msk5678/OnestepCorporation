@@ -1,6 +1,4 @@
 import 'dart:math';
-import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 
 class CreateRandomNumberNotDuplicated {
   final int length;

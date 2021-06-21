@@ -233,8 +233,7 @@ abstract class PostListParentWidget<T extends StatefulWidget> extends State<T>
     );
   }
 
-  @override
-  Future<void> refreshPage(BoardData currentBoard) async {
+  refreshPage(BoardData currentBoard) async {
     context.read(listProvider).fetchPosts(currentBoard.boardId);
   }
 }

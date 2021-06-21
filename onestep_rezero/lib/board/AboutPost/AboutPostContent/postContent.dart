@@ -1,19 +1,17 @@
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_database/firebase_database.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-import 'package:like_button/like_button.dart';
-import 'package:onestep_rezero/board/AboutPost/AboutPostContent/postCoComment.dart';
+
 import 'package:onestep_rezero/board/AboutPost/AboutPostContent/postComment.dart';
-import 'package:onestep_rezero/board/AboutPost/AboutPostContent/postCommentSidingPanel.dart';
+
 import 'package:onestep_rezero/board/TipDialog/tip_dialog.dart';
+import 'package:onestep_rezero/board/declareData/favoriteCommentWidget.dart';
 import 'package:onestep_rezero/board/declareData/postData.dart';
 import 'package:onestep_rezero/board/declareData/commentData.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -123,7 +121,6 @@ class _PostContentState extends State<PostContent>
                   child: Container(
                     width: deviceWidth,
                     child: Column(
-                      // crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         postStatusBar(currentPostData, currentUid),
                         Container(
@@ -139,6 +136,9 @@ class _PostContentState extends State<PostContent>
                       ]
                         ..addAll(imageCommentContainer(
                             deviceWidth * 0.9, deviceHeight))
+                        ..add(FavoriteButton(
+                          postData: currentPostData,
+                        ))
                         ..add(Container(
                           width: deviceWidth / 2,
                           margin:
@@ -149,8 +149,6 @@ class _PostContentState extends State<PostContent>
                                       color: OnestepColors().thirdColor,
                                       width: 2.0))),
                         ))
-                        ..add(likeScrabButton(deviceWidth, deviceHeight,
-                            currentPostData, currentUid))
                         ..add(CommentWidget(
                           boardId: currentPostData.boardId,
                           postId: currentPostData.documentId,
@@ -158,6 +156,7 @@ class _PostContentState extends State<PostContent>
                           postWriterUID: currentPostData.uid,
                           openSlidingPanelCallback: slidingUpDownMethod,
                           coCommentCallback: coCommentCallback,
+                          showDialogCallback: showingDismissCommentCallback,
                         ))
                         ..add(SizedBox(
                           height: deviceHeight / 10,
@@ -181,8 +180,6 @@ class _PostContentState extends State<PostContent>
   }
 
   postStatusBar(PostData currentPost, String uid) {
-    bool userLiked = currentPost.favoriteUserList.containsKey(uid);
-    bool userWrittenComment = currentPost.commentUserList.containsKey(uid);
     return Container(
       margin: EdgeInsets.only(bottom: 10),
       child: Row(
@@ -204,46 +201,16 @@ class _PostContentState extends State<PostContent>
               ),
             ],
           ),
-          Row(
-            children: [
-              Icon(
-                //foot icon
-                userWrittenComment ? Icons.comment : Icons.comment_outlined,
-                size: 20,
-                color: OnestepColors().mainColor,
-              ),
-              Container(
-                margin: EdgeInsets.only(right: 5),
-                child: Text("${currentPost.commentCount}",
-                    style: TextStyle(color: Colors.grey, fontSize: 10)),
-              ),
-              Icon(
-                //foot icon
-                userLiked ? Icons.favorite : Icons.favorite_border,
-                size: 20,
-                color: OnestepColors().mainColor,
-              ),
-              Container(
-                margin: EdgeInsets.only(right: 5),
-                child: Text("${currentPost.favoriteUserList.keys.length}",
-                    style: TextStyle(color: Colors.grey, fontSize: 10)),
-              ),
-              Icon(
-                //foot icon
-                Icons.remove_red_eye,
-                size: 20,
-                color: OnestepColors().mainColor,
-              ),
-              Container(
-                margin: EdgeInsets.only(right: 5),
-                child: Text("${currentPost.views.keys.length}",
-                    style: TextStyle(color: Colors.grey, fontSize: 10)),
-              ),
-            ],
-          ),
+          FavoriteCountWidget(
+            postData: currentPost,
+          )
         ],
       ),
     );
+  }
+
+  updatePostDataCallback(PostData latestData) {
+    currentPostData = latestData;
   }
 
   Widget likeScrabButton(double deviceWidth, double deviceHeight,
@@ -610,6 +577,23 @@ class _PostContentState extends State<PostContent>
       TipDialogHelper.fail("저장 실패\n Error : CANNOT UPLOAD COMMENT");
       Future.delayed(Duration(seconds: 2)).then((value) => errorFunction);
     }
+  }
+
+  showingDismissCommentCallback(CommentData comment) {
+    return showDialog(
+      barrierDismissible: true,
+      context: context,
+      builder: (context) {
+        return SimpleDialog(
+          title: Text("${comment.userName}"),
+          children: [
+            Container(
+                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                child: Text("${comment.textContent}"))
+          ],
+        );
+      },
+    );
   }
 }
 

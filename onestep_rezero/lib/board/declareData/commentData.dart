@@ -195,7 +195,7 @@ class CommentData {
 
   dismissComment() {
     var realtimeDb;
-
+    print("this.parentComment : $parentCommentId");
     if (this.parentCommentId != null) {
       if (this.parentCommentId != "") {
         realtimeDb = FirebaseDatabase.instance
@@ -206,14 +206,14 @@ class CommentData {
             .child(this.parentCommentId)
             .child("CoComment")
             .child(this.commentId);
+      } else {
+        realtimeDb = FirebaseDatabase.instance
+            .reference()
+            .child('board')
+            .child(this.boardId)
+            .child(this.postId)
+            .child(this.commentId);
       }
-    } else {
-      realtimeDb = FirebaseDatabase.instance
-          .reference()
-          .child('board')
-          .child(this.boardId)
-          .child(this.postId)
-          .child(this.commentId);
     }
 
     String currentTimeStamp = DateTime.now().millisecondsSinceEpoch.toString();

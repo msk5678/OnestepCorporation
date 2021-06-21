@@ -1,11 +1,9 @@
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:onestep_rezero/board/AboutPost/AboutPostContent/postComment.dart';
 import 'package:onestep_rezero/board/declareData/commentData.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/timeUtil.dart';
 
@@ -19,6 +17,7 @@ class ChildComment extends StatelessWidget implements Comment {
   final boardId;
   final postId;
   final SlidableController slidableController;
+  final showDialogCallback;
 
   ChildComment(
       {this.coCommentCallback,
@@ -29,7 +28,8 @@ class ChildComment extends StatelessWidget implements Comment {
       this.slidableController,
       this.refreshCallback,
       this.postId,
-      this.boardId});
+      this.boardId,
+      this.showDialogCallback});
   @override
   Widget build(
     BuildContext context,
@@ -212,9 +212,15 @@ class ChildComment extends StatelessWidget implements Comment {
           bottom: deviceHeight / 30,
         ),
         child: deletedTimeWithDay
-            ? Text(
-                "삭제되었습니다.",
-                style: TextStyle(color: Colors.grey),
+            ? GestureDetector(
+                onLongPress: () => showDialogCallback(comment),
+                child: Container(
+                  width: deviceWidth,
+                  child: Text(
+                    "삭제되었습니다.",
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                ),
               )
             : Text(
                 "삭제되었습니다.",

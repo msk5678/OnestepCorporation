@@ -1,4 +1,3 @@
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -38,6 +37,7 @@ class CommentWidget extends CommentParent {
   final postWriterUID;
   final openSlidingPanelCallback;
   final coCommentCallback;
+  final showDialogCallback;
   final SlidableController slidableController = SlidableController();
 
   CommentWidget(
@@ -46,7 +46,8 @@ class CommentWidget extends CommentParent {
       this.openSlidingPanelCallback,
       this.commentMap,
       this.postWriterUID,
-      this.coCommentCallback});
+      this.coCommentCallback,
+      this.showDialogCallback});
 }
 
 abstract class CommentParent extends ConsumerWidget implements Comment {
@@ -56,6 +57,7 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
   final postWriterUID;
   final openSlidingPanelCallback;
   final coCommentCallback;
+  final showDialogCallback;
   final SlidableController slidableController = SlidableController();
 
   CommentParent(
@@ -64,7 +66,8 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
       this.openSlidingPanelCallback,
       this.commentMap,
       this.postWriterUID,
-      this.coCommentCallback});
+      this.coCommentCallback,
+      this.showDialogCallback});
 
   @override
   Widget commentBoxDesignMethod(
@@ -136,24 +139,6 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
   }
 
   @override
-  stackFavoriteIcon(bool wasFavorite, {Widget child}) {
-    return GestureDetector(
-      child: Stack(
-        alignment: Alignment.center,
-        children: <Widget>[
-          Center(
-            child: Icon(
-              Icons.favorite,
-              color: wasFavorite ? Colors.grey : OnestepColors().mainColor,
-            ),
-          ),
-          child
-        ],
-      ),
-    );
-  }
-
-  @override
   animationLimiterListView(
       List comment, double deviceWidth, double deviceHeight) {
     return AnimationLimiter(
@@ -191,15 +176,6 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
                                 deviceWidth,
                                 deviceHeight),
                           )
-                        // Dismissible(
-                        //     onDismissed: (direction) {},
-                        //     key: ValueKey<String>(comment[index].commentId),
-                        //     background: Container(
-                        //       color: Colors.green,
-                        //     ),
-                        //     child: commentBoxDesignMethod(index, comment[index],
-                        //         deviceWidth, deviceHeight),
-                        //   )
                         : commentBoxDesignMethod(index, currentIndexCommentData,
                             deviceWidth, deviceHeight),
                     haveChildComment
@@ -212,6 +188,7 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
                             postWriterUID: postWriterUID,
                             commentMap: commentMap,
                             refreshCallback: refreshComment,
+                            showDialogCallback: showDialogCallback,
                           )
                         : Container()
                     // coCommentWidget(currentIndexCommentData.haveChildComment,
@@ -321,9 +298,15 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
           bottom: deviceHeight / 30,
         ),
         child: deletedTimeWithDay
-            ? Text(
-                "삭제되었습니다.",
-                style: TextStyle(color: Colors.grey),
+            ? GestureDetector(
+                onLongPress: () => showDialogCallback(comment),
+                child: Container(
+                  width: deviceWidth,
+                  child: Text(
+                    "삭제되었습니다.",
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                ),
               )
             : Text(
                 "삭제되었습니다.",

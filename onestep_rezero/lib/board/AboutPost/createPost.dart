@@ -32,7 +32,6 @@ class _CreateBoardState extends CreatePageParent<CreatePost> {
 
 abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
     with OneStepPermission {
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   // CustomSlideDialog customSlideDialog;
   final int maxImageCount = 5;
   double deviceHeight;
@@ -489,13 +488,15 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
                             title: Text('사진 삭제'),
                             content: Text("사진 및 설명이 삭제됩니다."),
                             actions: <Widget>[
-                              FlatButton(
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(elevation: 0),
                                 child: Text('삭제'),
                                 onPressed: () {
                                   Navigator.pop(context, true);
                                 },
                               ),
-                              FlatButton(
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(elevation: 0),
                                 child: Text('유지'),
                                 onPressed: () {
                                   Navigator.pop(context, false);
@@ -518,7 +519,7 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
                             imageCommentMap);
                         // images.removeAt(value);
                       });
-                      _scaffoldKey.currentState.showSnackBar(showSnackBar(
+                      ScaffoldMessenger.of(context).showSnackBar(showSnackBar(
                           textMessage: Text("${value + 1}번째 이미지가 삭제되었습니다."),
                           duration: Duration(milliseconds: 1500),
                           snackBarAction: SnackBarAction(
@@ -676,7 +677,7 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
       getterImgCommentFromMapToTextEditingControl(imageCommentMap);
       // images.removeAt(value);
     });
-    _scaffoldKey.currentState.showSnackBar(showSnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(showSnackBar(
         textMessage: Text("${selectedIndex + 1}번째 이미지가 삭제되었습니다."),
         duration: Duration(milliseconds: 1500),
         snackBarAction: SnackBarAction(

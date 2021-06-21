@@ -18,7 +18,6 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     alterPostData = widget.postData;
     textEditingControllerBottomSheet..text = alterPostData.title;

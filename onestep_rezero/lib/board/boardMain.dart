@@ -3,12 +3,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onestep_rezero/board/StateManage/Provider/boardCategoryList.dart';
-import 'package:onestep_rezero/board/Animation/Rive/AboutBoard/boardMyPostIcon.dart';
+
 import 'package:onestep_rezero/board/Animation/Rive/AboutBoard/randomList.dart';
 import 'package:onestep_rezero/board/declareData/boardData.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/main.dart';
-import 'package:onestep_rezero/search/pages/searchAllMain.dart';
+
 import "dart:math" as math;
 
 class BoardMain extends StatefulWidget {
@@ -252,7 +252,7 @@ class _BoardMainState extends State<BoardMain> {
     initIconData = [
       BoardInitData(
           icons: Icon(
-            Icons.escalator_warning_outlined,
+            Icons.ballot_rounded,
             size: 30,
             color: OnestepColors().mainColor,
           ),
@@ -261,16 +261,16 @@ class _BoardMainState extends State<BoardMain> {
           icons: Icon(
             Icons.insert_comment_outlined,
             size: 30,
-            color: OnestepColors().secondColor,
+            color: OnestepColors().mainColor,
           ),
           explain: "나의 댓글"),
       BoardInitData(
           icons: Icon(
-            Icons.book_rounded,
+            Icons.favorite,
             size: 30,
             color: Colors.yellow[600],
           ),
-          explain: "나의 스크랩"),
+          explain: "나의 좋아요"),
       BoardInitData(
           icons: Icon(
             Icons.favorite,
