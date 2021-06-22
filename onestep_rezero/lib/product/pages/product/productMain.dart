@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/favorite/pages/favoriteMain.dart';
+import 'package:onestep_rezero/product/pages/category/categorySidebar.dart';
 import 'package:onestep_rezero/product/pages/product/productAdd.dart';
 
 import 'package:onestep_rezero/product/widgets/main/productMainBody.dart';
@@ -68,12 +70,41 @@ class _ProductMainState extends State<ProductMain> {
 
   PreferredSizeWidget appBar() {
     return AppBar(
-      title: Text(
-        '장터',
-        style: TextStyle(color: Colors.black),
-      ),
+      // title: Text(
+      //   '장터',
+      //   style: TextStyle(color: Colors.black),
+      // ),
       elevation: 0,
       backgroundColor: Colors.white,
+      leading: IconButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            PageRouteBuilder(
+              pageBuilder: (
+                BuildContext context,
+                Animation<double> animation,
+                Animation<double> secondaryAnimation,
+              ) =>
+                  CategorySidebar(),
+              transitionsBuilder: (
+                BuildContext context,
+                Animation<double> animation,
+                Animation<double> secondaryAnimation,
+                Widget child,
+              ) =>
+                  SlideTransition(
+                position: Tween<Offset>(
+                  begin: const Offset(-1, 0),
+                  end: Offset.zero,
+                ).animate(animation),
+                child: child,
+              ),
+            ),
+          );
+        },
+        icon: Icon(Icons.menu_rounded, color: Colors.black),
+      ),
       actions: <Widget>[
         // new IconButton(
         //   icon: new Icon(
@@ -110,6 +141,15 @@ class _ProductMainState extends State<ProductMain> {
                 builder: (context) => FavoriteMain(),
               ),
             ),
+          },
+        ),
+        new IconButton(
+          icon: new Icon(
+            Icons.notifications_none_rounded,
+            color: Colors.black,
+          ),
+          onPressed: () => {
+            // 알림
           },
         ),
       ],
@@ -230,15 +270,23 @@ class _ProductMainState extends State<ProductMain> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                ProductMainHeader(),
-                SizedBox(
-                    height: 10,
-                    child: Container(color: Color.fromRGBO(240, 240, 240, 1))),
+                Container(
+                  height: 180,
+                  color: OnestepColors().mainColor,
+                  child: Center(
+                    child: Text("광고"),
+                  ),
+                ),
+                SizedBox(height: 10),
+                // ProductMainHeader(),
+                // SizedBox(
+                //     height: 10,
+                //     child: Container(color: Color.fromRGBO(240, 240, 240, 1))),
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Padding(
                       padding: EdgeInsets.only(top: 10, left: 15),
-                      child: Text("오늘의 상품",
+                      child: Text("추천 상품",
                           style: TextStyle(
                               fontSize: 15, fontWeight: FontWeight.w600))),
                 ),

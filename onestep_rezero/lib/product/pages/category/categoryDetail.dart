@@ -13,17 +13,34 @@ class CategoryDetail extends StatefulWidget {
 }
 
 class _CategoryDetailState extends State<CategoryDetail> {
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
+    _scrollController.addListener(scrollListener);
+
+    context.read(categoryProvider).product.clear();
     context
         .read(categoryProvider)
         .fetchProducts(category: widget.category, detailCategory: null);
     super.initState();
   }
 
+  void scrollListener() {
+    if ((_scrollController.position.maxScrollExtent * 0.7) <
+        _scrollController.position.pixels) {
+      context.read(categoryProvider).fetchNextProducts();
+    }
+  }
+
+  Future<void> _refreshPage() async {
+    context.read(categoryProvider).fetchProducts();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: Text(
@@ -34,24 +51,21 @@ class _CategoryDetailState extends State<CategoryDetail> {
           color: Colors.black,
         ),
       ),
-      body:
-          // RefreshIndicator(
-          // onRefresh: _refreshPage,
-          // child:
-          SingleChildScrollView(
-        // controller: _scrollController,
-
-        child: Container(
-          color: Colors.white,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              CategoryDetailHeader(category: widget.category),
-              CategoryDetailBody(),
-            ],
+      body: RefreshIndicator(
+        onRefresh: _refreshPage,
+        child: SingleChildScrollView(
+          controller: _scrollController,
+          child: Container(
+            color: Colors.white,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                CategoryDetailHeader(category: widget.category),
+                CategoryDetailBody(),
+              ],
+            ),
           ),
         ),
-        // ),
       ),
     );
   }

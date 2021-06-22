@@ -5,6 +5,7 @@ import 'package:onestep_rezero/home/homeMain.dart';
 import 'package:onestep_rezero/myinfo/pages/myinfoMain.dart';
 // import 'package:onestep_rezero/notification/page/chatMain.dart';
 import 'package:onestep_rezero/chat/page/chatMain.dart';
+import 'package:onestep_rezero/product/pages/product/productAdd.dart';
 import 'package:onestep_rezero/product/pages/product/productMain.dart';
 // import 'package:onestep_rezero/notification/realtime/realtimeProductChatController.dart' aaaaa;
 
@@ -26,7 +27,7 @@ class BottomNavigationItem {
           title: "홈",
         ),
         BottomNavigationItem(
-          page: HomeMain(),
+          page: ProductAdd(),
           icon: Icon(Icons.add_rounded),
           title: "물품 등록",
         ),

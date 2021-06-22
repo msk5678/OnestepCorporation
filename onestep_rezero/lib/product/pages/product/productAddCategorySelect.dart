@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:onestep_rezero/product/models/categorySelectItem.dart';
 import 'package:onestep_rezero/product/pages/product/productAddDetailCategorySelect.dart';
 
 class ProductAddCategorySelect extends StatefulWidget {
@@ -27,7 +28,9 @@ Widget mainCategory() {
               return ListTile(
                 onTap: () {
                   snapshot.data.docs[index].data()['detail'] == null
-                      ? Navigator.of(context).pop(snapshot.data.docs[index].id)
+                      ? Navigator.of(context).pop(CategorySelectItem(
+                          category: snapshot.data.docs[index].id,
+                          detailCategory: null))
                       : Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -35,7 +38,11 @@ Widget mainCategory() {
                                 ProductAddDetailCategorySelect(
                                     category: snapshot.data.docs[index]
                                         .data()['detail']),
-                          ));
+                          )).then((value) {
+                          Navigator.of(context).pop(CategorySelectItem(
+                              category: snapshot.data.docs[index].id,
+                              detailCategory: value));
+                        });
                 },
                 leading: Padding(
                     padding: EdgeInsets.only(bottom: 5.0),

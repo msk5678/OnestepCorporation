@@ -373,8 +373,8 @@ class _MainPageState extends State<MainPage> {
                     setState(() => _currentIndex = index);
                 },
                 type: BottomNavigationBarType.fixed,
-                showSelectedLabels: false,
-                showUnselectedLabels: false, // title 안보이게 설정
+                // showSelectedLabels: false,
+                // showUnselectedLabels: false, // title 안보이게 설정
                 items: [
                   for (final tabItem in BottomNavigationItem.items)
                     BottomNavigationBarItem(

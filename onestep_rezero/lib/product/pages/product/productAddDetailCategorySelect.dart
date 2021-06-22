@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 
 class ProductAddDetailCategorySelect extends StatefulWidget {
@@ -12,14 +14,21 @@ class ProductAddDetailCategorySelect extends StatefulWidget {
 class _ProductAddDetailCategorySelect
     extends State<ProductAddDetailCategorySelect> {
   Widget detailCategory() {
+    Map<String, dynamic> categoryMap = widget.category;
+
+    var sortedKeys = categoryMap.keys.toList(growable: false)
+      ..sort((k1, k2) => categoryMap[k2].compareTo(categoryMap[k1]));
+    LinkedHashMap sortedMap = new LinkedHashMap.fromIterable(sortedKeys,
+        key: (k) => k, value: (k) => categoryMap[k]);
+
     return ListView.builder(
-      itemCount: widget.category.length,
+      itemCount: sortedMap.length,
       itemBuilder: (BuildContext context, int index) {
         return ListTile(
           onTap: () {
-            Navigator.of(context).pop(widget.category.keys.elementAt(index));
+            Navigator.of(context).pop(sortedMap.keys.elementAt(index));
           },
-          title: Text(widget.category.keys.elementAt(index)),
+          title: Text(sortedMap.keys.elementAt(index)),
         );
       },
     );
