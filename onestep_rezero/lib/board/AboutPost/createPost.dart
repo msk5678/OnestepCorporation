@@ -36,7 +36,7 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
   final int maxImageCount = 5;
   double deviceHeight;
   double deviceWidth;
-  ContentCategory _category;
+  ContentCategory category;
   TextEditingController textEditingControllerBottomSheet;
   TextEditingController textEditingControllerContent;
   TextEditingController textEditingControllerImage1;
@@ -128,7 +128,7 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
                           alignment: Alignment.bottomLeft,
                           width: deviceWidth / 3,
                           child: postCategory(
-                              ContentCategory.values, deviceHeight, _category)),
+                              ContentCategory.values, deviceHeight, category)),
                       setPostName(deviceHeight),
                       secondContainer(),
                       thirdContainer(imageCommentMap),
@@ -148,28 +148,29 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
     );
   }
 
-  postCategory(List<ContentCategory> category, double deviceheight, initData) {
-    if (initData == null) _category = category[0];
+  postCategory(
+      List<ContentCategory> categoryList, double deviceheight, initData) {
+    if (initData == null) category = categoryList[0];
     return CupertinoPicker(
       // scrollController: FixedExtentScrollController(initialItem: 0),
       itemExtent: deviceheight / 20,
       children: <Widget>[
-        for (int i = 0; i < category.length; i++)
+        for (int i = 0; i < categoryList.length; i++)
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Icon(category[i].categoryData.icon),
+              Icon(categoryList[i].categoryData.icon),
               Padding(
                 padding: EdgeInsets.only(left: 10),
                 child: Text(
-                  category[i].categoryData.title,
+                  categoryList[i].categoryData.title,
                   style: TextStyle(color: OnestepColors().mainColor),
                 ),
               )
             ],
           ),
       ],
-      onSelectedItemChanged: (int index) => _category = category[index],
+      onSelectedItemChanged: (int index) => category = categoryList[index],
       looping: true,
     );
 
@@ -249,10 +250,10 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
           Flexible(
             child: GestureDetector(
               onTap: () async {
-                var _result = _checkDataContain();
+                var _result = checkDataContain();
                 if (_result.runtimeType == bool) {
                   if (_result) {
-                    _saveDataInFirestore();
+                    saveDataInFirestore();
                   }
                 } else if (_result.runtimeType == String) {
                   print(_result);
@@ -287,7 +288,7 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
     );
   }
 
-  _saveDataInFirestore() async {
+  saveDataInFirestore() async {
     TipDialogHelper.loading("저장 중입니다.\n 잠시만 기다려주세요.");
 
     await saveData().then((value) {
@@ -305,7 +306,7 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
         title: textEditingControllerBottomSheet.text,
         imageCommentMap: imageCommentMap,
         textContent: textEditingControllerContent.text,
-        contentCategory: _category.toString(),
+        contentCategory: category.toString(),
         boardName: currentBoardData.boardName,
         boardId: currentBoardData.boardId);
     return await _postData.toFireStore(context);
@@ -338,11 +339,11 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
     );
   }
 
-  _checkDataContain() {
+  checkDataContain() {
     String content = textEditingControllerContent.text.trim();
     String title = textEditingControllerBottomSheet.text;
     if (title != null && title != '') {
-      if (_category != null) {
+      if (category != null) {
         if (content != null && content != '') {
           return true;
         } else {
@@ -360,7 +361,7 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
     String content = textEditingControllerContent.text.trim();
     String title = textEditingControllerBottomSheet.text;
     if (title == null || title == '') {
-      if (_category == null) {
+      if (category == null) {
         if (content == null || content == '') {
           if (imageCommentMap["IMAGE"].isEmpty) return true;
         }

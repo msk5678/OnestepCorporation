@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:onestep_rezero/board/AboutPost/createPost.dart';
 import 'package:onestep_rezero/board/TipDialog/tip_dialog.dart';
 import 'package:onestep_rezero/board/declareData/boardData.dart';
+import 'package:onestep_rezero/board/declareData/categoryManageClass.dart';
 import 'package:onestep_rezero/board/declareData/postData.dart';
 
 class AlterPost extends StatefulWidget {
@@ -18,11 +19,13 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
 
   @override
   void initState() {
-    super.initState();
     alterPostData = widget.postData;
+    super.initState();
+
     textEditingControllerBottomSheet..text = alterPostData.title;
     textEditingControllerContent..text = alterPostData.textContent;
-    imageCommentMap = alterPostData.imageCommentMap;
+    imageCommentMap =
+        Map<String, List<dynamic>>.from(alterPostData.imageCommentMap);
   }
 
   @override
@@ -50,23 +53,26 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
               },
               child: SafeArea(
                 minimum: const EdgeInsets.all(16.0),
-                child: Padding(
-                  padding: EdgeInsets.only(
-                      bottom: MediaQuery.of(context).viewInsets.bottom),
-                  child: SingleChildScrollView(
-                    controller: scrollController,
-                    child: Column(
-                      children: <Widget>[
-                        firstContainer(),
-                        displayCurrentBoard(alterPostData.boardName),
-                        setPostName(deviceHeight),
-                        secondContainer(),
-                        thirdContainer(imageCommentMap),
-                        SizedBox(
-                          height: deviceHeight / 15,
-                        ),
-                      ],
-                    ),
+                child: SingleChildScrollView(
+                  controller: scrollController,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      firstContainer(),
+                      displayCurrentBoard(currentBoardData.boardName),
+                      Container(
+                          padding: EdgeInsets.symmetric(vertical: 3),
+                          alignment: Alignment.bottomLeft,
+                          width: deviceWidth / 3,
+                          child: postCategory(
+                              ContentCategory.values, deviceHeight, category)),
+                      setPostName(deviceHeight),
+                      secondContainer(),
+                      thirdContainer(imageCommentMap),
+                      SizedBox(
+                        height: deviceHeight / 15,
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -77,6 +83,95 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
         TipDialogContainer(duration: const Duration(seconds: 2))
       ],
     );
+  }
+
+  @override
+  firstContainer() {
+    TextStyle _textStyle = TextStyle(
+        color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16);
+    return Container(
+      padding: EdgeInsets.only(top: 15),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Flexible(
+            child: GestureDetector(
+              onTap: () {
+                isDataContain()
+                    ? Navigator.pop(context)
+                    : navigatorPopAlertDialog();
+              },
+              child: Container(
+                child: Text(
+                  "취소",
+                  style: _textStyle,
+                ),
+              ),
+            ),
+          ),
+          Flexible(
+            child: GestureDetector(
+              onTap: () async {
+                var _result = checkDataContain();
+                if (_result.runtimeType == bool) {
+                  if (_result) {
+                    saveDataInFirestore();
+                  }
+                } else if (_result.runtimeType == String) {
+                  print(_result);
+                  switch (_result.toString()) {
+                    case "CONTENT":
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          showSnackBar(textMessage: Text("내용을 입력하세요.")));
+                      break;
+                    case "CATEGORY":
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          showSnackBar(textMessage: Text("카테고리 분류를 입력하세요.")));
+                      break;
+                    case "TITLE":
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          showSnackBar(textMessage: Text("제목을 입력하세요.")));
+                      // _scaffoldKey.currentState.showSnackBar(
+                      // showSnackBar(textMessage: Text("제목을 입력하세요.")));
+                      break;
+                  }
+                }
+              },
+              child: Container(
+                child: Text(
+                  "작성",
+                  style: _textStyle,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  saveDataInFirestore() async {
+    TipDialogHelper.loading("저장 중입니다.\n 잠시만 기다려주세요.");
+
+    await updateData(alterPostData).then((value) {
+      TipDialogHelper.dismiss();
+      TipDialogHelper.success("저장 완료!");
+      Future.delayed(Duration(seconds: 2))
+          .then((value) => Navigator.pop(context, alterPostData));
+    }).whenComplete(() {});
+  }
+
+  Future updateData(PostData postData) async {
+    setterImgCommentFromMapToTextEditingControl(imageCommentMap);
+    PostData updatedData = PostData(
+      title: textEditingControllerBottomSheet.text,
+      imageCommentMap: imageCommentMap,
+      textContent: textEditingControllerContent.text,
+      contentCategory: category.toString(),
+    );
+
+    return await postData.updatePostData(context, updatedData);
   }
 
   @override
@@ -94,6 +189,14 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
     for (int i = 0; i < maxImageCount - containImageCount; i++) {
       _emptyWidget.add(emptyImageWidget(imgCommMap));
     }
+    return Container(
+      child: Column(
+        children: _imageWidget
+          ..add(Row(
+            children: _emptyWidget,
+          )),
+      ),
+    );
   }
 
   cachedImgWidget(String imageURL) {

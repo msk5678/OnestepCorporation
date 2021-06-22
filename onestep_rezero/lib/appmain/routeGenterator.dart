@@ -5,6 +5,7 @@ import 'package:onestep_rezero/board/AboutPost/AboutDashBoard/myPost.dart';
 import 'package:onestep_rezero/board/AboutPost/AboutPostContent/postContent.dart';
 // import 'package:flutter/foundation.dart' as foundation;
 import 'package:onestep_rezero/board/AboutPost/AboutPostListView/postListMain.dart';
+import 'package:onestep_rezero/board/AboutPost/alterPost.dart';
 import 'package:onestep_rezero/board/AboutPost/createPost.dart';
 import 'package:onestep_rezero/board/AboutBoard/boardCreate.dart';
 import 'package:page_transition/page_transition.dart';
@@ -60,6 +61,14 @@ class RouteGenerator {
         return PageTransition(
             child: CreatePost(
               currentBoardData: arguments["CURRENTBOARDDATA"],
+            ),
+            type: PageTransitionType.fade,
+            settings: RouteSettings(name: settings.name.toString()));
+        break;
+      case 'AlterPost':
+        return PageTransition(
+            child: AlterPost(
+              postData: arguments["POSTDATA"],
             ),
             type: PageTransitionType.fade,
             settings: RouteSettings(name: settings.name.toString()));

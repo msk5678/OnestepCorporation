@@ -173,8 +173,9 @@ abstract class PostListParentWidget<T extends StatefulWidget> extends State<T>
                   heroTag: null,
                   onPressed: () async {
                     bool result = await Navigator.pushNamed(
-                        context, "/CreatePost",
-                        arguments: {"CURRENTBOARDDATA": currentBoard});
+                            context, "/CreatePost",
+                            arguments: {"CURRENTBOARDDATA": currentBoard}) ??
+                        false;
                     if (result)
                       context
                           .read(listProvider)

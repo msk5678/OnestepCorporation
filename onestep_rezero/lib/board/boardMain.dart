@@ -252,7 +252,7 @@ class _BoardMainState extends State<BoardMain> {
     initIconData = [
       BoardInitData(
           icons: Icon(
-            Icons.ballot_rounded,
+            Icons.article_outlined,
             size: 30,
             color: OnestepColors().mainColor,
           ),
@@ -268,7 +268,7 @@ class _BoardMainState extends State<BoardMain> {
           icons: Icon(
             Icons.favorite,
             size: 30,
-            color: Colors.yellow[600],
+            color: OnestepColors().mainColor,
           ),
           explain: "나의 좋아요"),
       BoardInitData(

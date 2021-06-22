@@ -110,7 +110,7 @@ class _PostContentState extends State<PostContent>
       child: GestureDetector(
         onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
         child: Scaffold(
-          appBar: appBar(),
+          appBar: appBar(currentPostData, currentUid),
           body: Stack(
             children: [
               Padding(
@@ -294,16 +294,19 @@ class _PostContentState extends State<PostContent>
 
           Center(
             child: Container(
-              margin: EdgeInsets.all(5),
-              height: deviceHeight / 8,
-              child: TextField(
-                controller: textEditingControllerComment,
-                // onChanged: (value) => saveCommentCallback(value),
-                minLines: 5,
-                maxLines: null,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: '댓글을 입력하세요.',
+              margin: EdgeInsets.all(10),
+              child: SizedBox(
+                height: deviceHeight / 10,
+                child: TextField(
+                  expands: false,
+                  keyboardType: TextInputType.multiline,
+                  controller: textEditingControllerComment,
+                  minLines: 2,
+                  maxLines: 8,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: '댓글을 입력하세요.',
+                  ),
                 ),
               ),
             ),
@@ -345,7 +348,9 @@ class _PostContentState extends State<PostContent>
     );
   }
 
-  PreferredSizeWidget appBar() {
+  PreferredSizeWidget appBar(PostData currentPost, String uid) {
+    bool isWritter = currentPost.uid == uid;
+    print("currentPost Board Id : ${currentPost.boardId}");
     return AppBar(
       title: GestureDetector(
         onTap: () {
@@ -360,7 +365,29 @@ class _PostContentState extends State<PostContent>
       elevation: 0,
       backgroundColor: Colors.white,
       brightness: Brightness.light, // this makes status bar text color black
-      actions: <Widget>[],
+      actions: <Widget>[
+        // Icons.format_align_justify_sharp
+        IconButton(
+            icon: Icon(
+              isWritter ? Icons.settings : Icons.flag,
+              color: OnestepColors().mainColor,
+            ),
+            onPressed: () async {
+              if (isWritter) {
+                var result = await Navigator.of(context).pushNamed("/AlterPost",
+                        arguments: {"POSTDATA": currentPost}) ??
+                    false;
+                print("result : ${result.runtimeType}");
+                if (result == PostData) {
+                  setState(() {
+                    currentPostData = result;
+                  });
+                }
+              } else {
+                //This is Report button Event
+              }
+            })
+      ],
     );
   }
 
@@ -527,12 +554,10 @@ class _PostContentState extends State<PostContent>
           return Text(" '" '익명 ${i + 1}' "'로 댓글이 작성됩니다." "",
               style:
                   TextStyle(color: OnestepColors().secondColor, fontSize: 13));
-        } else {
-          return Text(" '" '익명 ${commentUserList.length + 1}' "' 로 댓글이 작성됩니다.",
-              style:
-                  TextStyle(color: OnestepColors().secondColor, fontSize: 13));
         }
       }
+      return Text(" '" '익명 ${commentUserList.length + 1}' "' 로 댓글이 작성됩니다.",
+          style: TextStyle(color: OnestepColors().secondColor, fontSize: 13));
     }
   }
 

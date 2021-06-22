@@ -110,6 +110,35 @@ class PostData {
         );
   }
 
+  Future updatePostData(BuildContext context, PostData updatingData) async {
+    String currentTimeStamp = DateTime.now().millisecondsSinceEpoch.toString();
+    imgUriList = await convertImage(imageCommentMap["IMAGE"]);
+    imageCommentMap.update("IMAGE", (value) => imgUriList);
+    return await FirebaseFirestore.instance
+        .collection('university')
+        .doc(currentUserModel.university)
+        .collection('board')
+        .doc(this.boardId)
+        .collection(this.boardId)
+        .doc(this.documentId)
+        .update({
+          "updateTime": currentTimeStamp,
+          "title": updatingData.title ?? "",
+          "contentCategory": updatingData.contentCategory.toString(),
+          "textContent": updatingData.textContent ?? "",
+          "imageCommentList": updatingData.imageCommentMap ?? {},
+        })
+        .whenComplete(() => true)
+        .then((value) => true)
+        .timeout(
+          Duration(seconds: 3),
+          onTimeout: () {
+            Navigator.pop(context);
+            return null;
+          },
+        );
+  }
+
   factory PostData.fromFireStore(DocumentSnapshot snapshot) {
     Map postData = snapshot.data();
     return PostData(
