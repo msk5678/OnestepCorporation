@@ -2,12 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onestep_rezero/chat/productchat/controller/productChatController.dart';
 import 'package:onestep_rezero/chat/productchat/model/productChatMenuItem.dart';
-import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/chat/widget/productMenuItems.dart';
-import 'package:onestep_rezero/chat/productchat/controller/chatBlockController.dart';
+import 'package:onestep_rezero/onestepCustomDialog.dart';
 
 class ProductChatMenu {
-  Widget getProductMenu(BuildContext context, String chatId, String friendId) {
+  Widget getProductMenu(
+    BuildContext context,
+    String chatId,
+    String friendId,
+  ) {
+    // FocusScopeNode currentFocus = FocusScope.of(context);
+
     return PopupMenuButton<ProductChatMenuItem>(
       // color: Colors.red,
       icon: Container(
@@ -17,7 +22,15 @@ class ProductChatMenu {
           // OnestepColors().mainColor,
         ),
       ),
-      onSelected: (item) => onSelected(context, item, chatId, friendId),
+      elevation: 0.2,
+      onCanceled: () {
+        FocusManager.instance.primaryFocus.unfocus();
+        // _menuCanceledPrint();
+      },
+      onSelected: (item) {
+        // print("텍스트 끝, 메뉴 선택");
+        onSelected(context, item, chatId, friendId);
+      },
       itemBuilder: (context) => [
         ...ProductChatMenuItems.itemsFirst.map(buildItem).toList(),
         PopupMenuDivider(),
@@ -25,6 +38,10 @@ class ProductChatMenu {
       ],
     );
   }
+
+  // void _menuCanceledPrint() {
+  //   print("메뉴 캔슬");
+  // }
 
   PopupMenuItem<ProductChatMenuItem> buildItem(ProductChatMenuItem item) =>
       PopupMenuItem(
@@ -43,20 +60,65 @@ class ProductChatMenu {
       String friendId) {
     switch (item) {
       case ProductChatMenuItems.itemSettings:
-        Fluttertoast.showToast(msg: "미구현");
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return OnestepCustomDialog(
+              title: '설정',
+              description: '설정으로 가시겠습니까?',
+              cancleButtonText: '취소',
+              confirmButtonText: '확인',
+              confirmButtonOnPress: () {
+                Fluttertoast.showToast(msg: "설정 미구현");
+              },
+            );
+          },
+        );
+        // Fluttertoast.showToast(msg: "미구현");
         print("widget메뉴-설정");
         break;
       case ProductChatMenuItems.itemBlock:
         // Fluttertoast.showToast(msg: "미구현");
-        ChatBlockController().blockToUser(friendId);
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return OnestepCustomDialog(
+              title: '차단(항후 차단 <-> 차단 해제 변경)',
+              description: '상대를 차단할 경우 채팅이 불가합니다.\n\n' + '차단하시겠습니까? 현재 기능 비활성화',
+              cancleButtonText: '취소',
+              confirmButtonText: '차단',
+              confirmButtonOnPress: () {
+                // ChatBlockController().blockToUser(friendId);
+                Navigator.pop(context);
+                Navigator.pop(context);
+                Fluttertoast.showToast(msg: "차단되었습니다.");
+              },
+            );
+          },
+        );
         print("widget메뉴-차단");
         break;
 
       case ProductChatMenuItems.itemExit:
-        Fluttertoast.showToast(msg: "채팅방을 나갑니다..");
-        ProductChatController().exitProductChat(chatId);
-        Navigator.pop(context);
-        print("widget나가기");
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return OnestepCustomDialog(
+              title: '',
+              description: '채팅방을 나갈 경우 기존 대화가 모두 사라집니다. \n\n' + '나가시겠습니까?',
+              cancleButtonText: '취소',
+              confirmButtonText: '나가기',
+              confirmButtonOnPress: () {
+                ProductChatController().exitProductChat(chatId);
+                Navigator.pop(context);
+                Navigator.pop(context);
+                Fluttertoast.showToast(msg: '채팅방을 나갔습니다.');
+
+                print("widget나가기");
+              },
+            );
+          },
+        );
         break;
     }
   }

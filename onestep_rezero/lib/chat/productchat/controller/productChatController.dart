@@ -23,9 +23,9 @@ class ProductChatController {
 
   //채팅방 생성 시 상대방 정보 내부 저장 / 채팅방 정보 fb 저장
   Future<void> createProductChatToRealtimeDatabase(
-      String friendUid, String postId, String chatId, Product product) async {
+      String friendUid, String postId, String chatId) async {
     String myUid = googleSignIn.currentUser.id;
-    print("proChatController-createProductChatToRealtimeDatabase 1. 채팅방 생성");
+    // print("proChatController-createProductChatToRealtimeDatabase 1. 채팅방 생성");
     try {
       //1.
 
@@ -36,9 +36,9 @@ class ProductChatController {
           .get()
           .then((uservalue) {
         //읽어온 상대방 정보 내부db 저장
-        print("FriendNickname test");
-        print("FriendNickname : ${uservalue["nickName"].toString()}");
-        print("FriendNickImage : ${uservalue["photoUrl"].toString()}");
+        // print("FriendNickname test");
+        // print("FriendNickname : ${uservalue["nickName"].toString()}");
+        // print("FriendNickImage : ${uservalue["photoUrl"].toString()}");
       }).whenComplete(
         () {
           var nowTime = DateTime.now().millisecondsSinceEpoch.toString();
@@ -64,8 +64,7 @@ class ProductChatController {
               },
             },
           }).whenComplete(() {
-            print(
-                "proChatController-createProductChatToRealtimeDatabase 2. 채팅방 생성 완료, 초기 메세지 생성");
+            // print("proChatController-createProductChatToRealtimeDatabase 2. 채팅방 생성 완료, 초기 메세지 생성");
 
             // onSendToProductMessage(chatId, friendUid, product, 3);
             // onSendToProductAddMessage(chatId, friendUid);
@@ -95,7 +94,7 @@ class ProductChatController {
   }
 
   _setChatUserimageUrl(String chatId, String imageUrl) async {
-    print("1. 유저 이미지 내부 저장");
+    // print("1. 유저 이미지 내부 저장");
     SharedPreferences prefsChatUserImageUrls =
         await SharedPreferences.getInstance();
     await prefsChatUserImageUrls.setString(chatId, imageUrl);
@@ -106,7 +105,7 @@ class ProductChatController {
     SharedPreferences prefsChatUserPhotoUrls =
         await SharedPreferences.getInstance();
     imageUrl = prefsChatUserPhotoUrls.getString(chatId);
-    print("2. 내부 db 값 : GetChatUserPhotoUrl : $imageUrl");
+    // print("2. 내부 db 값 : GetChatUserPhotoUrl : $imageUrl");
 
     return imageUrl;
   }
@@ -120,10 +119,10 @@ class ProductChatController {
               return CircularProgressIndicator();
             default:
               if (snapshot.hasData == false) {
-                print("YES ${snapshot.data.toString()}");
+                // print("YES ${snapshot.data.toString()}");
                 return CircularProgressIndicator();
               } else {
-                print("No ${snapshot.data.toString()}");
+                // print("No ${snapshot.data.toString()}");
                 return Material(
                   child: CachedNetworkImage(
                     imageUrl: snapshot.data,
@@ -132,7 +131,9 @@ class ProductChatController {
                     height: 40,
                     width: 40,
                   ),
-                  borderRadius: BorderRadius.all(Radius.circular(18.0)),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(18.0),
+                  ),
                   clipBehavior: Clip.hardEdge,
                 );
               }
@@ -171,23 +172,22 @@ class ProductChatController {
               );
             } else {
               _setChatUserimageUrl(chatId, snapshot.data['imageUrl']);
-              print("1. 가져온 url  : ${snapshot.data['imageUrl']}");
+              // print("1. 가져온 url  : ${snapshot.data['imageUrl']}");
               return Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Expanded(
+                  Material(
                     child: CachedNetworkImage(
                       imageUrl: snapshot.data['imageUrl'],
+                      // productMessage.content.imageUrl,
                       fit: BoxFit.cover,
-                      height: 50,
-                      width: 50,
+                      height: 40,
+                      width: 40,
                     ),
-                    // child: ExtendedImage.network(
-                    //   snapshot.data['imageUrl'],
-                    //   fit: BoxFit.cover,
-                    //   height: 50,
-                    //   width: 50,
-                    //   cache: true,
-                    // ),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(18.0),
+                    ),
+                    clipBehavior: Clip.hardEdge,
                   ),
                 ],
               );
@@ -357,8 +357,7 @@ class ProductChatController {
 
   bool onSendToProductMessage(
       String chatId, String friendId, var contentMsg, int type) {
-    print(
-        "proChatController-onSendToProductMessage 1. 받은 값 확인, 문제없으면 채팅 생성 $chatId $friendId ${contentMsg.runtimeType} $type ");
+    // print("proChatController-onSendToProductMessage 1. 받은 값 확인, 문제없으면 채팅 생성 $chatId $friendId ${contentMsg.runtimeType} $type ");
     //type = 0 its text msg
     //type = 1 its imageFile
     //type = 2 its sticker image
@@ -369,8 +368,7 @@ class ProductChatController {
       return false;
     } else if (contentMsg != null) {
       if (contentMsg.runtimeType == Product) {
-        print(
-            "proChatController-onSendToProductMessage 2-1. contentMsg type이 product이면 map형식 생성");
+        // print("proChatController-onSendToProductMessage 2-1. contentMsg type이 product이면 map형식 생성");
         // 프로덕트 타입이면 contentMsg 변경
         Map<String, String> productContent = {
           'title': '${contentMsg.title}',
@@ -379,24 +377,23 @@ class ProductChatController {
         };
 
         content = productContent;
-        print("maptest $content");
+        // print("maptest $content");
       } else {
-        print(
-            "proChatController-onSendToProductMessage 2-2. contentMsg type이 string이면 그대로 생성");
+        // print("proChatController-onSendToProductMessage 2-2. contentMsg type이 string이면 그대로 생성");
         content = contentMsg;
       }
-      print("maptest1 컨텐츠저장완");
+      // print("maptest1 컨텐츠저장완");
       String messageId = DateTime.now().millisecondsSinceEpoch.toString();
-      print("proChatController-onSendToProductMessage 2-3. 상대방 hide true면 변경함");
+      // print("proChatController-onSendToProductMessage 2-3. 상대방 hide true면 변경함");
 
-      print("maptest1-1 $chatId $messageId");
+      // print("maptest1-1 $chatId $messageId");
 //RealTime
       DatabaseReference productChatMessageReference =
           productChatReference.child(chatId).child("message").child(messageId);
-      print("maptest1-2");
+      // print("maptest1-2");
       DatabaseReference productChatListReference =
           productChatReference.child(chatId);
-      print("maptest2");
+      // print("maptest2");
       productChatMessageReference.set({
         "idFrom": googleSignIn.currentUser.id,
         "idTo": {friendId: false},
@@ -406,7 +403,7 @@ class ProductChatController {
         // "isRead": false,
         //"isRead": false,
       }).whenComplete(() {
-        print("proChatController-onSendToProductMessage 3. 메세지 저장 완료");
+        // print("proChatController-onSendToProductMessage 3. 메세지 저장 완료");
         switch (type) {
           case 1:
             content = "사진을 보냈습니다.";
@@ -416,8 +413,7 @@ class ProductChatController {
             break;
         }
         if (contentMsg.runtimeType == String) {
-          print(
-              "proChatController-onSendToProductMessage 4. 채팅방 시간, 최근 정보 업데이트");
+          // print("proChatController-onSendToProductMessage 4. 채팅방 시간, 최근 정보 업데이트");
 
           productChatListReference.update({
             "recentText": content,
@@ -474,8 +470,8 @@ class ProductChatController {
     Map<String, dynamic> friendConnectState;
     productChatFriendUidRefernce.once().then((DataSnapshot snapshot) {
       if (snapshot.value['hide'] == true) {
-        print("proChatContro ${snapshot.value['hide']}");
-        print("proChatContro ${snapshot.value['friendUid']}");
+        // print("proChatContro ${snapshot.value['hide']}");
+        // print("proChatContro ${snapshot.value['friendUid']}");
         friendConnectState = {
           "hide": false,
           "connectTime": reConnectTime,
@@ -490,8 +486,8 @@ class ProductChatController {
     Map<String, dynamic> myConnectState;
     productChatMyUidRefernce.once().then((DataSnapshot snapshot) {
       if (snapshot.value['hide'] == true) {
-        print("proChatContro ${snapshot.value['hide']}");
-        print("proChatContro ${snapshot.value['friendUid']}");
+        // print("proChatContro ${snapshot.value['hide']}");
+        // print("proChatContro ${snapshot.value['friendUid']}");
         myConnectState = {
           "hide": false,
           "connectTime": reConnectTime,
@@ -502,7 +498,7 @@ class ProductChatController {
   }
 
   void exitProductChat(String chatId) {
-    print("채팅방 나가기. hide = true, currentTime = 나간시간");
+    // print("채팅방 나가기. hide = true, currentTime = 나간시간");
     String exitTime = DateTime.now().millisecondsSinceEpoch.toString();
     productChatReference
         .child(chatId)
@@ -529,9 +525,13 @@ class ProductChatController {
           //   return Text("d");
           // } else
           if (snapshot.hasData) {
-            print(snapshot.data.toString());
+            // print(snapshot.data.toString());
           } else
-            return Text("error");
+            return Icon(
+              Icons.notifications_none,
+              size: 25,
+              // color: Colors.black,
+            );
 
           if (snapshot.data.data()['productChatCount'] == 0 &&
               snapshot.data.data()['boardChatCount'] == 0) {
@@ -540,7 +540,7 @@ class ProductChatController {
                 new Icon(
                   Icons.notifications_none,
                   size: 25,
-                  color: Colors.black,
+                  // color: Colors.black,
                 ),
                 Positioned(
                   top: 1,
@@ -567,7 +567,7 @@ class ProductChatController {
                 new Icon(
                   Icons.notifications_none,
                   size: 25,
-                  color: Colors.black,
+                  // color: Colors.black,
                 ),
                 Positioned(
                   top: 1,
@@ -592,6 +592,62 @@ class ProductChatController {
             );
           }
           return Container();
+        });
+  }
+
+  //Chat Main ChatCount
+  StreamBuilder getProductChatCountText() {
+    return StreamBuilder<DocumentSnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('user')
+            .doc(googleSignIn.currentUser.id.toString())
+            .collection("chatCount")
+            .doc(googleSignIn.currentUser.id.toString())
+            .snapshots(),
+        builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          if (snapshot.hasData) {
+            // print(snapshot.data.toString());
+          } else
+            return Text("error");
+          if (snapshot.data.data()['productChatCount'] != null) {
+            //print("####누적 채팅 : ${snapshot.data.data()['nickname']}");
+          }
+          return Text(
+            snapshot.data.data()['productChatCount'].toString(),
+            style: TextStyle(fontSize: 8, color: Colors.white),
+          );
+        });
+  }
+
+  //Chat Main ChatCount
+  StreamBuilder getNewProductChatCountText() {
+    return StreamBuilder<DocumentSnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('user')
+            .doc(googleSignIn.currentUser.id.toString())
+            .collection("chatCount")
+            .doc(googleSignIn.currentUser.id.toString())
+            .snapshots(),
+        builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          if (snapshot.hasData) {
+            // print(snapshot.data.toString());
+          } else
+            return Text("error");
+          if (snapshot.data.data()['productChatCount'] != null) {
+            //print("####누적 채팅 : ${snapshot.data.data()['nickname']}");
+          }
+          return Text(
+            snapshot.data.data()['productChatCount'].toString() + '개',
+            style: TextStyle(
+              color: //
+                  // OnestepColors().mainColor,
+                  snapshot.data.data()['productChatCount'] == 0
+                      ? Colors.grey
+                      : Colors.green,
+              // Colors.green,
+              fontSize: 10,
+            ),
+          );
         });
   }
 }
