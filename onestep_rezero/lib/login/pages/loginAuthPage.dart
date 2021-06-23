@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/home/homeMain.dart';
 import 'package:onestep_rezero/login/model/user.dart';
 import 'package:onestep_rezero/login/providers/providers.dart';
@@ -135,7 +136,7 @@ class _LoginAuthPageState extends State<LoginAuthPage>
               automaticallyImplyLeading: false,
               backgroundColor: Colors.white,
               title: Text(
-                "이메일인증",
+                "학교인증",
                 style: TextStyle(color: Colors.black),
               ),
               // 뒤로가기
@@ -309,6 +310,8 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                           child: Container(
                               width: MediaQuery.of(context).size.width / 1.2,
                               child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    primary: OnestepColors().mainColor),
                                 onPressed: (_isEmailCheck
                                                 .authFlag.isEmailChecked ==
                                             true &&
@@ -436,6 +439,8 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                           child: Container(
                             width: MediaQuery.of(context).size.width / 1.2,
                             child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  primary: OnestepColors().mainColor),
                               onPressed: _isEmailCheck.authFlag.isShowBtn ==
                                       true
                                   ? () async {

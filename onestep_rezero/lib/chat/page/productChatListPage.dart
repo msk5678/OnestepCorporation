@@ -1,10 +1,7 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:onestep_rezero/chat/boardchat/realtimeProductChatController.dart';
-import 'package:onestep_rezero/chat/controller/realtimeNavigationManager.dart';
+import 'package:onestep_rezero/chat/navigator/chatNavigationManager.dart';
 import 'package:onestep_rezero/chat/productchat/controller/productChatController.dart';
-import 'package:onestep_rezero/chat/productchat/model/assetTest.dart';
 
 import 'package:onestep_rezero/chat/productchat/model/productChatList.dart';
 import 'package:onestep_rezero/chat/productchat/model/productChatListCount.dart';
@@ -128,9 +125,9 @@ class _ProductChatListPageState extends State<ProductChatListPage>
                 //     values['chatUsers'][googleSignIn.currentUser.id]
                 //         .toString());
 
-                var obj = values['chatUsers'].keys.toString();
-                var obj3 = values['chatUsers'].keys.toList()[0];
-                var obj4 = values['chatUsers'].keys.toList()[1];
+                // var obj = values['chatUsers'].keys.toString();
+                // var obj3 = values['chatUsers'].keys.toList()[0];
+                // var obj4 = values['chatUsers'].keys.toList()[1];
 
                 // print("##ProductMessage 7 / chatId의 keys : $obj , [0] : $obj3, [1] : $obj4");
 
@@ -249,7 +246,7 @@ class _ProductChatListPageState extends State<ProductChatListPage>
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: <Widget>[
                                 ProductChatController()
-                                    .getProductUserNickName(productsUserId),
+                                    .getProductUserNickName(productsUserId, 15),
                                 // Text(
                                 //   productsUserId + " 108438757310040285856",
                                 //   style: TextStyle(fontSize: 9),
@@ -299,8 +296,7 @@ class _ProductChatListPageState extends State<ProductChatListPage>
                             ),
                           ),
                           onTap: () {
-                            RealTimeChatNavigationManager
-                                .navigateToProductChattingRoom(
+                            ChatNavigationManager.navigateToProductChattingRoom(
                               context,
                               listProductChat[index].chatUsers.user1Uid,
                               listProductChat[index].chatUsers.user2Uid,

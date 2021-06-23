@@ -35,9 +35,9 @@ class ReportPageTest extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                String uid;
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => ReportUserPage(uid)));
+                // String uid;
+                // Navigator.of(context).push(MaterialPageRoute(
+                //     builder: (context) => ReportUserPage(uid)));
               },
               child: Text("사용자신고"),
             ),

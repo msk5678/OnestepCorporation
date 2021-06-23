@@ -7,6 +7,7 @@ class MyinfoSettingsPage extends ConsumerWidget {
   // final SharedPreferences _prefsPush;
   // final SharedPreferences _prefsMarketing;
   // MyinfoSettingsPage(this._prefsPush, this._prefsMarketing);
+  // MyinfoSettingsPage();
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
