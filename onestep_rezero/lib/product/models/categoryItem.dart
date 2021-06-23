@@ -33,7 +33,7 @@ class CategoryItem {
             "언더웨어/잠옷": 0,
             "이벤트/테마": 0
           },
-          "totla": 0,
+          "total": 0,
         },
         "남성의류": {
           "image": 'icons/category/man.png',
@@ -55,7 +55,7 @@ class CategoryItem {
           "total": 0,
         },
         "뷰티/미용": {
-          "image": 'icons/category/.png',
+          "image": 'icons/category/beauty.png',
           "detail": {
             "스킨케어": 0,
             "메이크업": 0,
@@ -71,7 +71,7 @@ class CategoryItem {
           "total": 0,
         },
         "패션잡화": {
-          "image": 'icons/category/.png',
+          "image": 'icons/category/watch.png',
           "detail": {
             "여성가방": 0,
             "남성가방": 0,
@@ -89,7 +89,7 @@ class CategoryItem {
           "total": 0,
         },
         "디지털기기": {
-          "image": 'icons/category/.png',
+          "image": 'icons/category/monitor.png',
           "detail": {
             "카메라/캠코더": 0,
             "노트북": 0,
@@ -103,7 +103,7 @@ class CategoryItem {
           "total": 0,
         },
         "가전": {
-          "image": 'icons/category/.png',
+          "image": 'icons/category/monitor.png',
           "detail": {
             "TV": 0,
             "냉장고": 0,
@@ -120,7 +120,7 @@ class CategoryItem {
           "total": 0,
         },
         "가구/인테리어": {
-          "image": 'icons/category/.png',
+          "image": 'icons/category/interior.png',
           "detail": {
             "책상": 0,
             "의자": 0,
@@ -136,7 +136,7 @@ class CategoryItem {
           "total": 0,
         },
         "스포츠": {
-          "image": 'icons/category/.png',
+          "image": 'icons/category/sport.png',
           "detail": {
             "골프": 0,
             "자전거": 0,
@@ -152,7 +152,7 @@ class CategoryItem {
           "total": 0,
         },
         "레저/캠핑/여행": {
-          "image": 'icons/category/.png',
+          "image": 'icons/category/sport.png',
           "detail": {
             "텐트/침낭": 0,
             "취사용품": 0,
@@ -163,7 +163,7 @@ class CategoryItem {
           "total": 0,
         },
         "반려동물": {
-          "image": 'icons/category/.png',
+          "image": 'icons/category/pet.png',
           "detail": {
             "강아지용품": 0,
             "고양이용품": 0,
@@ -173,7 +173,7 @@ class CategoryItem {
           "total": 0,
         },
         "도서": {
-          "image": 'icons/category/.png',
+          "image": 'icons/category/record.png',
           "detail": {
             "대학교재": 0,
             "학습/참고서": 0,
@@ -189,7 +189,7 @@ class CategoryItem {
           "total": 0,
         },
         "음반/굿즈": {
-          "image": 'icons/category/.png',
+          "image": 'icons/category/record.png',
           "detail": {
             "CD": 0,
             "DVD": 0,
@@ -200,7 +200,7 @@ class CategoryItem {
           "total": 0,
         },
         "티켓/쿠폰": {
-          "image": 'icons/category/.png',
+          "image": 'icons/category/ticket.png',
           "detail": {
             "기프티콘/쿠폰": 0,
             "상품권": 0,
@@ -209,7 +209,7 @@ class CategoryItem {
           "total": 0,
         },
         "게임": {
-          "image": 'icons/category/.png',
+          "image": 'icons/category/game.png',
           "detail": {
             "PC게임": 0,
             "플레이스테이션": 0,
@@ -222,7 +222,7 @@ class CategoryItem {
           "total": 0,
         },
         "취미": {
-          "image": 'icons/category/.png',
+          "image": 'icons/category/game.png',
           "detail": {
             "예술/악기": 0,
             "수공예품": 0,
@@ -233,17 +233,17 @@ class CategoryItem {
           "total": 0,
         },
         "원룸/숙소": {
-          "image": 'icons/category/.png',
+          "image": 'icons/category/game.png',
           "detail": {},
           "total": 0,
         },
         "무료나눔": {
-          "image": 'icons/category/.png',
+          "image": 'icons/category/gift.png',
           "detail": {},
           "total": 0,
         },
         "기타": {
-          "image": 'icons/category/.png',
+          "image": 'icons/category/tag.png',
           "detail": {},
           "total": 0,
         },
