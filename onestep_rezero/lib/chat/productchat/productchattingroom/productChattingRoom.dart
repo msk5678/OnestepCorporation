@@ -17,7 +17,7 @@ import 'package:onestep_rezero/main.dart';
 import 'dart:io' as io;
 
 import 'package:onestep_rezero/product/models/product.dart';
-import 'package:onestep_rezero/product/pages/productDetail.dart';
+import 'package:onestep_rezero/product/pages/product/productDetail.dart';
 
 class ProductChattingRoomPage extends StatefulWidget {
   final String myUid;
