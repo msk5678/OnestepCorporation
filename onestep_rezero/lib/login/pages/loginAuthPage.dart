@@ -5,11 +5,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
-import 'package:onestep_rezero/home/homeMain.dart';
 import 'package:onestep_rezero/login/model/user.dart';
 import 'package:onestep_rezero/login/providers/providers.dart';
 
 import '../../main.dart';
+import '../../onestepCustomDialogNotCancel.dart';
 import '../../sendMail.dart';
 
 String _tempEmail;
@@ -54,7 +54,6 @@ class Countdown extends AnimatedWidget {
     String timerText =
         '${clockTimer.inMinutes.remainder(60).toString()}:${clockTimer.inSeconds.remainder(60).toString().padLeft(2, '0')}';
 
-    print('animation.value  ${animation.value} ');
     // timer 0초
     if (animation.value == 0) {
       timeOver = true;
@@ -115,6 +114,7 @@ class _LoginAuthPageState extends State<LoginAuthPage>
       builder: (context, ScopedReader watch, _) {
         final _isEmailCheck = watch(schoolEmailCheckProvider);
         return WillPopScope(
+          // ignore: missing_return
           onWillPop: () {
             // 추후에 증명서 들어오면 뒤로가기 필요함
             // Navigator.pop(context, false);
@@ -136,7 +136,7 @@ class _LoginAuthPageState extends State<LoginAuthPage>
               automaticallyImplyLeading: false,
               backgroundColor: Colors.white,
               title: Text(
-                "학교인증",
+                "대학교인증",
                 style: TextStyle(color: Colors.black),
               ),
               // 뒤로가기
@@ -254,6 +254,7 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                               .read(schoolEmailCheckProvider)
                                               .authEmailNickNameCheck(
                                                   _tempEmail);
+                                          _authNumberController.text = "";
                                           _firstEmailEnter = false;
                                         },
                                       )
@@ -264,6 +265,7 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                               .read(schoolEmailCheckProvider)
                                               .authEmailNickNameCheck(
                                                   _tempEmail);
+                                          _authNumberController.text = "";
                                           _firstEmailEnter = false;
                                         },
                                       ),
@@ -318,11 +320,8 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                         _isEmailCheck.authFlag.isSendClick ==
                                             false)
                                     ? () async {
-                                        // checkPassword = await getRandomNumber();
                                         checkPassword =
                                             await getRandomString(6);
-
-                                        print("checkPassword = $checkPassword");
                                         _isEmailCheck
                                             .changedAuthSendUnderLine(false);
                                         _isEmailCheck
@@ -342,8 +341,8 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                         _isEmailCheck.changedShowBtn(true);
 
                                         timeOver = false;
-                                        _isEmailCheck.authFlag.levelClock = 30;
-                                        // _isEmailCheck.authFlag.levelClock = 300;
+                                        // _isEmailCheck.authFlag.levelClock = 30;
+                                        _isEmailCheck.authFlag.levelClock = 300;
                                         _controller = AnimationController(
                                             duration: Duration(
                                                 seconds: _isEmailCheck
@@ -445,9 +444,7 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                       true
                                   ? () async {
                                       _authNumberController.text = "";
-                                      // checkPassword = await getRandomNumber();
                                       checkPassword = await getRandomString(6);
-                                      print("checkPassword = $checkPassword");
                                       Fluttertoast.showToast(
                                           msg: '인증번호가 재전송 되었습니다',
                                           toastLength: Toast.LENGTH_SHORT,
@@ -458,8 +455,8 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                       _isEmailCheck.changedAuthNumber(true);
 
                                       timeOver = false;
-                                      _isEmailCheck.authFlag.levelClock = 30;
-                                      // _isEmailCheck.authFlag.levelClock = 300;
+                                      // _isEmailCheck.authFlag.levelClock = 30;
+                                      _isEmailCheck.authFlag.levelClock = 300;
                                       _controller = AnimationController(
                                           duration: Duration(
                                               seconds: _isEmailCheck
@@ -484,59 +481,121 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                             style: ElevatedButton.styleFrom(
                                 primary: OnestepColors().mainColor),
                             // onPressed: () async {
-                            //   FirebaseFirestore.instance
-                            //       .collection('user')
-                            //       .doc(user.id)
-                            //       .update({
-                            //     "auth": 2,
-                            //     "univerisityEmail": _emailController.text,
-                            //     "university": "kmu",
-                            //     "authTime":
-                            //         DateTime.now().millisecondsSinceEpoch
-                            //   });
-
-                            //   var time = DateTime.now().microsecondsSinceEpoch;
-                            //   DocumentSnapshot userRecord =
-                            //       await ref.doc(user.id).get();
-                            //   currentUserModel = User.fromDocument(userRecord);
-                            //   ref
-                            //       .doc(currentUserModel.uid)
-                            //       .collection("log")
-                            //       .doc(time.toString())
-                            //       .set({
-                            //     "loginTime": time,
-                            //   });
-                            //   categoryList = FirebaseFirestore.instance
-                            //       .collection('category')
-                            //       .get();
-
-                            //   Navigator.of(context).push(MaterialPageRoute(
-                            //       builder: (context) => MainPage()));
+                            //   showDialog(
+                            //     context: context,
+                            //     builder: (BuildContext context) {
+                            //       return OnestepCustomDialogNotCancel(
+                            //         title: '한발자국 학교인증 성공!',
+                            //         description: '이제 한발자국의 기능들을 이용할 수 있습니다.',
+                            //         confirmButtonText: '확인',
+                            //         confirmButtonOnPress: () {
+                            //           Navigator.of(context).push(
+                            //               MaterialPageRoute(
+                            //                   builder: (context) =>
+                            //                       MainPage()));
+                            //         },
+                            //       );
+                            //     },
+                            //   );
                             // },
 
                             onPressed: _isEmailCheck.authFlag.isShowBtn == true
                                 ? () async {
-                                    print("checkPassword ${checkPassword}");
-                                    print(
-                                        "_authNumberController.text ${_authNumberController.text}");
                                     // 5분 안에 인증해야함
                                     if (timeOver == false &&
                                         checkPassword ==
                                             _authNumberController.text) {
-                                      print("성공");
-                                      // university 는 지금 계명대학교라고 줬는데, 나중에 학교이메일 판단해서 넣어줘야함
-                                      // ex) stu.kmu -> 계명대학교 이런식으로
-                                      FirebaseFirestore.instance
-                                          .collection('user')
-                                          .doc(user.id)
-                                          .update({
-                                        "auth": 2,
-                                        "univerisityEmail":
-                                            _emailController.text,
-                                        "university": "kmu",
-                                        "authTime": DateTime.now()
-                                            .millisecondsSinceEpoch
-                                      });
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return OnestepCustomDialogNotCancel(
+                                            title: '한발자국 대학교인증 성공!',
+                                            description:
+                                                '이제 한발자국의 모든 기능들을 이용할 수 있습니다.',
+                                            confirmButtonText: '확인',
+                                            confirmButtonOnPress: () {
+                                              Navigator.of(context).push(
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          MainPage()));
+                                            },
+                                          );
+                                        },
+                                      );
+                                      // 계명대
+                                      if (_emailController.text
+                                          .contains('@stu.kmu.ac.kr')) {
+                                        FirebaseFirestore.instance
+                                            .collection('user')
+                                            .doc(user.id)
+                                            .update({
+                                          "auth": 2,
+                                          "univerisityEmail":
+                                              _emailController.text,
+                                          "university": "kmu",
+                                          "authTime": DateTime.now()
+                                              .millisecondsSinceEpoch
+                                        });
+                                      }
+                                      // 경대
+                                      else if (_emailController.text
+                                          .contains('@stu.knu.ac.kr')) {
+                                        FirebaseFirestore.instance
+                                            .collection('user')
+                                            .doc(user.id)
+                                            .update({
+                                          "auth": 2,
+                                          "univerisityEmail":
+                                              _emailController.text,
+                                          "university": "knu",
+                                          "authTime": DateTime.now()
+                                              .millisecondsSinceEpoch
+                                        });
+                                      }
+                                      // 영대
+                                      else if (_emailController.text
+                                          .contains('@stu.yu.ac.kr')) {
+                                        FirebaseFirestore.instance
+                                            .collection('user')
+                                            .doc(user.id)
+                                            .update({
+                                          "auth": 2,
+                                          "univerisityEmail":
+                                              _emailController.text,
+                                          "university": "yu",
+                                          "authTime": DateTime.now()
+                                              .millisecondsSinceEpoch
+                                        });
+                                      }
+                                      // 대구대
+                                      else if (_emailController.text
+                                          .contains('@stu.daegu.ac.kr')) {
+                                        FirebaseFirestore.instance
+                                            .collection('user')
+                                            .doc(user.id)
+                                            .update({
+                                          "auth": 2,
+                                          "univerisityEmail":
+                                              _emailController.text,
+                                          "university": "daegu",
+                                          "authTime": DateTime.now()
+                                              .millisecondsSinceEpoch
+                                        });
+                                      }
+                                      // 대가대
+                                      else {
+                                        FirebaseFirestore.instance
+                                            .collection('user')
+                                            .doc(user.id)
+                                            .update({
+                                          "auth": 2,
+                                          "univerisityEmail":
+                                              _emailController.text,
+                                          "university": "cu",
+                                          "authTime": DateTime.now()
+                                              .millisecondsSinceEpoch
+                                        });
+                                      }
 
                                       var time =
                                           DateTime.now().microsecondsSinceEpoch;
@@ -554,13 +613,7 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                       categoryList = FirebaseFirestore.instance
                                           .collection('category')
                                           .get();
-
-                                      Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  MainPage()));
                                     } else if (timeOver == true) {
-                                      print("time over 실패");
                                       _isEmailCheck
                                           .changedAuthTimeOverChecked(false);
                                       _isEmailCheck.changedAuthNumber(true);
@@ -569,10 +622,8 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                       //   _isTimeOverChecked = false;
                                       //   _isAuthNumber = true;
                                       // });
-                                      // print("${snapshot.data.data()['authTest']}");
-                                      // Navigator.of(context).pop();
+
                                     } else {
-                                      print("인증번호 매칭 실패");
                                       _isEmailCheck
                                           .changedAuthTimeOverChecked(true);
                                       _isEmailCheck.changedAuthNumber(false);

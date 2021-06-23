@@ -1,24 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
 
-class OnestepCustomDialog extends StatefulWidget {
+class OnestepCustomDialogNotCancel extends StatefulWidget {
   final String title, description;
-  final String confirmButtonText, cancleButtonText;
+  final String confirmButtonText;
   final Function confirmButtonOnPress;
-  OnestepCustomDialog(
+  OnestepCustomDialogNotCancel(
       {Key key,
       @required this.title,
       this.description,
       @required this.confirmButtonText,
-      @required this.cancleButtonText,
       @required this.confirmButtonOnPress})
       : super(key: key);
 
   @override
-  _OnestepCustomDialogState createState() => _OnestepCustomDialogState();
+  _OnestepCustomDialogNotCancelState createState() =>
+      _OnestepCustomDialogNotCancelState();
 }
 
-class _OnestepCustomDialogState extends State<OnestepCustomDialog> {
+class _OnestepCustomDialogNotCancelState
+    extends State<OnestepCustomDialogNotCancel> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -47,25 +48,9 @@ class _OnestepCustomDialogState extends State<OnestepCustomDialog> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width / 3,
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Text(widget.cancleButtonText),
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.black26,
-                        onPrimary: Colors.white,
-                        textStyle: TextStyle(fontSize: 17),
-                        elevation: 0,
-                      ),
-                    ),
-                  ),
                   SizedBox(width: 10),
                   SizedBox(
-                    width: MediaQuery.of(context).size.width / 3,
+                    width: MediaQuery.of(context).size.width / 2,
                     height: 50,
                     child: ElevatedButton(
                       onPressed: widget.confirmButtonOnPress,

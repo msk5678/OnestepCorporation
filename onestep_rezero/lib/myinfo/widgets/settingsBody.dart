@@ -4,9 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/myinfo/pages/myinfoNickNameChagnePage.dart';
-import 'package:onestep_rezero/myinfo/providers/providers.dart';
 import 'package:random_string/random_string.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io' as io;
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
@@ -20,8 +18,8 @@ class SettingsBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
-    final _isSwitchCheckPush = watch(switchCheckPush.state);
-    final _isSwitchCheckMarketing = watch(switchCheckMarketing.state);
+    // final _isSwitchCheckPush = watch(switchCheckPush.state);
+    // final _isSwitchCheckMarketing = watch(switchCheckMarketing.state);
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

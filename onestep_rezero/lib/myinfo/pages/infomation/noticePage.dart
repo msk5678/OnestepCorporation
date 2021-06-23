@@ -35,7 +35,6 @@ class NoticePage extends StatelessWidget {
                       // int tempTime = doc.data()['time'];
                       return InkWell(
                         onTap: () {
-                          print("doc id = ${doc.id}");
                           // 찬섭이형 게시글 형식으로 넘어가야함, 이야기해보기
                         },
                         child: Column(

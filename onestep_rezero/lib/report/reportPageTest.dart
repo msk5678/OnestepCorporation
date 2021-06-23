@@ -1,9 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/report/pages/reportDealPage.dart';
-import 'package:onestep_rezero/report/pages/reportUserPage.dart';
 
 class ReportPageTest extends StatelessWidget {
   @override

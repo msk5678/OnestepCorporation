@@ -1,6 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/myinfo/providers/providers.dart';
+
+import '../../main.dart';
+import '../../onestepCustomDialogNotCancel.dart';
 
 // ignore: must_be_immutable
 class NickNameChangeBody extends ConsumerWidget {
@@ -101,20 +106,34 @@ class NickNameChangeBody extends ConsumerWidget {
             child: Container(
               width: MediaQuery.of(context).size.width / 1.2,
               child: ElevatedButton(
-                style: ElevatedButton.styleFrom(primary: Colors.white70),
+                style: ElevatedButton.styleFrom(
+                  primary: OnestepColors().mainColor,
+                ),
                 child: Text(
                   "변경하기",
-                  style: TextStyle(color: Colors.black),
+                  style: TextStyle(color: Colors.white),
                 ),
                 onPressed: _isNickNameCheck == true
                     ? () {
-                        // FirebaseFirestore.instance
-                        //     .collection("user")
-                        //     .doc(googleSignIn.currentUser.id)
-                        //     .update({"nickName": resultNickName});
+                        FirebaseFirestore.instance
+                            .collection("user")
+                            .doc(googleSignIn.currentUser.id)
+                            .update({"nickName": _nicknameController.text});
                         _tempNickName = "";
                         _firstEnter = true;
-                        Navigator.of(context).pop();
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return OnestepCustomDialogNotCancel(
+                              title: '닉네임 변경이 완료되었습니다.',
+                              confirmButtonText: '확인',
+                              confirmButtonOnPress: () {
+                                Navigator.pop(context);
+                                Navigator.pop(context);
+                              },
+                            );
+                          },
+                        );
                       }
                     : null,
               ),

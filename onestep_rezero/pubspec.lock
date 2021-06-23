@@ -426,13 +426,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.2"
-  flutter_mailer:
-    dependency: "direct main"
-    description:
-      name: flutter_mailer
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.0.0"
   flutter_image_compress:
     dependency: "direct main"
     description:
@@ -440,6 +433,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.0"
+  flutter_mailer:
+    dependency: "direct main"
+    description:
+      name: flutter_mailer
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.0"
   flutter_native_admob:
     dependency: "direct main"
     description:

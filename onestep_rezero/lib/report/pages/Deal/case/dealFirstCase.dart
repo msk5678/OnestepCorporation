@@ -1,10 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
 
 import '../../../../main.dart';
+import '../../../../onestepCustomDialog.dart';
+import '../../../../onestepCustomDialogNotCancel.dart';
 
 final myController = TextEditingController();
 
@@ -90,28 +90,6 @@ void report() {
                 })
               }
           });
-}
-
-void _showDialog(BuildContext context, int index) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      // return object of type Dialog
-      return AlertDialog(
-        title: index == 1 ? Text("이미 신고한 게시물입니다.") : Text("신고하시겠습니까?."),
-        content: index == 1 ? Text("이미 신고한 게시물입니다.") : Text("신고하시겠습니까?."),
-        actions: <Widget>[
-          ElevatedButton(
-            child: Text("확인"),
-            onPressed: () {
-              index == 1 ? null : report();
-              Navigator.of(context).popUntil((route) => route.isFirst);
-            },
-          ),
-        ],
-      );
-    },
-  );
 }
 
 class DealFirstCase extends StatelessWidget {
@@ -213,8 +191,18 @@ class DealFirstCase extends StatelessWidget {
                                           // 같은 글을 신고한다
                                           if (value['postUid'] == true) {
                                             flag = true;
-                                            print("중복신고");
-                                            _showDialog(context, 1);
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return OnestepCustomDialogNotCancel(
+                                                  title: '이미 신고한 게시물입니다.',
+                                                  confirmButtonText: '확인',
+                                                  confirmButtonOnPress: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                );
+                                              },
+                                            );
                                           }
                                           // 신고를 한적이 있는데 같은 글이 아니다
                                           else {
@@ -226,7 +214,21 @@ class DealFirstCase extends StatelessWidget {
                                 });
                         // 처음 신고한다
                         if (flag == false) {
-                          _showDialog(context, 2);
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return OnestepCustomDialog(
+                                title: '신고하시겠습니까?',
+                                confirmButtonText: '확인',
+                                cancleButtonText: '취소',
+                                confirmButtonOnPress: () {
+                                  report();
+                                  Navigator.of(context)
+                                      .popUntil((route) => route.isFirst);
+                                },
+                              );
+                            },
+                          );
                         }
                       },
                       child: Container(

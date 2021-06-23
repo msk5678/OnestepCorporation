@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onestep_rezero/myinfo/widgets/settingsBody.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class MyinfoSettingsPage extends ConsumerWidget {
   // final SharedPreferences _prefsPush;

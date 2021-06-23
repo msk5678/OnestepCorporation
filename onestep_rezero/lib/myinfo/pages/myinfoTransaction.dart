@@ -52,7 +52,6 @@ class _MyinfoTransactionState extends State<MyinfoTransaction> {
               ),
               GestureDetector(
                 onTap: () {
-                  print("필터 click");
                   showModalBottomSheet(
                       context: context,
                       builder: _filterBottomSheet,
@@ -155,9 +154,7 @@ class _MyinfoTransactionState extends State<MyinfoTransaction> {
                   selectedColor: Colors.white,
                   unSelectedColor: Colors.black,
                   textStyle: TextStyle(fontSize: 16)),
-              radioButtonValue: (value) {
-                print(value);
-              },
+              radioButtonValue: (value) {},
               selectedColor: Theme.of(context).accentColor,
             ),
             SizedBox(
@@ -196,9 +193,7 @@ class _MyinfoTransactionState extends State<MyinfoTransaction> {
                   selectedColor: Colors.white,
                   unSelectedColor: Colors.black,
                   textStyle: TextStyle(fontSize: 16)),
-              radioButtonValue: (value) {
-                print(value);
-              },
+              radioButtonValue: (value) {},
               selectedColor: Theme.of(context).accentColor,
             ),
             SizedBox(
@@ -208,9 +203,7 @@ class _MyinfoTransactionState extends State<MyinfoTransaction> {
               width: double.infinity,
               height: MediaQuery.of(context).size.height / 15,
               child: ElevatedButton(
-                  onPressed: () {
-                    print("조회하기 click");
-                  },
+                  onPressed: () {},
                   child: Container(
                     child: Text("조회하기"),
                   )),

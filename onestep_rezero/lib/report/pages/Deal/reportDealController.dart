@@ -2,9 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'case/dealFirstCase.dart';
-import 'case/dealFourCase.dart';
-import 'case/dealSecondCase.dart';
-import 'case/dealThirdCase.dart';
 
 void reportDealController(
     BuildContext context, int caseValue, String postUid, String reportedUid) {

@@ -44,7 +44,8 @@ class MyinfoProvider extends StateNotifier<bool> {
   String get hasResultNickName => _resultNickName;
 
   void authEmailNickNameCheck(String tempNickName) async {
-    if (tempNickName == "") {
+    int nickNameLength = tempNickName.length;
+    if (tempNickName == "" || !(nickNameLength >= 3 && nickNameLength < 8)) {
       state = false;
     } else {
       QuerySnapshot ref = await FirebaseFirestore.instance

@@ -1,19 +1,17 @@
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
-import 'package:flutter_mailer/flutter_mailer.dart';
-import 'package:device_apps/device_apps.dart';
 
 sendEmailAuth([
   String checkPassword = "",
   String universityEmail = "",
 ]) async {
-  // schollAuthFlag = 1 이면 학교인증 sendMail
+  // schollAuthFlag = 1 이면 대학교인증 sendMail
   // schollAuthFlag = 2 이면 증명서
-  print("checkPassword = ${checkPassword}");
-  // 회사 공용 email 들어가야하고
+
   String smtpUserName = 'legendstarthelp@gmail.com';
   String smtpPassword = 'rmflsqlf123';
 
+  // ignore: deprecated_member_use
   final _smtpServer = gmail(smtpUserName, smtpPassword);
 
   final message = Message()
@@ -33,29 +31,6 @@ sendEmailAuth([
     }
   }
 }
-
-// newSendTest() async {
-//   const GMAIL_SCHEMA = 'com.google.android.gm';
-
-//   final bool gmailinstalled = await DeviceApps.isAppInstalled(GMAIL_SCHEMA);
-//   print("gmailinstalled = ${gmailinstalled}");
-
-//   if (gmailinstalled) {
-//     final MailOptions mailOptions = MailOptions(
-//       body: 'a long body for the email <br> with a subset of HTML',
-//       subject: 'the Email Subject',
-//       recipients: ['leedool3003@naver.com'],
-//       isHTML: true,
-//       // bccRecipients: ['other@example.com'],
-//       // ccRecipients: ['third@example.com'],
-//       // attachments: [
-//       //   'path/to/image.png',
-//       // ],
-//       appSchema: GMAIL_SCHEMA,
-//     );
-//     await FlutterMailer.send(mailOptions);
-//   }
-// }
 
 sendCertificateAuth([
   String certificateURL = "",

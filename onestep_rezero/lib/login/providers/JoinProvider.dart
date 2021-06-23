@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:email_validator/email_validator.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final emailCheckProvider = StateNotifierProvider<EmailCheckProvider>((ref) {
@@ -16,7 +15,7 @@ class EmailCheckProvider extends StateNotifier<bool> {
     // if (tempEmail == "" || !isValid) {
     int emailLength = tempEmail.length;
     bool emailFlag = false;
-    (emailLength >= 2 && emailLength < 10)
+    (emailLength >= 5 && emailLength < 15)
         ? emailFlag = true
         : emailFlag = false;
     if (tempEmail == "" || emailFlag == false) {
@@ -70,7 +69,7 @@ class NickNameProvider extends StateNotifier<bool> {
   void authEmailNickNameCheck(String tempNickName) async {
     int nickNameLength = tempNickName.length;
     bool nickNameFlag = false;
-    (nickNameLength >= 2 && nickNameLength < 10)
+    (nickNameLength >= 3 && nickNameLength < 9)
         ? nickNameFlag = true
         : nickNameFlag = false;
     if (tempNickName == "" || nickNameFlag == false) {
