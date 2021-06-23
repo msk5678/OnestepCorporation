@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:onestep_rezero/login/pages/choiceAuthWayPage.dart';
+import 'package:onestep_rezero/login/pages/loginAuthPage.dart';
 import 'package:onestep_rezero/login/providers/providers.dart';
 
 String _tempEmail = "";
@@ -35,7 +36,7 @@ class JoinBody extends ConsumerWidget {
           Padding(
             padding: EdgeInsets.fromLTRB(
                 (MediaQuery.of(context).size.width / 15),
-                (MediaQuery.of(context).size.height / 40),
+                (MediaQuery.of(context).size.height / 20),
                 0,
                 0),
             child: Column(
@@ -121,7 +122,7 @@ class JoinBody extends ConsumerWidget {
                       MediaQuery.of(context).size.width / 4,
                       0),
                   child: Text(
-                    "이메일 형식이 잘못되었거나 중복입니다.",
+                    "아이디 형식이 잘못되었거나 중복입니다.",
                     style: TextStyle(color: Colors.red),
                   ),
                 ),
@@ -246,9 +247,11 @@ class JoinBody extends ConsumerWidget {
                                         })
                                       });
 
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) =>
-                                      ChoiceAuthWayPage(user)));
+                              // Navigator.of(context).push(MaterialPageRoute(
+                              //     builder: (context) =>
+                              //         ChoiceAuthWayPage(user)));
+
+                              _showDialog(context, user);
                             }
                           }
                         : null,
@@ -265,4 +268,26 @@ class JoinBody extends ConsumerWidget {
       ),
     );
   }
+}
+
+void _showDialog(BuildContext context, GoogleSignInAccount user) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text("한발자국 회원가입을 환영합니다!"),
+        content: Text(
+            "한발자국을 이용하기 위해서는 학교이메일 인증이 필수입니다. 모든 서비스는 학교인증을 하고 난 뒤에 이용이 가능합니다."),
+        actions: <Widget>[
+          ElevatedButton(
+            child: Text("확인"),
+            onPressed: () {
+              Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => LoginAuthPage(user)));
+            },
+          ),
+        ],
+      );
+    },
+  );
 }

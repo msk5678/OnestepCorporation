@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:onestep_rezero/login/pages/choiceAuthWayPage.dart';
 import 'package:onestep_rezero/login/pages/loginAuthPage.dart';
 import 'package:onestep_rezero/main.dart';
@@ -15,7 +16,9 @@ import 'dart:async';
 import 'package:onestep_rezero/myinfo/widgets/myProfileImage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-void _showDialog(BuildContext context, int authValue) {
+void _showDialog(BuildContext context, int authValue,
+    AsyncSnapshot<DocumentSnapshot> snapshot) {
+  final f = DateFormat('yyyy-MM-dd hh:mm');
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -34,8 +37,9 @@ void _showDialog(BuildContext context, int authValue) {
               ],
             )
           : AlertDialog(
-              title: Text("인증을 완료하셨습니다"),
-              content: Text("완료"),
+              title: Text("학교인증"),
+              content: Text(
+                  "${f.format(DateTime.fromMillisecondsSinceEpoch(snapshot.data.data()['authTime']))} 에 완료하셨습니다"),
               actions: <Widget>[
                 ElevatedButton(
                   child: Text("확인"),
@@ -232,9 +236,10 @@ class MyinfoMainBody extends ConsumerWidget {
                   ),
                   InkWell(
                     onTap: () {
+                      _showDialog(context, 2, snapshot);
                       // snapshot.data.data()['auth'] == 1
-                      //     ? _showDialog(context, 1)
-                      //     : _showDialog(context, 2);
+                      //     ? _showDialog(context, 1, snapshot)
+                      //     : _showDialog(context, 2, snapshot);
                     },
                     child: Padding(
                       padding: EdgeInsets.fromLTRB(
@@ -254,9 +259,10 @@ class MyinfoMainBody extends ConsumerWidget {
                           IconButton(
                             icon: Icon(Icons.keyboard_arrow_right),
                             onPressed: () {
+                              _showDialog(context, 2, snapshot);
                               // snapshot.data.data()['auth'] == 1
-                              //     ? _showDialog(context, 1)
-                              //     : _showDialog(context, 2);
+                              //     ? _showDialog(context, 1, snapshot)
+                              //     : _showDialog(context, 2, snapshot);
                             },
                           )
                         ],

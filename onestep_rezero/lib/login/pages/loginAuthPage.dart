@@ -9,30 +9,38 @@ import 'package:onestep_rezero/login/model/user.dart';
 import 'package:onestep_rezero/login/providers/providers.dart';
 
 import '../../main.dart';
+import '../../sendMail.dart';
 
 String _tempEmail;
 bool _firstEmailEnter;
 String checkPassword;
-int levelClock;
+// int levelClock;
 AnimationController _controller;
 bool timeOver;
 
-Future getRandomNumber() async {
-  var _random = Random();
-  var numMin = 0x30;
-  var charMax = 0x5A;
-  var skipCharacter = [0x3A, 0x3B, 0x3C, 0x3D, 0x3E, 0x3F, 0x40];
-  var checkNumber = [];
+const _chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+Random _rnd = Random();
 
-  while (checkNumber.length <= 6) {
-    var tmp = numMin + _random.nextInt(charMax - numMin);
-    if (skipCharacter.contains(skipCharacter)) {
-      continue;
-    }
-    checkNumber.add(tmp);
-  }
-  return String.fromCharCodes(checkNumber.cast<int>());
-}
+String getRandomString(int length) => String.fromCharCodes(Iterable.generate(
+    length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
+
+// Future getRandomNumber() async {
+
+//   var _random = Random();
+//   var numMin = 0x30;
+//   var charMax = 0x5A;
+//   var skipCharacter = [0x3A, 0x3B, 0x3C, 0x3D, 0x3E, 0x3F, 0x40];
+//   var checkNumber = [];
+
+//   while (checkNumber.length <= 6) {
+//     var tmp = numMin + _random.nextInt(charMax - numMin);
+//     if (skipCharacter.contains(skipCharacter)) {
+//       continue;
+//     }
+//     checkNumber.add(tmp);
+//   }
+//   return String.fromCharCodes(checkNumber.cast<int>());
+// }
 
 class Countdown extends AnimatedWidget {
   Countdown({Key key, this.animation}) : super(key: key, listenable: animation);
@@ -62,8 +70,6 @@ class Countdown extends AnimatedWidget {
 }
 
 void init() {
-  // levelClock = 300;
-  levelClock = 10;
   _tempEmail = "";
   checkPassword = "";
   timeOver = false;
@@ -88,7 +94,8 @@ class _LoginAuthPageState extends State<LoginAuthPage>
     super.initState();
     init();
     _controller = AnimationController(
-        duration: Duration(seconds: levelClock),
+        duration: Duration(seconds: 30),
+        // duration: Duration(seconds: 300),
         vsync:
             this // gameData.levelClock is a user entered number elsewhere in the applciation
         );
@@ -108,45 +115,48 @@ class _LoginAuthPageState extends State<LoginAuthPage>
         final _isEmailCheck = watch(schoolEmailCheckProvider);
         return WillPopScope(
           onWillPop: () {
-            Navigator.pop(context, false);
-            setState(() {
-              _isEmailCheck.changedAuthEmailChecked(false);
-              _isEmailCheck.changedAuthEmailErrorUnderLine(true);
-              _isEmailCheck.changedAuthEmailDupliCheckUnderLine(true);
-              _isEmailCheck.changedAuthSendUnderLine(true);
-              _isEmailCheck.changedAuthNumber(true);
-              _isEmailCheck.changedAuthTimeOverChecked(true);
-              _isEmailCheck.changedAuthTimerChecked(false);
-              _isEmailCheck.changedAuthSendClick(false);
-              _isEmailCheck.changedShowBtn(false);
-            });
-            return Future(() => false);
+            // 추후에 증명서 들어오면 뒤로가기 필요함
+            // Navigator.pop(context, false);
+            // setState(() {
+            //   _isEmailCheck.changedAuthEmailChecked(false);
+            //   _isEmailCheck.changedAuthEmailErrorUnderLine(true);
+            //   _isEmailCheck.changedAuthEmailDupliCheckUnderLine(true);
+            //   _isEmailCheck.changedAuthSendUnderLine(true);
+            //   _isEmailCheck.changedAuthNumber(true);
+            //   _isEmailCheck.changedAuthTimeOverChecked(true);
+            //   _isEmailCheck.changedAuthTimerChecked(false);
+            //   _isEmailCheck.changedAuthSendClick(false);
+            //   _isEmailCheck.changedShowBtn(false);
+            // });
+            // return Future(() => false);
           },
           child: Scaffold(
             appBar: AppBar(
+              automaticallyImplyLeading: false,
               backgroundColor: Colors.white,
               title: Text(
                 "이메일인증",
                 style: TextStyle(color: Colors.black),
               ),
-              leading: IconButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  setState(() {
-                    _isEmailCheck.changedAuthEmailChecked(false);
-                    _isEmailCheck.changedAuthEmailErrorUnderLine(true);
-                    _isEmailCheck.changedAuthEmailDupliCheckUnderLine(true);
-                    _isEmailCheck.changedAuthSendUnderLine(true);
-                    _isEmailCheck.changedAuthNumber(true);
-                    _isEmailCheck.changedAuthTimeOverChecked(true);
-                    _isEmailCheck.changedAuthTimerChecked(false);
-                    _isEmailCheck.changedAuthSendClick(false);
-                    _isEmailCheck.changedShowBtn(false);
-                  });
-                },
-                icon: Icon(Icons.arrow_back),
-                color: Colors.black,
-              ),
+              // 뒤로가기
+              // leading: IconButton(
+              //   onPressed: () {
+              //     Navigator.pop(context);
+              //     setState(() {
+              //       _isEmailCheck.changedAuthEmailChecked(false);
+              //       _isEmailCheck.changedAuthEmailErrorUnderLine(true);
+              //       _isEmailCheck.changedAuthEmailDupliCheckUnderLine(true);
+              //       _isEmailCheck.changedAuthSendUnderLine(true);
+              //       _isEmailCheck.changedAuthNumber(true);
+              //       _isEmailCheck.changedAuthTimeOverChecked(true);
+              //       _isEmailCheck.changedAuthTimerChecked(false);
+              //       _isEmailCheck.changedAuthSendClick(false);
+              //       _isEmailCheck.changedShowBtn(false);
+              //     });
+              //   },
+              //   icon: Icon(Icons.arrow_back),
+              //   color: Colors.black,
+              // ),
             ),
             body: SingleChildScrollView(
               child: Column(
@@ -206,13 +216,13 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                           child: Container(
                             width: MediaQuery.of(context).size.width / 1.2,
                             child: TextField(
-                              style: TextStyle(
-                                  color: _isEmailCheck.authFlag.isEmailChecked
-                                      ? Colors.grey
-                                      : Colors.black),
-                              enabled: _isEmailCheck.authFlag.isEmailChecked
-                                  ? false
-                                  : true,
+                              style: TextStyle(color: Colors.black),
+                              // color: _isEmailCheck.authFlag.isEmailChecked
+                              //     ? Colors.grey
+                              //     : Colors.black),
+                              // enabled: _isEmailCheck.authFlag.isEmailChecked
+                              //     ? false
+                              //     : true,
                               controller: _emailController,
                               onChanged: (text) {
                                 _tempEmail = text;
@@ -305,7 +315,10 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                         _isEmailCheck.authFlag.isSendClick ==
                                             false)
                                     ? () async {
-                                        checkPassword = await getRandomNumber();
+                                        // checkPassword = await getRandomNumber();
+                                        checkPassword =
+                                            await getRandomString(6);
+
                                         print("checkPassword = $checkPassword");
                                         _isEmailCheck
                                             .changedAuthSendUnderLine(false);
@@ -324,7 +337,21 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                             .changedAuthSendClick(true);
 
                                         _isEmailCheck.changedShowBtn(true);
+
+                                        timeOver = false;
+                                        _isEmailCheck.authFlag.levelClock = 30;
+                                        // _isEmailCheck.authFlag.levelClock = 300;
+                                        _controller = AnimationController(
+                                            duration: Duration(
+                                                seconds: _isEmailCheck
+                                                    .authFlag.levelClock),
+                                            vsync:
+                                                this // gameData.levelClock is a user entered number elsewhere in the applciation
+                                            );
+
                                         _controller.forward();
+                                        // sendEmailAuth(checkPassword,
+                                        //     _emailController.text);
                                       }
                                     : null,
                                 child: Text("전송"),
@@ -366,8 +393,8 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                     _isEmailCheck.authFlag.isTimerChecked
                                         ? Countdown(
                                             animation: StepTween(
-                                              begin:
-                                                  levelClock, // THIS IS A USER ENTERED NUMBER
+                                              begin: _isEmailCheck.authFlag
+                                                  .levelClock, // THIS IS A USER ENTERED NUMBER
                                               end: 0,
                                             ).animate(_controller),
                                           )
@@ -412,7 +439,10 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                               onPressed: _isEmailCheck.authFlag.isShowBtn ==
                                       true
                                   ? () async {
-                                      checkPassword = await getRandomNumber();
+                                      _authNumberController.text = "";
+                                      // checkPassword = await getRandomNumber();
+                                      checkPassword = await getRandomString(6);
+                                      print("checkPassword = $checkPassword");
                                       Fluttertoast.showToast(
                                           msg: '인증번호가 재전송 되었습니다',
                                           toastLength: Toast.LENGTH_SHORT,
@@ -423,11 +453,12 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                       _isEmailCheck.changedAuthNumber(true);
 
                                       timeOver = false;
-                                      // levelClock = 300;
-                                      levelClock = 10;
+                                      _isEmailCheck.authFlag.levelClock = 30;
+                                      // _isEmailCheck.authFlag.levelClock = 300;
                                       _controller = AnimationController(
-                                          duration:
-                                              Duration(seconds: levelClock),
+                                          duration: Duration(
+                                              seconds: _isEmailCheck
+                                                  .authFlag.levelClock),
                                           vsync:
                                               this // gameData.levelClock is a user entered number elsewhere in the applciation
                                           );
@@ -445,103 +476,106 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                         Container(
                           width: MediaQuery.of(context).size.width / 1.2,
                           child: ElevatedButton(
-                            onPressed: () async {
-                              FirebaseFirestore.instance
-                                  .collection('user')
-                                  .doc(user.id)
-                                  .update({
-                                "auth": 2,
-                                "univerisityEmail": _emailController.text,
-                                "university": "kmu",
-                                "authTime":
-                                    DateTime.now().millisecondsSinceEpoch
-                              });
+                            // onPressed: () async {
+                            //   FirebaseFirestore.instance
+                            //       .collection('user')
+                            //       .doc(user.id)
+                            //       .update({
+                            //     "auth": 2,
+                            //     "univerisityEmail": _emailController.text,
+                            //     "university": "kmu",
+                            //     "authTime":
+                            //         DateTime.now().millisecondsSinceEpoch
+                            //   });
 
-                              var time = DateTime.now().microsecondsSinceEpoch;
-                              DocumentSnapshot userRecord =
-                                  await ref.doc(user.id).get();
-                              currentUserModel = User.fromDocument(userRecord);
-                              ref
-                                  .doc(currentUserModel.uid)
-                                  .collection("log")
-                                  .doc(time.toString())
-                                  .set({
-                                "loginTime": time,
-                              });
-                              categoryList = FirebaseFirestore.instance
-                                  .collection('category')
-                                  .get();
+                            //   var time = DateTime.now().microsecondsSinceEpoch;
+                            //   DocumentSnapshot userRecord =
+                            //       await ref.doc(user.id).get();
+                            //   currentUserModel = User.fromDocument(userRecord);
+                            //   ref
+                            //       .doc(currentUserModel.uid)
+                            //       .collection("log")
+                            //       .doc(time.toString())
+                            //       .set({
+                            //     "loginTime": time,
+                            //   });
+                            //   categoryList = FirebaseFirestore.instance
+                            //       .collection('category')
+                            //       .get();
 
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => HomeMain()));
-                            },
-                            // onPressed: _isEmailCheck.authFlag.isShowBtn == true
-                            //     ? () async {
-                            //         // 5분 안에 인증해야함
-                            //         if (timeOver == false &&
-                            //             checkPassword ==
-                            //                 _authNumberController.text) {
-                            //           print("성공");
-                            //           // university 는 지금 계명대학교라고 줬는데, 나중에 학교이메일 판단해서 넣어줘야함
-                            //           // ex) stu.kmu -> 계명대학교 이런식으로
-                            //           FirebaseFirestore.instance
-                            //               .collection('user')
-                            //               .doc(user.id)
-                            //               .update({
-                            //             "auth": 2,
-                            //             "univerisityEmail":
-                            //                 _emailController.text,
-                            //             "university": "kmu",
-                            //             "authTime": DateTime.now()
-                            //                 .millisecondsSinceEpoch
-                            //           });
+                            //   Navigator.of(context).push(MaterialPageRoute(
+                            //       builder: (context) => HomeMain()));
+                            // },
+                            onPressed: _isEmailCheck.authFlag.isShowBtn == true
+                                ? () async {
+                                    print("checkPassword ${checkPassword}");
+                                    print(
+                                        "_authNumberController.text ${_authNumberController.text}");
+                                    // 5분 안에 인증해야함
+                                    if (timeOver == false &&
+                                        checkPassword ==
+                                            _authNumberController.text) {
+                                      print("성공");
+                                      // university 는 지금 계명대학교라고 줬는데, 나중에 학교이메일 판단해서 넣어줘야함
+                                      // ex) stu.kmu -> 계명대학교 이런식으로
+                                      FirebaseFirestore.instance
+                                          .collection('user')
+                                          .doc(user.id)
+                                          .update({
+                                        "auth": 2,
+                                        "univerisityEmail":
+                                            _emailController.text,
+                                        "university": "kmu",
+                                        "authTime": DateTime.now()
+                                            .millisecondsSinceEpoch
+                                      });
 
-                            //           var time =
-                            //               DateTime.now().microsecondsSinceEpoch;
-                            //           DocumentSnapshot userRecord =
-                            //               await ref.doc(user.id).get();
-                            //           currentUserModel =
-                            //               User.fromDocument(userRecord);
-                            //           ref
-                            //               .doc(currentUserModel.uid)
-                            //               .collection("log")
-                            //               .doc(time.toString())
-                            //               .set({
-                            //             "loginTime": time,
-                            //           });
-                            //           categoryList = FirebaseFirestore.instance
-                            //               .collection('category')
-                            //               .get();
+                                      var time =
+                                          DateTime.now().microsecondsSinceEpoch;
+                                      DocumentSnapshot userRecord =
+                                          await ref.doc(user.id).get();
+                                      currentUserModel =
+                                          User.fromDocument(userRecord);
+                                      ref
+                                          .doc(currentUserModel.uid)
+                                          .collection("log")
+                                          .doc(time.toString())
+                                          .set({
+                                        "loginTime": time,
+                                      });
+                                      categoryList = FirebaseFirestore.instance
+                                          .collection('category')
+                                          .get();
 
-                            //           Navigator.of(context).push(
-                            //               MaterialPageRoute(
-                            //                   builder: (context) =>
-                            //                       HomeMain()));
-                            //         } else if (timeOver == true) {
-                            //           print("time over 실패");
-                            //           _isEmailCheck
-                            //               .changedAuthTimeOverChecked(false);
-                            //           _isEmailCheck.changedAuthNumber(true);
+                                      Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  HomeMain()));
+                                    } else if (timeOver == true) {
+                                      print("time over 실패");
+                                      _isEmailCheck
+                                          .changedAuthTimeOverChecked(false);
+                                      _isEmailCheck.changedAuthNumber(true);
 
-                            //           // setState(() {
-                            //           //   _isTimeOverChecked = false;
-                            //           //   _isAuthNumber = true;
-                            //           // });
-                            //           // print("${snapshot.data.data()['authTest']}");
-                            //           // Navigator.of(context).pop();
-                            //         } else {
-                            //           print("인증번호 매칭 실패");
-                            //           _isEmailCheck
-                            //               .changedAuthTimeOverChecked(true);
-                            //           _isEmailCheck.changedAuthNumber(false);
+                                      // setState(() {
+                                      //   _isTimeOverChecked = false;
+                                      //   _isAuthNumber = true;
+                                      // });
+                                      // print("${snapshot.data.data()['authTest']}");
+                                      // Navigator.of(context).pop();
+                                    } else {
+                                      print("인증번호 매칭 실패");
+                                      _isEmailCheck
+                                          .changedAuthTimeOverChecked(true);
+                                      _isEmailCheck.changedAuthNumber(false);
 
-                            //           // setState(() {
-                            //           //   _isTimeOverChecked = true;
-                            //           //   _isAuthNumber = false;
-                            //           // });
-                            //         }
-                            //       }
-                            //     : null,
+                                      // setState(() {
+                                      //   _isTimeOverChecked = true;
+                                      //   _isAuthNumber = false;
+                                      // });
+                                    }
+                                  }
+                                : null,
                             child: Text("인증"),
                           ),
                         )

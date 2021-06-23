@@ -25,13 +25,19 @@ class SchoolEmailCheckProvider extends ChangeNotifier {
       authFlag.isEmailDupliCheckUnderLine = true;
       authFlag.isSendUnderLine = true;
       authFlag.isTimerChecked = false;
+      authFlag.levelClock = 30;
+      // authFlag.levelClock = 300;
       notifyListeners();
     } else {
+      authFlag.isEmailChecked = false;
       authFlag.isEmailErrorUnderLine = false;
       authFlag.isEmailDupliCheckUnderLine = true;
       authFlag.isSendUnderLine = true;
       authFlag.isTimerChecked = false;
       authFlag.isSendClick = false;
+      authFlag.isShowBtn = false;
+      authFlag.levelClock = 30;
+      // authFlag.levelClock = 300;
       notifyListeners();
     }
   }

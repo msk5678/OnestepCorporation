@@ -15,7 +15,12 @@ class EmailCheckProvider extends StateNotifier<bool> {
     // final bool isValid = EmailValidator.validate(email);
 
     // if (tempEmail == "" || !isValid) {
-    if (tempEmail == "") {
+    int emailLength = tempEmail.length;
+    bool emailFlag = false;
+    (emailLength >= 2 && emailLength < 10)
+        ? emailFlag = true
+        : emailFlag = false;
+    if (tempEmail == "" || emailFlag == false) {
       state = false;
     } else {
       QuerySnapshot ref = await FirebaseFirestore.instance
@@ -64,7 +69,12 @@ class NickNameProvider extends StateNotifier<bool> {
   NickNameProvider() : super(false);
 
   void authEmailNickNameCheck(String tempNickName) async {
-    if (tempNickName == "") {
+    int nickNameLength = tempNickName.length;
+    bool nickNameFlag = false;
+    (nickNameLength >= 2 && nickNameLength < 10)
+        ? nickNameFlag = true
+        : nickNameFlag = false;
+    if (tempNickName == "" || nickNameFlag == false) {
       state = false;
     } else {
       QuerySnapshot ref = await FirebaseFirestore.instance

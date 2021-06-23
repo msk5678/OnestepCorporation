@@ -7,8 +7,6 @@ import '../../../../main.dart';
 
 final myController = TextEditingController();
 
-// Navigator.of(context).popUntil((route) => route.isFirst);
-
 void report() {
   Map<dynamic, dynamic> values;
 
@@ -22,7 +20,7 @@ void report() {
   FirebaseDatabase.instance
       .reference()
       .child('report')
-      .child(googleSignIn.currentUser.id)
+      .child('reportedUid')
       .once()
       .then((value) => {
             if (value.value == null)
@@ -91,19 +89,19 @@ void report() {
           });
 }
 
-void _showDialog(BuildContext context) {
+void _showDialog(BuildContext context, int index) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
       // return object of type Dialog
       return AlertDialog(
-        title: Text("이미 신고한 게시물입니다."),
-        content: Text("이미 신고한 게시물입니다."),
+        title: index == 1 ? Text("이미 신고한 게시물입니다.") : Text("신고하시겠습니까?."),
+        content: index == 1 ? Text("이미 신고한 게시물입니다.") : Text("신고하시겠습니까?."),
         actions: <Widget>[
           ElevatedButton(
             child: Text("확인"),
             onPressed: () {
-              Navigator.of(context).pop();
+              Navigator.of(context).popUntil((route) => route.isFirst);
             },
           ),
         ],
@@ -186,44 +184,45 @@ class DealFirstCase extends StatelessWidget {
                 Center(
                   child: ElevatedButton(
                       onPressed: () async {
-                        report();
-                        // Map<dynamic, dynamic> values;
-                        // bool flag = false;
+                        // report();
+                        Map<dynamic, dynamic> values;
+                        bool flag = false;
 
-                        // await FirebaseDatabase.instance
-                        //     .reference()
-                        //     .child('reportUser')
-                        //     .once()
-                        //     .then((value) => {
-                        //           if (value.value == null)
-                        //             {
-                        //               flag = false,
-                        //             }
-                        //           else
-                        //             {
-                        //               values = value.value,
-                        //               values.forEach((key, value) {
-                        //                 // 한번이라도 신고한적이 있다
-                        //                 if (key ==
-                        //                     googleSignIn.currentUser.id) {
-                        //                   // 같은 글을 신고한다
-                        //                   if (value['postUid'] == true) {
-                        //                     flag = true;
-                        //                     print("중복신고");
-                        //                     _showDialog(context);
-                        //                   }
-                        //                   // 신고를 한적이 있는데 같은 글이 아니다
-                        //                   else {
-                        //                     flag = false;
-                        //                   }
-                        //                 }
-                        //               })
-                        //             }
-                        //         });
-                        // // 처음 신고한다
-                        // if (flag == false) {
-                        //   report();
-                        // }
+                        await FirebaseDatabase.instance
+                            .reference()
+                            .child('reportUser')
+                            .once()
+                            .then((value) => {
+                                  if (value.value == null)
+                                    {
+                                      flag = false,
+                                    }
+                                  else
+                                    {
+                                      values = value.value,
+                                      values.forEach((key, value) {
+                                        // 한번이라도 신고한적이 있다
+                                        if (key ==
+                                            googleSignIn.currentUser.id) {
+                                          // 같은 글을 신고한다
+                                          if (value['postUid'] == true) {
+                                            flag = true;
+                                            print("중복신고");
+                                            _showDialog(context, 1);
+                                          }
+                                          // 신고를 한적이 있는데 같은 글이 아니다
+                                          else {
+                                            flag = false;
+                                          }
+                                        }
+                                      })
+                                    }
+                                });
+                        // 처음 신고한다
+                        if (flag == false) {
+                          report();
+                          _showDialog(context, 2);
+                        }
                       },
                       child: Container(
                         width: MediaQuery.of(context).size.width / 1.5,

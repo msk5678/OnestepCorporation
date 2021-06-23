@@ -84,12 +84,21 @@ dependencies:
   #toast
   fluttertoast: ^7.1.1
   ##########
+  
+  #device_apps
+  device_apps: ^2.1.1
+  
+  #intl
+  intl: ^0.17.0
 
   #custom_radio_grouped_button
   custom_radio_grouped_button: ^1.0.6+1
 
   #email_validator
   email_validator: ^2.0.1
+
+  #flutter_mailer
+  flutter_mailer: ^2.0.0
 
   #shared_preferences
   shared_preferences: ^2.0.5
