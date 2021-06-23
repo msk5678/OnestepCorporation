@@ -8,11 +8,8 @@ import 'package:onestep_rezero/chat/productchat/model/productChatListCount.dart'
 import 'package:onestep_rezero/chat/widget/chatBadge.dart';
 import 'package:onestep_rezero/chat/widget/chat_list_time.dart';
 import 'package:onestep_rezero/main.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductChatListPage extends StatefulWidget {
-  // static List<Asset> imageList = List<Asset>();
-
   @override
   _ProductChatListPageState createState() => _ProductChatListPageState();
 }
@@ -20,8 +17,6 @@ class ProductChatListPage extends StatefulWidget {
 class _ProductChatListPageState extends State<ProductChatListPage>
     with AutomaticKeepAliveClientMixin<ProductChatListPage> {
   _ProductChatListPageState();
-
-  ProductChatList productChatList;
 
   List<ProductChatList> listProductChat = [];
   List<ProductChatListCount> listProductChatCount2 = [];
@@ -32,54 +27,26 @@ class _ProductChatListPageState extends State<ProductChatListPage>
   @override
   void initState() {
     super.initState();
-    productChatList = ProductChatList();
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text('채팅&알림'),
-      //   actions: [
-      //     _buildsave(context),
-      //     _buildload(context),
-      //     _buildjson(context),
-      //     _buildupdate(context),
-      //   ],
-      // ),
-      body: SingleChildScrollView(
-        // scrollDirection: Axis.horizontal,
-        child: Column(
-          children: [
-            //Text("dd"),
-            // TextField(),
-
-            // ProductChatListPage.imageList.isEmpty
-            //     ? Container()
-            //     : Container(
-            //         height: 400,
-            //         width: MediaQuery.of(context).size.width,
-            //         child: ListView.builder(
-            //             scrollDirection: Axis.horizontal,
-            //             itemCount: ProductChatListPage.imageList.length,
-            //             itemBuilder: (BuildContext context, int index) {
-            //               Asset asset = ProductChatListPage.imageList[index];
-            //               return AssetTest(
-            //                   asset: asset, width: 300, height: 300);
-            //             }),
-            //       ),
-
-            _buildChatListListTileStream(),
-          ],
-        ),
-      ),
+      body: _buildChatListListTileStream(),
     );
   }
 
   Widget _buildChatListListTileStream() {
     bool userExist = false;
-    return StreamBuilder(
+    return
+        // ConstrainedBox(
+        //   constraints: new BoxConstraints(
+        //     minHeight: 50.0,
+        //     maxHeight: 260.0,
+        //   ),
+        //   child:
+        StreamBuilder(
       stream: ProductChatController.productChatReference
           .orderByChild("chatUsers/${googleSignIn.currentUser.id}/hide")
           .equalTo(false)
@@ -88,21 +55,31 @@ class _ProductChatListPageState extends State<ProductChatListPage>
         switch (snapshot.connectionState) {
           case ConnectionState.waiting:
             return Container(
-                color: Colors.red,
-                child: Center(child: Text("No datadddddddddddd")));
+              color: Colors.white,
+              child: Center(
+                child: Text(
+                  "채팅방을 불러오고 있습니다..!",
+                  style: TextStyle(
+                    fontSize: 15,
+                  ),
+                ),
+              ),
+            );
           // CircularProgressIndicator();
           default:
             if (snapshot == null ||
                 !snapshot.hasData ||
                 snapshot.data.snapshot.value == null) {
-              print("stream values if0 null : ${snapshot.data.snapshot.value}");
-              return Container(
-                width: 100,
-                height: 100,
-                color: Colors.red,
-                // child: Center(
-                //   child: Text("No datadddddddddddd"),
-                // ),
+              // print("stream values if0 null : ${snapshot.data.snapshot.value}");
+              return Center(
+                child: Container(
+                  width: 200,
+                  height: 200,
+                  color: Colors.yellow,
+                  child: Center(
+                    child: Text("생성된 채팅이 없습니다..!"),
+                  ),
+                ),
               );
             } else {
               //print("stream values else1 : ${snapshot.data.snapshot.value}");
@@ -210,111 +187,143 @@ class _ProductChatListPageState extends State<ProductChatListPage>
               });
               ProductChatController().setToFirebaseProductChatCount(sum);
               return userExist == true
-                  ? ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: listProductChat.length,
-                      itemBuilder: (context, index) {
-                        String productsUserId; //장터 상대방 Id
-                        listProductChat[index].chatUsers.user1Uid ==
-                                googleSignIn.currentUser.id
-                            ? productsUserId =
-                                listProductChat[index].chatUsers.user2Uid
-                            : productsUserId =
-                                listProductChat[index].chatUsers.user1Uid;
-                        String chatId = listProductChat[index].chatId;
-                        // print(
-                        //     "##dd pro $productsUserId : '${listProductChat[index].chatId.toString()}/message'");
-
-                        // "$productsUserId" //시발왜다름
-                        //         ==
-                        //         "108438757310040285856"
-                        //     ? print(
-                        //         "같음 pro Id : $productsUserId // 108438757310040285856")
-                        //     : print(
-                        //         "다름 pro Id : $productsUserId !// 108438757310040285856");
-                        // ProductChatController().getChatUserPhotoUrl(chatId);
-                        return ListTile(
-                          leading: Material(
-                            child: ProductChatController()
-                                .getUserImage(chatId, productsUserId),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(6.0)),
-                            clipBehavior: Clip.hardEdge,
-                          ),
-                          //leading end
-                          title: Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 3),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: <Widget>[
-                                ProductChatController()
-                                    .getProductUserNickName(productsUserId, 15),
-                                // Text(
-                                //   productsUserId + " 108438757310040285856",
-                                //   style: TextStyle(fontSize: 9),
-                                // ),
-                                // ProductChatController().createProductInfomation(
-                                //     "1620367437865460"),
-
-                                // Text("$productsUserId"),
-                                // ProductChatController()
-                                //     .getProductUserNickname(productsUserId),
-
-                                // Container(
-                                //   height: 10,
-                                //   width: 10,
-                                //   child: ProductChatController()
-                                //       .getProductUserNickname(productsUserId),
-                                // ),
-                                //Text(listProductChat[index].recentText),
-                                SizedBox(width: 10, height: 10),
-                                Spacer(),
-                                //시간
-                                getChatListTime(
-                                    listProductChat[index].recentTime),
-                              ],
+                  ? Center(
+                      child: Container(
+                        color: Colors.white,
+                        child: CustomScrollView(
+                          shrinkWrap: false,
+                          // anchor: 0.5,
+                          // dragStartBehavior: DragStartBehavior.down,
+                          slivers: <Widget>[
+                            SliverOverlapInjector(
+                              handle: NestedScrollView
+                                  .sliverOverlapAbsorberHandleFor(context),
                             ),
-                          ),
-                          subtitle: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Text(
-                                  listProductChat[index].recentText.toString()),
-                              SizedBox(width: 10, height: 10),
-                              Spacer(),
-                              chatCountBadge(
-                                  listProductChatCount2[index].chatCount),
-                            ],
-                          ),
-                          trailing: Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                Text("menu"),
-                              ],
+                            SliverList(
+                              delegate: SliverChildBuilderDelegate(
+                                (context, index) {
+                                  String productsUserId; //장터 상대방 Id
+                                  listProductChat[index].chatUsers.user1Uid ==
+                                          googleSignIn.currentUser.id
+                                      ? productsUserId = listProductChat[index]
+                                          .chatUsers
+                                          .user2Uid
+                                      : productsUserId = listProductChat[index]
+                                          .chatUsers
+                                          .user1Uid;
+                                  String chatId = listProductChat[index].chatId;
+                                  return Column(
+                                    children: [
+                                      // Text('.'),
+                                      ListTile(
+                                        tileColor: Colors.white,
+                                        // onLongPress: () {
+                                        //   Fluttertoast.showToast(msg: "꾹");
+                                        // },
+                                        // selected: true,
+                                        leading: Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 7.0),
+                                          child: ProductChatController()
+                                              .getUserImage(
+                                                  chatId, productsUserId),
+                                        ),
+                                        // borderRadius: Bo
+                                        title: Padding(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              0, 0, 0, 3),
+                                          child: Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.end,
+                                            children: <Widget>[
+                                              ProductChatController()
+                                                  .getProductUserNickName(
+                                                      productsUserId, 15),
+                                              SizedBox(width: 10, height: 10),
+                                              Spacer(),
+                                              getChatListTime(
+                                                  listProductChat[index]
+                                                      .recentTime),
+                                              // Container(
+                                              //   width: 130,
+                                              //   height: 530,
+                                              //   color: Colors.blue,
+                                              // ),
+                                            ],
+                                          ),
+                                        ),
+                                        subtitle: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: <Widget>[
+                                            Container(
+                                              width: 250,
+                                              height: 30,
+                                              child: Text(
+                                                listProductChat[index]
+                                                    .recentText,
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 2,
+                                              ),
+                                            ),
+                                            SizedBox(width: 10, height: 10),
+                                            Spacer(),
+                                            chatCountBadge(
+                                                listProductChatCount2[index]
+                                                    .chatCount),
+                                          ],
+                                        ),
+                                        trailing: Padding(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              0, 0, 0, 0),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: <Widget>[
+                                              Text("menu"),
+                                            ],
+                                          ),
+                                        ),
+                                        onTap: () {
+                                          ChatNavigationManager
+                                              .navigateToProductChattingRoom(
+                                            context,
+                                            listProductChat[index]
+                                                .chatUsers
+                                                .user1Uid,
+                                            listProductChat[index]
+                                                .chatUsers
+                                                .user2Uid,
+                                            listProductChat[index].postId,
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
+                                childCount: listProductChat.length,
+                              ),
                             ),
-                          ),
-                          onTap: () {
-                            ChatNavigationManager.navigateToProductChattingRoom(
-                              context,
-                              listProductChat[index].chatUsers.user1Uid,
-                              listProductChat[index].chatUsers.user2Uid,
-                              listProductChat[index].postId,
-                            );
-                          },
-                        );
-                      },
+                          ],
+                          // ),
+                        ),
+                      ),
                     )
                   : Container(
-                      color: Colors.red,
-                      child: Center(child: Text("No datadddddddddddd")));
-              // Text("생성된 채팅방이 없습니다. . !");
+                      width: 30,
+                      height: 30,
+                      color: Colors.blue,
+                      // child: Center(
+                      child: Text("생성된 채팅방이 없습니다. . !"),
+                      // ),
+                    );
             }
         }
       },
+      // ),
     );
   }
 }

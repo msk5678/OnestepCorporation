@@ -58,7 +58,7 @@ String _getChatListTime(String timestamp) {
   var gettimelist = gettime.split('/');
 
   if (nowtimelist[0] == gettimelist[0]) {
-    print(nowtimelist[0] + gettimelist[0]);
+    // print(nowtimelist[0] + gettimelist[0]);
     //오늘날짜일 경우 시간 보여준다.
     meridiem = _getChatListMeridiem((gettimelist[2]));
     time = gettimelist[3]; //오전 오후 12시 기준

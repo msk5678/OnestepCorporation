@@ -37,7 +37,7 @@ class BottomNavigationItem {
           title: "게시판",
         ),
         BottomNavigationItem(
-          page: ChatMainPage(),
+          page: ChatMain(),
           icon: ProductChatController().getTotalChatCountInBottomBar(),
           //Icon(Icons.chat_outlined),
           title: "알림",

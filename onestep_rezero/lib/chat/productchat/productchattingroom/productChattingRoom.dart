@@ -5,8 +5,6 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:onestep_rezero/chat/productchat/controller/productChatController.dart';
 import 'package:onestep_rezero/chat/productchat/model/productChatMessage.dart';
@@ -43,7 +41,6 @@ class _ProductChattingRoomPageState extends State<ProductChattingRoomPage> {
   void dispose() {
     super.dispose();
     streamController.close();
-    print("채팅방 디스포즈");
   }
 
   @override
@@ -54,8 +51,6 @@ class _ProductChattingRoomPageState extends State<ProductChattingRoomPage> {
 
   @override
   Widget build(BuildContext context) {
-    print("포커스 빌드 다시됨");
-
     return
         // WillPopScope(
         //   onWillPop:
@@ -286,12 +281,14 @@ class _LastChatState extends State<ChatScreen> {
   }
 
   _createChatId() {
-    print("proChat-_createChatId");
+    // print("proChat-_createChatId");
     chatId = DateTime.now().millisecondsSinceEpoch.toString();
   }
 
+  String localImageUrl = "";
+
   void checkExistChattingRoom() {
-    print("proChat-checkExistChattingRoom");
+    // print("proChat-checkExistChattingRoom");
     //RealTime
 
     productChatReference
@@ -300,20 +297,19 @@ class _LastChatState extends State<ChatScreen> {
         .once()
         .then((DataSnapshot snapshot) {
       if (snapshot.value == null) {
-        print("proChat-checkExistChattingRoom 1-1. 채팅방 없으므로  chatId 생성");
+        // print("proChat-checkExistChattingRoom 1-1. 채팅방 없으므로  chatId 생성");
         //1-1. 채팅방 없을 경우 chatId 생성하고 채팅방 만든다.
         _createChatId(); //chatId 생성
         ProductChatController().createProductChatToRealtimeDatabase(
-            friendId, postId, chatId, product); //chat Id로 채팅방 생성
+            friendId, postId, chatId); //chat Id로 채팅방 생성
         setTextFieldtoProductInfo(product);
       } else {
         //채팅방 하나라도 있으면 판별해줘야 함
         Map<dynamic, dynamic> values = snapshot.value;
-        values.forEach((key, values) {
-          print(
-              "#realpro 생성 채팅방 가져온값 186 key ${key.toString()} / myid ${values['chatUsers'].keys.toList()[0]} / fid ${values['chatUsers'].keys.toList()[1]} / postId ${values['postId']}");
+        values.forEach((key, values) async {
+          // print("#realpro 생성 채팅방 가져온값 186 key ${key.toString()} / myid ${values['chatUsers'].keys.toList()[0]} / fid ${values['chatUsers'].keys.toList()[1]} / postId ${values['postId']}");
 
-          //만약 나와 상대 채팅방이 있으면, 텍스트 필드 생성
+          //나, 상대 채팅방 있으면 텍스트 필드 생성
           if ((myId == values['chatUsers'].keys.toList()[0] &&
                   friendId == values['chatUsers'].keys.toList()[1]
               //&&postId == values['postId']
@@ -325,16 +321,18 @@ class _LastChatState extends State<ChatScreen> {
             existChattingRoom = true;
             chatId = key.toString();
             connectTime = values['chatUsers'][myId]['connectTime'];
-            print("2.-1. $chatId");
-            ProductChatController().getChatUserimageUrl(chatId);
+            // print("2.-1. $chatId");
 
-            print("getc 커넥타임 $connectTime ");
-            // getConnectTime(chatId);
-
+            // if (localImageUrl == "") {
+            //   print("이미지 널, 한번만 읽음.");
+            //   localImageUrl =
+            //       await ProductChatController().getChatUserimageUrl(chatId);
+            //   print("이미지 널, : $localImageUrl.");
+            // }
+            // print("getc 커넥타임 $connectTime ");
             //채팅방 있으면서 & 장터에서 넘어온 경우
             if (checkProductExist() == true) {
-              print(
-                  "proChat-checkExistChattingRoom 1-3. 만약 장터에서 왔으면 초기 메세지 생성");
+              // print("proChat-checkExistChattingRoom 1-3. 만약 장터에서 왔으면 초기 메세지 생성");
               //장터에서 온게 맞으면 텍스트 필드에 물품정보 생성
               setTextFieldtoProductInfo(product);
             }
@@ -343,7 +341,7 @@ class _LastChatState extends State<ChatScreen> {
         if (existChattingRoom == false) {
           _createChatId(); //chatId 생성
           ProductChatController().createProductChatToRealtimeDatabase(
-              friendId, postId, chatId, product); //chat Id로 채팅방 생성
+              friendId, postId, chatId); //chat Id로 채팅방 생성
           setTextFieldtoProductInfo(product);
         }
       } //else 데이터 하나라도 있을 경우
@@ -370,26 +368,21 @@ class _LastChatState extends State<ChatScreen> {
     existChattingRoom = false;
 
     checkExistChattingRoom(); //1. 채팅방 생성 여부 확인
-    print("getc init $connectTime");
   }
 
   bool checkProductExist() {
     print("proChat-checkProductExist");
-    //네비게이트 위치 확인,
-    String test = "dd";
     if (product != null) {
-      Fluttertoast.showToast(
-          msg:
-              "type ${product.runtimeType} / 프로덕트에서 넘어옴, 초기 채팅 저장 ${product.title}");
+      // Fluttertoast.showToast(
+      //     msg:"type ${product.runtimeType} / 프로덕트에서 넘어옴, 초기 채팅 저장 ${product.title}");
       return true;
     } else
-      Fluttertoast.showToast(
-          msg: "type ${test.runtimeType} / 챗리스트에서 넘어옴 product null");
-    return false;
+      // Fluttertoast.showToast(
+      //     msg: "챗리스트에서 넘어옴 product null");
+      return false;
   }
 
   onFocusChange() {
-    print("^^^포커스체인지");
     if (focusNode.hasFocus) {
       //hide stickers whenever keypad appears
       //setState(() {
@@ -447,8 +440,11 @@ class _LastChatState extends State<ChatScreen> {
                   // Text("ge"),
                 ),
                 actions: [
-                  ProductChatMenu().getProductMenu(context, chatId, friendId),
-                  // Text("ge"),
+                  ProductChatMenu().getProductMenu(
+                    context,
+                    chatId,
+                    friendId,
+                  ),
                 ],
               ),
               //Text("con $connectTime"),
@@ -458,9 +454,9 @@ class _LastChatState extends State<ChatScreen> {
               //    child:
               _buildChatListListTileStream(),
               //),
-              (isDisplaySticker ? createStickers() : Container()),
               //Input Controllers
               createInput(),
+              (isDisplaySticker ? createStickers() : Container()),
             ],
           ),
           createLoding(),
@@ -477,24 +473,17 @@ class _LastChatState extends State<ChatScreen> {
   }
 
   Future<bool> onBackPress() {
-    print("키보드 백 기본");
     if (isDisplaySticker) {
-      print("키보드 이모티콘 떠있네여");
       setState(() {
         isDisplaySticker = false;
       });
     }
-    // else if (focusNode.) {
-    //   print("키보드 떠있네여");
-    // }
     // else if (focusNode.hasFocus) {
-    //   print("키보드 떠있네여");
     //   // SystemChannels.textInput.invokeMethod('TextInput.hide');
     //   // FocusScope.of(context).requestFocus(new FocusNode());
     //   // focusNode.dispose();
     // }
     else {
-      print("키보드 없음");
       Navigator.pop(context);
       //   //print('뒤로감');
     }
@@ -564,7 +553,7 @@ class _LastChatState extends State<ChatScreen> {
 
   _buildChatListListTileStream() {
     // Future.delayed(const Duration(seconds: 1));
-    print("getc 스트림시작 $connectTime");
+    // print("getc 스트림시작 $connectTime");
     return Flexible(
       fit: FlexFit.tight,
       child: myId == ""
@@ -594,26 +583,18 @@ class _LastChatState extends State<ChatScreen> {
                       listProductMessage.clear();
                       DataSnapshot dataValues = snapshot.data.snapshot;
                       Map<dynamic, dynamic> values = dataValues.value;
-                      print(
-                          "#realpro Strmsg message id0 : ${values.toString()}");
+                      // print("#realpro Strmsg message id0 : ${values.toString()}");
                       values.forEach((key, values) {
-                        print(
-                            "#realpro Strmsg message id1 : ${values["idTo"].keys.toList()[0]}");
-                        String s = values[
-                            "idTo/${googleSignIn.currentUser.id.toString()}"];
-                        print(
-                            "#realpro Strmsg message read2 : ${googleSignIn.currentUser.id.toString()} ${values["idTo/${googleSignIn.currentUser.id.toString()}"]} $s");
-                        print(
-                            "#realpro Strmsg message read3 : ${googleSignIn.currentUser.id.toString()} ${values["idTo/TLtvLka2sHTPQE3q6U2WPxfgJ8j2"].toString()} ");
+                        // print("#realpro Strmsg message id1 : ${values["idTo"].keys.toList()[0]}");
+                        // String s = values[
+                        //     "idTo/${googleSignIn.currentUser.id.toString()}"];
+                        // print("#realpro Strmsg message read2 : ${googleSignIn.currentUser.id.toString()} ${values["idTo/${googleSignIn.currentUser.id.toString()}"]} $s");
+                        // print("#realpro Strmsg message read3 : ${googleSignIn.currentUser.id.toString()} ${values["idTo/TLtvLka2sHTPQE3q6U2WPxfgJ8j2"].toString()} ");
 
-                        print(
-                            "#realpro Strmsg message key4 : ${key.toString()}");
-                        print(
-                            "#realpro Strmsg message value5 : ${values['content']}");
-                        print(
-                            "#realpro Strmsg message idTo6 : ${values['idTo']}");
-                        print(
-                            "#realpro Strmsg message idTo7 : ${values['idTo'].values.toList()[0]}");
+                        // print("#realpro Strmsg message key4 : ${key.toString()}");
+                        // print("#realpro Strmsg message value5 : ${values['content']}");
+                        // print("#realpro Strmsg message idTo6 : ${values['idTo']}");
+                        // print("#realpro Strmsg message idTo7 : ${values['idTo'].values.toList()[0]}");
 
                         //Message Read update
                         if (values["idTo"].keys.toList()[0] ==
@@ -684,8 +665,7 @@ class _LastChatState extends State<ChatScreen> {
       ProductChatMessage productMessage,
       ProductChatMessage nextProductMessage) {
     var maxindex = maxIndex - 1;
-    print(
-        "##message index $index / m Index $maxIndex / proMsg ${productMessage.sendTime}");
+    // print("##message index $index /@@/${productMessage.content.title} /@@/ m Index $maxIndex / proMsg ${productMessage.sendTime}");
     if (index == maxindex && productMessage != null) //메세지 시작일 경우 이거 출력
       return getMessageDate(productMessage.sendTime);
     else if (index < maxindex && productMessage != null) {
@@ -722,14 +702,26 @@ class _LastChatState extends State<ChatScreen> {
           productMessage.type == 0
               //Text Msg
               ? Container(
+                  width: 250,
                   child: Text(
                     productMessage.content.title,
-                    maxLines: 2,
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w500,
-                    ),
+                    style: TextStyle(height: 1.5),
+                    overflow: TextOverflow.ellipsis,
+                    // maxLines: 2,
                   ),
+
+                  // Text(
+                  //   productMessage.content.title,
+                  //   // maxLines: 2,
+                  //   softWrap: false,
+                  //   style: TextStyle(
+                  //     color: Colors.red,
+                  //     fontWeight: FontWeight.w500,
+                  //   ),
+                  //   overflow: TextOverflow.clip,
+                  //   // overflow: TextOverflow.fade,
+                  // ),
+
                   padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
                   //width: 150.0,
                   decoration: BoxDecoration(
@@ -856,7 +848,8 @@ class _LastChatState extends State<ChatScreen> {
                                         child: Text(
                                           productMessage.content.title,
                                           style: TextStyle(
-                                              fontWeight: FontWeight.bold),
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                           overflow: TextOverflow.ellipsis,
                                         ),
                                       ),
@@ -915,8 +908,17 @@ class _LastChatState extends State<ChatScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-                margin: EdgeInsets.only(right: 6.0),
-                child: ProductChatController().getUserImagetoChatroom(chatId)),
+              margin: EdgeInsets.only(right: 6.0),
+              child:
+                  //  CachedNetworkImage(
+                  //   imageUrl: localImageUrl,
+                  //   // productMessage.content.imageUrl,
+                  //   fit: BoxFit.cover,
+                  //   height: 40,
+                  //   width: 40,
+                  // ),
+                  ProductChatController().getUserImagetoChatroom(chatId),
+            ),
             Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
@@ -924,9 +926,11 @@ class _LastChatState extends State<ChatScreen> {
                 productMessage.type == 0
                     //Text Msg
                     ? Container(
+                        width: 250,
                         child: Text(
                           productMessage.content.title,
                           maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.w500,
@@ -1165,11 +1169,12 @@ class _LastChatState extends State<ChatScreen> {
           //Text Field
           Flexible(
             child: TextField(
+              enabled: true,
               style: TextStyle(color: Colors.black, fontSize: 15.0),
               controller: textEditingController,
               maxLines: null,
               decoration: InputDecoration.collapsed(
-                  hintText: "Write here...,",
+                  hintText: "메세지를 입력하세요.",
                   hintStyle: TextStyle(color: Colors.grey)),
               focusNode: focusNode,
             ),
@@ -1194,10 +1199,9 @@ class _LastChatState extends State<ChatScreen> {
                           friendId,
                           reConnectTime); //상대방 hide = true 면 변경하고 수신시간도 바꿈
                       checkTheSendMessage(chatId, friendId, product, 3);
-                      print("상품정보");
+                      // print("상품정보");
                     } else {
-                      print(
-                          "#realpro myid $myId / fid $friendId / chatId $chatId");
+                      // print("#realpro myid $myId / fid $friendId / chatId $chatId");
                       checkTheSendMessage(
                           chatId, friendId, textEditingController.text, 0);
                     }
@@ -1222,21 +1226,20 @@ class _LastChatState extends State<ChatScreen> {
 
   void checkTheSendMessage(
       String chatId, String friendId, var contentMsg, int type) {
-    print(
-        "proChat-checkTheSendMessage 1. 받은 값 확인, 문제없으면 채팅 생성 $chatId $friendId ${contentMsg.runtimeType} $type ");
+    // print("proChat-checkTheSendMessage 1. 받은 값 확인, 문제없으면 채팅 생성 $chatId $friendId ${contentMsg.runtimeType} $type ");
 
     if (ProductChatController()
             .onSendToProductMessage(chatId, friendId, contentMsg, type) ==
         true) {
-      print("proChat-checkTheSendMessage 3. 전송성공");
+      // print("proChat-checkTheSendMessage 3. 전송성공");
       if (type == 3) {
-        print("proChat-checkTheSendMessage 2. type == 3, 추가 채팅 생성");
+        // print("proChat-checkTheSendMessage 2. type == 3, 추가 채팅 생성");
         ProductChatController().onSendToProductAddMessage(chatId, friendId);
       }
       initTextEditingController();
       initListScrollController();
     } else {
-      print("proChat-checkTheSendMessage 4. 전송실패");
+      // print("proChat-checkTheSendMessage 4. 전송실패");
     }
   }
 
@@ -1253,7 +1256,7 @@ class _LastChatState extends State<ChatScreen> {
 
   // var metadata;
   Future getImage() async {
-    print("1. 이미지 선택");
+    // print("1. 이미지 선택");
     pickFile = await ImagePicker().getImage(source: ImageSource.gallery);
     if (pickFile != null) {
       isLoading = true;
@@ -1268,16 +1271,16 @@ class _LastChatState extends State<ChatScreen> {
     // if (imageFile != null) {
     //   isLoading = true;
     // }
-    print("2. 이미지 선택 완료");
+    // print("2. 이미지 선택 완료");
 
     uploadImageFile();
-    print("0. 이미지 업로드 완료");
+    // print("0. 이미지 업로드 완료");
   }
 
   Future uploadImageFile() async {
-    print("3. 이미지 업로드 호출");
+    // print("3. 이미지 업로드 호출");
     String fileName = DateTime.now().millisecondsSinceEpoch.toString();
-    print('4. 이미지 파일명 : $fileName');
+    // print('4. 이미지 파일명 : $fileName');
     firebase_storage.Reference storageReference = firebase_storage
         .FirebaseStorage.instance
         .ref()

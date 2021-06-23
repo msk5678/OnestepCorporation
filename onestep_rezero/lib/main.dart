@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:onestep_rezero/admob/googleAdmob.dart';
 import 'package:onestep_rezero/login/model/user.dart';
 import 'package:onestep_rezero/login/pages/authWaitPage.dart';
 import 'package:onestep_rezero/login/pages/loginJoinPage.dart';
@@ -20,8 +21,10 @@ final auth = FBA.FirebaseAuth.instance;
 final googleSignIn = GoogleSignIn();
 final ref = FirebaseFirestore.instance.collection('user');
 final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+
 Future<QuerySnapshot> categoryList;
 
+// BannerAd mainBanner;
 User currentUserModel;
 
 void main() async {
@@ -81,9 +84,7 @@ class _MainPageState extends State<MainPage> {
 
   @override
   void dispose() {
-    print("종료 디스포즈..");
     super.dispose();
-    print("종료 디스포즈..2");
   }
   //   void initDynamicLinks() async {
   //   // 앱이 active이거나 background 상태일때 들어온 링크를 알 수 있는 링크 콜백에 대한 리스너 onLink()
@@ -343,6 +344,7 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
+    double deviceWidth = MediaQuery.of(context).size.width;
     if (triedSilentLogin == false) {
       silentLogin(context);
     }
@@ -358,11 +360,37 @@ class _MainPageState extends State<MainPage> {
         child: WillPopScope(
             child: Scaffold(
               // key: _globalKey,
-              body: IndexedStack(
-                index: _currentIndex,
+              body: Stack(
                 children: [
-                  for (final tabItem in BottomNavigationItem.items)
-                    tabItem.page,
+                  IndexedStack(
+                    index: _currentIndex,
+                    children: [
+                      for (final tabItem in BottomNavigationItem.items)
+                        tabItem.page,
+                    ],
+                  ),
+                  //     1 == 0
+                  //         ?
+                  // Positioned(
+                  //             bottom: 0,
+                  //             child: Container(
+                  //               width: 20,
+                  //               height: 20,
+                  //               color: Colors.red,
+                  //             ),
+                  //           )
+                  //         :
+                  if (_currentIndex == 1)
+                    Positioned(
+                      child:
+                          GoogleAdmob().getProductMainBottomBanner(deviceWidth),
+                      bottom: 0,
+                    ),
+                  if (_currentIndex == 3)
+                    Positioned(
+                      child: GoogleAdmob().getChatMainBottomBanner(deviceWidth),
+                      bottom: 0,
+                    ),
                 ],
               ),
               bottomNavigationBar: BottomNavigationBar(
