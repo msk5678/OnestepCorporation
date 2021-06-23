@@ -14,6 +14,7 @@ import 'package:onestep_rezero/timeUtil.dart';
 
 import 'appmain/bottomNavigationItem.dart';
 import 'appmain/routeGenterator.dart';
+import 'login/pages/loginAuthPage.dart';
 
 final auth = FBA.FirebaseAuth.instance;
 final googleSignIn = GoogleSignIn();
@@ -203,9 +204,13 @@ class _MainPageState extends State<MainPage> {
     }
 
     if (userRecord.data()['auth'] == 1) {
+      GoogleSignInAccount user = googleSignIn.currentUser;
       // 증명서 대기 페이지
+      // Navigator.of(context)
+      //     .push(MaterialPageRoute(builder: (context) => AuthWaitPage()));
+      // 이메일 인증 페이지
       Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => AuthWaitPage()));
+          .push(MaterialPageRoute(builder: (context) => LoginAuthPage(user)));
       return null;
     }
 

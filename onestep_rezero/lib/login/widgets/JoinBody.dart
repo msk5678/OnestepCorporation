@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/login/pages/choiceAuthWayPage.dart';
 import 'package:onestep_rezero/login/pages/loginAuthPage.dart';
 import 'package:onestep_rezero/login/providers/providers.dart';
@@ -201,7 +202,9 @@ class JoinBody extends ConsumerWidget {
                 child: Container(
                   width: 200,
                   child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(primary: Colors.white70),
+                    style: ElevatedButton.styleFrom(
+                      primary: OnestepColors().mainColor,
+                    ),
                     onPressed: _isEmailCheck == true && _isNickNameCheck == true
                         ? () async {
                             if (_isEmailCheck == true &&
@@ -210,8 +213,9 @@ class JoinBody extends ConsumerWidget {
                                   .collection('user')
                                   .doc(user.id)
                                   .set({
+                                    // 원래 0 이었는데 일단 1로 변경
                                     "auth":
-                                        0, // 대학인증여부 0 : 안됨, 1 : 인증대기중, 2 : 인증 완료
+                                        1, // 대학인증여부 0 : 안됨, 1 : 인증대기중, 2 : 인증 완료
                                     "authTime": 0, // 학교 인증시간
                                     "uid": user.id, // uid
                                     "nickName": _nicknameController.text, // 닉네임
@@ -257,7 +261,7 @@ class JoinBody extends ConsumerWidget {
                         : null,
                     child: Text(
                       "가입완료",
-                      style: TextStyle(color: Colors.black),
+                      style: TextStyle(color: Colors.white),
                     ),
                   ),
                 ),

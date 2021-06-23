@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:onestep_rezero/chat/widget/appColor.dart';
 
 import '../../../../main.dart';
 
@@ -30,7 +31,8 @@ void report() {
                     .reference()
                     .child('report')
                     .child('reportedUid')
-                    .child('처음신고 시간')
+                    // 처음신고 시간
+                    .child(DateTime.now().millisecondsSinceEpoch.toString())
                     .child('deal')
                     .child('postUid')
                     .child('value')
@@ -54,7 +56,8 @@ void report() {
                         .reference()
                         .child('report')
                         .child('reportedUid')
-                        .child('처음신고 시간2')
+                        // 처음신고 시간 2
+                        .child(DateTime.now().millisecondsSinceEpoch.toString())
                         .child('deal')
                         .child('postUid')
                         .child('value')
@@ -101,6 +104,7 @@ void _showDialog(BuildContext context, int index) {
           ElevatedButton(
             child: Text("확인"),
             onPressed: () {
+              index == 1 ? null : report();
               Navigator.of(context).popUntil((route) => route.isFirst);
             },
           ),
@@ -183,6 +187,8 @@ class DealFirstCase extends StatelessWidget {
                 ),
                 Center(
                   child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          primary: OnestepColors().mainColor),
                       onPressed: () async {
                         // report();
                         Map<dynamic, dynamic> values;
@@ -220,7 +226,6 @@ class DealFirstCase extends StatelessWidget {
                                 });
                         // 처음 신고한다
                         if (flag == false) {
-                          report();
                           _showDialog(context, 2);
                         }
                       },

@@ -166,7 +166,7 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                   Padding(
                     padding: EdgeInsets.fromLTRB(
                         (MediaQuery.of(context).size.width / 15),
-                        (MediaQuery.of(context).size.height / 40),
+                        (MediaQuery.of(context).size.height / 20),
                         0,
                         0),
                     child: Column(
@@ -353,8 +353,8 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                             );
 
                                         _controller.forward();
-                                        // sendEmailAuth(checkPassword,
-                                        //     _emailController.text);
+                                        sendEmailAuth(checkPassword,
+                                            _emailController.text);
                                       }
                                     : null,
                                 child: Text("전송"),
@@ -470,8 +470,8 @@ class _LoginAuthPageState extends State<LoginAuthPage>
 
                                       _controller.forward();
 
-                                      // sendEmailAuth(
-                                      //     checkPassword, _emailController.text);
+                                      sendEmailAuth(
+                                          checkPassword, _emailController.text);
                                     }
                                   : null,
                               child: Text("재전송"),
@@ -481,6 +481,8 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                         Container(
                           width: MediaQuery.of(context).size.width / 1.2,
                           child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                primary: OnestepColors().mainColor),
                             // onPressed: () async {
                             //   FirebaseFirestore.instance
                             //       .collection('user')
@@ -509,8 +511,9 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                             //       .get();
 
                             //   Navigator.of(context).push(MaterialPageRoute(
-                            //       builder: (context) => HomeMain()));
+                            //       builder: (context) => MainPage()));
                             // },
+
                             onPressed: _isEmailCheck.authFlag.isShowBtn == true
                                 ? () async {
                                     print("checkPassword ${checkPassword}");
@@ -555,7 +558,7 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                       Navigator.of(context).push(
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  HomeMain()));
+                                                  MainPage()));
                                     } else if (timeOver == true) {
                                       print("time over 실패");
                                       _isEmailCheck

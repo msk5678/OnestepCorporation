@@ -11,8 +11,8 @@ sendEmailAuth([
   // schollAuthFlag = 2 이면 증명서
   print("checkPassword = ${checkPassword}");
   // 회사 공용 email 들어가야하고
-  String smtpUserName = 'leedool3003@gmail.com';
-  String smtpPassword = 'alstjsdl421!';
+  String smtpUserName = 'legendstarthelp@gmail.com';
+  String smtpPassword = 'rmflsqlf123';
 
   final _smtpServer = gmail(smtpUserName, smtpPassword);
 

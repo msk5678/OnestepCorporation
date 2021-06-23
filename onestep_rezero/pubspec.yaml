@@ -96,9 +96,6 @@ dependencies:
   
   #device_apps
   device_apps: ^2.1.1
-  
-  #intl
-  intl: ^0.17.0
 
   #custom_radio_grouped_button
   custom_radio_grouped_button: ^1.0.6+1
