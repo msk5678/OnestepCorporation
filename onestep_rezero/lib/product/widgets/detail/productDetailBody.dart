@@ -5,16 +5,21 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:onestep_rezero/animation/favoriteAnimation.dart';
+import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/favorite/utils/favoriteFirebaseApi.dart';
 import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/chat/navigator/chatNavigationManager.dart';
+import 'package:onestep_rezero/onestepCustomDialog.dart';
 import 'package:onestep_rezero/product/models/product.dart';
-import 'package:onestep_rezero/product/pages/productBump.dart';
-import 'package:onestep_rezero/product/pages/productEdit.dart';
+import 'package:onestep_rezero/product/pages/product/productBump.dart';
+import 'package:onestep_rezero/product/pages/product/productDetail.dart';
+import 'package:onestep_rezero/product/pages/product/productEdit.dart';
 import 'package:onestep_rezero/product/widgets/detail/imagesFullViewer.dart';
+import 'package:onestep_rezero/product/widgets/main/productMainBody.dart';
 import 'package:onestep_rezero/product/widgets/public/productItem.dart';
 import 'package:onestep_rezero/timeUtil.dart';
-import 'package:wechat_assets_picker/wechat_assets_picker.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:rxdart/rxdart.dart';
 
 class ProductDetailBody extends StatefulWidget {
   final Product product;
@@ -26,18 +31,22 @@ class ProductDetailBody extends StatefulWidget {
 
 class _ProductDetailBodyState extends State<ProductDetailBody>
     with SingleTickerProviderStateMixin {
-  double locationAlpha;
+  // Appbar
+  double _locationAlpha;
   Animation _colorTween;
-
-  bool _isRunning;
-  StreamController<int> _imageStreamController =
-      StreamController<int>.broadcast();
-
-  final ScrollController _customScrollViewScrollController = ScrollController();
-  final StreamController<int> _customScrollViewStreamController =
-      StreamController<int>();
   AnimationController _animationController;
 
+  // BottomModal
+  int modalState;
+
+  // Favorite
+  bool _isRunning;
+
+  final ScrollController _customScrollViewScrollController = ScrollController();
+
+  final StreamController _imageStreamController = BehaviorSubject();
+  final StreamController<int> _customScrollViewStreamController =
+      StreamController<int>();
   final StreamController<bool> _favoriteStreamController =
       StreamController<bool>();
 
@@ -47,20 +56,29 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
   @override
   void initState() {
     _imageStreamInit();
-    locationAlpha = 0;
-    _animationController = AnimationController(vsync: this);
-    _colorTween = ColorTween(begin: Colors.white, end: Colors.black)
-        .animate(_animationController);
+    _appbarAnimationInit();
+    _componentInit();
 
     _customScrollViewScrollController.addListener(scrollListener);
+
+    _isRunning = false;
+    super.initState();
+  }
+
+  void _componentInit() {
     _favoriteTextController = new TextEditingController(
         text: widget.product.favoriteUserList == null
             ? "0"
             : widget.product.favoriteUserList.length.toString());
     _priceEditingController =
         new TextEditingController(text: widget.product.price + "원");
-    _isRunning = false;
-    super.initState();
+  }
+
+  void _appbarAnimationInit() {
+    _locationAlpha = 0;
+    _animationController = AnimationController(vsync: this);
+    _colorTween = ColorTween(begin: Colors.white, end: Colors.black)
+        .animate(_animationController);
   }
 
   void _imageStreamInit() {
@@ -75,15 +93,15 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
 
   void scrollListener() {
     if (_customScrollViewScrollController.offset > 255) {
-      locationAlpha = 255;
+      _locationAlpha = 255;
       _customScrollViewStreamController.sink.add(255);
     } else {
-      locationAlpha = _customScrollViewScrollController.offset;
+      _locationAlpha = _customScrollViewScrollController.offset;
       _customScrollViewStreamController.sink
           .add(_customScrollViewScrollController.offset.toInt());
     }
 
-    _animationController.value = locationAlpha / 255;
+    _animationController.value = _locationAlpha / 255;
   }
 
   @override
@@ -108,30 +126,8 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
       case '신고하기':
         break;
       case '수정하기':
-        Navigator.of(context)
-            .push(
-          MaterialPageRoute(
-            builder: (context) => ProductEdit(product: widget.product),
-          ),
-        )
-            .then((value) {
-          if (value == "OK") {
-            setState(() {});
-          }
-        });
         break;
       case '끌올하기':
-        if (DateTime.now().difference(widget.product.bumpTime).inHours >= 1) {
-          Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => ProductBump(product: widget.product),
-          ));
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            duration: Duration(seconds: 2),
-            content: Text("물품을 등록하고 1시간 뒤에 끌올할 수 있어요."),
-          ));
-        }
-
         break;
       case '숨김':
         // 확인 취소 다이얼로그 띄우기
@@ -143,8 +139,10 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
       case '삭제':
         // 확인 취소 다이얼로그 띄우기
         FirebaseFirestore.instance
+            .collection("university")
+            .doc(currentUserModel.university)
             .collection("product")
-            .doc(googleSignIn.currentUser.id)
+            .doc(widget.product.firestoreid)
             .update({'deleted': true});
         break;
     }
@@ -158,13 +156,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
         color: Colors.white,
         onSelected: handleClick,
         itemBuilder: (BuildContext context) {
-          var menuItem = <String>[];
-
-          if (googleSignIn.currentUser.id == widget.product.uid)
-            menuItem.addAll({'끌올하기', '수정하기', '숨김', '삭제'});
-          else {
-            menuItem.addAll({'새로고침', '신고하기'});
-          }
+          var menuItem = <String>['새로고침', '신고하기'];
 
           return menuItem.map((String choice) {
             return PopupMenuItem<String>(
@@ -198,7 +190,8 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
             elevation: 0,
             actions: [
               IconButton(onPressed: () {}, icon: _makeIcon(Icons.share)),
-              popupMenuButton(),
+              if (googleSignIn.currentUser.id != widget.product.uid)
+                popupMenuButton(),
             ],
           );
         },
@@ -209,8 +202,9 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
   Widget _productState() {
     return StreamBuilder(
       stream: _imageStreamController.stream,
-      initialData: 0,
       builder: (context, snapshot) {
+        if (!snapshot.hasData) return Container();
+        modalState = snapshot.data;
         if (snapshot.data >= 1) {
           return IgnorePointer(
             ignoring: true,
@@ -245,9 +239,9 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
 
   Widget _makeSliderImage() {
     Size _size = MediaQuery.of(context).size;
-
+    double _height = _size.width * 1.1;
     return Container(
-      height: _size.width * 0.8,
+      height: _height,
       child: Stack(
         children: [
           Swiper(
@@ -264,7 +258,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
             pagination: SwiperPagination(
               alignment: Alignment.bottomCenter,
               builder: DotSwiperPaginationBuilder(
-                activeColor: Colors.pink,
+                activeColor: OnestepColors().mainColor,
                 color: Colors.grey,
               ),
             ),
@@ -584,6 +578,29 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
         ]);
   }
 
+  void stateChange(String type) {
+    bool trading = 'trading' == type;
+    bool completed = 'completed' == type;
+    int value = 0;
+    if (trading) value = 1;
+    if (completed) value = 2;
+
+    FirebaseFirestore.instance
+        .collection("university")
+        .doc(currentUserModel.university)
+        .collection("product")
+        .doc(widget.product.firestoreid)
+        .update({"trading": trading, "completed": completed}).whenComplete(() {
+      _imageStreamController.sink.add(value);
+
+      context
+          .read(productMainService)
+          .updateState(widget.product.firestoreid, trading, completed);
+
+      Navigator.pop(context);
+    }).onError((error, stackTrace) => null);
+  }
+
   Future<dynamic> _productStateChangeModal() {
     return showModalBottomSheet(
       context: context,
@@ -591,59 +608,31 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            if (widget.product.trading || widget.product.completed)
+            if (modalState != 0)
               ListTile(
                 title: Center(
                   child: Text('판매중'),
                 ),
                 onTap: () {
-                  FirebaseFirestore.instance
-                      .collection("university")
-                      .doc(currentUserModel.university)
-                      .collection("product")
-                      .doc(widget.product.firestoreid)
-                      .update({
-                    "trading": false,
-                    "completed": false
-                  }).whenComplete(() {
-                    _imageStreamController.sink.add(0);
-
-                    Navigator.pop(context);
-                  }).onError((error, stackTrace) => null);
+                  stateChange('sale');
                 },
               ),
-            if (!widget.product.trading)
+            if (modalState != 1)
               ListTile(
                 title: Center(
                   child: Text('예약됨'),
                 ),
                 onTap: () {
-                  FirebaseFirestore.instance
-                      .collection("university")
-                      .doc(currentUserModel.university)
-                      .collection("product")
-                      .doc(widget.product.firestoreid)
-                      .update({"trading": true}).whenComplete(() {
-                    _imageStreamController.sink.add(1);
-                    Navigator.pop(context);
-                  });
+                  stateChange('trading');
                 },
               ),
-            if (!widget.product.completed)
+            if (modalState != 2)
               ListTile(
                 title: Center(
                   child: Text('판매완료'),
                 ),
                 onTap: () {
-                  FirebaseFirestore.instance
-                      .collection("university")
-                      .doc(currentUserModel.university)
-                      .collection("product")
-                      .doc(widget.product.firestoreid)
-                      .update({"completed": true}).whenComplete(() {
-                    _imageStreamController.sink.add(2);
-                    Navigator.pop(context);
-                  });
+                  stateChange('completed');
                 },
               ),
             Divider(color: Colors.black.withOpacity(0.3)),
@@ -706,10 +695,12 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
         width: 150,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            primary: Colors.pink,
+            primary: OnestepColors().mainColor,
             textStyle: TextStyle(color: Colors.white),
+            elevation: 0,
           ),
           onPressed: () {
+            print("장터채팅누름");
             print(googleSignIn.currentUser.id);
             print(widget.product.uid);
             print(widget.product.firestoreid);
@@ -726,7 +717,10 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
             //     widget.product.uid,
             //     widget.product.firestoreid); aaaaa
           },
-          child: Text('채팅'),
+          child: Text(
+            '채팅',
+            style: TextStyle(),
+          ),
         ),
       ),
     );
@@ -749,7 +743,22 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
               Padding(
                 padding: EdgeInsets.only(right: 20),
                 child: GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    if (DateTime.now()
+                            .difference(widget.product.bumpTime)
+                            .inHours >=
+                        1) {
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) =>
+                            ProductBump(product: widget.product),
+                      ));
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        duration: Duration(seconds: 2),
+                        content: Text("물품을 등록하고 1시간 뒤에 끌올할 수 있어요."),
+                      ));
+                    }
+                  },
                   child: Row(
                     children: [Icon(Icons.upload_outlined), Text("끌올하기")],
                   ),
@@ -759,12 +768,10 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
                 padding: EdgeInsets.only(right: 20),
                 child: GestureDetector(
                   onTap: () {},
-                  child: Row(
-                    children: [
-                      Icon(Icons.favorite_border_outlined),
-                      Text("찜한사람")
-                    ],
-                  ),
+                  child: Row(children: [
+                    Icon(Icons.favorite_border_outlined),
+                    Text("찜한사람")
+                  ]),
                 ),
               ),
               Padding(
@@ -773,28 +780,62 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
                   onTap: () {
                     _productStateChangeModal();
                   },
-                  child: Row(
-                    children: [
-                      Icon(Icons.check_circle_outline_rounded),
-                      Text("상태변경")
-                    ],
-                  ),
+                  child: Row(children: [
+                    Icon(Icons.check_circle_outline_rounded),
+                    Text("상태변경")
+                  ]),
                 ),
               ),
               Padding(
                 padding: EdgeInsets.only(right: 20),
                 child: GestureDetector(
-                  onTap: () {},
-                  child: Row(
-                    children: [Icon(Icons.edit_outlined), Text("상품수정")],
-                  ),
+                  onTap: () {
+                    Navigator.of(context)
+                        .push(
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            ProductEdit(product: widget.product),
+                      ),
+                    )
+                        .then((value) {
+                      if (value == "OK") {
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ProductDetail(
+                                    docId: widget.product.firestoreid)));
+                      }
+                    });
+                  },
+                  child:
+                      Row(children: [Icon(Icons.edit_outlined), Text("상품수정")]),
                 ),
               ),
               GestureDetector(
-                onTap: () {},
-                child: Row(
-                  children: [Icon(Icons.delete_outline), Text("상품삭제")],
-                ),
+                onTap: () {
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return OnestepCustomDialog(
+                          title: '상품을 삭제하시겠습니까?',
+                          description: '삭제한 상품은 복구할 수 없습니다.',
+                          cancleButtonText: '취소',
+                          confirmButtonText: '삭제',
+                          confirmButtonOnPress: () {
+                            FirebaseFirestore.instance
+                                .collection("university")
+                                .doc(currentUserModel.university)
+                                .collection("product")
+                                .doc(widget.product.firestoreid)
+                                .update({'deleted': true});
+
+                            Navigator.pop(context);
+                          },
+                        );
+                      });
+                },
+                child:
+                    Row(children: [Icon(Icons.delete_outline), Text("상품삭제")]),
               ),
             ],
           ),

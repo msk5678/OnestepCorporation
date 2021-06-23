@@ -27,13 +27,13 @@ class ProductChatUser {
     user1 = snapshot['chatUsers'].keys.toList()[0];
     user2 = snapshot['chatUsers'].keys.toList()[1];
 
-    user1Uid = snapshot['chatUsers'][user1]['uid'];
+    user1Uid = snapshot['chatUsers'][user1]['friendUid'];
     // user1NickName = snapshot["chatUsers"]['user1']['user1NickName'];
     // user1ImageUrl = snapshot["chatUsers"]['user1']['user1ImageUrl'];
     user1ConnectTime = snapshot['chatUsers'][user1]['connectTime'];
     user1Hide = snapshot['chatUsers'][user1]['hide'];
 
-    user2Uid = snapshot['chatUsers'][user2]['uid'];
+    user2Uid = snapshot['chatUsers'][user2]['friendUid'];
     // user2NickName = snapshot["chatUsers"]['user2']['uid'];
     // user2ImageUrl = snapshot["chatUsers"]['user2']['uid'];
     user2ConnectTime = snapshot['chatUsers'][user2]['connectTime'];

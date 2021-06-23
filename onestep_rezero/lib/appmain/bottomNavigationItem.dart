@@ -8,8 +8,9 @@ import 'package:onestep_rezero/login/pages/loginJoinPage.dart';
 import 'package:onestep_rezero/myinfo/pages/myinfoMain.dart';
 // import 'package:onestep_rezero/notification/page/chatMain.dart';
 import 'package:onestep_rezero/chat/page/chatMain.dart';
+import 'package:onestep_rezero/product/pages/product/productAdd.dart';
+import 'package:onestep_rezero/product/pages/product/productMain.dart';
 // import 'package:onestep_rezero/notification/realtime/realtimeProductChatController.dart' aaaaa;
-import 'package:onestep_rezero/product/pages/productMain.dart';
 
 class BottomNavigationItem {
   final Widget page;
@@ -24,14 +25,14 @@ class BottomNavigationItem {
 
   static List<BottomNavigationItem> get items => [
         BottomNavigationItem(
-          page: HomeMain(),
+          page: ProductMain(),
           icon: Icon(Icons.home),
           title: "홈",
         ),
         BottomNavigationItem(
-          page: ProductMain(),
-          icon: Icon(Icons.shopping_cart),
-          title: "장터",
+          page: ProductAdd(),
+          icon: Icon(Icons.add_rounded),
+          title: "물품 등록",
         ),
         BottomNavigationItem(
           page: BoardMain(),
@@ -39,7 +40,7 @@ class BottomNavigationItem {
           title: "게시판",
         ),
         BottomNavigationItem(
-          page: ChatMainPage(),
+          page: ChatMain(),
           icon: ProductChatController().getTotalChatCountInBottomBar(),
           //Icon(Icons.chat_outlined),
           title: "알림",

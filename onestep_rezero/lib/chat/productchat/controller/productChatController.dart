@@ -7,6 +7,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/product/models/product.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductChatController {
   //Product Chat Count
@@ -22,9 +23,9 @@ class ProductChatController {
 
   //채팅방 생성 시 상대방 정보 내부 저장 / 채팅방 정보 fb 저장
   Future<void> createProductChatToRealtimeDatabase(
-      String friendUid, String postId, String chatId, Product product) async {
+      String friendUid, String postId, String chatId) async {
     String myUid = googleSignIn.currentUser.id;
-    print("proChatController-createProductChatToRealtimeDatabase 1. 채팅방 생성");
+    // print("proChatController-createProductChatToRealtimeDatabase 1. 채팅방 생성");
     try {
       //1.
 
@@ -35,9 +36,9 @@ class ProductChatController {
           .get()
           .then((uservalue) {
         //읽어온 상대방 정보 내부db 저장
-        print("FriendNickname test");
-        print("FriendNickname : ${uservalue["nickName"].toString()}");
-        print("FriendNickImage : ${uservalue["photoUrl"].toString()}");
+        // print("FriendNickname test");
+        // print("FriendNickname : ${uservalue["nickName"].toString()}");
+        // print("FriendNickImage : ${uservalue["photoUrl"].toString()}");
       }).whenComplete(
         () {
           var nowTime = DateTime.now().millisecondsSinceEpoch.toString();
@@ -52,22 +53,22 @@ class ProductChatController {
             "recentText": "채팅방이 생성되었습니다.",
             "chatUsers": {
               myUid: {
-                "uid": myUid,
+                "friendUid": friendUid,
                 "connectTime": nowTime,
-                "hide": false,
+                "hide": true,
               },
               friendUid: {
-                "uid": friendUid,
+                "friendUid": myUid,
                 "connectTime": nowTime,
-                "hide": false,
+                "hide": true,
               },
             },
           }).whenComplete(() {
-            print(
-                "proChatController-createProductChatToRealtimeDatabase 2. 채팅방 생성 완료, 초기 메세지 생성");
+            // print("proChatController-createProductChatToRealtimeDatabase 2. 채팅방 생성 완료, 초기 메세지 생성");
 
-            onSendToProductMessage(chatId, friendUid, product, 3);
-            onSendToProductAddMessage(chatId, friendUid);
+            // onSendToProductMessage(chatId, friendUid, product, 3);
+            // onSendToProductAddMessage(chatId, friendUid);
+
             // productChatReference
             //     .child(chatId)
             //     //.child("roominfo")
@@ -92,7 +93,55 @@ class ProductChatController {
     return FirebaseFirestore.instance.collection('user').doc(proUserId).get();
   }
 
-  FutureBuilder getUserImage(String proUserId) {
+  _setChatUserimageUrl(String chatId, String imageUrl) async {
+    // print("1. 유저 이미지 내부 저장");
+    SharedPreferences prefsChatUserImageUrls =
+        await SharedPreferences.getInstance();
+    await prefsChatUserImageUrls.setString(chatId, imageUrl);
+  }
+
+  getChatUserimageUrl(String chatId) async {
+    String imageUrl;
+    SharedPreferences prefsChatUserPhotoUrls =
+        await SharedPreferences.getInstance();
+    imageUrl = prefsChatUserPhotoUrls.getString(chatId);
+    // print("2. 내부 db 값 : GetChatUserPhotoUrl : $imageUrl");
+
+    return imageUrl;
+  }
+
+  FutureBuilder getUserImagetoChatroom(String chatId) {
+    return FutureBuilder(
+        future: getChatUserimageUrl(chatId),
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+              return CircularProgressIndicator();
+            default:
+              if (snapshot.hasData == false) {
+                // print("YES ${snapshot.data.toString()}");
+                return CircularProgressIndicator();
+              } else {
+                // print("No ${snapshot.data.toString()}");
+                return Material(
+                  child: CachedNetworkImage(
+                    imageUrl: snapshot.data,
+                    // productMessage.content.imageUrl,
+                    fit: BoxFit.cover,
+                    height: 40,
+                    width: 40,
+                  ),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(18.0),
+                  ),
+                  clipBehavior: Clip.hardEdge,
+                );
+              }
+          }
+        });
+  }
+
+  FutureBuilder getUserImage(String chatId, String proUserId) {
     return FutureBuilder(
       future: getUserId(proUserId),
       builder: (context, snapshot) {
@@ -122,22 +171,23 @@ class ProductChatController {
                 ),
               );
             } else {
+              _setChatUserimageUrl(chatId, snapshot.data['imageUrl']);
+              // print("1. 가져온 url  : ${snapshot.data['imageUrl']}");
               return Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Expanded(
+                  Material(
                     child: CachedNetworkImage(
                       imageUrl: snapshot.data['imageUrl'],
+                      // productMessage.content.imageUrl,
                       fit: BoxFit.cover,
-                      height: 50,
-                      width: 50,
+                      height: 40,
+                      width: 40,
                     ),
-                    // child: ExtendedImage.network(
-                    //   snapshot.data['imageUrl'],
-                    //   fit: BoxFit.cover,
-                    //   height: 50,
-                    //   width: 50,
-                    //   cache: true,
-                    // ),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(18.0),
+                    ),
+                    clipBehavior: Clip.hardEdge,
                   ),
                 ],
               );
@@ -182,7 +232,7 @@ class ProductChatController {
             } else {
               return AutoSizeText(
                 snapshot.data.data()['nickName'],
-                style: TextStyle(fontSize: fontSize), //15
+                style: TextStyle(fontSize: fontSize, color: Colors.black), //15
                 minFontSize: 10,
                 stepGranularity: 10,
                 maxLines: 1,
@@ -307,8 +357,7 @@ class ProductChatController {
 
   bool onSendToProductMessage(
       String chatId, String friendId, var contentMsg, int type) {
-    print(
-        "proChatController-onSendToProductMessage 1. 받은 값 확인, 문제없으면 채팅 생성 $chatId $friendId ${contentMsg.runtimeType} $type ");
+    // print("proChatController-onSendToProductMessage 1. 받은 값 확인, 문제없으면 채팅 생성 $chatId $friendId ${contentMsg.runtimeType} $type ");
     //type = 0 its text msg
     //type = 1 its imageFile
     //type = 2 its sticker image
@@ -319,8 +368,7 @@ class ProductChatController {
       return false;
     } else if (contentMsg != null) {
       if (contentMsg.runtimeType == Product) {
-        print(
-            "proChatController-onSendToProductMessage 2-1. contentMsg type이 product이면 map형식 생성");
+        // print("proChatController-onSendToProductMessage 2-1. contentMsg type이 product이면 map형식 생성");
         // 프로덕트 타입이면 contentMsg 변경
         Map<String, String> productContent = {
           'title': '${contentMsg.title}',
@@ -329,36 +377,33 @@ class ProductChatController {
         };
 
         content = productContent;
-        print("maptest $content");
+        // print("maptest $content");
       } else {
-        print(
-            "proChatController-onSendToProductMessage 2-2. contentMsg type이 string이면 그대로 생성");
+        // print("proChatController-onSendToProductMessage 2-2. contentMsg type이 string이면 그대로 생성");
         content = contentMsg;
       }
-      print("maptest1 컨텐츠저장완");
+      // print("maptest1 컨텐츠저장완");
       String messageId = DateTime.now().millisecondsSinceEpoch.toString();
-      print("proChatController-onSendToProductMessage 2-3. 상대방 hide true면 변경함");
-      reConnectProductChat(
-          chatId, friendId, messageId); //상대방 hide = true 면 변경하고 수신시간도 바꿈
+      // print("proChatController-onSendToProductMessage 2-3. 상대방 hide true면 변경함");
 
-      print("maptest1-1 $chatId $messageId");
+      // print("maptest1-1 $chatId $messageId");
 //RealTime
       DatabaseReference productChatMessageReference =
           productChatReference.child(chatId).child("message").child(messageId);
-      print("maptest1-2");
+      // print("maptest1-2");
       DatabaseReference productChatListReference =
           productChatReference.child(chatId);
-      print("maptest2");
+      // print("maptest2");
       productChatMessageReference.set({
         "idFrom": googleSignIn.currentUser.id,
         "idTo": {friendId: false},
         "sendTime": messageId,
         "content": content,
         "type": type,
-        "isRead": false,
+        // "isRead": false,
         //"isRead": false,
       }).whenComplete(() {
-        print("proChatController-onSendToProductMessage 3. 메세지 저장 완료");
+        // print("proChatController-onSendToProductMessage 3. 메세지 저장 완료");
         switch (type) {
           case 1:
             content = "사진을 보냈습니다.";
@@ -368,8 +413,7 @@ class ProductChatController {
             break;
         }
         if (contentMsg.runtimeType == String) {
-          print(
-              "proChatController-onSendToProductMessage 4. 채팅방 시간, 최근 정보 업데이트");
+          // print("proChatController-onSendToProductMessage 4. 채팅방 시간, 최근 정보 업데이트");
 
           productChatListReference.update({
             "recentText": content,
@@ -419,32 +463,50 @@ class ProductChatController {
     // //if (data['idTo'] == googleSignIn.currentUser.id.toString() && data['isRead'] == false) {}
   }
 
-  void reConnectProductChat(String chatId, String friendId, String sendTime) {
-    DatabaseReference productChatFriendRefernce =
+  void reConnectProductChat(
+      String chatId, String friendId, String reConnectTime) {
+    DatabaseReference productChatFriendUidRefernce =
         productChatReference.child(chatId).child("chatUsers").child(friendId);
     Map<String, dynamic> friendConnectState;
-    productChatFriendRefernce.once().then((DataSnapshot snapshot) {
+    productChatFriendUidRefernce.once().then((DataSnapshot snapshot) {
       if (snapshot.value['hide'] == true) {
-        print("proChatContro ${snapshot.value['hide']}");
-        print("proChatContro ${snapshot.value['uid']}");
+        // print("proChatContro ${snapshot.value['hide']}");
+        // print("proChatContro ${snapshot.value['friendUid']}");
         friendConnectState = {
           "hide": false,
-          "connectTime": sendTime,
+          "connectTime": reConnectTime,
         };
-        productChatFriendRefernce.update(friendConnectState);
+        productChatFriendUidRefernce.update(friendConnectState);
+      }
+    });
+    DatabaseReference productChatMyUidRefernce = productChatReference
+        .child(chatId)
+        .child("chatUsers")
+        .child(googleSignIn.currentUser.id);
+    Map<String, dynamic> myConnectState;
+    productChatMyUidRefernce.once().then((DataSnapshot snapshot) {
+      if (snapshot.value['hide'] == true) {
+        // print("proChatContro ${snapshot.value['hide']}");
+        // print("proChatContro ${snapshot.value['friendUid']}");
+        myConnectState = {
+          "hide": false,
+          "connectTime": reConnectTime,
+        };
+        productChatMyUidRefernce.update(myConnectState);
       }
     });
   }
 
   void exitProductChat(String chatId) {
-    print("채팅방 나가기. hide = true, currentTime = 0");
+    // print("채팅방 나가기. hide = true, currentTime = 나간시간");
+    String exitTime = DateTime.now().millisecondsSinceEpoch.toString();
     productChatReference
         .child(chatId)
         .child("chatUsers")
         .child(googleSignIn.currentUser.id)
         .update({
       "hide": true,
-      "connectTime": 0,
+      "connectTime": exitTime,
       //"111357489031227818227": true,
     });
   }
@@ -463,9 +525,13 @@ class ProductChatController {
           //   return Text("d");
           // } else
           if (snapshot.hasData) {
-            print(snapshot.data.toString());
+            // print(snapshot.data.toString());
           } else
-            return Text("error");
+            return Icon(
+              Icons.notifications_none,
+              size: 25,
+              // color: Colors.black,
+            );
 
           if (snapshot.data.data()['productChatCount'] == 0 &&
               snapshot.data.data()['boardChatCount'] == 0) {
@@ -474,7 +540,7 @@ class ProductChatController {
                 new Icon(
                   Icons.notifications_none,
                   size: 25,
-                  color: Colors.black,
+                  // color: Colors.black,
                 ),
                 Positioned(
                   top: 1,
@@ -501,7 +567,7 @@ class ProductChatController {
                 new Icon(
                   Icons.notifications_none,
                   size: 25,
-                  color: Colors.black,
+                  // color: Colors.black,
                 ),
                 Positioned(
                   top: 1,
@@ -526,6 +592,62 @@ class ProductChatController {
             );
           }
           return Container();
+        });
+  }
+
+  //Chat Main ChatCount
+  StreamBuilder getProductChatCountText() {
+    return StreamBuilder<DocumentSnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('user')
+            .doc(googleSignIn.currentUser.id.toString())
+            .collection("chatCount")
+            .doc(googleSignIn.currentUser.id.toString())
+            .snapshots(),
+        builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          if (snapshot.hasData) {
+            // print(snapshot.data.toString());
+          } else
+            return Text("error");
+          if (snapshot.data.data()['productChatCount'] != null) {
+            //print("####누적 채팅 : ${snapshot.data.data()['nickname']}");
+          }
+          return Text(
+            snapshot.data.data()['productChatCount'].toString(),
+            style: TextStyle(fontSize: 8, color: Colors.white),
+          );
+        });
+  }
+
+  //Chat Main ChatCount
+  StreamBuilder getNewProductChatCountText() {
+    return StreamBuilder<DocumentSnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('user')
+            .doc(googleSignIn.currentUser.id.toString())
+            .collection("chatCount")
+            .doc(googleSignIn.currentUser.id.toString())
+            .snapshots(),
+        builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          if (snapshot.hasData) {
+            // print(snapshot.data.toString());
+          } else
+            return Text("error");
+          if (snapshot.data.data()['productChatCount'] != null) {
+            //print("####누적 채팅 : ${snapshot.data.data()['nickname']}");
+          }
+          return Text(
+            snapshot.data.data()['productChatCount'].toString() + '개',
+            style: TextStyle(
+              color: //
+                  // OnestepColors().mainColor,
+                  snapshot.data.data()['productChatCount'] == 0
+                      ? Colors.grey
+                      : Colors.green,
+              // Colors.green,
+              fontSize: 10,
+            ),
+          );
         });
   }
 }

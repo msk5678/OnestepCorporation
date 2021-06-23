@@ -4,6 +4,7 @@ import 'package:onestep_rezero/home/pages/homeNotificationPage.dart';
 import 'package:onestep_rezero/login/pages/loginJoinPage.dart';
 import 'package:onestep_rezero/report/reportPageTest.dart';
 import 'package:onestep_rezero/search/pages/searchAllMain.dart';
+import 'package:onestep_rezero/search/pages/searchMain.dart';
 
 import '../main.dart';
 import '../sendMail.dart';
@@ -31,7 +32,7 @@ class _HomeMainState extends State<HomeMain> {
                 onPressed: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                        builder: (context) => SearchAllMain(searchKey: 0)),
+                        builder: (context) => SearchMain(searchKey: 0)),
                   );
                 },
               ),

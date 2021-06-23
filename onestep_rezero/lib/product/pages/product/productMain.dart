@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/favorite/pages/favoriteMain.dart';
-import 'package:onestep_rezero/product/pages/productAdd.dart';
+import 'package:onestep_rezero/product/pages/category/categorySidebar.dart';
+import 'package:onestep_rezero/product/pages/product/productAdd.dart';
 
 import 'package:onestep_rezero/product/widgets/main/productMainBody.dart';
 import 'package:onestep_rezero/product/widgets/main/productMainHeader.dart';
-import 'package:onestep_rezero/search/pages/searchAllMain.dart';
+import 'package:onestep_rezero/search/pages/searchMain.dart';
 
 class ProductMain extends StatefulWidget {
   @override
@@ -68,12 +70,41 @@ class _ProductMainState extends State<ProductMain> {
 
   PreferredSizeWidget appBar() {
     return AppBar(
-      title: Text(
-        '장터',
-        style: TextStyle(color: Colors.black),
-      ),
+      // title: Text(
+      //   '장터',
+      //   style: TextStyle(color: Colors.black),
+      // ),
       elevation: 0,
       backgroundColor: Colors.white,
+      leading: IconButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            PageRouteBuilder(
+              pageBuilder: (
+                BuildContext context,
+                Animation<double> animation,
+                Animation<double> secondaryAnimation,
+              ) =>
+                  CategorySidebar(),
+              transitionsBuilder: (
+                BuildContext context,
+                Animation<double> animation,
+                Animation<double> secondaryAnimation,
+                Widget child,
+              ) =>
+                  SlideTransition(
+                position: Tween<Offset>(
+                  begin: const Offset(-1, 0),
+                  end: Offset.zero,
+                ).animate(animation),
+                child: child,
+              ),
+            ),
+          );
+        },
+        icon: Icon(Icons.menu_rounded, color: Colors.black),
+      ),
       actions: <Widget>[
         // new IconButton(
         //   icon: new Icon(
@@ -95,8 +126,7 @@ class _ProductMainState extends State<ProductMain> {
           ),
           onPressed: () => {
             Navigator.of(context).push(
-              MaterialPageRoute(
-                  builder: (context) => SearchAllMain(searchKey: 1)),
+              MaterialPageRoute(builder: (context) => SearchMain(searchKey: 1)),
             ),
           },
         ),
@@ -111,6 +141,15 @@ class _ProductMainState extends State<ProductMain> {
                 builder: (context) => FavoriteMain(),
               ),
             ),
+          },
+        ),
+        new IconButton(
+          icon: new Icon(
+            Icons.notifications_none_rounded,
+            color: Colors.black,
+          ),
+          onPressed: () => {
+            // 알림
           },
         ),
       ],
@@ -129,9 +168,26 @@ class _ProductMainState extends State<ProductMain> {
         return Visibility(
           visible: snapshot.data,
           child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(100),
+                  topRight: Radius.circular(100),
+                  bottomLeft: Radius.circular(100),
+                  bottomRight: Radius.circular(100)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.1),
+                  spreadRadius: 3,
+                  blurRadius: 7,
+                  offset: Offset(0, 3), // changes position of shadow
+                ),
+              ],
+            ),
             height: 40,
             child: FloatingActionButton.extended(
               heroTag: null,
+              elevation: 0,
               onPressed: () {
                 Navigator.of(context).push(
                     MaterialPageRoute(builder: (context) => ProductAdd()));
@@ -162,10 +218,27 @@ class _ProductMainState extends State<ProductMain> {
         return Visibility(
           visible: snapshot.data,
           child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(100),
+                  topRight: Radius.circular(100),
+                  bottomLeft: Radius.circular(100),
+                  bottomRight: Radius.circular(100)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.1),
+                  spreadRadius: 3,
+                  blurRadius: 7,
+                  offset: Offset(0, 3), // changes position of shadow
+                ),
+              ],
+            ),
             height: 40.0,
             width: 40.0,
             child: FittedBox(
               child: FloatingActionButton(
+                elevation: 0,
                 heroTag: null,
                 onPressed: () {
                   _scrollController.position
@@ -174,8 +247,6 @@ class _ProductMainState extends State<ProductMain> {
                 child:
                     Icon(Icons.keyboard_arrow_up_rounded, color: Colors.black),
                 backgroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(100.0))),
               ),
             ),
           ),
@@ -199,18 +270,26 @@ class _ProductMainState extends State<ProductMain> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
+                Container(
+                  height: 180,
+                  color: OnestepColors().mainColor,
+                  child: Center(
+                    child: Text("광고"),
+                  ),
+                ),
+                SizedBox(height: 10),
                 // ProductMainHeader(),
-                SizedBox(
-                    height: 10,
-                    child: Container(color: Color.fromRGBO(240, 240, 240, 1))),
-                // Align(
-                //   alignment: Alignment.centerLeft,
-                //   child: Padding(
-                //       padding: EdgeInsets.only(top: 10, left: 15),
-                //       child: Text("오늘의 상품",
-                //           style: TextStyle(
-                //               fontSize: 15, fontWeight: FontWeight.w600))),
-                // ),
+                // SizedBox(
+                //     height: 10,
+                //     child: Container(color: Color.fromRGBO(240, 240, 240, 1))),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                      padding: EdgeInsets.only(top: 10, left: 15),
+                      child: Text("추천 상품",
+                          style: TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.w600))),
+                ),
                 ProductMainBody(),
               ],
             ),

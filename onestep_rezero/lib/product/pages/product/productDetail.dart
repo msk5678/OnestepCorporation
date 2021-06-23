@@ -38,6 +38,27 @@ class _ProductDetailState extends State<ProductDetail> {
     }
   }
 
+  Widget exceptionWidget(String text) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        iconTheme: IconThemeData(
+          color: Colors.black, //change your color here
+        ),
+        elevation: 0,
+      ),
+      body: Container(
+        color: Colors.white,
+        child: Center(
+          child: Text(
+            text,
+            style: TextStyle(fontSize: 22),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -48,15 +69,14 @@ class _ProductDetailState extends State<ProductDetail> {
           .doc(widget.docId)
           .get(),
       builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-        if (snapshot.hasError)
-          return Container(child: Center(child: Text("상품을 불러오는데 실패했어요.")));
+        if (snapshot.hasError) return exceptionWidget("상품을 불러오는데 실패했어요.");
         switch (snapshot.connectionState) {
           case ConnectionState.waiting:
             return Container();
           default:
             if (snapshot.data.data()['deleted'] ||
                 snapshot.data.data()['hide']) {
-              return Container(child: Center(child: Text("없는 상품이에요.")));
+              return exceptionWidget("삭제된 상품이에요.");
             } else {
               _product =
                   Product.fromJson(snapshot.data.data(), snapshot.data.id);

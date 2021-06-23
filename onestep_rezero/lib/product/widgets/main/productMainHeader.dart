@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/product/models/categoryItem.dart';
-import 'package:onestep_rezero/product/pages/categoryDetail.dart';
+import 'package:onestep_rezero/product/pages/category/categoryDetail.dart';
 
 final categoryStateProvider = StateProvider<bool>((ref) {
   return false;
@@ -80,8 +80,6 @@ class ProductMainHeader extends ConsumerWidget {
   }
 
   Widget header(BuildContext context) {
-    Map<String, dynamic> a;
-
     return FutureBuilder(
         future: categoryList,
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -107,8 +105,6 @@ class ProductMainHeader extends ConsumerWidget {
                           MaterialPageRoute(
                             builder: (context) => CategoryDetail(
                               category: snapshot.data.docs[index].id,
-                              detailCategory: snapshot.data.docs[index]
-                                  ['detail'],
                             ),
                           ),
                         );
@@ -119,59 +115,7 @@ class ProductMainHeader extends ConsumerWidget {
           }
         });
 
-    return GridView(
-      physics: NeverScrollableScrollPhysics(),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 5,
-        childAspectRatio: (MediaQuery.of(context).size.width * 0.0025),
-        crossAxisSpacing: 1.0,
-      ),
-      shrinkWrap: true,
-      children: [
-        ...CategoryItem.headeritems
-            .map(
-              (item) => InkWell(
-                splashColor: Colors.red,
-                onTap: () {
-                  // Navigator.of(context).push(
-                  //   MaterialPageRoute(
-                  //     builder: (context) => Consumer<CategoryProuductProvider>(
-                  //       builder: (context, prouductProvider, _) =>
-                  //           ClothCategoryWidget(
-                  //         productProvider: prouductProvider,
-                  //         category: item.name,
-                  //       ),
-                  //     ),
-                  //   ),
-                  // );
-                },
-                child: Column(
-                  children: <Widget>[
-                    Padding(
-                        padding: EdgeInsets.only(bottom: 5.0),
-                        child: Image(image: item.image, width: 45, height: 45)),
-                    Text(item.name, style: TextStyle(fontSize: 12)),
-                  ],
-                ),
-              ),
-            )
-            .toList(),
-        GestureDetector(
-          child: Column(
-            children: <Widget>[
-              Padding(
-                  padding: EdgeInsets.only(bottom: 5.0),
-                  child: Icon(Icons.add, size: 45)),
-              Text("더보기", style: TextStyle(fontSize: 12)),
-            ],
-          ),
-          onTap: () {
-            context.read(categoryStateProvider).state =
-                !context.read(categoryStateProvider).state;
-          },
-        ),
-      ],
-    );
+   
   }
 
   @override

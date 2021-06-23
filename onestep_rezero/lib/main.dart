@@ -5,8 +5,10 @@ import 'package:firebase_auth/firebase_auth.dart' as FBA;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:onestep_rezero/admob/googleAdmob.dart';
 import 'package:onestep_rezero/login/model/user.dart';
 import 'package:onestep_rezero/login/pages/authWaitPage.dart';
 import 'package:onestep_rezero/login/pages/loginJoinPage.dart';
@@ -20,14 +22,17 @@ final auth = FBA.FirebaseAuth.instance;
 final googleSignIn = GoogleSignIn();
 final ref = FirebaseFirestore.instance.collection('user');
 final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+
 Future<QuerySnapshot> categoryList;
 
+// BannerAd mainBanner;
 User currentUserModel;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   TimeUtil.setLocalMessages();
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(
     ProviderScope(child: MyApp()),
   );
@@ -78,6 +83,10 @@ class _MainPageState extends State<MainPage> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
   //   void initDynamicLinks() async {
   //   // 앱이 active이거나 background 상태일때 들어온 링크를 알 수 있는 링크 콜백에 대한 리스너 onLink()
   //   FirebaseDynamicLinks.instance.onLink(
@@ -219,7 +228,10 @@ class _MainPageState extends State<MainPage> {
     ref.doc(currentUserModel.uid).collection("log").doc(time.toString()).set({
       "loginTime": time,
     });
-    categoryList = FirebaseFirestore.instance.collection('category').get();
+    categoryList = FirebaseFirestore.instance
+        .collection('category')
+        .orderBy('total', descending: true)
+        .get();
     print("@@@@ category 가져오기");
     return null;
   }
@@ -337,6 +349,7 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
+    double deviceWidth = MediaQuery.of(context).size.width;
     if (triedSilentLogin == false) {
       silentLogin(context);
     }
@@ -352,11 +365,37 @@ class _MainPageState extends State<MainPage> {
         child: WillPopScope(
             child: Scaffold(
               // key: _globalKey,
-              body: IndexedStack(
-                index: _currentIndex,
+              body: Stack(
                 children: [
-                  for (final tabItem in BottomNavigationItem.items)
-                    tabItem.page,
+                  IndexedStack(
+                    index: _currentIndex,
+                    children: [
+                      for (final tabItem in BottomNavigationItem.items)
+                        tabItem.page,
+                    ],
+                  ),
+                  //     1 == 0
+                  //         ?
+                  // Positioned(
+                  //             bottom: 0,
+                  //             child: Container(
+                  //               width: 20,
+                  //               height: 20,
+                  //               color: Colors.red,
+                  //             ),
+                  //           )
+                  //         :
+                  if (_currentIndex == 0)
+                    Positioned(
+                      child:
+                          GoogleAdmob().getProductMainBottomBanner(deviceWidth),
+                      bottom: 0,
+                    ),
+                  if (_currentIndex == 3)
+                    Positioned(
+                      child: GoogleAdmob().getChatMainBottomBanner(deviceWidth),
+                      bottom: 0,
+                    ),
                 ],
               ),
               bottomNavigationBar: BottomNavigationBar(
@@ -367,8 +406,8 @@ class _MainPageState extends State<MainPage> {
                     setState(() => _currentIndex = index);
                 },
                 type: BottomNavigationBarType.fixed,
-                showSelectedLabels: false,
-                showUnselectedLabels: false, // title 안보이게 설정
+                // showSelectedLabels: false,
+                // showUnselectedLabels: false, // title 안보이게 설정
                 items: [
                   for (final tabItem in BottomNavigationItem.items)
                     BottomNavigationBarItem(
