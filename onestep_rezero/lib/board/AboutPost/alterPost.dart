@@ -180,17 +180,22 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
     List<Widget> _emptyWidget = [];
     int containImageCount =
         imgCommMap["IMAGE"] != null ? imageCommentMap["IMAGE"].length : 0;
+
     for (int i = 0; i < containImageCount; i++) {
-      if (imgCommMap["IMAGE"][i].runtimeType == String) {
+      if (imgCommMap["IMAGE"][i].runtimeType != String) {
         continue;
       }
-      _imageWidget.add(cachedImgWidget(imgCommMap["IMAGE"][i]));
+      _imageWidget.add(Container(
+          padding: EdgeInsets.all(5.0),
+          child: imageContainer(i, cachedImgWidget(imgCommMap["IMAGE"][i]),
+              imageCommentMap["COMMENT"][i])));
     }
     for (int i = 0; i < maxImageCount - containImageCount; i++) {
       _emptyWidget.add(emptyImageWidget(imgCommMap));
     }
     return Container(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: _imageWidget
           ..add(Row(
             children: _emptyWidget,
@@ -201,5 +206,90 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
 
   cachedImgWidget(String imageURL) {
     return CachedNetworkImage(imageUrl: imageURL);
+  }
+
+  @override
+  imageContainer(int index, image, String comment) {
+    Widget cachedImage = image;
+    return Container(
+      padding: EdgeInsets.only(top: 5.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          SizedBox(
+            height: 80,
+            width: 80,
+            child: Container(
+              child: PopupMenuButton<int>(
+                  onSelected: (value) async {
+                    bool result = await showDialog(
+                        context: context,
+                        barrierDismissible: true,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('사진 삭제'),
+                            content: Text("사진 및 설명이 삭제됩니다."),
+                            actions: <Widget>[
+                              ElevatedButton(
+                                child: Text('삭제'),
+                                onPressed: () {
+                                  Navigator.pop(context, true);
+                                },
+                              ),
+                              ElevatedButton(
+                                child: Text('유지'),
+                                onPressed: () {
+                                  Navigator.pop(context, false);
+                                },
+                              ),
+                            ],
+                          );
+                        });
+                    if (result) {
+                      //Deleted
+                      imageDismiss(imageCommentMap, value);
+                    }
+                  },
+                  itemBuilder: (context) => [
+                        PopupMenuItem(
+                          value: index,
+                          child: Text(
+                            "삭제",
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w700),
+                          ),
+                        ),
+                      ],
+                  child: Container(
+                    child: cachedImage,
+                    height: 200,
+                    width: 200,
+                  )),
+            ),
+          ),
+          Expanded(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              reverse: true,
+              child: TextField(
+                  keyboardType: TextInputType.multiline,
+                  minLines: 2,
+                  maxLines: null,
+                  decoration: InputDecoration(
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 20.0, horizontal: 5.0),
+                    border: OutlineInputBorder(),
+                    labelText: "사진${index + 1}의 설명",
+                    hintText: "내용을 입력하세요",
+                  ),
+                  controller: getTextEditingImageTextField(
+                    index,
+                  )),
+            ),
+          )
+        ],
+      ),
+    );
   }
 }

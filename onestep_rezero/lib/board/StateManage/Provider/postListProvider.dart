@@ -81,6 +81,72 @@ class PostListProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Future fetchUserFavorite(String currentUid) async {
+    if (_isFetching) return;
+    _isFetching = true;
+    _hasNext = true;
+
+    _productsSnapshot.clear();
+    try {
+      // final docList =
+      await getAllUserFavoriteList(currentUid);
+      // _productsSnapshot.addAll(docList);
+
+      // if (snap.docs.length < documentLimit) _hasNext = false;
+    } catch (error) {}
+    _isFetching = false;
+    notifyListeners();
+  }
+
+  getAllUserFavoriteList(
+    String uid,
+  ) async {
+    QuerySnapshot getAllPostExceptEmptyFavoriteMapList;
+
+    QuerySnapshot boardList = await FirebaseFirestore.instance
+        .collection('university')
+        .doc(currentUserModel.university)
+        .collection("board")
+        .get();
+
+    await Future.forEach(boardList.docs, (DocumentSnapshot element) async {
+      String boardId = element.id;
+
+      getAllPostExceptEmptyFavoriteMapList = await FirebaseFirestore.instance
+          .collection('university')
+          .doc(currentUserModel.university)
+          .collection("board")
+          .doc(boardId)
+          .collection(boardId)
+          .where("favoriteUserList", isNotEqualTo: {}).get();
+
+      // return userAllPosting.addAll(postQuerySnapshot.docs);
+      await Future.forEach(getAllPostExceptEmptyFavoriteMapList.docs,
+          (DocumentSnapshot postDocumentSnapshot) async {
+        String postId = postDocumentSnapshot.id;
+        Map<String, dynamic> favoriteUserList =
+            postDocumentSnapshot.data()["favoriteUserList"] ?? {};
+        bool wasWrittenComment = favoriteUserList.containsKey(uid);
+        if (wasWrittenComment) {
+          DocumentSnapshot postQuerySnapshot;
+          postQuerySnapshot = await FirebaseFirestore.instance
+              .collection('university')
+              .doc(currentUserModel.university)
+              .collection("board")
+              .doc(boardId)
+              .collection(boardId)
+              .doc(postId)
+              .get();
+
+          _productsSnapshot.add(postQuerySnapshot);
+          notifyListeners();
+        }
+      });
+    });
+
+    // return userAllPosting;
+  }
+
   getAllUserPostingList(
     String uid,
   ) async {

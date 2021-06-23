@@ -168,7 +168,6 @@ class PostData {
     );
   }
   Future<bool> updateFavorite(String uid) async {
-    print("1");
     final db = FirebaseFirestore.instance
         .collection('university')
         .doc(currentUserModel.university)
@@ -176,15 +175,14 @@ class PostData {
         .doc(this.boardId)
         .collection(this.boardId)
         .doc(this.documentId);
-    print("2");
+
     DocumentSnapshot getLatestDb =
         await db.get().onError((error, stackTrace) => null);
-    print("3");
+
     if (getLatestDb != null) {
-      print("4");
       Map<String, dynamic> latestFavoriteUserMap =
           getLatestDb.data()["favoriteUserList"];
-      print("5");
+
       return await db
           .update({
             "favoriteUserList": latestFavoriteUserMap..addAll({uid: true})
@@ -192,7 +190,6 @@ class PostData {
           .then((value) => true)
           .onError((error, stackTrace) => false);
     } else {
-      print("6");
       return false;
     }
   }

@@ -78,22 +78,23 @@ class BoardListView extends ConsumerWidget {
       ));
     });
 
-    return Column(
-        children: categoryListWidget
-          ..add(Center(
-            child: IconButton(
-              icon: Icon(Icons.add),
-              onPressed: () async {
-                manageAnimationTimer(false);
-                await Navigator.of(context)
-                    .pushNamed("/BoardCreate")
-                    .then((value) {
-                  bool result = value ?? false;
-                  if (result) context.read(boardListProvider).fetchBoards();
-                  manageAnimationTimer(true);
-                });
-              },
-            ),
-          )));
+    return Column(children: categoryListWidget
+        // ..add(Center(
+        //   child: IconButton(
+        //     icon: Icon(Icons.add),
+        //     onPressed: () async {
+        //       manageAnimationTimer(false);
+        //       await Navigator.of(context)
+        //           .pushNamed("/BoardCreate")
+        //           .then((value) {
+        //         bool result = value ?? false;
+        //         if (result) context.read(boardListProvider).fetchBoards();
+        //         manageAnimationTimer(true);
+        //       });
+        //     },
+        //   ),
+        // )
+        // )
+        );
   }
 }

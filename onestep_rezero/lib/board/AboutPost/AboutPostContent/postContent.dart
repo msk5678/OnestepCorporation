@@ -1,21 +1,16 @@
 import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:onestep_rezero/board/AboutPost/AboutPostContent/postComment.dart';
-
 import 'package:onestep_rezero/board/TipDialog/tip_dialog.dart';
 import 'package:onestep_rezero/board/declareData/favoriteCommentWidget.dart';
 import 'package:onestep_rezero/board/declareData/postData.dart';
 import 'package:onestep_rezero/board/declareData/commentData.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-
 import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/timeUtil.dart';
@@ -272,7 +267,7 @@ class _PostContentState extends State<PostContent>
       borderRadius: BorderRadius.only(
           topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
       minHeight: deviceWidth / 6,
-      maxHeight: deviceHeight / 3,
+      maxHeight: deviceHeight / 3.2,
       controller: panelController,
       onPanelClosed: () => _arrowAnimationController.forward(),
       onPanelOpened: () => _arrowAnimationController.reverse(),
@@ -338,8 +333,8 @@ class _PostContentState extends State<PostContent>
                 ),
               ),
               Container(
-                  alignment: Alignment.topRight,
-                  margin: EdgeInsets.only(right: 10),
+                  // alignment: Alignment.centerRight,
+                  margin: EdgeInsets.only(right: 10, top: 5),
                   child: commentName(wirtterName, currentPostUid, commentList)),
             ],
           ),
@@ -377,7 +372,6 @@ class _PostContentState extends State<PostContent>
                 var result = await Navigator.of(context).pushNamed("/AlterPost",
                         arguments: {"POSTDATA": currentPost}) ??
                     false;
-                print("result : ${result.runtimeType}");
                 if (result == PostData) {
                   setState(() {
                     currentPostData = result;
@@ -543,20 +537,23 @@ class _PostContentState extends State<PostContent>
   }
 
   commentName(commentUID, postWriterUid, commentList) {
-    Map<String, dynamic> commentUserMap = commentList ?? {};
-    List commentUserList = commentUserMap.keys.toList();
+    // Map<String, dynamic> commentUserMap = commentList ?? {};
+    // List commentUserList = commentUserMap.keys.toList();
     if (commentUID.toString() == postWriterUid) {
       return Text("'" '작성자' "'로 댓글이 작성됩니다." "",
           style: TextStyle(color: OnestepColors().secondColor, fontSize: 13));
     } else {
-      for (int i = 0; i < commentUserList.length; i++) {
-        if (commentUserList[i].toString() == commentUID) {
-          return Text(" '" '익명 ${i + 1}' "'로 댓글이 작성됩니다." "",
-              style:
-                  TextStyle(color: OnestepColors().secondColor, fontSize: 13));
-        }
-      }
-      return Text(" '" '익명 ${commentUserList.length + 1}' "' 로 댓글이 작성됩니다.",
+      //   for (int i = 0; i < commentUserList.length; i++) {
+      //     if (commentUserList[i].toString() == commentUID) {
+      //       return Text(" '" '익명 ${i + 1}' "'로 댓글이 작성됩니다." "",
+      //           style:
+      //               TextStyle(color: OnestepColors().secondColor, fontSize: 13));
+      //     }
+      //   }
+      // return Text(" '" '익명 ${commentUserList.length + 1}' "' 로 댓글이 작성됩니다.",
+      //     style: TextStyle(color: OnestepColors().secondColor, fontSize: 13));
+      // }
+      return Text(" '" '익명' "' 로 댓글이 작성됩니다.",
           style: TextStyle(color: OnestepColors().secondColor, fontSize: 13));
     }
   }

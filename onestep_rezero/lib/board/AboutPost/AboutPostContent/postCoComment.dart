@@ -4,6 +4,7 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:onestep_rezero/board/AboutPost/AboutPostContent/postComment.dart';
 import 'package:onestep_rezero/board/declareData/commentData.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/timeUtil.dart';
 
@@ -46,18 +47,6 @@ class ChildComment extends StatelessWidget implements Comment {
     bool isEmpty = childCommentList.length == 0 ? true : false;
     if (!isEmpty)
       return Container(
-          // decoration: BoxDecoration(
-          //     borderRadius: BorderRadius.only(bottomLeft: Radius.circular(5)),
-          //     border: Border(
-          //       bottom: BorderSide(
-          //           color: OnestepColors().thirdColor.withOpacity(0.2),
-          //           width: 2.0),
-          //       left: BorderSide(
-          //           color: OnestepColors().thirdColor.withOpacity(0.2),
-          //           width: 2.0),
-          //       top: BorderSide(color: Colors.white, width: 2.0),
-          //       right: BorderSide(color: Colors.white, width: 2.0),
-          // )),
           margin: EdgeInsets.only(left: 10),
           padding: EdgeInsets.only(left: 5),
           child: animationLimiterListView(
@@ -91,38 +80,29 @@ class ChildComment extends StatelessWidget implements Comment {
           currentIndexCommentData
             ..userName = commentName(
                 currentIndexCommentData.uid, postWriterUID, commentMap);
+          bool isDeleted = comment[index].deleted;
           return AnimationConfiguration.staggeredList(
             position: index,
             duration: const Duration(milliseconds: 375),
             child: SlideAnimation(
               verticalOffset: 50.0,
               child: FadeInAnimation(
-                child: Column(
-                  children: [
-                    !comment[index].deleted
-                        ? commentListSwipeMenu(
-                            currentIndexCommentData,
-                            context,
-                            currentUserModel.uid,
-                            slidableKey: Key(currentIndexCommentData.commentId),
-                            child: commentBoxDesignMethod(
-                                index,
-                                currentIndexCommentData,
-                                deviceWidth,
-                                deviceHeight),
-                          )
-                        // Dismissible(
-                        //     onDismissed: (direction) {},
-                        //     key: ValueKey<String>(comment[index].commentId),
-                        //     background: Container(
-                        //       color: Colors.green,
-                        //     ),
-                        //     child: commentBoxDesignMethod(index, comment[index],
-                        //         deviceWidth, deviceHeight),
-                        //   )
-                        : commentBoxDesignMethod(index, currentIndexCommentData,
-                            deviceWidth, deviceHeight),
-                  ],
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 15),
+                  child: !isDeleted
+                      ? commentListSwipeMenu(
+                          currentIndexCommentData,
+                          context,
+                          currentUserModel.uid,
+                          slidableKey: Key(currentIndexCommentData.commentId),
+                          child: commentBoxDesignMethod(
+                              index,
+                              currentIndexCommentData,
+                              deviceWidth,
+                              deviceHeight),
+                        )
+                      : commentBoxDesignMethod(index, currentIndexCommentData,
+                          deviceWidth, deviceHeight),
                 ),
               ),
             ),
@@ -202,30 +182,37 @@ class ChildComment extends StatelessWidget implements Comment {
         int.tryParse(comment.deletedTime ?? 0) ?? 0);
     bool deletedTimeWithDay = DateTime.now().difference(deleteTime).inDays < 1;
     //Deleted Time with in 24h
-
+    DateTime uploadTime = DateTime.fromMillisecondsSinceEpoch(
+        int.tryParse(comment.uploadTime ?? 0) ?? 0);
     return Container(
         alignment: Alignment.centerLeft,
-        height: deviceHeight / 9,
         padding: EdgeInsets.only(
           left: 8,
-          top: deviceHeight / 30,
-          bottom: deviceHeight / 30,
         ),
-        child: deletedTimeWithDay
-            ? GestureDetector(
-                onLongPress: () => showDialogCallback(comment),
-                child: Container(
-                  width: deviceWidth,
-                  child: Text(
-                    "삭제되었습니다.",
-                    style: TextStyle(color: Colors.grey),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          deletedTimeWithDay
+              ? GestureDetector(
+                  onLongPress: () => showDialogCallback(comment),
+                  child: Container(
+                    width: deviceWidth,
+                    child: Text(
+                      "삭제되었습니다.",
+                      style: TextStyle(color: Colors.grey),
+                    ),
                   ),
+                )
+              : Text(
+                  "삭제되었습니다.",
+                  style: TextStyle(color: Colors.grey),
                 ),
-              )
-            : Text(
-                "삭제되었습니다.",
-                style: TextStyle(color: Colors.redAccent),
-              ));
+          Container(
+            alignment: Alignment.centerRight,
+            child: Text(
+              "${TimeUtil.timeAgo(date: uploadTime)}",
+              style: TextStyle(color: Colors.grey[700], fontSize: 10),
+            ),
+          )
+        ]));
   }
 
   @override
@@ -233,42 +220,58 @@ class ChildComment extends StatelessWidget implements Comment {
       int index, CommentData comment, double deviceWidth, double deviceHeight) {
     DateTime uploadTime = DateTime.fromMillisecondsSinceEpoch(
         int.tryParse(comment.uploadTime ?? 0) ?? 0);
+    bool isWritter = comment.userName == "작성자";
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(padding: EdgeInsets.only(top: deviceHeight / 30)),
         Container(
           alignment: Alignment.centerLeft,
-          child: Text(comment.userName),
+          child: Text(
+            comment.userName,
+            style: isWritter
+                ? TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: OnestepColors().mainColor)
+                : TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: OnestepColors().secondColor),
+          ),
         ),
         Container(
           padding: EdgeInsets.only(
-            left: 8,
-            top: 5,
+            left: 10,
+            top: 10,
           ),
           alignment: Alignment.centerLeft,
           child: Text(comment.textContent ?? "NO"),
         ),
         Container(
-          alignment: Alignment.centerRight,
-          child: Text(
-            "${TimeUtil.timeAgo(date: uploadTime)}",
-            style: TextStyle(color: Colors.grey, fontSize: 10),
+          margin: EdgeInsets.only(top: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                padding: EdgeInsets.only(left: 10),
+                alignment: Alignment.centerRight,
+                child: GestureDetector(
+                  onTap: () =>
+                      coCommentCallback(comment..isUnderComment = true),
+                  child: Text(
+                    "댓글달기",
+                    style: TextStyle(color: Colors.grey[700], fontSize: 10),
+                  ),
+                ),
+              ),
+              Container(
+                alignment: Alignment.centerRight,
+                child: Text(
+                  "${TimeUtil.timeAgo(date: uploadTime)}",
+                  style: TextStyle(color: Colors.grey[700], fontSize: 10),
+                ),
+              ),
+            ],
           ),
         ),
-        Container(
-          width: deviceWidth / 2,
-          margin: EdgeInsets.only(bottom: deviceHeight / 100),
-          // decoration: BoxDecoration(
-          //     border: Border(
-          //   bottom: BorderSide(
-          //       color: OnestepColors().thirdColor.withOpacity(0.2), width: 2.0),
-          // left: BorderSide(
-          //     color: OnestepColors().thirdColor.withOpacity(0.2),
-          //     width: 2.0)
-          // )),
-          alignment: Alignment.topLeft,
-        )
       ],
     );
   }

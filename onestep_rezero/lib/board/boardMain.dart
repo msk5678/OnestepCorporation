@@ -370,6 +370,7 @@ class _BoardMainState extends State<BoardMain> {
                   bottom: 10,
                   top: deviceHeight / 150),
               child: GridView.count(
+                physics: NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 crossAxisSpacing: 0.1,
                 mainAxisSpacing: 0.1,
@@ -386,6 +387,8 @@ class _BoardMainState extends State<BoardMain> {
                         pageName = "/UserPostingList";
                       } else if (index == 1) {
                         pageName = "/UserWrittenCommentList";
+                      } else if (index == 2) {
+                        pageName = "/UserFavoriteList";
                       }
                       if (pageName != "")
                         Navigator.pushNamed(context, pageName, arguments: arg);

@@ -99,6 +99,7 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
 
   @override
   Widget build(BuildContext context) {
+    print("here");
     // print("CreatePost AssetThumb change to ConvertImages ");
     return Stack(
       children: <Widget>[
@@ -106,7 +107,7 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
           body: WillPopScope(
             onWillPop: () {
               isDataContain()
-                  ? Navigator.pop(context)
+                  ? Navigator.pop(context, false)
                   : navigatorPopAlertDialog();
               return null;
             },
@@ -123,12 +124,12 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
                     children: <Widget>[
                       firstContainer(),
                       displayCurrentBoard(currentBoardData.boardName),
-                      Container(
-                          padding: EdgeInsets.symmetric(vertical: 3),
-                          alignment: Alignment.bottomLeft,
-                          width: deviceWidth / 3,
-                          child: postCategory(
-                              ContentCategory.values, deviceHeight, category)),
+                      // Container(
+                      //     padding: EdgeInsets.symmetric(vertical: 3),
+                      //     alignment: Alignment.bottomLeft,
+                      //     width: deviceWidth / 3,
+                      //     child: postCategory(
+                      //         ContentCategory.values, deviceHeight, category)),
                       setPostName(deviceHeight),
                       secondContainer(),
                       thirdContainer(imageCommentMap),
@@ -583,7 +584,8 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
     );
   }
 
-  imageContainer(int index, Asset imageAsset, String comment) {
+  imageContainer(int index, image, String comment) {
+    Asset imageAsset = image;
     return Container(
       padding: EdgeInsets.only(top: 5.0),
       child: Row(
@@ -657,8 +659,9 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
                     labelText: "사진${index + 1}의 설명",
                     hintText: "내용을 입력하세요",
                   ),
-                  controller: getTextEditingImageTextField(index,
-                      initComment: comment)),
+                  controller: getTextEditingImageTextField(
+                    index,
+                  )),
             ),
           )
         ],
@@ -784,7 +787,6 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
 
     for (int i = 0; i < containImageCount; i++) {
       if (imgCommMap["IMAGE"][i].runtimeType == String) {
-        print("imgComment Map : ${imgCommMap["IMAGE"][i]}");
         //Continue Check Plz
         continue;
       }
@@ -811,7 +813,9 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
     Map<String, dynamic> imgCommMap,
   ) {
     for (int i = 0; i < maxImageCount; i++) {
-      getTextEditingImageTextField(i, initComment: imgCommMap["COMMENT"][i]);
+      getTextEditingImageTextField(
+        i,
+      );
     }
   }
 
@@ -828,19 +832,20 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
     imageCommentMap["COMMENT"].addAll(_tempTextEditing);
   }
 
-  getTextEditingImageTextField(int index, {String initComment}) {
-    String initCom = initComment ?? "";
+  getTextEditingImageTextField(
+    int index,
+  ) {
     switch (index) {
       case 0:
-        return textEditingControllerImage1..text = initCom;
+        return textEditingControllerImage1;
       case 1:
-        return textEditingControllerImage2..text = initCom;
+        return textEditingControllerImage2;
       case 2:
-        return textEditingControllerImage3..text = initCom;
+        return textEditingControllerImage3;
       case 3:
-        return textEditingControllerImage4..text = initCom;
+        return textEditingControllerImage4;
       case 4:
-        return textEditingControllerImage5..text = initCom;
+        return textEditingControllerImage5;
       default:
         return null;
     }

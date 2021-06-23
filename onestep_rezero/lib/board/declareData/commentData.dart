@@ -49,7 +49,28 @@ class CommentData {
       uploadTime: currentTimeStamp,
     );
   }
-  _increaseCommentCount() {
+  factory CommentData.fromRealtimeData(DataSnapshot dataSnapshot) {
+    Map<dynamic, dynamic> value = dataSnapshot.value;
+
+    return CommentData(
+        uid: value["uid"],
+        boardId: value["boardId"],
+        boardName: value["boardName"],
+        postId: value["postId"],
+        deleted: value["deleted"].toString() == 'true' ? true : false,
+        deletedTime: value["deletedTime"],
+        reportCount: int.tryParse(value["reportCount"]) ?? 0,
+        reported: value['reported'].toString() == 'true' ? true : false,
+        updateTime: value["updateTime"],
+        uploadTime: value["uploadTime"],
+        textContent: value["textContent"].toString(),
+        haveChildComment:
+            value["haveChildComment"].toString() == 'true' ? true : false,
+        parentCommentId: value["parentCommentId"] ?? "",
+        commentId: dataSnapshot.key);
+  }
+
+  Future increaseCommentCount() async {
     final firestoreDb = FirebaseFirestore.instance;
     firestoreDb
         .collection('university')
@@ -63,11 +84,29 @@ class CommentData {
     });
   }
 
+  Future<bool> saveCommentToUserCollection(String timeStampId) async {
+    final firestoreDb = FirebaseFirestore.instance;
+    return firestoreDb
+        .collection('user')
+        .doc('aboutBoard')
+        .collection('comment')
+        .doc(timeStampId)
+        .set({
+          "boardId": boardId,
+          "postId": postId,
+          "haveChildComment": haveChildComment ?? false,
+          "parentCommentId": parentCommentId ?? ""
+        })
+        .then((value) => true)
+        .onError((error, stackTrace) => false);
+  }
+
   Future toRealtimeDatabase(
       {String textContent, Map<String, dynamic> commentList}) async {
     final realtimeDb = FirebaseDatabase.instance.reference();
     final firestoreDb = FirebaseFirestore.instance;
-    if (!commentList.containsKey(googleSignIn.currentUser.id)) {
+    if (!commentList.containsKey(currentUserModel.uid)) {
+      increaseCommentCount();
       firestoreDb
           .collection('university')
           .doc(currentUserModel.university)
@@ -76,34 +115,36 @@ class CommentData {
           .collection(this.boardId)
           .doc(this.postId)
           .update({
-        "commentUserList": {googleSignIn.currentUser.id: true}
+        "commentUserList": {currentUserModel.uid: true}
       });
     }
     String currentTimeStamp = DateTime.now().millisecondsSinceEpoch.toString();
-    return realtimeDb
-        .child('board')
-        .child(boardId)
-        .child(postId)
-        .child(currentTimeStamp)
-        .set({
-          "uid": this.uid.toString(),
-          "boardId": this.boardId.toString(),
-          "boardName": this.boardName.toString(),
-          "postId": this.postId.toString(),
-          "textContent":
-              textContent.toString() ?? this.textContent.toString() ?? '',
-          "deleted": this.deleted.toString() ?? 'false',
-          "deletedTime": this.deletedTime.toString() ?? '',
-          "reported": this.reported.toString() ?? 'false',
-          "reportCount": this.reportCount.toString() ?? '0',
-          "uploadTime": currentTimeStamp,
-          "updateTime": this.updateTime.toString() ?? '',
-          "userName": "",
-          "haveChildComment": "false",
-          "parentCommentId": this.parentCommentId
-        })
-        .then((value) => true)
-        .whenComplete(() => null);
+    bool result = await saveCommentToUserCollection(currentTimeStamp) ?? false;
+    if (result)
+      return realtimeDb
+          .child('board')
+          .child(boardId)
+          .child(postId)
+          .child(currentTimeStamp)
+          .set({
+            "uid": this.uid.toString(),
+            "boardId": this.boardId.toString(),
+            "boardName": this.boardName.toString(),
+            "postId": this.postId.toString(),
+            "textContent":
+                textContent.toString() ?? this.textContent.toString() ?? '',
+            "deleted": this.deleted.toString() ?? 'false',
+            "deletedTime": this.deletedTime.toString() ?? '',
+            "reported": this.reported.toString() ?? 'false',
+            "reportCount": this.reportCount.toString() ?? '0',
+            "uploadTime": currentTimeStamp,
+            "updateTime": this.updateTime.toString() ?? '',
+            "userName": "",
+            "haveChildComment": "false",
+            "parentCommentId": this.parentCommentId
+          })
+          .then((value) => true)
+          .whenComplete(() => null);
   }
 
   fromFirebaseReference(DataSnapshot snapshot) async {

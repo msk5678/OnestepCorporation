@@ -48,6 +48,24 @@ class CommentWidget extends CommentParent {
       this.postWriterUID,
       this.coCommentCallback,
       this.showDialogCallback});
+  @override
+  Widget build(BuildContext context, watch) {
+    final deviceWidth = MediaQuery.of(context).size.width;
+    final deviceHeight = MediaQuery.of(context).size.height;
+    final commentprovider = watch(commentProvider);
+    bool isFetch = commentprovider.isFetching;
+    if (isFetch) {
+      return CupertinoActivityIndicator();
+    } else {
+      bool isEmpty = commentprovider.comments.length == 0 ? true : false;
+      if (!isEmpty)
+        return Container(
+            child: animationLimiterListView(
+                commentprovider.comments, deviceWidth, deviceHeight));
+      else
+        return Container(child: commentListEmptyWidget());
+    }
+  }
 }
 
 abstract class CommentParent extends ConsumerWidget implements Comment {
@@ -119,26 +137,6 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
   }
 
   @override
-  Widget build(BuildContext context, watch) {
-    final deviceWidth = MediaQuery.of(context).size.width;
-    final deviceHeight = MediaQuery.of(context).size.height;
-    final commentprovider = watch(commentProvider);
-    bool isFetch = commentprovider.isFetching;
-    print("isFetch : $isFetch");
-    if (isFetch) {
-      return CupertinoActivityIndicator();
-    } else {
-      bool isEmpty = commentprovider.comments.length == 0 ? true : false;
-      if (!isEmpty)
-        return Container(
-            child: animationLimiterListView(
-                commentprovider.comments, deviceWidth, deviceHeight));
-      else
-        return Container(child: commentListEmptyWidget());
-    }
-  }
-
-  @override
   animationLimiterListView(
       List comment, double deviceWidth, double deviceHeight) {
     return AnimationLimiter(
@@ -164,32 +162,38 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
               child: FadeInAnimation(
                 child: Column(
                   children: [
-                    !isDeleted
-                        ? commentListSwipeMenu(
-                            currentIndexCommentData,
-                            context,
-                            currentUserModel.uid,
-                            slidableKey: Key(currentIndexCommentData.commentId),
-                            child: commentBoxDesignMethod(
-                                index,
-                                currentIndexCommentData,
-                                deviceWidth,
-                                deviceHeight),
-                          )
-                        : commentBoxDesignMethod(index, currentIndexCommentData,
-                            deviceWidth, deviceHeight),
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border(
+                          top: BorderSide(
+                            color: OnestepColors().mainColor,
+                            width: 0.5,
+                          ),
+                        ),
+                      ),
+                      padding: EdgeInsets.symmetric(vertical: 15),
+                      child: !isDeleted
+                          ? commentListSwipeMenu(
+                              currentIndexCommentData,
+                              context,
+                              currentUserModel.uid,
+                              slidableKey:
+                                  Key(currentIndexCommentData.commentId),
+                              child: commentBoxDesignMethod(
+                                  index,
+                                  currentIndexCommentData,
+                                  deviceWidth,
+                                  deviceHeight),
+                            )
+                          : commentBoxDesignMethod(
+                              index,
+                              currentIndexCommentData,
+                              deviceWidth,
+                              deviceHeight),
+                    ),
                     haveChildComment
-                        ? ChildComment(
-                            childCommentList:
-                                currentIndexCommentData.childCommentList,
-                            coCommentCallback: coCommentCallback,
-                            openSlidingPanelCallback: openSlidingPanelCallback,
-                            slidableController: slidableController,
-                            postWriterUID: postWriterUID,
-                            commentMap: commentMap,
-                            refreshCallback: refreshComment,
-                            showDialogCallback: showDialogCallback,
-                          )
+                        ? childCommentWidget(
+                            currentIndexCommentData.childCommentList)
                         : Container()
                     // coCommentWidget(currentIndexCommentData.haveChildComment,
                     //     currentIndexCommentData)
@@ -200,6 +204,19 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
           );
         },
       ),
+    );
+  }
+
+  childCommentWidget(childCommentList) {
+    return ChildComment(
+      childCommentList: childCommentList,
+      coCommentCallback: coCommentCallback,
+      openSlidingPanelCallback: openSlidingPanelCallback,
+      slidableController: slidableController,
+      postWriterUID: postWriterUID,
+      commentMap: commentMap,
+      refreshCallback: refreshComment,
+      showDialogCallback: showDialogCallback,
     );
   }
 
@@ -288,30 +305,37 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
         int.tryParse(comment.deletedTime ?? 0) ?? 0);
     bool deletedTimeWithDay = DateTime.now().difference(deleteTime).inDays < 1;
     //Deleted Time with in 24h
-
+    DateTime uploadTime = DateTime.fromMillisecondsSinceEpoch(
+        int.tryParse(comment.uploadTime ?? 0) ?? 0);
     return Container(
         alignment: Alignment.centerLeft,
-        height: deviceHeight / 9,
         padding: EdgeInsets.only(
           left: 8,
-          top: deviceHeight / 30,
-          bottom: deviceHeight / 30,
         ),
-        child: deletedTimeWithDay
-            ? GestureDetector(
-                onLongPress: () => showDialogCallback(comment),
-                child: Container(
-                  width: deviceWidth,
-                  child: Text(
-                    "삭제되었습니다.",
-                    style: TextStyle(color: Colors.grey),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          deletedTimeWithDay
+              ? GestureDetector(
+                  onLongPress: () => showDialogCallback(comment),
+                  child: Container(
+                    width: deviceWidth,
+                    child: Text(
+                      "삭제되었습니다.",
+                      style: TextStyle(color: Colors.grey),
+                    ),
                   ),
+                )
+              : Text(
+                  "삭제되었습니다.",
+                  style: TextStyle(color: Colors.grey),
                 ),
-              )
-            : Text(
-                "삭제되었습니다.",
-                style: TextStyle(color: Colors.redAccent),
-              ));
+          Container(
+            alignment: Alignment.centerRight,
+            child: Text(
+              "${TimeUtil.timeAgo(date: uploadTime)}",
+              style: TextStyle(color: Colors.grey[700], fontSize: 10),
+            ),
+          )
+        ]));
   }
 
   refreshComment(BuildContext context, String boardId, String postId) {
@@ -376,45 +400,61 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
       int index, CommentData comment, double deviceWidth, double deviceHeight) {
     DateTime uploadTime = DateTime.fromMillisecondsSinceEpoch(
         int.tryParse(comment.uploadTime ?? 0) ?? 0);
+    bool isWritter = comment.userName == "작성자";
     return Column(
       children: [
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(padding: EdgeInsets.only(top: deviceHeight / 30)),
             Container(
               alignment: Alignment.centerLeft,
               // child: commentName(comment.uid, postWriterUID, commentList),
-              child: Text(comment.userName),
+              child: Text(
+                comment.userName,
+                style: isWritter
+                    ? TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: OnestepColors().mainColor)
+                    : TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: OnestepColors().secondColor),
+              ),
             ),
             Container(
               padding: EdgeInsets.only(
                 left: 8,
-                top: 5,
+                top: 10,
               ),
               alignment: Alignment.centerLeft,
               child: Text(comment.textContent ?? "NO"),
             ),
             Container(
-              alignment: Alignment.centerRight,
-              child: Text(
-                "${TimeUtil.timeAgo(date: uploadTime)}",
-                style: TextStyle(color: Colors.grey, fontSize: 10),
+              margin: EdgeInsets.only(top: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    padding: EdgeInsets.only(left: 10),
+                    alignment: Alignment.centerRight,
+                    child: GestureDetector(
+                      onTap: () =>
+                          coCommentCallback(comment..isUnderComment = true),
+                      child: Text(
+                        "댓글달기",
+                        style: TextStyle(color: Colors.grey, fontSize: 10),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      "${TimeUtil.timeAgo(date: uploadTime)}",
+                      style: TextStyle(color: Colors.grey, fontSize: 10),
+                    ),
+                  ),
+                ],
               ),
             ),
-            Container(
-              width: deviceWidth / 2,
-              margin: EdgeInsets.only(bottom: deviceHeight / 100),
-              decoration: BoxDecoration(
-                  border: Border(
-                      bottom: BorderSide(
-                          color: OnestepColors().thirdColor.withOpacity(0.2),
-                          width: 2.0),
-                      left: BorderSide(
-                          color: OnestepColors().thirdColor.withOpacity(0.2),
-                          width: 2.0))),
-              alignment: Alignment.topLeft,
-            )
           ],
         ),
       ],

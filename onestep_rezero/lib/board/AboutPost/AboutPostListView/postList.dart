@@ -5,6 +5,7 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:onestep_rezero/board/AboutPost/AboutPostListView/listRiverpod.dart';
 import 'package:onestep_rezero/board/declareData/categoryManageClass.dart';
 import 'package:onestep_rezero/board/declareData/postData.dart';
+import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/timeUtil.dart';
 
@@ -16,9 +17,8 @@ class PostList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ScopedReader watch) {
     double deviceHeight = MediaQuery.of(context).size.height;
-
     double deviceWidth = MediaQuery.of(context).size.width;
-
+    final String currentUid = currentUserModel.uid;
     return Container(
       child: AnimationLimiter(
         child: ListView.builder(
@@ -34,7 +34,7 @@ class PostList extends ConsumerWidget {
                 verticalOffset: 50.0,
                 child: FadeInAnimation(
                   child: _buildListCard(context, index, postList[index],
-                      deviceHeight, deviceWidth),
+                      deviceHeight, deviceWidth, currentUid),
                 ),
               ),
             );
@@ -51,7 +51,7 @@ class PostList extends ConsumerWidget {
   }
 
   Widget _buildListCard(BuildContext context, int index, var postData,
-      double deviceHeight, double deviceWidth) {
+      double deviceHeight, double deviceWidth, String currentUid) {
     bool isDeleted = postData.deleted ?? false;
     if (!isDeleted)
       return SizedBox(
@@ -78,7 +78,8 @@ class PostList extends ConsumerWidget {
                     children: <Widget>[
                       firstColumnLine(postData, deviceHeight, deviceWidth),
                       secondColumnLine(postData, deviceHeight, deviceWidth),
-                      thirdColumnLine(postData, deviceHeight, deviceWidth)
+                      thirdColumnLine(
+                          postData, deviceHeight, deviceWidth, currentUid)
                     ],
                   ))),
         ),
@@ -128,23 +129,23 @@ class PostList extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Container(
-          padding: EdgeInsets.only(left: deviceWidth / 50),
-        ),
-        Container(
-            height: deviceHeight / 27 * 0.6,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.all(Radius.circular(3.0))),
-            child: Center(
-              child: Text(
-                category ?? "",
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            )),
+            // padding: EdgeInsets.only(left: deviceWidth / 50),
+            ),
+        // Container(
+        //     height: deviceHeight / 27 * 0.6,
+        //     alignment: Alignment.center,
+        //     decoration: BoxDecoration(
+        //         color: Colors.grey[200],
+        //         borderRadius: BorderRadius.all(Radius.circular(3.0))),
+        //     child: Center(
+        //       child: Text(
+        //         category ?? "",
+        //         style: TextStyle(
+        //           fontSize: 13,
+        //           fontWeight: FontWeight.bold,
+        //         ),
+        //       ),
+        //     )),
         Container(
             height: deviceHeight / 27 * 0.6,
             alignment: Alignment.centerLeft,
@@ -160,7 +161,10 @@ class PostList extends ConsumerWidget {
     );
   }
 
-  thirdColumnLine(PostData postData, double deviceHeight, double deviceWidth) {
+  thirdColumnLine(
+      PostData postData, double deviceHeight, double deviceWidth, String uid) {
+    bool clickedFavorite = postData.favoriteUserList.containsKey(uid);
+    bool havePicture = postData.imageCommentMap["IMAGE"].length != 0;
     return Container(
         padding: EdgeInsets.only(left: deviceWidth / 50),
         child: Row(children: <Widget>[
@@ -168,11 +172,13 @@ class PostList extends ConsumerWidget {
               child: Row(
             children: <Widget>[
               IconTheme(
-                  child: Icon(Icons.favorite, size: 14),
-                  data: new IconThemeData(color: Colors.red)),
+                  child: Icon(
+                      clickedFavorite ? Icons.favorite : Icons.favorite_border,
+                      size: 14),
+                  data: new IconThemeData(color: OnestepColors().mainColor)),
               // Icon(Icons.favorite),
               Container(
-                padding: EdgeInsets.only(left: 3),
+                padding: EdgeInsets.only(left: 3, right: 5),
                 child: Text(
                   postData.favoriteCount.toString(),
                   style: TextStyle(
@@ -181,6 +187,19 @@ class PostList extends ConsumerWidget {
                       fontWeight: FontWeight.bold),
                 ),
               ),
+
+              IconTheme(
+                  child: havePicture
+                      ? Icon(
+                          Icons.photo_rounded,
+                          size: 14,
+                          color: OnestepColors().mainColor,
+                        )
+                      : Icon(Icons.photo_outlined,
+                          color: Colors.grey, size: 14),
+                  data: new IconThemeData(color: Colors.red)),
+              // Icon(Icons.favorite),
+
               Text(
                 ' | ',
                 style: TextStyle(
@@ -192,6 +211,7 @@ class PostList extends ConsumerWidget {
                 child: Text('${TimeUtil.timeAgo(date: postData.uploadTime)}'),
               ),
               Spacer(),
+
               Container(
                   child: Icon(
                 Icons.remove_red_eye,

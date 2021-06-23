@@ -172,11 +172,11 @@ abstract class PostListParentWidget<T extends StatefulWidget> extends State<T>
               child: FloatingActionButton.extended(
                   heroTag: null,
                   onPressed: () async {
-                    bool result = await Navigator.pushNamed(
-                            context, "/CreatePost",
+                    var result = await Navigator.of(context).pushNamed(
+                            "/CreatePost",
                             arguments: {"CURRENTBOARDDATA": currentBoard}) ??
                         false;
-                    if (result)
+                    if (result == bool) if (result)
                       context
                           .read(listProvider)
                           .fetchPosts(currentBoard.boardId);

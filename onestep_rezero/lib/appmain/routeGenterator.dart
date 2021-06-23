@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:onestep_rezero/board/AboutPost/AboutDashBoard/myComment.dart';
+import 'package:onestep_rezero/board/AboutPost/AboutDashBoard/myFavorite.dart';
 import 'package:onestep_rezero/board/AboutPost/AboutDashBoard/myPost.dart';
 import 'package:onestep_rezero/board/AboutPost/AboutPostContent/postContent.dart';
 // import 'package:flutter/foundation.dart' as foundation;
@@ -49,7 +50,15 @@ class RouteGenerator {
         break;
 
       case 'UserWrittenCommentList':
-        _pageWidget = UserWrittenCommentList();
+        _pageWidget = UserWrittenCommentList(
+          dashBoardIconData: arguments["DASHBOARDDATA"],
+        );
+        break;
+
+      case 'UserFavoriteList':
+        _pageWidget = UserFavoriteList(
+          dashBoardIconData: arguments["DASHBOARDDATA"],
+        );
         break;
       case 'PostContent':
         // Navigator.of(context).pushNamed('/BoardContent?INDEX=$index&BOARD_NAME="current"') -> arguments['INDEX'] = index, arguments['BOARD_NAME'] = "current"
