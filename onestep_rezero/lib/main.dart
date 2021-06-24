@@ -380,12 +380,12 @@ class _MainPageState extends State<MainPage> {
                   //             ),
                   //           )
                   //         :
-                  if (_currentIndex == 0)
-                    Positioned(
-                      child:
-                          GoogleAdmob().getProductMainBottomBanner(deviceWidth),
-                      bottom: 0,
-                    ),
+                  // if (_currentIndex == 0)
+                  //   Positioned(
+                  //     child:
+                  //         GoogleAdmob().getProductMainBottomBanner(deviceWidth),
+                  //     bottom: 0,
+                  //   ),
                   if (_currentIndex == 3)
                     Positioned(
                       child: GoogleAdmob().getChatMainBottomBanner(deviceWidth),

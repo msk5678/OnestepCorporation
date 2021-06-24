@@ -257,7 +257,7 @@ class _ProductChatListPageState extends State<ProductChatListPage>
                                               MainAxisAlignment.spaceBetween,
                                           children: <Widget>[
                                             Container(
-                                              width: 250,
+                                              width: 220,
                                               height: 30,
                                               child: Text(
                                                 listProductChat[index]
