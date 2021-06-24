@@ -7,15 +7,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/favorite/pages/favoriteMain.dart';
-import 'package:onestep_rezero/login/pages/loginJoinPage.dart';
-import 'package:onestep_rezero/login/pages/termsPage.dart';
 import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/product/pages/category/categorySidebar.dart';
 import 'package:onestep_rezero/product/pages/product/productAdd.dart';
 
 import 'package:onestep_rezero/product/widgets/main/productMainBody.dart';
-import 'package:onestep_rezero/product/widgets/main/productMainHeader.dart';
-import 'package:onestep_rezero/report/reportPageTest.dart';
 import 'package:onestep_rezero/search/pages/searchMain.dart';
 
 class ProductMain extends StatefulWidget {
