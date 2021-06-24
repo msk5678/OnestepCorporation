@@ -41,7 +41,10 @@ void report() {
                   'case': '1',
                   'content': myController.text.toString(),
                   'title': "case first",
+                  // 신고 당한 사람
                   'reportedUid': googleSignIn.currentUser.id,
+                  // 신고 한 사람
+                  'reportingUid': googleSignIn.currentUser.id,
                   'time': DateTime.now().millisecondsSinceEpoch.toString(),
                 })
               }
@@ -66,7 +69,10 @@ void report() {
                       'case': '1',
                       'content': myController.text.toString(),
                       'title': "case first",
+                      // 신고 당한 사람
                       'reportedUid': googleSignIn.currentUser.id,
+                      // 신고 한 사람
+                      'reportingUid': googleSignIn.currentUser.id,
                       'time': DateTime.now().millisecondsSinceEpoch.toString(),
                     });
                   } else {
@@ -83,7 +89,10 @@ void report() {
                       'case': '1',
                       'content': myController.text.toString(),
                       'title': "case first",
+                      // 신고 당한 사람
                       'reportedUid': googleSignIn.currentUser.id,
+                      // 신고 한 사람
+                      'reportingUid': googleSignIn.currentUser.id,
                       'time': DateTime.now().millisecondsSinceEpoch.toString(),
                     });
                   }
@@ -223,8 +232,7 @@ class DealFirstCase extends StatelessWidget {
                                 cancleButtonText: '취소',
                                 confirmButtonOnPress: () {
                                   report();
-                                  Navigator.of(context)
-                                      .popUntil((route) => route.isFirst);
+                                  Navigator.pop(context);
                                 },
                               );
                             },

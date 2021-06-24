@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:onestep_rezero/report/pages/reportDealPage.dart';
+import 'package:onestep_rezero/report/pages/reportUserPage.dart';
 
 class ReportPageTest extends StatelessWidget {
   @override
@@ -31,9 +32,9 @@ class ReportPageTest extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                // String uid;
-                // Navigator.of(context).push(MaterialPageRoute(
-                //     builder: (context) => ReportUserPage(uid)));
+                String uid;
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => ReportUserPage(uid)));
               },
               child: Text("사용자신고"),
             ),

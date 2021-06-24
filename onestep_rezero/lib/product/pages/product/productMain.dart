@@ -8,6 +8,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/favorite/pages/favoriteMain.dart';
 import 'package:onestep_rezero/login/pages/loginJoinPage.dart';
+import 'package:onestep_rezero/login/pages/termsPage.dart';
 import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/product/pages/category/categorySidebar.dart';
 import 'package:onestep_rezero/product/pages/product/productAdd.dart';
@@ -32,6 +33,9 @@ class _ProductMainState extends State<ProductMain> {
   final StreamController<bool> _productAddstreamController =
       StreamController<bool>();
   bool _isVisibility = false;
+
+  // test 용
+  GoogleSignInAccount user = googleSignIn.currentUser;
 
   @override
   void initState() {
@@ -158,6 +162,8 @@ class _ProductMainState extends State<ProductMain> {
           onPressed: () => {
             // 알림
 
+            // sunghun
+
             // 회원가입 넘어가는 부분
             // Navigator.of(context).push(
             //     MaterialPageRoute(builder: (context) => LoginJoinPage(user))),
@@ -170,6 +176,10 @@ class _ProductMainState extends State<ProductMain> {
             // 신고 page test
             // Navigator.of(context).push(
             //     MaterialPageRoute(builder: (context) => ReportPageTest())),
+
+            // 약관 page
+            // Navigator.of(context)
+            //     .push(MaterialPageRoute(builder: (context) => TermsPage(user))),
           },
         ),
       ],
