@@ -4,19 +4,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/favorite/pages/favoriteMain.dart';
+import 'package:onestep_rezero/login/pages/loginJoinPage.dart';
+import 'package:onestep_rezero/login/pages/termsPage.dart';
+import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/product/pages/category/categorySidebar.dart';
 import 'package:onestep_rezero/product/pages/product/productAdd.dart';
 
 import 'package:onestep_rezero/product/widgets/main/productMainBody.dart';
 import 'package:onestep_rezero/product/widgets/main/productMainHeader.dart';
+import 'package:onestep_rezero/report/reportPageTest.dart';
 import 'package:onestep_rezero/search/pages/searchMain.dart';
 
 class ProductMain extends StatefulWidget {
   @override
   _ProductMainState createState() => _ProductMainState();
 }
+
+// test
+GoogleSignInAccount user = googleSignIn.currentUser;
 
 class _ProductMainState extends State<ProductMain> {
   final ScrollController _scrollController = ScrollController();
@@ -25,6 +33,9 @@ class _ProductMainState extends State<ProductMain> {
   final StreamController<bool> _productAddstreamController =
       StreamController<bool>();
   bool _isVisibility = false;
+
+  // test 용
+  GoogleSignInAccount user = googleSignIn.currentUser;
 
   @override
   void initState() {
@@ -150,6 +161,25 @@ class _ProductMainState extends State<ProductMain> {
           ),
           onPressed: () => {
             // 알림
+
+            // sunghun
+
+            // 회원가입 넘어가는 부분
+            // Navigator.of(context).push(
+            //     MaterialPageRoute(builder: (context) => LoginJoinPage(user))),
+
+            // 알림으로 넘어가는 부분
+            // Navigator.of(context).push(MaterialPageRoute(
+            //   builder: (context) => HomeNotificationPage(),
+            // ));
+
+            // 신고 page test
+            // Navigator.of(context).push(
+            //     MaterialPageRoute(builder: (context) => ReportPageTest())),
+
+            // 약관 page
+            // Navigator.of(context)
+            //     .push(MaterialPageRoute(builder: (context) => TermsPage(user))),
           },
         ),
       ],

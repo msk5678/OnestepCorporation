@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as FBA;
 import 'package:firebase_core/firebase_core.dart';
@@ -10,12 +9,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:onestep_rezero/admob/googleAdmob.dart';
 import 'package:onestep_rezero/login/model/user.dart';
-import 'package:onestep_rezero/login/pages/authWaitPage.dart';
-import 'package:onestep_rezero/login/pages/loginJoinPage.dart';
 import 'package:onestep_rezero/timeUtil.dart';
-
 import 'appmain/bottomNavigationItem.dart';
 import 'appmain/routeGenterator.dart';
+import 'login/pages/loginAuthPage.dart';
+import 'login/pages/termsPage.dart';
 
 final auth = FBA.FirebaseAuth.instance;
 final googleSignIn = GoogleSignIn();
@@ -155,7 +153,7 @@ class _MainPageState extends State<MainPage> {
 
       // ********* 회원가입 ************* aaaaa
       Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => LoginJoinPage(user)));
+          .push(MaterialPageRoute(builder: (context) => TermsPage(user)));
 
       // await Navigator.push(
       //   context,
@@ -212,9 +210,13 @@ class _MainPageState extends State<MainPage> {
     }
 
     if (userRecord.data()['auth'] == 1) {
+      GoogleSignInAccount user = googleSignIn.currentUser;
       // 증명서 대기 페이지
+      // Navigator.of(context)
+      //     .push(MaterialPageRoute(builder: (context) => AuthWaitPage()));
+      // 이메일 인증 페이지
       Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => AuthWaitPage()));
+          .push(MaterialPageRoute(builder: (context) => LoginAuthPage(user)));
       return null;
     }
 
@@ -227,7 +229,6 @@ class _MainPageState extends State<MainPage> {
         .collection('category')
         .orderBy('total', descending: true)
         .get();
-    print("@@@@ category 가져오기");
     return null;
   }
 
@@ -296,7 +297,7 @@ class _MainPageState extends State<MainPage> {
   Future<Null> _setUpNotifications() async {
     if (Platform.isAndroid) {
       _firebaseMessaging.getToken().then((token) {
-        print("Firebase Messaging Token: " + token);
+        // print("Firebase Messaging Token: " + token);
 
         FirebaseFirestore.instance
             .collection("users")

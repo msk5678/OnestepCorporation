@@ -2,8 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:onestep_rezero/login/pages/choiceAuthWayPage.dart';
+import 'package:onestep_rezero/chat/widget/appColor.dart';
+import 'package:onestep_rezero/login/pages/loginAuthPage.dart';
 import 'package:onestep_rezero/login/providers/providers.dart';
+import 'package:onestep_rezero/onestepCustomDialogNotCancel.dart';
 
 String _tempEmail = "";
 String _tempNickName = "";
@@ -35,7 +37,7 @@ class JoinBody extends ConsumerWidget {
           Padding(
             padding: EdgeInsets.fromLTRB(
                 (MediaQuery.of(context).size.width / 15),
-                (MediaQuery.of(context).size.height / 40),
+                (MediaQuery.of(context).size.height / 20),
                 0,
                 0),
             child: Column(
@@ -121,7 +123,7 @@ class JoinBody extends ConsumerWidget {
                       MediaQuery.of(context).size.width / 4,
                       0),
                   child: Text(
-                    "이메일 형식이 잘못되었거나 중복입니다.",
+                    "아이디 형식이 잘못되었거나 중복입니다.",
                     style: TextStyle(color: Colors.red),
                   ),
                 ),
@@ -200,7 +202,9 @@ class JoinBody extends ConsumerWidget {
                 child: Container(
                   width: 200,
                   child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(primary: Colors.white70),
+                    style: ElevatedButton.styleFrom(
+                      primary: OnestepColors().mainColor,
+                    ),
                     onPressed: _isEmailCheck == true && _isNickNameCheck == true
                         ? () async {
                             if (_isEmailCheck == true &&
@@ -209,14 +213,16 @@ class JoinBody extends ConsumerWidget {
                                   .collection('user')
                                   .doc(user.id)
                                   .set({
+                                    // 원래 0 이었는데 일단 1로 변경
                                     "auth":
-                                        0, // 대학인증여부 0 : 안됨, 1 : 인증대기중, 2 : 인증 완료
+                                        1, // 대학인증여부 0 : 안됨, 1 : 인증대기중, 2 : 인증 완료
                                     "authTime": 0, // 학교 인증시간
                                     "uid": user.id, // uid
                                     "nickName": _nicknameController.text, // 닉네임
                                     "imageUrl": user.photoUrl, // 사진
                                     "email": _emailController.text, // 이메일
-                                    "reportPoint": 0, // 신고 점수
+                                    "reportState": 0, // 제재 확인
+                                    // "reportTime": 0, // 제재 시간
                                     "university": "", // 학교이름
                                     "universityEmail": "", // 학교이메일
                                     "joinTime": DateTime.now()
@@ -237,22 +243,41 @@ class JoinBody extends ConsumerWidget {
                                         FirebaseFirestore.instance
                                             .collection('user')
                                             .doc(user.id)
-                                            .collection("report")
+                                            .collection("notification")
                                             .doc(user.id)
                                             .set({
-                                          "reportPoint": 0,
+                                          "marketing": 0,
+                                          "push": 0,
                                         })
                                       });
 
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) =>
-                                      ChoiceAuthWayPage(user)));
+                              // Navigator.of(context).push(MaterialPageRoute(
+                              //     builder: (context) =>
+                              //         ChoiceAuthWayPage(user)));
+
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return OnestepCustomDialogNotCancel(
+                                    title: '한발자국 회원가입을 환영합니다!',
+                                    description:
+                                        '한발자국을 이용하기 위해서는 \n 학교이메일 인증이 필수입니다. \n모든 서비스는 대학교인증을 하고 난 뒤에 \n 이용이 가능합니다.',
+                                    confirmButtonText: '확인',
+                                    confirmButtonOnPress: () {
+                                      Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  LoginAuthPage(user)));
+                                    },
+                                  );
+                                },
+                              );
                             }
                           }
                         : null,
                     child: Text(
                       "가입완료",
-                      style: TextStyle(color: Colors.black),
+                      style: TextStyle(color: Colors.white),
                     ),
                   ),
                 ),

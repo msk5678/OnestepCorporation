@@ -4,9 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/myinfo/pages/myinfoNickNameChagnePage.dart';
-import 'package:onestep_rezero/myinfo/providers/providers.dart';
 import 'package:random_string/random_string.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io' as io;
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
@@ -20,82 +18,82 @@ class SettingsBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
-    final _isSwitchCheckPush = watch(switchCheckPush.state);
-    final _isSwitchCheckMarketing = watch(switchCheckMarketing.state);
+    // final _isSwitchCheckPush = watch(switchCheckPush.state);
+    // final _isSwitchCheckMarketing = watch(switchCheckMarketing.state);
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: EdgeInsets.fromLTRB(MediaQuery.of(context).size.width / 20,
-                MediaQuery.of(context).size.width / 20, 0, 0),
-            child: Container(
-              child: Text(
-                "알림 설정",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ),
-          ),
-          InkWell(
-            onTap: () {},
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(
-                  MediaQuery.of(context).size.width / 20,
-                  MediaQuery.of(context).size.width / 30,
-                  0,
-                  0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    child: Text(
-                      "푸시 알림 설정",
-                      style: TextStyle(fontSize: 15),
-                    ),
-                  ),
-                  // Switch(
-                  //   value: _isSwitchCheckPush,
-                  //   onChanged: (value) {
-                  //     context.read(switchCheckPush).changeSwitch(value);
-                  //     _prefsPush.setBool('value', value);
-                  //   },
-                  //   activeTrackColor: Colors.lightGreenAccent,
-                  //   activeColor: Colors.green,
-                  // ),
-                ],
-              ),
-            ),
-          ),
-          InkWell(
-            onTap: () {},
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(
-                  MediaQuery.of(context).size.width / 20, 0, 0, 0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    child: Text(
-                      "마케팅 알림 설정",
-                      style: TextStyle(fontSize: 15),
-                    ),
-                  ),
-                  // Switch(
-                  //   value: _isSwitchCheckMarketing,
-                  //   onChanged: (value) {
-                  //     context.read(switchCheckMarketing).changeSwitch(value);
-                  //     _prefsMarketing.setBool('value', value);
-                  //   },
-                  //   activeTrackColor: Colors.lightGreenAccent,
-                  //   activeColor: Colors.green,
-                  // ),
-                ],
-              ),
-            ),
-          ),
-          Divider(
-            thickness: 2,
-          ),
+          // Padding(
+          //   padding: EdgeInsets.fromLTRB(MediaQuery.of(context).size.width / 20,
+          //       MediaQuery.of(context).size.width / 20, 0, 0),
+          //   child: Container(
+          //     child: Text(
+          //       "알림 설정",
+          //       style: TextStyle(fontWeight: FontWeight.bold),
+          //     ),
+          //   ),
+          // ),
+          // InkWell(
+          //   onTap: () {},
+          //   child: Padding(
+          //     padding: EdgeInsets.fromLTRB(
+          //         MediaQuery.of(context).size.width / 20,
+          //         MediaQuery.of(context).size.width / 30,
+          //         0,
+          //         0),
+          //     child: Row(
+          //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //       children: [
+          //         Container(
+          //           child: Text(
+          //             "푸시 알림 설정",
+          //             style: TextStyle(fontSize: 15),
+          //           ),
+          //         ),
+          //         // Switch(
+          //         //   value: _isSwitchCheckPush,
+          //         //   onChanged: (value) {
+          //         //     context.read(switchCheckPush).changeSwitch(value);
+          //         //     _prefsPush.setBool('value', value);
+          //         //   },
+          //         //   activeTrackColor: Colors.lightGreenAccent,
+          //         //   activeColor: Colors.green,
+          //         // ),
+          //       ],
+          //     ),
+          //   ),
+          // ),
+          // InkWell(
+          //   onTap: () {},
+          //   child: Padding(
+          //     padding: EdgeInsets.fromLTRB(
+          //         MediaQuery.of(context).size.width / 20, 0, 0, 0),
+          //     child: Row(
+          //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //       children: [
+          //         Container(
+          //           child: Text(
+          //             "마케팅 알림 설정",
+          //             style: TextStyle(fontSize: 15),
+          //           ),
+          //         ),
+          //         // Switch(
+          //         //   value: _isSwitchCheckMarketing,
+          //         //   onChanged: (value) {
+          //         //     context.read(switchCheckMarketing).changeSwitch(value);
+          //         //     _prefsMarketing.setBool('value', value);
+          //         //   },
+          //         //   activeTrackColor: Colors.lightGreenAccent,
+          //         //   activeColor: Colors.green,
+          //         // ),
+          //       ],
+          //     ),
+          //   ),
+          // ),
+          // Divider(
+          //   thickness: 2,
+          // ),
           Padding(
             padding: EdgeInsets.fromLTRB(MediaQuery.of(context).size.width / 20,
                 MediaQuery.of(context).size.width / 20, 0, 0),
@@ -256,6 +254,31 @@ class SettingsBody extends ConsumerWidget {
               ),
             ),
           ),
+          // InkWell(
+          //   onTap: () {},
+          //   child: Padding(
+          //     padding: EdgeInsets.fromLTRB(
+          //         MediaQuery.of(context).size.width / 20,
+          //         MediaQuery.of(context).size.width / 30,
+          //         0,
+          //         0),
+          //     child: Row(
+          //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //       children: [
+          //         Container(
+          //           child: Text(
+          //             "언어설정",
+          //             style: TextStyle(fontSize: 15),
+          //           ),
+          //         ),
+          //         IconButton(
+          //           icon: Icon(Icons.keyboard_arrow_right),
+          //           onPressed: () {},
+          //         )
+          //       ],
+          //     ),
+          //   ),
+          // ),
           InkWell(
             onTap: () {},
             child: Padding(
@@ -264,28 +287,6 @@ class SettingsBody extends ConsumerWidget {
                   MediaQuery.of(context).size.width / 30,
                   0,
                   0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    child: Text(
-                      "언어설정",
-                      style: TextStyle(fontSize: 15),
-                    ),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.keyboard_arrow_right),
-                    onPressed: () {},
-                  )
-                ],
-              ),
-            ),
-          ),
-          InkWell(
-            onTap: () {},
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(
-                  MediaQuery.of(context).size.width / 20, 0, 0, 0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
