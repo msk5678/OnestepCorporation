@@ -71,7 +71,7 @@ class ChoiceAuthWayPage extends StatelessWidget {
                       padding: EdgeInsets.fromLTRB(
                           0, 0, 0, MediaQuery.of(context).size.height / 10),
                       child: Container(
-                        child: Text("학교인증을 필수로 해주셔야합니다"),
+                        child: Text("대학교인증을 필수로 해주셔야합니다"),
                       ),
                     ),
                     Row(

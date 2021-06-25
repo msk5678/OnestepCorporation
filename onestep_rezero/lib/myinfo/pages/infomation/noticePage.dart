@@ -1,5 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
+final f = DateFormat('yyyy-MM-dd');
 
 class NoticePage extends StatelessWidget {
   @override
@@ -29,19 +32,18 @@ class NoticePage extends StatelessWidget {
                   child: ListView(
                     // QureySnapshot -> Document 데이터 접근할 때 이런식으로
                     children: snapshot.data.docs.map((DocumentSnapshot doc) {
-                      Timestamp tempTime = doc.data()['time'];
+                      // int tempTime = doc.data()['time'];
                       return InkWell(
                         onTap: () {
-                          print("doc id = ${doc.id}");
                           // 찬섭이형 게시글 형식으로 넘어가야함, 이야기해보기
                         },
                         child: Column(
                           children: [
                             ListTile(
                               title: Text(doc.data()['title']),
-                              subtitle: Text(
-                                  DateTime.parse(tempTime.toDate().toString())
-                                      .toString()),
+                              subtitle: Text(f.format(
+                                  DateTime.fromMillisecondsSinceEpoch(
+                                      int.parse(doc.data()['time'])))),
                             ),
                             Divider(
                               height: 0,

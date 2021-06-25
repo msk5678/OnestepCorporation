@@ -225,10 +225,6 @@ class _LastChatState extends State<ChatScreen> {
   PickedFile pickFile;
   String imageUrl;
 
-  //메시지 보내기
-  String senderId; //보내는 내 아이디
-  String receiveId; //받는 상대 아이디
-
   //SharedPreferences preferences;
   //String id; //내아이디
   //채팅방 생성 판별
@@ -397,67 +393,70 @@ class _LastChatState extends State<ChatScreen> {
       child: Stack(
         //alignment: Alignment.bottomCenter,
         children: <Widget>[
-          Column(
+          Container(
+            color: Colors.white,
+            child: Column(
 //            mainAxisSize: MainAxisSize.max,
-            //mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              AppBar(
-                leading: BackButton(
-                  color: Colors.black,
-                  // OnestepColors().mainColor,
-                ),
-                // shadowColor: Colors.white,
-                elevation: 0,
-                backgroundColor: Colors.white10,
-                // OnestepColors().thirdColor,
-                title: Center(
-                  child: Column(
-                    children: [
-                      ProductChatController()
-                          .getProductUserNickName(friendId, 15),
-                      SizedBox(
-                        height: 1,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.circle,
-                            color: Colors.green,
-                            size: 9,
-                          ),
-                          Text(
-                            "접속중",
-                            style: TextStyle(
+              //mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                AppBar(
+                  leading: BackButton(
+                    color: Colors.black,
+                    // OnestepColors().mainColor,
+                  ),
+                  // shadowColor: Colors.white,
+                  elevation: 0,
+                  backgroundColor: Colors.white,
+                  // OnestepColors().thirdColor,
+                  title: Center(
+                    child: Column(
+                      children: [
+                        ProductChatController()
+                            .getProductUserNickName(friendId, 15),
+                        SizedBox(
+                          height: 1,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.circle,
                               color: Colors.green,
-                              fontSize: 9,
+                              size: 9,
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
+                            Text(
+                              "접속중",
+                              style: TextStyle(
+                                color: Colors.green,
+                                fontSize: 9,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    // Text("ge"),
                   ),
-                  // Text("ge"),
+                  actions: [
+                    ProductChatMenu().getProductMenu(
+                      context,
+                      chatId,
+                      friendId,
+                    ),
+                  ],
                 ),
-                actions: [
-                  ProductChatMenu().getProductMenu(
-                    context,
-                    chatId,
-                    friendId,
-                  ),
-                ],
-              ),
-              //Text("con $connectTime"),
-              ProductChatController().createProductInfomation(postId),
-              // Align(
-              //  alignment: FractionalOffset(0.5, 0.5), // 수평 중간, 수직 하단에 위치하도록 설정
-              //    child:
-              _buildChatListListTileStream(),
-              //),
-              //Input Controllers
-              createInput(),
-              (isDisplaySticker ? createStickers() : Container()),
-            ],
+                //Text("con $connectTime"),
+                ProductChatController().createProductInfomation(postId),
+                // Align(
+                //  alignment: FractionalOffset(0.5, 0.5), // 수평 중간, 수직 하단에 위치하도록 설정
+                //    child:
+                _buildChatListListTileStream(),
+                //),
+                //Input Controllers
+                createInput(),
+                (isDisplaySticker ? createStickers() : Container()),
+              ],
+            ),
           ),
           createLoding(),
         ],
@@ -622,7 +621,7 @@ class _LastChatState extends State<ChatScreen> {
                               itemBuilder: (context, index) {
                                 return Container(
                                   padding: EdgeInsets.only(
-                                    bottom: 5,
+                                    bottom: 5, //각 메세지 하단 패딩
                                   ),
                                   child: Column(
                                     children: [
@@ -678,326 +677,280 @@ class _LastChatState extends State<ChatScreen> {
       return Text("err");
   }
 
+  _createMessageTypeWithText(String uid, String content) {
+    Color messageColor;
+    uid == googleSignIn.currentUser.id
+        ? messageColor = OnestepColors().fifColor
+        : messageColor = Colors.grey[200];
+
+    return Container(
+      // color: Colors.red,
+      padding: EdgeInsets.all(
+        9,
+      ),
+      // height: 30,
+      constraints: BoxConstraints(
+        maxWidth: 270,
+        minWidth: 0,
+      ),
+      child: Text(
+        content,
+        style: TextStyle(
+          // height: 1.5,
+          color: Colors.black,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+
+      decoration: BoxDecoration(
+        color: messageColor,
+        borderRadius: BorderRadius.circular(4.0),
+      ),
+      // margin: EdgeInsets.all(5),
+    );
+  }
+
+  _createMessageTypeWithImage(String content) {
+    return Container(
+      constraints: BoxConstraints(maxHeight: 200, maxWidth: 200),
+      width: 200,
+      height: 200,
+      // color: Colors.black,
+      child: TextButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => FullPhoto(url: content),
+            ),
+          );
+        },
+        style: TextButton.styleFrom(
+          padding: EdgeInsets.zero, //textButton margin
+          // minimumSize: Size(50, 30),
+          // alignment: Alignment.centerLeft,
+        ),
+        child: Material(
+          borderRadius: BorderRadius.all(
+            Radius.circular(8.0),
+          ),
+          clipBehavior: Clip.hardEdge,
+          child: CachedNetworkImage(
+            imageUrl: content,
+            width: 200.0,
+            height: 200.0,
+            fit: BoxFit.cover,
+            placeholder: (context, url) => Container(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  (OnestepColors().mainColor),
+                ),
+              ),
+              decoration: BoxDecoration(
+                color: Colors.grey,
+                borderRadius: BorderRadius.all(
+                  Radius.circular(4.0),
+                ),
+              ),
+            ),
+            errorWidget: (context, url, error) => Material(
+              child: Text("err"),
+              // Image.asset("images/mimi1.gif",
+              //     width: 200.0,
+              //     height: 200.0,
+              //     fit: BoxFit.cover),
+              borderRadius: BorderRadius.circular(4.0),
+
+              clipBehavior: Clip.hardEdge,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  _createMessageTypeWithProductInfo(
+      String uid, ProductChatMessage productMessage) {
+    Color messageColor;
+    Color btnColor;
+    uid == googleSignIn.currentUser.id
+        ? messageColor = OnestepColors().fifColor
+        : messageColor = Colors.grey[200];
+
+    uid == googleSignIn.currentUser.id
+        ? btnColor = OnestepColors().mainColor
+        : btnColor = Colors.grey[400];
+
+    return Container(
+      padding: EdgeInsets.all(
+        10.0,
+      ), // width: 150.0,
+      //height: 150,
+      decoration: BoxDecoration(
+        color: messageColor,
+        borderRadius: BorderRadius.circular(4.0),
+      ),
+      child: Column(
+        // crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Expanded(
+              //child:
+              Material(
+                child: CachedNetworkImage(
+                  imageUrl: productMessage.content.imageUrl,
+                  fit: BoxFit.cover,
+                  height: 50,
+                  width: 50,
+                ),
+                borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                clipBehavior: Clip.hardEdge,
+              ),
+              SizedBox(
+                width: 15,
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 140,
+                    child: Text(
+                      productMessage.content.title,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  Text(
+                    productMessage.content.price + "원",
+                  ),
+                ],
+              ),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+            child: ElevatedButton(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(btnColor),
+                elevation: MaterialStateProperty.all(0),
+              ),
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            (ProductDetail(docId: widget.postId))));
+              },
+              child: Container(
+                  alignment: Alignment.center,
+                  width: 60,
+                  height: 30,
+                  child: Text("상세보기")),
+            ),
+          ),
+        ],
+      ),
+      margin: EdgeInsets.only(
+          // top: 8,
+
+          ),
+    );
+  }
+
   Widget createMessage(int index, ProductChatMessage productMessage) {
     if (productMessage.idFrom == myId) {
-      senderId = myId;
-      receiveId = friendId;
       //내가 보냈을 경우
       return Container(
-          // margin: EdgeInsets.only(top: 8.0),
-          child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
-            child: Column(
+        // color: Colors.blue,
+        // margin: EdgeInsets.only(top: 8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: <Widget>[
+            // Padding(
+            //   padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
+            //   child:
+            Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
-                productMessage.isRead == false ? Text("1") : Text(""),
+                productMessage.isRead == false
+                    ? Text(
+                        "1",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 10,
+                          color: OnestepColors().mainColor,
+                        ),
+                      )
+                    : Text(""),
                 getMessageTime(productMessage.sendTime),
               ],
             ),
-          ),
-          SizedBox(width: 5, height: 10),
-          productMessage.type == 0
-              //Text Msg
-              ? Container(
-                  width: 250,
-                  child: Text(
-                    productMessage.content.title,
-                    style: TextStyle(height: 1.5),
-                    overflow: TextOverflow.ellipsis,
-                    // maxLines: 2,
-                  ),
-
-                  // Text(
-                  //   productMessage.content.title,
-                  //   // maxLines: 2,
-                  //   softWrap: false,
-                  //   style: TextStyle(
-                  //     color: Colors.red,
-                  //     fontWeight: FontWeight.w500,
-                  //   ),
-                  //   overflow: TextOverflow.clip,
-                  //   // overflow: TextOverflow.fade,
-                  // ),
-
-                  padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
-                  //width: 150.0,
-                  decoration: BoxDecoration(
-                      color: OnestepColors().fifColor,
-                      borderRadius: BorderRadius.circular(8.0)),
-                  margin: EdgeInsets.only(
-                      //textmargin
-                      // top: 8,
-                      // bottom: 5,
-                      // isLastMsgRight(index) ? 0.0 : 0.0,
-                      // right: 10.0,
-                      ),
-                )
-              //Image Msg
-              : productMessage.type == 1
-                  ?
-                  //Text(productMessage.content.imageUrl.toString())
-                  Container(
-                      child: TextButton(
-                        child: Material(
-                          child: CachedNetworkImage(
-                            placeholder: (context, url) => Container(
-                              child: CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                    (OnestepColors().mainColor)),
-                              ),
-                              width: 200.0,
-                              height: 200.0,
-                              padding: EdgeInsets.all(70.0),
-                              decoration: BoxDecoration(
-                                color: Colors.grey,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(8.0)),
-                              ),
+            // ),
+            Container(
+              // color: Colors.red,
+              child: SizedBox(width: 5, height: 10),
+            ),
+            productMessage.type == 0
+                //0. Text
+                ? _createMessageTypeWithText(
+                    productMessage.idFrom, productMessage.content.title)
+                //1. Image
+                : productMessage.type == 1
+                    ? _createMessageTypeWithImage(
+                        productMessage.content.imageUrl)
+                    //2. Sticker
+                    : productMessage.type == 2
+                        ? Container(
+                            child: Image.asset(
+                              "images/${productMessage.content}.gif",
+                              width: 100.0,
+                              height: 100.0,
+                              fit: BoxFit.cover,
                             ),
-                            errorWidget: (context, url, error) => Material(
-                              child: Text("err"),
-                              // Image.asset("images/mimi1.gif",
-                              //     width: 200.0,
-                              //     height: 200.0,
-                              //     fit: BoxFit.cover),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(8.0)),
-                              clipBehavior: Clip.hardEdge,
-                            ),
-                            imageUrl: productMessage.content.imageUrl,
-                            width: 200.0,
-                            height: 200.0,
-                            fit: BoxFit.cover,
-                          ),
-                          borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                          clipBehavior: Clip.hardEdge,
-                        ),
-                        onPressed: () {
-                          // print("pic click " +
-                          //     document["content"] +
-                          //     'index : ' +
-                          //     index.toString());
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => FullPhoto(
-                                      url: productMessage.content.imageUrl)));
-                        },
-                      ),
-                      margin: EdgeInsets.only(
-                          //image margin
-                          // top: 8,
-                          // bottom: isLastMsgRight(index) ? 0.0 : 0.0,
-                          // right: 0.0,
-                          ),
-                    )
-                  //Sticker . gif Msg
-                  : productMessage.type == 2
-                      ? Container(
-                          child: Image.asset(
-                            "images/${productMessage.content}.gif",
-                            width: 100.0,
-                            height: 100.0,
-                            fit: BoxFit.cover,
-                          ),
-                          margin: EdgeInsets.only(
-                              // top: 8,
-                              // bottom: isLastMsgRight(index) ? 20.0 : 0.0,
-                              // right: 10.0,
-                              ),
-                        )
-                      //Product Info Message
-                      : Container(
-                          padding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 8.0),
-                          // width: 150.0,
-                          //height: 150,
-                          decoration: BoxDecoration(
-                              color: OnestepColors().fifColor,
-                              borderRadius: BorderRadius.circular(8.0)),
-                          child: Column(
-                            // crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  // Expanded(
-                                  //child:
-                                  Material(
-                                    child: CachedNetworkImage(
-                                      imageUrl: productMessage.content.imageUrl,
-                                      fit: BoxFit.cover,
-                                      height: 50,
-                                      width: 50,
-                                    ),
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(8.0)),
-                                    clipBehavior: Clip.hardEdge,
-                                  ),
-                                  SizedBox(
-                                    width: 15,
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        width: 140,
-                                        child: Text(
-                                          productMessage.content.title,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 8,
-                                      ),
-                                      Text(
-                                        productMessage.content.price + "원",
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
-                                child: ElevatedButton(
-                                  style: ButtonStyle(
-                                    backgroundColor: MaterialStateProperty.all(
-                                        OnestepColors().mainColor),
-                                    elevation: MaterialStateProperty.all(0),
-                                  ),
-                                  onPressed: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                (ProductDetail(
-                                                    docId: widget.postId))));
-                                  },
-                                  child: Container(
-                                      alignment: Alignment.center,
-                                      width: 60,
-                                      height: 30,
-                                      child: Text("상세보기")),
+                            margin: EdgeInsets.only(
+                                // top: 8,
                                 ),
-                              ),
-                            ],
-                          ),
-                          margin: EdgeInsets.only(
-                              // top: 8,
-
-                              ),
-                        ),
-        ],
-        mainAxisAlignment: MainAxisAlignment.end,
-      ));
+                          )
+                        //3. Product Info Message
+                        : _createMessageTypeWithProductInfo(
+                            productMessage.idFrom, productMessage),
+          ],
+        ),
+      );
     } //if My messages - Right Side
-
-    //Receiver Messages - Left Side
     else {
       //상대가 보냈을 경우
-
       return Container(
+        // color: Colors.yellow,
         // margin: EdgeInsets.only(top: 8.0),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Container(
               margin: EdgeInsets.only(right: 6.0),
-              child:
-                  //  CachedNetworkImage(
-                  //   imageUrl: localImageUrl,
-                  //   // productMessage.content.imageUrl,
-                  //   fit: BoxFit.cover,
-                  //   height: 40,
-                  //   width: 40,
-                  // ),
-                  ProductChatController().getUserImagetoChatroom(chatId),
+              child: ProductChatController().getUserImagetoChatroom(chatId),
             ),
             Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
-                //displayMessages
                 productMessage.type == 0
-                    //Text Msg
-                    ? Container(
-                        width: 250,
-                        child: Text(
-                          productMessage.content.title,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
-                        //width: 150.0,
-                        decoration: BoxDecoration(
-                            color: Colors.grey[200],
-                            borderRadius: BorderRadius.circular(8.0)),
-                        margin: EdgeInsets.only(
-                          //top: 8,
-
-                          // left: 10.0,
-                          right: 5.0,
-                        ), //상대 텍스트 마진
-                      )
+                    //0. Text
+                    ? _createMessageTypeWithText(
+                        productMessage.idFrom, productMessage.content.title)
+                    //1. Image
                     : productMessage.type == 1
-                        ? Container(
-                            child: TextButton(
-                              child: Material(
-                                child: CachedNetworkImage(
-                                  placeholder: (context, url) => Container(
-                                    child: CircularProgressIndicator(
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                          (Colors.lightBlueAccent)),
-                                    ),
-                                    width: 200.0,
-                                    height: 200.0,
-                                    padding: EdgeInsets.all(70.0),
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey,
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(8.0)),
-                                    ),
-                                  ),
-                                  errorWidget: (context, url, error) =>
-                                      Material(
-                                    child: Image.asset("images/test.jpeg",
-                                        width: 200.0,
-                                        height: 200.0,
-                                        fit: BoxFit.cover),
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(8.0)),
-                                    clipBehavior: Clip.hardEdge,
-                                  ),
-                                  imageUrl: productMessage.content.imageUrl,
-                                  width: 200.0,
-                                  height: 200.0,
-                                  fit: BoxFit.cover,
-                                ),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(8.0)),
-                                clipBehavior: Clip.hardEdge,
-                              ),
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => FullPhoto(
-                                            url: productMessage
-                                                .content.imageUrl)));
-                              },
-                            ),
-                            margin: EdgeInsets.only(left: 10.0),
-                          )
-                        //Sticker
+                        ? _createMessageTypeWithImage(
+                            productMessage.content.imageUrl)
+                        //2. Sticker
                         : productMessage.type == 2
                             ? Container(
                                 child: Image.asset(
@@ -1010,138 +963,31 @@ class _LastChatState extends State<ChatScreen> {
                                     //bottom: isLastMsgLeft(index) ? 20.0 : 10.0,
                                     right: 10.0),
                               )
-                            //Product Info Message
-                            : Container(
-                                padding:
-                                    EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
-                                // width: 150.0,
-                                //height: 150,
-                                decoration: BoxDecoration(
-                                    color: Colors.grey[200],
-                                    borderRadius: BorderRadius.circular(8.0)),
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        // Expanded(
-                                        //child:
-                                        Material(
-                                          child: CachedNetworkImage(
-                                            imageUrl:
-                                                productMessage.content.imageUrl,
-                                            fit: BoxFit.cover,
-                                            height: 50,
-                                            width: 50,
-                                          ),
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(8.0)),
-                                          clipBehavior: Clip.hardEdge,
-                                        ),
-
-                                        // child: ExtendedImage.network(
-                                        //   snapshot.data['imageUrl'],
-                                        //   fit: BoxFit.cover,
-                                        //   height: 50,
-                                        //   width: 50,
-                                        //   cache: true,
-                                        // ),
-                                        // ),
-                                        SizedBox(
-                                          width: 15,
-                                        ),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Container(
-                                              width: 140,
-                                              child: Text(
-                                                productMessage.content.title,
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              height: 8,
-                                            ),
-                                            Text(
-                                              productMessage.content.price +
-                                                  "원",
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                    Padding(
-                                      padding:
-                                          const EdgeInsets.fromLTRB(5, 5, 5, 0),
-                                      child: ElevatedButton(
-                                        style: ButtonStyle(
-                                          backgroundColor:
-                                              MaterialStateProperty.all(
-                                            Colors.grey[400],
-                                          ),
-                                          elevation:
-                                              MaterialStateProperty.all(0),
-                                          // hoverElevation: 0,
-                                          // focusElevation: 0,
-                                          // highlightElevation: 0,
-                                        ),
-                                        onPressed: () {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      (ProductDetail(
-                                                          docId:
-                                                              widget.postId))));
-                                        },
-                                        child: Container(
-                                            alignment: Alignment.center,
-                                            width: 60,
-                                            height: 30,
-                                            child: Text("상세보기")),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                margin: EdgeInsets.only(
-                                    //top: 8,
-                                    // bottom: isLastMsgRight(index) ? 20.0 : 0.0,
-                                    right: 10.0),
-                              ),
-                //GetTime(document),
+                            //3. Product Info Message
+                            : _createMessageTypeWithProductInfo(
+                                productMessage.idFrom, productMessage),
+                Container(
+                  // color: Colors.red,
+                  child: SizedBox(width: 5, height: 10),
+                ),
                 getMessageTime(productMessage.sendTime),
               ],
             ),
           ],
         ),
-        //Msg time 하단이라 지움
-/*
-            isLastMsgLeft(index)
-                ? Container(
-                    child: GetTime(document), //채팅 우측 시간출력
-                    margin: EdgeInsets.only(left: 50.0, top: 50.0, bottom: 5.0),
-                  )
-                : Container(
-                    child: Text(' 텍스트?'),
-                  )
-                  */
       );
     } //else 상대방 Receiver Messages - Left Side
   }
 
-  //Future<void>
   createInput() {
+    Color _inputWidgetColor = Colors.white10;
     return Container(
+      // color: Colors.blue,
       child: Row(
         children: <Widget>[
           //pick image icon button
           Material(
+            color: _inputWidgetColor,
             child: Container(
               margin: EdgeInsets.symmetric(horizontal: 1.0),
               child: IconButton(
@@ -1150,38 +996,64 @@ class _LastChatState extends State<ChatScreen> {
                 onPressed: getImage, //getImageFromGallery,
               ),
             ),
-            color: Colors.white,
           ),
 
           //emoji icon button
-          Material(
-            child: Container(
-              margin: EdgeInsets.symmetric(horizontal: 1.0),
-              child: IconButton(
-                icon: Icon(Icons.face),
-                color: OnestepColors().mainColor,
-                onPressed: getSticker, //getImageFromGallery,
-              ),
-            ),
-            color: Colors.white,
-          ),
+          // Material(
+          //   child: Container(
+          //     margin: EdgeInsets.symmetric(horizontal: 1.0),
+          //     child: IconButton(
+          //       icon: Icon(Icons.face),
+          //       color: OnestepColors().mainColor,
+          //       onPressed: getSticker, //getImageFromGallery,
+          //     ),
+          //   ),
+          //   color: Colors.white,
+          // ),
 
           //Text Field
           Flexible(
-            child: TextField(
-              enabled: true,
-              style: TextStyle(color: Colors.black, fontSize: 15.0),
-              controller: textEditingController,
-              maxLines: null,
-              decoration: InputDecoration.collapsed(
-                  hintText: "메세지를 입력하세요.",
-                  hintStyle: TextStyle(color: Colors.grey)),
-              focusNode: focusNode,
+            child: Container(
+              // width: 250,
+              height: 35,
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(18.0),
+              ),
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    left: 15,
+                  ),
+                  child: TextField(
+                    // onChanged: (value) {
+                    //   textEditingController.text == ""
+                    //   ?
+                    // },
+                    cursorColor: OnestepColors().mainColor,
+                    enabled: true,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 15.0,
+                    ),
+                    controller: textEditingController,
+                    maxLines: null,
+                    decoration: InputDecoration.collapsed(
+                      hintText: "메세지를 입력하세요.",
+                      hintStyle: TextStyle(
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                    focusNode: focusNode,
+                  ),
+                ),
+              ),
             ),
           ),
 
           //Send Message Icon Button
           Material(
+            color: _inputWidgetColor, //Send icon background color
             child: Container(
               margin: EdgeInsets.symmetric(
                 horizontal: 8.0,
@@ -1189,6 +1061,7 @@ class _LastChatState extends State<ChatScreen> {
               child: IconButton(
                   icon: Icon(Icons.send),
                   color: OnestepColors().mainColor,
+                  disabledColor: Colors.red,
                   onPressed: () {
                     if (textEditingController.text.contains("[상품정보문의]")) {
                       String reConnectTime =
@@ -1206,7 +1079,9 @@ class _LastChatState extends State<ChatScreen> {
                           chatId, friendId, textEditingController.text, 0);
                     }
                   }),
-              color: Colors.white,
+              color: //Send Icon Button Color
+                  // Colors.red,
+                  _inputWidgetColor,
             ),
           ),
         ],
@@ -1214,12 +1089,13 @@ class _LastChatState extends State<ChatScreen> {
       width: double.infinity,
       height: 50,
       decoration: BoxDecoration(
-        border: Border(
-            top: BorderSide(
-          color: Colors.grey,
-          width: 0.5,
-        )),
-        color: Colors.white,
+        // border: Border(
+        //   top: BorderSide(
+        //     // color: Colors.green,
+        //     width: 0.5,
+        //   ),
+        // ),
+        color: _inputWidgetColor,
       ),
     );
   }
