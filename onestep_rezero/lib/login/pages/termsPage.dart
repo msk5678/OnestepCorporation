@@ -3,7 +3,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/login/pages/termsPersonalDataPage.dart';
 import 'package:onestep_rezero/login/pages/termsServicePage.dart';
-import 'package:onestep_rezero/onestepCustomDialogNotCancel.dart';
 
 import 'loginJoinPage.dart';
 
