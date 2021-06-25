@@ -4,9 +4,16 @@ import 'package:onestep_rezero/product/widgets/categoryDetail/categoryDetailBody
 import 'package:onestep_rezero/product/widgets/categoryDetail/categoryDetailHeader.dart';
 
 class CategoryDetail extends StatefulWidget {
+  final int total;
   final String category;
+  final Map<String, dynamic> detailCategory;
 
-  CategoryDetail({Key key, @required this.category}) : super(key: key);
+  CategoryDetail(
+      {Key key,
+      @required this.category,
+      @required this.detailCategory,
+      @required this.total})
+      : super(key: key);
 
   @override
   _CategoryDetailState createState() => _CategoryDetailState();
@@ -60,7 +67,10 @@ class _CategoryDetailState extends State<CategoryDetail> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                CategoryDetailHeader(category: widget.category),
+                CategoryDetailHeader(
+                    category: widget.category,
+                    total: widget.total,
+                    detailcategory: widget.detailCategory),
                 CategoryDetailBody(),
               ],
             ),

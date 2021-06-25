@@ -32,6 +32,7 @@ void main() async {
   await Firebase.initializeApp();
   TimeUtil.setLocalMessages();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
   runApp(
     ProviderScope(child: MyApp()),
   );
@@ -135,7 +136,10 @@ class _MainPageState extends State<MainPage> {
 
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         duration: Duration(seconds: 2),
-        content: Text("한번더 누르면 종료"),
+        content: Text(
+          "버튼을 한번 더 누르시면 종료됩니다.",
+          textAlign: TextAlign.center,
+        ),
       ));
       return false;
     }

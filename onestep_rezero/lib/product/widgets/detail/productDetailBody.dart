@@ -329,7 +329,8 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
                   Padding(
                     padding: const EdgeInsets.only(right: 2.0),
                   ),
-                  Text("${widget.product.category}"),
+                  Text(
+                      "${widget.product.category} > ${widget.product.detailCategory}"),
                 ],
               ),
               Row(

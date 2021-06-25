@@ -1,5 +1,8 @@
+import 'dart:collection';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/product/models/categorySelectItem.dart';
 import 'package:onestep_rezero/product/pages/product/productAddDetailCategorySelect.dart';
 
@@ -15,45 +18,58 @@ Widget mainCategory() {
   return FutureBuilder(
     future: FirebaseFirestore.instance
         .collection("category")
-        .orderBy("total", descending: true)
+        .doc(currentUserModel.university)
         .get(),
-    builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+    builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
       switch (snapshot.connectionState) {
         case ConnectionState.waiting:
           return Container();
         default:
+          Map<String, dynamic> map = snapshot.data.data();
+
+          var sortedKeys = map.keys.toList(growable: false)
+            ..sort((k2, k1) => map[k1]['total'].compareTo(map[k2]['total']));
+
+          LinkedHashMap sortedMap = new LinkedHashMap.fromIterable(sortedKeys,
+              key: (k) => k, value: (k) => map[k]);
+
           return ListView.builder(
-            itemCount: snapshot.data.size,
+            itemCount: sortedMap.length,
             itemBuilder: (BuildContext context, int index) {
               return ListTile(
                 onTap: () {
-                  snapshot.data.docs[index].data()['detail'] == null
+                  Map map = sortedMap[sortedMap.keys.elementAt(index)];
+
+                  String _category = sortedMap.keys.elementAt(index);
+                  Map _detailCategory = map['detail'];
+
+                  _detailCategory.isEmpty
                       ? Navigator.of(context).pop(CategorySelectItem(
-                          category: snapshot.data.docs[index].id,
-                          detailCategory: null))
+                          category: _category, detailCategory: null))
                       : Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) =>
                                 ProductAddDetailCategorySelect(
-                                    category: snapshot.data.docs[index]
-                                        .data()['detail']),
+                                    category: _detailCategory),
                           )).then((value) {
-                          Navigator.of(context).pop(CategorySelectItem(
-                              category: snapshot.data.docs[index].id,
-                              detailCategory: value));
+                          if (value != null)
+                            Navigator.of(context).pop(CategorySelectItem(
+                                category: _category, detailCategory: value));
                         });
                 },
                 leading: Padding(
                     padding: EdgeInsets.only(bottom: 5.0),
                     child: Image.asset(
-                        snapshot.data.docs[index].data()['image'],
-                        width: 38,
-                        height: 38)),
-                title: Text(snapshot.data.docs[index].id),
-                trailing: snapshot.data.docs[index].data()['detail'] == null
-                    ? null
-                    : Icon(Icons.arrow_forward_ios_rounded),
+                        sortedMap[sortedMap.keys.elementAt(index)]['image'],
+                        width: 30,
+                        height: 30)),
+                title: Text(sortedMap.keys.elementAt(index)),
+                trailing:
+                    // map['detail']
+                    // ? null
+                    // :
+                    Icon(Icons.arrow_forward_ios_rounded),
               );
             },
           );
