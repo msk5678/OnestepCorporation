@@ -166,8 +166,8 @@ class _ProductMainState extends State<ProductMain> {
                   //     MaterialPageRoute(builder: (context) => ReportPageTest())),
 
                   // 약관 page
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => TermsPage(user))),
+                  // Navigator.of(context).push(
+                  //     MaterialPageRoute(builder: (context) => TermsPage(user))),
 
                   //   FirebaseFirestore.instance
                   //       .collection("category")
