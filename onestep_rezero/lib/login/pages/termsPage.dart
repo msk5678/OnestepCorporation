@@ -125,6 +125,11 @@ class _TermsPageState extends State<TermsPage> {
                           onTap: () {
                             setState(() {
                               serviceFlag = !serviceFlag;
+                              if (personalFlag == true && serviceFlag == true) {
+                                allCheckFlag = true;
+                              } else {
+                                allCheckFlag = false;
+                              }
                             });
                           },
                           child: Container(
@@ -204,6 +209,11 @@ class _TermsPageState extends State<TermsPage> {
                           onTap: () {
                             setState(() {
                               personalFlag = !personalFlag;
+                              if (serviceFlag == true && personalFlag == true) {
+                                allCheckFlag = true;
+                              } else {
+                                allCheckFlag = false;
+                              }
                             });
                           },
                           child: Container(
@@ -287,6 +297,13 @@ class _TermsPageState extends State<TermsPage> {
                           onTap: () {
                             setState(() {
                               allCheckFlag = !allCheckFlag;
+                              if (allCheckFlag == true) {
+                                serviceFlag = true;
+                                personalFlag = true;
+                              } else {
+                                serviceFlag = false;
+                                personalFlag = false;
+                              }
                             });
                           },
                           child: Container(
