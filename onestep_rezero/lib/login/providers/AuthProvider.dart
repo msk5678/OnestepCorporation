@@ -24,24 +24,23 @@ class SchoolEmailCheckProvider extends ChangeNotifier {
     // const start = "@stu.";
     // const end = ".ac";
 
-    // final startIndex = str.indexOf(start);
-    // final endIndex = str.indexOf(end, startIndex + start.length);
+    // final startIndex = tempEmail.indexOf(start);
+    // final endIndex = tempEmail.indexOf(end, startIndex + start.length);
 
-    // print(
-    //     str.substring(startIndex + start.length, endIndex)); // kmu
+    // print(tempEmail.substring(startIndex + start.length, endIndex)); // kmu
 
-    // final QuerySnapshot result =
-    //     await FirebaseFirestore.instance.collection('university').get();
-    // final List<DocumentSnapshot> documents = result.docs;
-    // documents.forEach((data) => print(data.id));
+    final QuerySnapshot result =
+        await FirebaseFirestore.instance.collection('university').get();
+    final List<DocumentSnapshot> documents = result.docs;
+    bool universityCheck = false;
+    documents.forEach((data) => {
+          if (tempEmail.contains("@stu.${data.id}.ac.kr"))
+            {universityCheck = true}
+        });
+    // print("test = $universityCheck");
 
     // 경대 : @stu.knu.ac.kr, 영대 : @stu.yu.ac.kr, 대구대 : @stu.daegu.ac.kr, 대가대 : @stu.cu.ac.kr
-    if (docRef.isEmpty &&
-        (tempEmail.contains("@stu.kmu.ac.kr") ||
-            tempEmail.contains("@stu.knu.ac.kr") ||
-            tempEmail.contains("@stu.yu.ac.kr") ||
-            tempEmail.contains("@stu.daegu.ac.kr") ||
-            tempEmail.contains("@stu.cu.ac.kr"))) {
+    if (docRef.isEmpty && universityCheck == true) {
       authFlag.isEmailChecked = true;
       authFlag.isEmailErrorUnderLine = true;
       authFlag.isEmailDupliCheckUnderLine = true;

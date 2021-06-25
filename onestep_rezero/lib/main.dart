@@ -14,6 +14,7 @@ import 'appmain/bottomNavigationItem.dart';
 import 'appmain/routeGenterator.dart';
 import 'login/pages/loginAuthPage.dart';
 import 'login/pages/termsPage.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 final auth = FBA.FirebaseAuth.instance;
 final googleSignIn = GoogleSignIn();
@@ -55,6 +56,7 @@ class MyApp extends StatelessWidget {
       //   return ScrollConfiguration(behavior: MyBehavior(), child: child);
       // }, //스크롤 영역 제거
       home: MainPage(),
+      // builder: EasyLoading.init(),
     );
   }
 }

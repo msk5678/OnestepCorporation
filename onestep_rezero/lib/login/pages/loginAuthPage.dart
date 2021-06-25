@@ -523,23 +523,6 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                     if (timeOver == false &&
                                         checkPassword ==
                                             _authNumberController.text) {
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return OnestepCustomDialogNotCancel(
-                                            title: '한발자국 대학교인증 성공!',
-                                            description:
-                                                '이제 한발자국의 모든 기능들을 이용할 수 있습니다.',
-                                            confirmButtonText: '확인',
-                                            confirmButtonOnPress: () {
-                                              Navigator.of(context).push(
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          MainPage()));
-                                            },
-                                          );
-                                        },
-                                      );
                                       // 계명대
                                       if (_emailController.text
                                           .contains('@stu.kmu.ac.kr')) {
@@ -631,6 +614,28 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                       categoryList = FirebaseFirestore.instance
                                           .collection('category')
                                           .get();
+
+                                      Future.delayed(
+                                          const Duration(milliseconds: 200),
+                                          () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return OnestepCustomDialogNotCancel(
+                                              title: '한발자국 대학교인증 성공!',
+                                              description:
+                                                  '이제 한발자국의 모든 기능들을 이용할 수 있습니다.',
+                                              confirmButtonText: '확인',
+                                              confirmButtonOnPress: () {
+                                                Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            MainPage()));
+                                              },
+                                            );
+                                          },
+                                        );
+                                      });
                                     } else if (timeOver == true) {
                                       _isEmailCheck
                                           .changedAuthTimeOverChecked(false);

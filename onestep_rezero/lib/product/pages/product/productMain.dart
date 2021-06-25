@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/favorite/pages/favoriteMain.dart';
@@ -17,6 +18,8 @@ import 'package:onestep_rezero/product/widgets/main/productMainBody.dart';
 import 'package:onestep_rezero/product/widgets/main/productMainHeader.dart';
 import 'package:onestep_rezero/report/reportPageTest.dart';
 import 'package:onestep_rezero/search/pages/searchMain.dart';
+
+import '../../../spinkitTest.dart';
 
 class ProductMain extends StatefulWidget {
   @override
@@ -180,6 +183,32 @@ class _ProductMainState extends State<ProductMain> {
             // 약관 page
             // Navigator.of(context)
             //     .push(MaterialPageRoute(builder: (context) => TermsPage(user))),
+
+            // spinkit test
+            // Navigator.of(context)
+            //     .push(MaterialPageRoute(builder: (context) => SpinkitTest())),
+
+            // Navigator.of(context).push(
+            //   PageRouteBuilder(
+            //     opaque: false, // set to false
+            //     pageBuilder: (_, __, ___) => SpinkitTest(),
+            //   ),
+            // ),
+
+            // showDialog(
+            //   context: context,
+            //   builder: (_) => Material(
+            //     type: MaterialType.transparency,
+            //     child: Center(
+            //       child: Container(
+            //         child: SpinKitWave(
+            //           color: OnestepColors().mainColor,
+            //           type: SpinKitWaveType.start,
+            //         ),
+            //       ),
+            //     ),
+            //   ),
+            // ),
           },
         ),
       ],

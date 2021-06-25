@@ -7,7 +7,7 @@ class User {
   final String uid;
   final String nickName;
   final String imageUrl;
-  final String email;
+  // final String email;
   final int reportState;
   // final Timestamp reportTime;
 
@@ -22,7 +22,7 @@ class User {
     this.uid,
     this.nickName,
     this.imageUrl,
-    this.email,
+    // this.email,
     this.reportState,
     this.university,
     this.universityEmail,
@@ -37,7 +37,7 @@ class User {
       uid: document['uid'],
       nickName: document['nickName'],
       imageUrl: document['imageUrl'],
-      email: document['email'],
+      // email: document['email'],
       reportState: document['reportState'],
       // reportTime: document['reportTime'],
       university: document['university'],

@@ -1,13 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
+import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/myinfo/pages/infomation/noticePage.dart';
 import 'package:onestep_rezero/myinfo/pages/myinfoProfilePage.dart';
 import 'package:onestep_rezero/myinfo/pages/myinfoTransaction.dart';
 import 'package:onestep_rezero/myinfo/widgets/myProfileImage.dart';
 import '../../onestepCustomDialogNotCancel.dart';
+import '../../spinkitTest.dart';
 
 // push, marketing 알림 dialog
 // void _testShowDialog(BuildContext context) {
@@ -79,7 +82,68 @@ class MyinfoMainBody extends ConsumerWidget {
           (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.waiting:
-            return Container();
+            // showDialog(
+            //   context: context,
+            //   builder: (_) => Material(
+            //     type: MaterialType.transparency,
+            //     child: Center(
+            //       child: Container(
+            //         child: SpinKitWave(
+            //           color: OnestepColors().mainColor,
+            //           type: SpinKitWaveType.start,
+            //         ),
+            //       ),
+            //     ),
+            //   ),
+            // );
+            return Center(child: CircularProgressIndicator());
+          // showDialog(
+          //   context: context,
+          //   builder: (_) => Material(
+          //     type: MaterialType.transparency,
+          //     child: Center(
+          //       child: Container(
+          //         child: SpinKitWave(
+          //           color: OnestepColors().mainColor,
+          //           type: SpinKitWaveType.start,
+          //         ),
+          //       ),
+          //     ),
+          //   ),
+          // );
+
+          // Material(
+          //   type: MaterialType.transparency,
+          //   child: Center(
+          //     child: Container(
+          //       child: SpinKitWave(
+          //         color: OnestepColors().mainColor,
+          //         type: SpinKitWaveType.start,
+          //       ),
+          //     ),
+          //   ),
+          // );
+
+          // AlertDialog(
+          //     contentPadding: EdgeInsets.zero,
+          //     backgroundColor: Colors.transparent,
+          //     content: Material(
+          //       type: MaterialType.transparency,
+          //       child: Center(
+          //         child: Container(
+          //           child: SpinKitWave(
+          //             color: OnestepColors().mainColor,
+          //             type: SpinKitWaveType.start,
+          //           ),
+          //         ),
+          //       ),
+          //     ));
+
+          // Container(
+          //     child: SpinKitWave(
+          //   color: OnestepColors().mainColor,
+          //   type: SpinKitWaveType.start,
+          // ));
           default:
             return SingleChildScrollView(
               child: Column(

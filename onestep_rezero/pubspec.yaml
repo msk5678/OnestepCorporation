@@ -77,6 +77,12 @@ dependencies:
   #uis
   badges: ^1.2.0  
   ##########
+
+  #flutter_spinkit
+  flutter_spinkit: ^5.0.0
+    
+  #flutter_easyloading
+  flutter_easyloading: ^3.0.0
   
   #permission
   permission_handler: ^6.1.0   # 권한 요청
