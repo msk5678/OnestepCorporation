@@ -229,7 +229,7 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                 _tempEmail = text;
                               },
                               decoration: InputDecoration(
-                                hintText: "학교 이메일",
+                                hintText: "대학교 이메일",
                                 enabledBorder: UnderlineInputBorder(
                                     borderSide: BorderSide(
                                         color: _firstEmailEnter == true ||
@@ -250,6 +250,24 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                     ? GestureDetector(
                                         child: Text("확인완료"),
                                         onTap: () {
+                                          _isEmailCheck
+                                              .changedAuthEmailChecked(true);
+                                          _isEmailCheck
+                                              .changedAuthEmailErrorUnderLine(
+                                                  true);
+                                          _isEmailCheck
+                                              .changedAuthEmailDupliCheckUnderLine(
+                                                  true);
+                                          _isEmailCheck
+                                              .changedAuthSendUnderLine(true);
+                                          _isEmailCheck.changedAuthNumber(true);
+                                          _isEmailCheck
+                                              .changedAuthTimeOverChecked(true);
+                                          _isEmailCheck
+                                              .changedAuthTimerChecked(false);
+                                          _isEmailCheck
+                                              .changedAuthSendClick(false);
+                                          _isEmailCheck.changedShowBtn(false);
                                           context
                                               .read(schoolEmailCheckProvider)
                                               .authEmailNickNameCheck(

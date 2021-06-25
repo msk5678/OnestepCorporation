@@ -33,20 +33,7 @@ class _TermsPageState extends State<TermsPage> {
               (serviceFlag == true && personalFlag == true)) {
             Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) => LoginJoinPage(user)));
-          } else {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return OnestepCustomDialogNotCancel(
-                  title: '필수 약관에 동의해주세요.',
-                  confirmButtonText: '확인',
-                  confirmButtonOnPress: () {
-                    Navigator.pop(context);
-                  },
-                );
-              },
-            );
-          }
+          } else {}
         },
         child: Container(
           height: 50,
