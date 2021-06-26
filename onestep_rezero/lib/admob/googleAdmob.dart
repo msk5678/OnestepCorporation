@@ -1,39 +1,91 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:onestep_rezero/admob/googleAdmobManager.dart';
 
 class GoogleAdmob {
   final String iOsTestUnitid = "ca-app-pub-3940256099942544/2934735716";
   final String androidTestUnitid =
       "ca-app-pub-3940256099942544/6300978111"; //testId
   BannerAd banner;
+
+  final BannerAd productMainBottomBanner = BannerAd(
+    listener: AdListener(),
+    size: AdSize.banner,
+    adUnitId: BannerAd.testAdUnitId,
+    // AdManager.bannerAdUnitId,
+    request: AdRequest(),
+  )..load();
+
+  final BannerAd chatMainBottomBanner = BannerAd(
+    listener: AdListener(),
+    size: AdSize.banner,
+    adUnitId: BannerAd.testAdUnitId,
+    // AdManager.bannerAdUnitId,
+    request: AdRequest(),
+  )..load();
+
+  getProductMainBottomBanner(double diviceWidth) {
+    return Container(
+      height: productMainBottomBanner == null ? 0 : 50,
+      width: diviceWidth,
+      color: Colors.white,
+      child: productMainBottomBanner == null
+          ? Container(
+              // color: Colors.yellow,
+              // width: 40,
+              // height: 20,
+              // child: Text("null"),
+              )
+          : AdWidget(
+              ad: productMainBottomBanner,
+            ),
+    );
+  }
+
+  getChatMainBottomBanner(double diviceWidth) {
+    return Container(
+      height: chatMainBottomBanner == null ? 0 : 50,
+      width: diviceWidth,
+      color: Colors.white,
+      child: chatMainBottomBanner == null
+          ? Container()
+          : AdWidget(
+              ad: chatMainBottomBanner,
+            ),
+    );
+  }
+
   InterstitialAd interstitialAd;
   RewardedAd rewardedAd;
 
-  Widget getBannerAd() {
-    return Container(
-        height: 50,
-        color: Colors.red,
-        child: this.banner == null
-            ? Text("err")
-            : AdWidget(
-                ad: this.banner,
-              ));
-  }
-
-  // initAdmob() {
-  //   initBannerAd();
-  //   initInterstitialAd();
-  //   initRewardedAd();
+  // Widget getBannerAd() {
+  //   return Container(
+  //       height: 50,
+  //       color: Colors.red,
+  //       child: this.banner == null
+  //           ? Text("err")
+  //           : AdWidget(
+  //               ad: this.banner,
+  //             ));
   // }
 
-  initBannerAd(BannerAd banners) {
-    banners = BannerAd(
+  // initBannerAd(BannerAd banners) {
+  //   print("배너 초기화");
+  //   banners = BannerAd(
+  //     listener: AdListener(),
+  //     size: AdSize.largeBanner,
+  //     // adUnitId: Platform.isIOS ? iOsTestUnitid : androidTestUnitid,
+  //     adUnitId: BannerAd.testAdUnitId,
+  //     request: AdRequest(),
+  //   )..load();
+  // }
+
+  initNativeBannerAd(NativeAd nativeAd) {
+    print("배너 초기화");
+    nativeAd = NativeAd(
       listener: AdListener(),
-      size: AdSize.banner,
-      adUnitId: Platform.isIOS ? iOsTestUnitid : androidTestUnitid,
-//      adUnitId: androidTestUnitid,
+      adUnitId: NativeAd.testAdUnitId,
+      factoryId: NativeAd.testAdUnitId,
       request: AdRequest(),
     )..load();
   }
@@ -43,7 +95,8 @@ class GoogleAdmob {
       listener: AdListener(onAdClosed: (ad) {
         print("Interstitial Ad 종료.");
       }),
-      adUnitId: InterstitialAd.testAdUnitId,
+      adUnitId: AdManager.interstitialAdUnitId,
+      // InterstitialAd.testAdUnitId,
       request: AdRequest(),
     )..load();
   }

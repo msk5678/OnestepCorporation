@@ -19,15 +19,39 @@ Widget getMessageDate(String timestamp) {
       .format(DateTime.fromMillisecondsSinceEpoch(int.parse(timestamp)));
   var nowTimeList = nowtime.split('/');
   var dayoftheweek = _getMessageDayOfTheWeek((nowTimeList[1]));
-  ; //chattingRoom
 
   var resultTime = nowTimeList[0] + dayoftheweek;
-  return Text(
-    resultTime,
-    style: TextStyle(
-      color: Colors.grey,
-      fontSize: 12.0,
-      //  fontStyle: FontStyle.italic,
+  return Container(
+    padding: EdgeInsets.only(
+      bottom: 8,
+    ),
+    child: Row(
+      children: [
+        Expanded(
+          child: new Container(
+              margin: const EdgeInsets.only(left: 10.0, right: 10.0),
+              child: Divider(
+                color: Colors.black,
+                height: 36,
+              )),
+        ),
+        Text(
+          resultTime,
+          style: TextStyle(
+            color: Colors.grey,
+            fontSize: 12.0,
+            //  fontStyle: FontStyle.italic,
+          ),
+        ),
+        Expanded(
+          child: new Container(
+              margin: const EdgeInsets.only(left: 10.0, right: 10.0),
+              child: Divider(
+                color: Colors.black,
+                height: 36,
+              )),
+        ),
+      ],
     ),
   );
 }
@@ -46,7 +70,7 @@ Widget compareToMessageDate(
   var nextTimeList = nextTime.split('/');
 
   var resultTime = pastTimeList[0] + _getMessageDayOfTheWeek((pastTimeList[1]));
-  print("##messaage pastTime $pastTimeList // nextTime $nextTimeList");
+  // print("##messaage pastTime $pastTimeList // nextTime $nextTimeList");
 
   if (pastTimeList[0] == nextTimeList[0]) {
     return Container();
@@ -75,17 +99,46 @@ Widget compareToProductMessageDate(
   var nextTimeList = nextTime.split('/');
 
   var resultTime = pastTimeList[0] + _getMessageDayOfTheWeek((pastTimeList[1]));
-  print("##messaage pastTime $pastTimeList // nextTime $nextTimeList");
+  // print("##messaage pastTime $pastTimeList // nextTime $nextTimeList");
 
   if (pastTimeList[0] == nextTimeList[0]) {
     return Container();
   } else
-    return Text(
-      resultTime,
-      style: TextStyle(
-        color: Colors.grey,
-        fontSize: 12.0,
-        //  fontStyle: FontStyle.italic,
+    return Container(
+      padding: EdgeInsets.only(
+        bottom: 8,
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: new Container(
+                margin: const EdgeInsets.only(left: 10.0, right: 10.0),
+                child: Divider(
+                  color: Colors.black,
+                  height: 36,
+                )),
+          ),
+          Text(
+            resultTime,
+            style: TextStyle(
+              color: Colors.grey,
+              fontSize: 12.0,
+              //  fontStyle: FontStyle.italic,
+            ),
+          ),
+          Expanded(
+            child: new Container(
+                margin: const EdgeInsets.only(left: 10.0, right: 10.0),
+                child: Divider(
+                  color: Colors.black,
+                  height: 36,
+                )),
+          ),
+          // Divider(
+          //   color: Colors.black,
+          //   height: 36,
+          // ),
+        ],
       ),
     );
 }
@@ -97,14 +150,14 @@ String _getMessageTime(String timestamp) {
   var nowtime = DateFormat("yyyy년 MM월 dd일/EEEE/a/kk:mm").format(
       DateTime.fromMillisecondsSinceEpoch(
           int.parse(DateTime.now().millisecondsSinceEpoch.toString())));
-  var nowtimelist = nowtime.split('/');
+  // var nowtimelist = nowtime.split('/');
 
   var gettime = DateFormat("yyyy년 MM월 dd일/EEEE/a/kk:mm")
       .format(DateTime.fromMillisecondsSinceEpoch(int.parse(timestamp)));
   var gettimelist = gettime.split('/');
 
   //if (nowtimelist[0] == gettimelist[0]) {
-  print(nowtimelist[0] + gettimelist[0]);
+  // print(nowtimelist[0] + gettimelist[0]);
   //오늘날짜일 경우 시간 보여준다.
   meridiem = _getMessageMeridiem((gettimelist[2]));
   time = gettimelist[3]; //오전 오후 12시 기준

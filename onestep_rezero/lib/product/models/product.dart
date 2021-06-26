@@ -1,6 +1,8 @@
 class Product {
+  // Firestore documnet id
   final String firestoreid;
 
+  // Component
   final String uid;
   final List<dynamic> imagesUrl;
   final String title;
@@ -9,16 +11,19 @@ class Product {
   final String price;
   final String explain;
 
-  final bool trading;
-  final bool completed;
+  // State
+  bool trading;
+  bool completed;
   final bool hide;
   final bool deleted;
   final bool reported;
 
+  // Map, List
   final Map<String, dynamic> favoriteUserList;
   final List<dynamic> chatUserList;
   final Map<String, dynamic> views;
 
+  // Time
   final DateTime uploadTime;
   final DateTime updateTime;
   final DateTime bumpTime;
@@ -68,4 +73,7 @@ class Product {
       bumpTime: DateTime.fromMicrosecondsSinceEpoch(json['bumpTime']),
     );
   }
+
+  set setTrading(bool trading) => this.trading = trading;
+  set setCompleted(bool completed) => this.completed = completed;
 }

@@ -33,7 +33,7 @@ dependencies:
   firebase_core: ^1.0.1
   cloud_firestore: ^1.0.1
   firebase_storage: ^8.0.0
-  firebase_messaging: ^10.0.0
+  firebase_messaging: ^9.0.0
   firebase_auth: ^1.0.1
   firebase_dynamic_links: ^0.8.0
   google_sign_in: ^5.0.0
@@ -41,8 +41,8 @@ dependencies:
   ###########
 
   #image
-  # cached_network_image: ^2.5.1 
-  cached_network_image: ^3.0.0
+  flutter_image_compress: ^1.0.0 # 이미지 압축, storage 저장용
+  cached_network_image: ^2.5.1 
   image_picker: ^0.7.2+1       # 이미지 피커
   multi_image_picker2: ^5.0.0  # multi image picker
   photo_view: ^0.11.1          # image fullViewer
@@ -64,7 +64,10 @@ dependencies:
   random_string: ^2.2.0-nullsafety  # fireStoreage image random name
   timeago: ^3.0.2 # 몇분전, 몇일전 표시
   auto_size_text: ^2.1.0 # 글씨 크기 자동 변환
+  ###########
 
+  #rxdart
+  rxdart: ^0.25.0
   ###########
 
   #provider
@@ -94,12 +97,18 @@ dependencies:
   #toast
   fluttertoast: ^7.1.1
   ##########
+  
+  #device_apps
+  device_apps: ^2.1.1
 
   #custom_radio_grouped_button
   custom_radio_grouped_button: ^1.0.6+1
 
   #email_validator
   email_validator: ^2.0.1
+
+  #flutter_mailer
+  flutter_mailer: ^2.0.0
 
   #shared_preferences
   shared_preferences: ^2.0.5
@@ -120,24 +129,9 @@ dependencies:
   like_button: ^2.0.2
   #pageTransition_pageChanged Animation
   page_transition: ^2.0.2
-  #flutter List Animation
-  flutter_staggered_animations: "^1.0.0"
-  flutter_staggered_grid_view: ^0.4.0
-  #list swipe Menu
-  flutter_slidable: ^0.6.0
-  #Cache Manager
-  flutter_cache_manager: ^3.0.2
-  #Image FadeIn Animation
-  transparent_image: ^2.0.0
-  flutter_fadein: ^2.0.0
-  #rive Animation
-  rive: ^0.7.5
-  #sortMap
-  sortedmap: ^0.5.0
+
   #Chat Test
   #stream_chat_flutter: ^1.5.1
-  #Get X
-  get: ^4.1.4
 
 # dependency_overrides:
 #   image_picker: "0.7.3"
@@ -169,8 +163,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - icons/category/
-    - images/   
-    - rives/
+    - images/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
 
@@ -182,27 +175,17 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  fonts:
-    - family: Ubuntu
-      fonts:
-        # - asset: fonts/Ubuntu-Bold.ttf
-        # - asset: fonts/Ubuntu-BoldItalic.ttf
-        # - asset: fonts/Ubuntu-Italic.ttf
-        # - asset: fonts/Ubuntu-Light.ttf
-        # # - asset: fonts/Ubuntu-LightItalic
-        # - asset: fonts/Ubuntu-Medium.ttf
-        # - asset: fonts/Ubuntu-MediumItalic.ttf
-        - asset: fonts/Ubuntu-Regular.ttf
-    - family: GamjaFlower
-      fonts:
-        - asset: fonts/GamjaFlower-Regular.ttf 
-
-          # style: italic
-    # - family: Trajan Pro
-    #   fonts:
-    #     - asset: fonts/TrajanPro.ttf
-    #     - asset: fonts/TrajanPro_Bold.ttf
-    #       weight: 700
+  # fonts:
+  #   - family: Schyler
+  #     fonts:
+  #       - asset: fonts/Schyler-Regular.ttf
+  #       - asset: fonts/Schyler-Italic.ttf
+  #         style: italic
+  #   - family: Trajan Pro
+  #     fonts:
+  #       - asset: fonts/TrajanPro.ttf
+  #       - asset: fonts/TrajanPro_Bold.ttf
+  #         weight: 700
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

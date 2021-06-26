@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:onestep_rezero/report/pages/Deal/reportDealController.dart';
 
 class ReportDealPage extends StatelessWidget {
+  final String postUid;
+  final String reportedUid;
+  ReportDealPage(this.postUid, this.reportedUid);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,7 +22,7 @@ class ReportDealPage extends StatelessWidget {
           children: [
             InkWell(
               onTap: () {
-                reportDealController(context, 1);
+                reportDealController(context, 1, postUid, reportedUid);
               },
               child: Padding(
                 padding: EdgeInsets.fromLTRB(
@@ -38,7 +42,7 @@ class ReportDealPage extends StatelessWidget {
                     IconButton(
                       icon: Icon(Icons.keyboard_arrow_right),
                       onPressed: () {
-                        reportDealController(context, 1);
+                        reportDealController(context, 1, postUid, reportedUid);
                       },
                     )
                   ],
@@ -46,9 +50,7 @@ class ReportDealPage extends StatelessWidget {
               ),
             ),
             InkWell(
-              onTap: () {
-                reportDealController(context, 2);
-              },
+              onTap: () {},
               child: Padding(
                 padding: EdgeInsets.fromLTRB(
                     MediaQuery.of(context).size.width / 20,
@@ -66,9 +68,7 @@ class ReportDealPage extends StatelessWidget {
                     ),
                     IconButton(
                       icon: Icon(Icons.keyboard_arrow_right),
-                      onPressed: () {
-                        reportDealController(context, 2);
-                      },
+                      onPressed: () {},
                     )
                   ],
                 ),
@@ -163,6 +163,31 @@ class ReportDealPage extends StatelessWidget {
                     Container(
                       child: Text(
                         "신고유형 6",
+                        style: TextStyle(fontSize: 15),
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.keyboard_arrow_right),
+                      onPressed: () {},
+                    )
+                  ],
+                ),
+              ),
+            ),
+            InkWell(
+              onTap: () {},
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(
+                    MediaQuery.of(context).size.width / 20,
+                    MediaQuery.of(context).size.width / 40,
+                    0,
+                    0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      child: Text(
+                        "신고유형 7",
                         style: TextStyle(fontSize: 15),
                       ),
                     ),

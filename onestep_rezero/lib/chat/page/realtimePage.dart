@@ -27,13 +27,10 @@ class _RealTimePageState extends State<RealTimePage>
       FirebaseDatabase.instance.reference().child("path");
 
   DatabaseReference productchatdatabasereference = FirebaseDatabase.instance
-          .reference()
-          .child("chattingroom")
-          .child("productchat")
-      //.child("roominfo")
-      ;
+      .reference()
+      .child("chattingroom")
+      .child("productchat");
 
-  String uId;
   @override
   bool get wantKeepAlive => true;
 
@@ -41,7 +38,6 @@ class _RealTimePageState extends State<RealTimePage>
   void initState() {
     super.initState();
     productChat = ProductChat();
-    uId = googleSignIn.currentUser.id.toString();
   }
 
   @override
@@ -129,7 +125,7 @@ class _RealTimePageState extends State<RealTimePage>
                 print("stream values else3-1 :" + key.toString());
                 print("stream values else3-2 :" + values['users'].toString());
                 print("stream values else3-3 :" +
-                    values['users'][uId].toString());
+                    values['users'][googleSignIn.currentUser.id].toString());
                 print("stream values else3-3 :" + values['users'].toString());
                 var obj = values['users'].keys.toString();
                 var obj3 = values['users'].keys.toList()[0];
@@ -165,16 +161,16 @@ class _RealTimePageState extends State<RealTimePage>
                   mesageInValues.forEach((mIkey, mIvalue) {
                     //보낸 사람 분해.
                     print(
-                        "stream values else1 message ForEach: MyUid : ${googleSignIn.currentUser.id.toString()}");
+                        "stream values else1 message ForEach: MyUid : ${googleSignIn.currentUser.id}");
 
                     if (mIvalue == false &&
-                        mIkey == googleSignIn.currentUser.id.toString()) {
+                        mIkey == googleSignIn.currentUser.id) {
                       len++;
-                      print(
-                          "stream values else1 message ForEach: 읽지 않은 메세지 있음. len : $len");
+                      // print(
+                      //     "stream values else1 message ForEach: 읽지 않은 메세지 있음. len : $len");
                     }
-                    print(
-                        "stream values else1 message ForEach: InMessageKey : ${mIkey} // InMessageValue : ${mIvalue}");
+                    // print(
+                    //     "stream values else1 message ForEach: InMessageKey : ${mIkey} // InMessageValue : ${mIvalue}");
                   });
                 }); //메시지 내부 분해 종료
                 print("리얼타임 메세지 처리 1 : $key /// $len /// $values");
@@ -300,13 +296,6 @@ class _RealTimePageState extends State<RealTimePage>
       .child("chattingroom")
       .child("productchat")
       .child("1615196869418/message");
-
-  // RealTimeChatNavigationManager.navigateToChattingRoom(
-  //   context,
-  //   googleSignIn.currentUser.id.toString(),
-  //   widget.product.uid,
-  //   widget.product.firestoreid,
-  // );
 
   // Widget _buildsave(var context) {
   //   return Stack(

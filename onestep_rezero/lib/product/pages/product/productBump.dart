@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/main.dart';
+import 'package:onestep_rezero/onestepCustomDialog.dart';
 import 'package:onestep_rezero/product/models/product.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onestep_rezero/product/widgets/main/productMainBody.dart';
@@ -69,33 +71,6 @@ class _ProductBumpState extends State<ProductBump> {
     });
   }
 
-  _navigatorPopAlertDialog() async {
-    await showDialog(
-      context: context,
-      barrierDismissible: true,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          // title: Text('끌어올리기'),
-          content: Text("끌어올리시겠습니까?"),
-          actions: <Widget>[
-            TextButton(
-              child: Text('확인'),
-              onPressed: () {
-                _saveDataInFirestore();
-              },
-            ),
-            TextButton(
-              child: Text('취소'),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -132,7 +107,11 @@ class _ProductBumpState extends State<ProductBump> {
                   children: <Widget>[
                     Text(
                       widget.product.title,
-                      style: TextStyle(fontSize: 20),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 20,
+                      ),
                     ),
                     SizedBox(height: 10),
                     Text(
@@ -140,7 +119,7 @@ class _ProductBumpState extends State<ProductBump> {
                       style: TextStyle(fontSize: 18),
                     ),
                   ],
-                )
+                ),
               ],
             ),
             SizedBox(
@@ -224,26 +203,27 @@ class _ProductBumpState extends State<ProductBump> {
               ),
             ),
             Spacer(),
-            SizedBox(
-              width: MediaQuery.of(context).size.width - 40,
+            Container(
+              width: MediaQuery.of(context).size.width,
               height: 50,
-              child: OutlinedButton(
+              child: ElevatedButton(
                 onPressed: () {
-                  print("끌어올리기");
-                  _navigatorPopAlertDialog();
-                },
-                style: ButtonStyle(
-                  shape: MaterialStateProperty.all(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5.0),
+                  showDialog(
+                    context: context,
+                    builder: (context) => OnestepCustomDialog(
+                      title: '상품을 끌어올리시겠습니까?',
+                      confirmButtonText: '확인',
+                      cancleButtonText: '취소',
+                      confirmButtonOnPress: _saveDataInFirestore,
                     ),
-                  ),
-                  backgroundColor:
-                      MaterialStateProperty.all<Color>(Colors.tealAccent),
-                ),
-                child: Text(
-                  "끌어올리기",
-                  style: TextStyle(color: Colors.black),
+                  );
+                },
+                child: Text('끌어올리기'),
+                style: ElevatedButton.styleFrom(
+                  primary: OnestepColors().mainColor,
+                  onPrimary: Colors.white,
+                  textStyle: TextStyle(fontSize: 17),
+                  elevation: 0,
                 ),
               ),
             ),

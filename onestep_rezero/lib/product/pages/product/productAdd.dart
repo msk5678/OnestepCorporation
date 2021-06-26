@@ -9,7 +9,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 
 import 'package:onestep_rezero/main.dart';
-import 'package:onestep_rezero/product/pages/productAddCategorySelect.dart';
+import 'package:onestep_rezero/product/models/categorySelectItem.dart';
+import 'package:onestep_rezero/product/pages/product/productAddCategorySelect.dart';
 import 'package:onestep_rezero/product/utils/numericTextFormatter.dart';
 
 import 'package:onestep_rezero/product/widgets/main/productMainBody.dart';
@@ -26,6 +27,7 @@ class ProductAdd extends StatefulWidget {
 class _ProductAddState extends State<ProductAdd> {
   List<AssetEntity> entity = [];
 
+  CategorySelectItem categorySelectItem;
   final _titleTextEditingController = TextEditingController();
   final _priceTextEditingController = TextEditingController();
   final _explainTextEditingController = TextEditingController();
@@ -36,7 +38,7 @@ class _ProductAddState extends State<ProductAdd> {
     super.initState();
   }
 
-  Future<void> aa() async {
+  Future<void> pickAssets() async {
     final List<AssetEntity> _entity = await AssetPicker.pickAssets(
       context,
       maxAssets: 5,
@@ -58,11 +60,11 @@ class _ProductAddState extends State<ProductAdd> {
     }
   }
 
-  Widget pickAssets() {
+  Widget getImages() {
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
-        aa();
+        pickAssets();
       },
       child: Container(
         width: 80,
@@ -155,7 +157,7 @@ class _ProductAddState extends State<ProductAdd> {
           child: ListView(
             scrollDirection: Axis.horizontal,
             children: [
-              pickAssets(),
+              getImages(),
               ...entity
                   .asMap()
                   .map(
@@ -248,19 +250,28 @@ class _ProductAddState extends State<ProductAdd> {
                   builder: (context) => ProductAddCategorySelect()),
             ).then((value) {
               if (value != null) {
-                _categoryTextEditingController.text = value;
+                categorySelectItem = value;
+                if (categorySelectItem.detailCategory == null) {
+                  _categoryTextEditingController.text =
+                      categorySelectItem.category;
+                } else {
+                  _categoryTextEditingController.text =
+                      categorySelectItem.category +
+                          " > " +
+                          categorySelectItem.detailCategory;
+                }
               }
             });
           },
           decoration: InputDecoration(
-            focusedBorder: OutlineInputBorder(
-              borderSide: const BorderSide(color: Colors.grey),
-            ),
-            border: OutlineInputBorder(),
-            hintText: '카테고리를 선택해주세요',
-            // isDense: true,
-            suffixIcon: Icon(Icons.keyboard_arrow_right_rounded),
-          ),
+              focusedBorder: OutlineInputBorder(
+                borderSide: const BorderSide(color: Colors.grey),
+              ),
+              border: OutlineInputBorder(),
+              hintText: '카테고리를 선택해주세요',
+              // isDense: true,
+              suffixIcon: Icon(Icons.keyboard_arrow_right_rounded,
+                  color: Colors.black)),
           readOnly: true,
         ),
       ),
@@ -354,8 +365,8 @@ class _ProductAddState extends State<ProductAdd> {
         'uid': googleSignIn.currentUser.id,
         'imagesUrl': _imgUriarr,
         'title': _titleTextEditingController.text,
-        'category': _categoryTextEditingController.text,
-        'detailCategory': "",
+        'category': categorySelectItem.category,
+        'detailCategory': categorySelectItem.detailCategory,
         'price': _priceTextEditingController.text,
         'explain': _explainTextEditingController.text,
         'favoriteUserList': {},

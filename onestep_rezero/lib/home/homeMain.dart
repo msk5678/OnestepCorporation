@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:onestep_rezero/search/pages/searchAllMain.dart';
+import 'package:onestep_rezero/search/pages/searchMain.dart';
 
 class HomeMain extends StatefulWidget {
   HomeMain({Key key}) : super(key: key);
@@ -13,6 +13,7 @@ class _HomeMainState extends State<HomeMain> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Text("홈"),
         actions: <Widget>[
           Row(
@@ -23,7 +24,7 @@ class _HomeMainState extends State<HomeMain> {
                 onPressed: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                        builder: (context) => SearchAllMain(searchKey: 0)),
+                        builder: (context) => SearchMain(searchKey: 0)),
                   );
                 },
               ),
@@ -34,6 +35,11 @@ class _HomeMainState extends State<HomeMain> {
                     icon: Icon(Icons.notifications_none),
                     color: Colors.black,
                     onPressed: () {
+                      // 회원가입 넘어가는 부분
+                      // GoogleSignInAccount user = googleSignIn.currentUser;
+                      // Navigator.of(context).push(MaterialPageRoute(
+                      //     builder: (context) => LoginJoinPage(user)));
+
                       // 알림으로 넘어가는 부분
                       // Navigator.of(context).push(MaterialPageRoute(
                       //   builder: (context) => HomeNotificationPage(),

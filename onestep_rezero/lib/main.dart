@@ -1,32 +1,36 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as FBA;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:onestep_rezero/admob/googleAdmob.dart';
 import 'package:onestep_rezero/login/model/user.dart';
-import 'package:onestep_rezero/login/pages/authWaitPage.dart';
-import 'package:onestep_rezero/login/pages/loginJoinPage.dart';
 import 'package:onestep_rezero/timeUtil.dart';
-
 import 'appmain/bottomNavigationItem.dart';
 import 'appmain/routeGenterator.dart';
+import 'login/pages/loginAuthPage.dart';
+import 'login/pages/termsPage.dart';
 
 final auth = FBA.FirebaseAuth.instance;
 final googleSignIn = GoogleSignIn();
 final ref = FirebaseFirestore.instance.collection('user');
 final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+
 Future<QuerySnapshot> categoryList;
 
+// BannerAd mainBanner;
 User currentUserModel;
 int currentBottomNaviIndex;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   TimeUtil.setLocalMessages();
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
   runApp(
     ProviderScope(child: MyApp()),
   );
@@ -77,6 +81,10 @@ class _MainPageState extends State<MainPage> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
   //   void initDynamicLinks() async {
   //   // 앱이 active이거나 background 상태일때 들어온 링크를 알 수 있는 링크 콜백에 대한 리스너 onLink()
   //   FirebaseDynamicLinks.instance.onLink(
@@ -126,7 +134,10 @@ class _MainPageState extends State<MainPage> {
 
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         duration: Duration(seconds: 2),
-        content: Text("한번더 누르면 종료"),
+        content: Text(
+          "버튼을 한번 더 누르시면 종료됩니다.",
+          textAlign: TextAlign.center,
+        ),
       ));
       return false;
     }
@@ -146,7 +157,7 @@ class _MainPageState extends State<MainPage> {
 
       // ********* 회원가입 ************* aaaaa
       Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => LoginJoinPage(user)));
+          .push(MaterialPageRoute(builder: (context) => TermsPage(user)));
 
       // await Navigator.push(
       //   context,
@@ -203,9 +214,13 @@ class _MainPageState extends State<MainPage> {
     }
 
     if (userRecord.data()['auth'] == 1) {
+      GoogleSignInAccount user = googleSignIn.currentUser;
       // 증명서 대기 페이지
+      // Navigator.of(context)
+      //     .push(MaterialPageRoute(builder: (context) => AuthWaitPage()));
+      // 이메일 인증 페이지
       Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => AuthWaitPage()));
+          .push(MaterialPageRoute(builder: (context) => LoginAuthPage(user)));
       return null;
     }
 
@@ -214,8 +229,10 @@ class _MainPageState extends State<MainPage> {
     ref.doc(currentUserModel.uid).collection("log").doc(time.toString()).set({
       "loginTime": time,
     });
-    categoryList = FirebaseFirestore.instance.collection('category').get();
-    print("@@@@ category 가져오기");
+    categoryList = FirebaseFirestore.instance
+        .collection('category')
+        .orderBy('total', descending: true)
+        .get();
     return null;
   }
 
@@ -284,7 +301,7 @@ class _MainPageState extends State<MainPage> {
   Future<Null> _setUpNotifications() async {
     if (Platform.isAndroid) {
       _firebaseMessaging.getToken().then((token) {
-        print("Firebase Messaging Token: " + token);
+        // print("Firebase Messaging Token: " + token);
 
         FirebaseFirestore.instance
             .collection("users")
@@ -332,6 +349,7 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
+    double deviceWidth = MediaQuery.of(context).size.width;
     if (triedSilentLogin == false) {
       silentLogin(context);
     }
@@ -347,11 +365,37 @@ class _MainPageState extends State<MainPage> {
         child: WillPopScope(
             child: Scaffold(
               // key: _globalKey,
-              body: IndexedStack(
-                index: _currentIndex,
+              body: Stack(
                 children: [
-                  for (final tabItem in BottomNavigationItem.items)
-                    tabItem.page,
+                  IndexedStack(
+                    index: _currentIndex,
+                    children: [
+                      for (final tabItem in BottomNavigationItem.items)
+                        tabItem.page,
+                    ],
+                  ),
+                  //     1 == 0
+                  //         ?
+                  // Positioned(
+                  //             bottom: 0,
+                  //             child: Container(
+                  //               width: 20,
+                  //               height: 20,
+                  //               color: Colors.red,
+                  //             ),
+                  //           )
+                  //         :
+                  // if (_currentIndex == 0)
+                  //   Positioned(
+                  //     child:
+                  //         GoogleAdmob().getProductMainBottomBanner(deviceWidth),
+                  //     bottom: 0,
+                  //   ),
+                  if (_currentIndex == 3)
+                    Positioned(
+                      child: GoogleAdmob().getChatMainBottomBanner(deviceWidth),
+                      bottom: 0,
+                    ),
                 ],
               ),
               bottomNavigationBar: BottomNavigationBar(
@@ -363,8 +407,8 @@ class _MainPageState extends State<MainPage> {
                         () => _currentIndex = currentBottomNaviIndex = index);
                 },
                 type: BottomNavigationBarType.fixed,
-                showSelectedLabels: false,
-                showUnselectedLabels: false, // title 안보이게 설정
+                // showSelectedLabels: false,
+                // showUnselectedLabels: false, // title 안보이게 설정
                 items: [
                   for (final tabItem in BottomNavigationItem.items)
                     BottomNavigationBarItem(

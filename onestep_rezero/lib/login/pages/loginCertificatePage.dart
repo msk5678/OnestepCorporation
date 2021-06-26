@@ -1,12 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'dart:io' as io;
-import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+// import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:image_picker/image_picker.dart';
 import 'package:onestep_rezero/login/pages/authWaitPage.dart';
-import 'package:onestep_rezero/main.dart';
-import 'package:random_string/random_string.dart';
-import '../../sendMail.dart';
 
 String downloadURL = "";
 bool _isDownloadCheck = false;
@@ -104,11 +100,7 @@ class _LoginCertificatePageState extends State<LoginCertificatePage> {
                         if (pickedFile != null) {
                           _image = io.File(pickedFile.path);
                           _isDownloadCheck = true;
-
-                          print("_image = $_image");
-                        } else {
-                          print('No image selected.');
-                        }
+                        } else {}
                         setState(() {});
                       }),
             ),
