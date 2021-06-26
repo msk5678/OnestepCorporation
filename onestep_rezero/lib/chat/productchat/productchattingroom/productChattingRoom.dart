@@ -318,13 +318,6 @@ class _LastChatState extends State<ChatScreen> {
             chatId = key.toString();
             connectTime = values['chatUsers'][myId]['connectTime'];
             // print("2.-1. $chatId");
-
-            // if (localImageUrl == "") {
-            //   print("이미지 널, 한번만 읽음.");
-            //   localImageUrl =
-            //       await ProductChatController().getChatUserimageUrl(chatId);
-            //   print("이미지 널, : $localImageUrl.");
-            // }
             // print("getc 커넥타임 $connectTime ");
             //채팅방 있으면서 & 장터에서 넘어온 경우
             if (checkProductExist() == true) {
@@ -412,7 +405,7 @@ class _LastChatState extends State<ChatScreen> {
                     child: Column(
                       children: [
                         ProductChatController()
-                            .getProductUserNickName(friendId, 15),
+                            .getProductUserNickName(chatId, friendId, 15),
                         SizedBox(
                           height: 1,
                         ),
@@ -937,7 +930,9 @@ class _LastChatState extends State<ChatScreen> {
           children: [
             Container(
               margin: EdgeInsets.only(right: 6.0),
-              child: ProductChatController().getUserImagetoChatroom(chatId),
+              child: //2
+                  ProductChatController().getUserImageToChat(chatId),
+              // ProductChatController().getUserImagetoChatroom(chatId),
             ),
             Row(
               crossAxisAlignment: CrossAxisAlignment.end,

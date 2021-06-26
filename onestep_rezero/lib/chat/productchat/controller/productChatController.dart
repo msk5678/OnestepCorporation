@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:hive/hive.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/product/models/product.dart';
@@ -90,24 +91,55 @@ class ProductChatController {
   }
 
   Future getUserId(String proUserId) async {
+    // return this._memoizer.runOnce(() async {
     return FirebaseFirestore.instance.collection('user').doc(proUserId).get();
+    // });
   }
 
-  _setChatUserimageUrl(String chatId, String imageUrl) async {
+  setChatUserimageUrl(String chatId, String imageUrl)
+  //async
+  {
+    //1. 없을 경우 저장
+    //2. 있는데 다를 경우 저장
+
     // print("1. 유저 이미지 내부 저장");
-    SharedPreferences prefsChatUserImageUrls =
-        await SharedPreferences.getInstance();
-    await prefsChatUserImageUrls.setString(chatId, imageUrl);
+    // SharedPreferences prefsChatUserImageUrls =
+    //     await SharedPreferences.getInstance();
+    // await prefsChatUserImageUrls.setString(chatId, imageUrl);
+    print("내부디비 저장 ");
+    if (Hive.box('localChatList').get('$chatId + image') == null ||
+        Hive.box('localChatList').get('$chatId + image') != imageUrl) {
+      Hive.box('localChatList').put('$chatId + image', imageUrl);
+      print("내부디비 저장 완 : $imageUrl");
+    }
   }
 
   getChatUserimageUrl(String chatId) async {
-    String imageUrl;
-    SharedPreferences prefsChatUserPhotoUrls =
-        await SharedPreferences.getInstance();
-    imageUrl = prefsChatUserPhotoUrls.getString(chatId);
-    // print("2. 내부 db 값 : GetChatUserPhotoUrl : $imageUrl");
-
+    print("내부디비 저장 불러 ");
+    String imageUrl = Hive.box('localChatList').get('$chatId + image');
+    print("내부디비 저장 불러 완 : $imageUrl");
     return imageUrl;
+
+    // SharedPreferences prefsChatUserImageUrls =
+    //     await SharedPreferences.getInstance();
+    // imageUrl = prefsChatUserImageUrls.getString(chatId);
+    // print("클 2. 내부 db 값 : GetChatUserPhotoUrl : $imageUrl");
+  }
+
+  getUserImageToChat(String chatId) {
+    return Material(
+      child: CachedNetworkImage(
+        imageUrl: getChatUserimageUrl(chatId),
+        // productMessage.content.imageUrl,
+        fit: BoxFit.cover,
+        height: 40,
+        width: 40,
+      ),
+      borderRadius: BorderRadius.all(
+        Radius.circular(18.0),
+      ),
+      clipBehavior: Clip.hardEdge,
+    );
   }
 
   FutureBuilder getUserImagetoChatroom(String chatId) {
@@ -147,10 +179,42 @@ class ProductChatController {
       builder: (context, snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.waiting:
-          //return CircularProgressIndicator();
+            //return CircularProgressIndicator();
+
+            return
+                // Text("dd");
+                // Material(child: Text("대기1"));
+                Material(
+              child: CachedNetworkImage(
+                imageUrl: getChatUserimageUrl(chatId),
+                fit: BoxFit.cover,
+                height: 50,
+                width: 50,
+              ),
+              borderRadius: BorderRadius.all(
+                Radius.circular(18.0),
+              ),
+              clipBehavior: Clip.hardEdge,
+            );
           default:
             if (snapshot.hasData == false) {
-              return CircularProgressIndicator();
+              print("클2");
+              return Material(
+                child: CachedNetworkImage(
+                  imageUrl: chatId,
+                  // productMessage.content.imageUrl,
+                  fit: BoxFit.cover,
+                  height: 35,
+                  width: 35,
+                ),
+                borderRadius: BorderRadius.all(
+                  Radius.circular(18.0),
+                ),
+                clipBehavior: Clip.hardEdge,
+              );
+              CircularProgressIndicator(
+                strokeWidth: 0,
+              );
             }
 
             if (snapshot.data['imageUrl'] == "") {
@@ -171,7 +235,10 @@ class ProductChatController {
                 ),
               );
             } else {
-              _setChatUserimageUrl(chatId, snapshot.data['imageUrl']);
+              print("@@@@url");
+              // Hive.box('localChatList')
+              //     .put('$chatId + image', snapshot.data['imageUrl']);
+              setChatUserimageUrl(chatId, snapshot.data['imageUrl']);
               // print("1. 가져온 url  : ${snapshot.data['imageUrl']}");
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -181,8 +248,8 @@ class ProductChatController {
                       imageUrl: snapshot.data['imageUrl'],
                       // productMessage.content.imageUrl,
                       fit: BoxFit.cover,
-                      height: 40,
-                      width: 40,
+                      height: 50,
+                      width: 50,
                     ),
                     borderRadius: BorderRadius.all(
                       Radius.circular(18.0),
@@ -208,20 +275,35 @@ class ProductChatController {
   //   });
   // }
 
-  FutureBuilder getProductUserNickName(String proUserId, double fontSize) {
+  FutureBuilder getProductUserNickName(
+      String chatId, String proUserId, double fontSize) {
     return FutureBuilder(
       future: getUserId(proUserId),
       //_fetchData(proUserId),
       builder: (context, snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.waiting:
-          //return CircularProgressIndicator();
+            // return Text("대기");
+            return AutoSizeText(
+              Hive.box('localChatList').get('$chatId + nickName'),
+              style: TextStyle(fontSize: fontSize, color: Colors.black), //15
+              minFontSize: 10,
+              stepGranularity: 10,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            );
+          // return Text("");
           default:
             if (snapshot.hasData == false) {
-              return CircularProgressIndicator();
-            }
-            //print("nick 대기완료.");
-            else if (snapshot.hasError) {
+              return AutoSizeText(
+                Hive.box('localChatList').get('$chatId + nickName'),
+                style: TextStyle(fontSize: fontSize, color: Colors.black), //15
+                minFontSize: 10,
+                stepGranularity: 10,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              );
+            } else if (snapshot.hasError) {
               print("nick 에러.");
               return Text(
                 'Error: ${snapshot.error}',
@@ -230,6 +312,9 @@ class ProductChatController {
             } else if (snapshot.data['nickName'] == "") {
               return Text("닉오류");
             } else {
+              print("@@@@name");
+              Hive.box('localChatList')
+                  .put('$chatId + nickName', snapshot.data.data()['nickName']);
               return AutoSizeText(
                 snapshot.data.data()['nickName'],
                 style: TextStyle(fontSize: fontSize, color: Colors.black), //15

@@ -7,6 +7,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:onestep_rezero/admob/googleAdmob.dart';
 import 'package:onestep_rezero/login/model/user.dart';
@@ -16,6 +17,9 @@ import 'package:onestep_rezero/timeUtil.dart';
 
 import 'appmain/bottomNavigationItem.dart';
 import 'appmain/routeGenterator.dart';
+
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 final auth = FBA.FirebaseAuth.instance;
 final googleSignIn = GoogleSignIn();
@@ -32,6 +36,9 @@ void main() async {
   await Firebase.initializeApp();
   TimeUtil.setLocalMessages();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
+  await Hive.initFlutter();
+  await Hive.openBox('localChatList');
   runApp(
     ProviderScope(child: MyApp()),
   );
@@ -84,6 +91,7 @@ class _MainPageState extends State<MainPage> {
 
   @override
   void dispose() {
+    Fluttertoast.showToast(msg: "한발자국 종료.");
     super.dispose();
   }
   //   void initDynamicLinks() async {

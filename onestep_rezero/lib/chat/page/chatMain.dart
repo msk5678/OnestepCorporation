@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:onestep_rezero/chat/page/admobListPage.dart';
 import 'package:onestep_rezero/chat/page/productChatListPage.dart';
+import 'package:onestep_rezero/chat/page/productChatListPage2.dart';
 import 'package:onestep_rezero/chat/productchat/controller/productChatController.dart';
 
 class ChatMain extends StatefulWidget {
@@ -277,7 +278,9 @@ class _StackListState extends State<ChatMain>
                       width: 20,
                       color: Colors.white,
                       child: (position == 0 && page.text == '장터채팅')
-                          ? ProductChatListPage()
+                          ? //
+                          ProductChatListPage()
+                          // ProductChatListPage2()
                           : AdmobListPage(),
                     );
                   },

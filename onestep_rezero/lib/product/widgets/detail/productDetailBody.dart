@@ -383,7 +383,9 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
               Divider(),
               SizedBox(height: 10),
               Container(
-                constraints: BoxConstraints(minHeight: 100),
+                constraints: BoxConstraints(
+                  minHeight: 100,
+                ),
                 child: Align(
                   alignment: Alignment.topLeft,
                   child: Text(

@@ -1,5 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onestep_rezero/chat/navigator/chatNavigationManager.dart';
 import 'package:onestep_rezero/chat/productchat/controller/productChatController.dart';
 
@@ -34,6 +35,14 @@ class _ProductChatListPageState extends State<ProductChatListPage>
     super.build(context);
     return Scaffold(
       body: _buildChatListListTileStream(),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(
+          bottom: 30.0,
+        ),
+        child: FloatingActionButton(
+          onPressed: () {},
+        ),
+      ),
     );
   }
 
@@ -65,7 +74,7 @@ class _ProductChatListPageState extends State<ProductChatListPage>
                 ),
               ),
             );
-          // CircularProgressIndicator();
+
           default:
             if (snapshot == null ||
                 !snapshot.hasData ||
@@ -216,77 +225,157 @@ class _ProductChatListPageState extends State<ProductChatListPage>
                                     children: [
                                       // Text('.'),
                                       ListTile(
-                                        tileColor: Colors.white,
-                                        // onLongPress: () {
-                                        //   Fluttertoast.showToast(msg: "꾹");
-                                        // },
+                                        contentPadding: EdgeInsets.fromLTRB(
+                                          12,
+                                          5,
+                                          12,
+                                          5,
+                                        ),
+                                        // tileColor: Colors.red,
+                                        onLongPress: () {
+                                          Fluttertoast.showToast(msg: "꾹");
+                                        },
                                         // selected: true,
                                         leading: Padding(
                                           padding:
-                                              const EdgeInsets.only(top: 7.0),
+                                              const EdgeInsets.only(top: 5.0),
                                           child: ProductChatController()
                                               .getUserImage(
                                                   chatId, productsUserId),
                                         ),
                                         // borderRadius: Bo
-                                        title: Padding(
-                                          padding: const EdgeInsets.fromLTRB(
-                                              0, 0, 0, 3),
-                                          child: Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.end,
-                                            children: <Widget>[
-                                              ProductChatController()
-                                                  .getProductUserNickName(
-                                                      productsUserId, 15),
-                                              SizedBox(width: 10, height: 10),
-                                              Spacer(),
-                                              getChatListTime(
-                                                  listProductChat[index]
-                                                      .recentTime),
-                                              // Container(
-                                              //   width: 130,
-                                              //   height: 530,
-                                              //   color: Colors.blue,
-                                              // ),
-                                            ],
-                                          ),
-                                        ),
-                                        subtitle: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: <Widget>[
-                                            Container(
-                                              width: 220,
-                                              height: 30,
-                                              child: Text(
-                                                listProductChat[index]
-                                                    .recentText,
-                                                overflow: TextOverflow.ellipsis,
-                                                maxLines: 2,
-                                              ),
+                                        title: Container(
+                                          // color: Colors.blue,
+                                          child: Padding(
+                                            padding: const EdgeInsets.fromLTRB(
+                                                0, 5, 0, 0),
+                                            child: Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.end,
+                                              children: <Widget>[
+                                                ProductChatController()
+                                                    .getProductUserNickName(
+                                                  chatId,
+                                                  productsUserId,
+                                                  14,
+                                                ),
+                                                // FutureBuilder(
+                                                //     future: ee,
+                                                //     builder:
+                                                //         (context, snapshot) {
+                                                //       switch (snapshot
+                                                //           .connectionState) {
+                                                //         case ConnectionState
+                                                //             .waiting:
+                                                //           return CircularProgressIndicator();
+                                                //         default:
+                                                //           if (snapshot
+                                                //                   .hasData ==
+                                                //               false) {
+                                                //             // print("YES ${snapshot.data.toString()}");
+                                                //             return CircularProgressIndicator();
+                                                //           } else {
+                                                //             // print("No ${snapshot.data.toString()}");
+                                                //             return Material(
+                                                //               child:
+                                                //                   CachedNetworkImage(
+                                                //                 imageUrl:
+                                                //                     snapshot
+                                                //                         .data,
+                                                //                 // productMessage.content.imageUrl,
+                                                //                 fit: BoxFit
+                                                //                     .cover,
+                                                //                 height: 40,
+                                                //                 width: 40,
+                                                //               ),
+                                                //               borderRadius:
+                                                //                   BorderRadius
+                                                //                       .all(
+                                                //                 Radius.circular(
+                                                //                     18.0),
+                                                //               ),
+                                                //               clipBehavior:
+                                                //                   Clip.hardEdge,
+                                                //             );
+                                                //           }
+                                                //       }
+                                                //     }),
+
+                                                SizedBox(width: 10, height: 10),
+                                                Spacer(),
+                                                getChatListTime(
+                                                    listProductChat[index]
+                                                        .recentTime),
+                                                // Container(
+                                                //   width: 130,
+                                                //   height: 530,
+                                                //   color: Colors.blue,
+                                                // ),
+                                              ],
                                             ),
-                                            SizedBox(width: 10, height: 10),
-                                            Spacer(),
-                                            chatCountBadge(
-                                                listProductChatCount2[index]
-                                                    .chatCount),
-                                          ],
-                                        ),
-                                        trailing: Padding(
-                                          padding: const EdgeInsets.fromLTRB(
-                                              0, 0, 0, 0),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: <Widget>[
-                                              Text("menu"),
-                                            ],
                                           ),
                                         ),
+                                        subtitle: Center(
+                                          child: Container(
+                                            // color: Colors.blue,
+                                            child: Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: <Widget>[
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                    top: 3,
+                                                  ),
+                                                  child: Container(
+                                                    // color: Colors.pink,
+                                                    width: 220,
+                                                    height: 30,
+                                                    child: Text(
+                                                      listProductChat[index]
+                                                          .recentText,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      maxLines: 2,
+                                                      style: TextStyle(
+                                                        fontSize: 12,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(width: 10, height: 10),
+                                                Spacer(),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                    top: 0,
+                                                  ),
+                                                  child: chatCountBadge(
+                                                      listProductChatCount2[
+                                                              index]
+                                                          .chatCount),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        // trailing: Padding(
+                                        //   padding: const EdgeInsets.fromLTRB(
+                                        //       0, 0, 0, 0),
+                                        //   child: Row(
+                                        //     mainAxisSize: MainAxisSize.min,
+                                        //     mainAxisAlignment:
+                                        //         MainAxisAlignment.center,
+                                        //     crossAxisAlignment:
+                                        //         CrossAxisAlignment.center,
+                                        //     children: <Widget>[
+                                        //       Text("menu"),
+                                        //     ],
+                                        //   ),
+                                        // ),
                                         onTap: () {
                                           ChatNavigationManager
                                               .navigateToProductChattingRoom(
