@@ -69,7 +69,7 @@ class NickNameProvider extends StateNotifier<bool> {
   void authEmailNickNameCheck(String tempNickName) async {
     int nickNameLength = tempNickName.length;
     bool nickNameFlag = false;
-    (nickNameLength >= 3 && nickNameLength < 9)
+    (nickNameLength >= 2 && nickNameLength < 9)
         ? nickNameFlag = true
         : nickNameFlag = false;
     if (tempNickName == "" || nickNameFlag == false) {

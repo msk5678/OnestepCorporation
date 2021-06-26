@@ -4,8 +4,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive/hive.dart';
 import 'package:onestep_rezero/loggedInWidget.dart';
 import 'package:onestep_rezero/signUpWidget.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onestep_rezero/timeUtil.dart';
 import 'appmain/routeGenterator.dart';
 
@@ -16,6 +18,8 @@ void main() async {
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp]); // 가로세로 회전 금지
 
+  await Hive.initFlutter();
+  await Hive.openBox('localChatList');
   runApp(
     ProviderScope(child: MyApp()),
   );
@@ -47,6 +51,7 @@ class _MainPageState extends State<MainPage> {
 
   @override
   void dispose() {
+    Fluttertoast.showToast(msg: "한발자국 종료.");
     super.dispose();
   }
 

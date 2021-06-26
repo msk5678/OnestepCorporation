@@ -200,7 +200,7 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                         top: MediaQuery.of(context).size.height / 30),
                     child: Center(
                       child: Container(
-                        child: Text("학교 off365 email을 적어주세요"),
+                        child: Text("대학교 off365 email을 적어주세요"),
                       ),
                     ),
                   ),
@@ -231,7 +231,7 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                 _tempEmail = text;
                               },
                               decoration: InputDecoration(
-                                hintText: "학교 이메일",
+                                hintText: "대학교 이메일",
                                 enabledBorder: UnderlineInputBorder(
                                     borderSide: BorderSide(
                                         color: _firstEmailEnter == true ||
@@ -252,6 +252,24 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                     ? GestureDetector(
                                         child: Text("확인완료"),
                                         onTap: () {
+                                          _isEmailCheck
+                                              .changedAuthEmailChecked(true);
+                                          _isEmailCheck
+                                              .changedAuthEmailErrorUnderLine(
+                                                  true);
+                                          _isEmailCheck
+                                              .changedAuthEmailDupliCheckUnderLine(
+                                                  true);
+                                          _isEmailCheck
+                                              .changedAuthSendUnderLine(true);
+                                          _isEmailCheck.changedAuthNumber(true);
+                                          _isEmailCheck
+                                              .changedAuthTimeOverChecked(true);
+                                          _isEmailCheck
+                                              .changedAuthTimerChecked(false);
+                                          _isEmailCheck
+                                              .changedAuthSendClick(false);
+                                          _isEmailCheck.changedShowBtn(false);
                                           context
                                               .read(schoolEmailCheckProvider)
                                               .authEmailNickNameCheck(
@@ -507,23 +525,6 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                     if (timeOver == false &&
                                         checkPassword ==
                                             _authNumberController.text) {
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return OnestepCustomDialogNotCancel(
-                                            title: '한발자국 대학교인증 성공!',
-                                            description:
-                                                '이제 한발자국의 모든 기능들을 이용할 수 있습니다.',
-                                            confirmButtonText: '확인',
-                                            confirmButtonOnPress: () {
-                                              Navigator.of(context).push(
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          MainPage()));
-                                            },
-                                          );
-                                        },
-                                      );
                                       // 계명대
                                       if (_emailController.text
                                           .contains('@stu.kmu.ac.kr')) {
@@ -613,6 +614,31 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                           .doc(time.toString())
                                           .set({
                                         "loginTime": time,
+                                      });
+                                      categoryList = FirebaseFirestore.instance
+                                          .collection('category')
+                                          .get();
+
+                                      Future.delayed(
+                                          const Duration(milliseconds: 200),
+                                          () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return OnestepCustomDialogNotCancel(
+                                              title: '한발자국 대학교인증 성공!',
+                                              description:
+                                                  '이제 한발자국의 모든 기능들을 이용할 수 있습니다.',
+                                              confirmButtonText: '확인',
+                                              confirmButtonOnPress: () {
+                                                Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            MainPage()));
+                                              },
+                                            );
+                                          },
+                                        );
                                       });
                                     } else if (timeOver == true) {
                                       _isEmailCheck

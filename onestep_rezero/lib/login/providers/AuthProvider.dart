@@ -19,6 +19,22 @@ class SchoolEmailCheckProvider extends ChangeNotifier {
 
     List<QueryDocumentSnapshot> docRef = ref.docs;
 
+    // onestep 남은 부분 2번
+    // const str = "@stu.kmu.ac.kr";
+    // const start = "@stu.";
+    // const end = ".ac";
+
+    // final startIndex = str.indexOf(start);
+    // final endIndex = str.indexOf(end, startIndex + start.length);
+
+    // print(
+    //     str.substring(startIndex + start.length, endIndex)); // kmu
+
+    // final QuerySnapshot result =
+    //     await FirebaseFirestore.instance.collection('university').get();
+    // final List<DocumentSnapshot> documents = result.docs;
+    // documents.forEach((data) => print(data.id));
+
     // 경대 : @stu.knu.ac.kr, 영대 : @stu.yu.ac.kr, 대구대 : @stu.daegu.ac.kr, 대가대 : @stu.cu.ac.kr
     if (docRef.isEmpty &&
         (tempEmail.contains("@stu.kmu.ac.kr") ||
