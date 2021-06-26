@@ -53,7 +53,7 @@ dependencies:
       url: 'https://github.com/honghoker/flutter_wechat_assets_picker.git'
       ref: master
 
-  ###########
+  ##########
 
   #intl
   intl: ^0.17.0
@@ -126,9 +126,13 @@ dependencies:
   #SlideUpPanel
   sliding_up_panel: ^2.0.0+1
   #LikeButton
-  like_button: ^2.0.2
+  flutter_fadein: ^2.0.0
   #pageTransition_pageChanged Animation
   page_transition: ^2.0.2
+  #animation listview
+  flutter_staggered_animations: ^1.0.0
+  #slidable panel
+  flutter_slidable: ^0.6.0
 
   #Chat Test
   #stream_chat_flutter: ^1.5.1

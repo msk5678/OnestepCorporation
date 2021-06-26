@@ -49,7 +49,7 @@ packages:
       name: async
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.6.1"
+    version: "2.5.0"
   auto_size_text:
     dependency: "direct main"
     description:
@@ -426,6 +426,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.2"
+  flutter_fadein:
+    dependency: "direct main"
+    description:
+      name: flutter_fadein
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.0"
   flutter_image_compress:
     dependency: "direct main"
     description:
@@ -468,6 +475,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.13.1+1"
+  flutter_slidable:
+    dependency: "direct main"
+    description:
+      name: flutter_slidable
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.6.0"
+  flutter_staggered_animations:
+    dependency: "direct main"
+    description:
+      name: flutter_staggered_animations
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.0"
   flutter_swiper:
     dependency: "direct main"
     description:
@@ -639,13 +660,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.6.3"
-  like_button:
-    dependency: "direct main"
-    description:
-      name: like_button
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.0.2"
   logging:
     dependency: transitive
     description:
@@ -993,7 +1007,7 @@ packages:
       name: source_span
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.8.1"
+    version: "1.8.0"
   sqflite:
     dependency: transitive
     description:
@@ -1077,7 +1091,7 @@ packages:
       name: test_api
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.3.0"
+    version: "0.2.19"
   timeago:
     dependency: "direct main"
     description:

@@ -1,12 +1,12 @@
-import 'package:rive/rive.dart';
+// import 'package:rive/rive.dart';
 
-class WiperAnimation extends SimpleAnimation {
-  WiperAnimation(String animationName) : super(animationName);
+// class WiperAnimation extends SimpleAnimation {
+//   WiperAnimation(String animationName) : super(animationName);
 
-  start() {
-    instance.animation.loop = Loop.loop;
-    isActive = true;
-  }
+//   start() {
+//     instance.animation.loop = Loop.loop;
+//     isActive = true;
+//   }
 
-  stop() => instance.animation.loop = Loop.oneShot;
-}
+//   stop() => instance.animation.loop = Loop.oneShot;
+// }
