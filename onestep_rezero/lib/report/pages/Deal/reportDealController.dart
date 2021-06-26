@@ -1,18 +1,20 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'case/caseOneTest.dart';
-import 'case/caseTwoTest.dart';
+import 'case/dealFirstCase.dart';
 
-void reportDealController(BuildContext context, int caseValue) {
+void reportDealController(
+    BuildContext context, int caseValue, String postUid, String reportedUid) {
   switch (caseValue) {
     case 1:
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => CaseOneTest()));
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => DealFirstCase(postUid, reportedUid)));
       break;
     case 2:
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => CaseTwoTest()));
+      break;
+    case 3:
+      break;
+    case 4:
       break;
     default:
       break;

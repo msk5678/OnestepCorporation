@@ -7,8 +7,9 @@ class User {
   final String uid;
   final String nickName;
   final String imageUrl;
-  final String email;
-  final int reportPoint;
+  // final String email;
+  final int reportState;
+  // final Timestamp reportTime;
 
   final String university;
   final String universityEmail;
@@ -21,11 +22,12 @@ class User {
     this.uid,
     this.nickName,
     this.imageUrl,
-    this.email,
-    this.reportPoint,
+    // this.email,
+    this.reportState,
     this.university,
     this.universityEmail,
     this.joinTime,
+    // this.reportTime,
   });
 
   factory User.fromDocument(DocumentSnapshot document) {
@@ -35,8 +37,9 @@ class User {
       uid: document['uid'],
       nickName: document['nickName'],
       imageUrl: document['imageUrl'],
-      email: document['email'],
-      reportPoint: document['reportPoint'],
+      // email: document['email'],
+      reportState: document['reportState'],
+      // reportTime: document['reportTime'],
       university: document['university'],
       universityEmail: document['universityEmail'],
       joinTime: document['joinTime'],
