@@ -176,7 +176,7 @@ abstract class PostListParentWidget<T extends StatefulWidget> extends State<T>
                             "/CreatePost",
                             arguments: {"CURRENTBOARDDATA": currentBoard}) ??
                         false;
-                    if (result == bool) if (result)
+                    if (result.runtimeType == bool) if (result)
                       context
                           .read(listProvider)
                           .fetchPosts(currentBoard.boardId);

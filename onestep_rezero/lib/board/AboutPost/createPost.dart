@@ -36,7 +36,7 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
   final int maxImageCount = 5;
   double deviceHeight;
   double deviceWidth;
-  ContentCategory category;
+  ContentCategory category = ContentCategory.SMALLTALK;
   TextEditingController textEditingControllerBottomSheet;
   TextEditingController textEditingControllerContent;
   TextEditingController textEditingControllerImage1;
@@ -49,7 +49,7 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
   FixedExtentScrollController categoryPickerController;
   BoardData currentBoardData;
   setBoardData();
-  List<String> _initCommentList = ['', '', '', '', ''];
+  List<String> initCommentList = ['', '', '', '', ''];
   Map<String, List<dynamic>> imageCommentMap = {"IMAGE": [], "COMMENT": []};
 
   textEditingInitNDispose(bool isInit) {
@@ -74,7 +74,7 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
 
   @override
   void initState() {
-    imageCommentMap["COMMENT"].addAll(_initCommentList);
+    imageCommentMap["COMMENT"].addAll(initCommentList);
     super.initState();
     setBoardData();
     textEditingInitNDispose(true);
@@ -99,7 +99,6 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
 
   @override
   Widget build(BuildContext context) {
-    print("here");
     // print("CreatePost AssetThumb change to ConvertImages ");
     return Stack(
       children: <Widget>[
@@ -290,13 +289,25 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
   }
 
   saveDataInFirestore() async {
-    TipDialogHelper.loading("저장 중입니다.\n 잠시만 기다려주세요.");
+    TipDialogHelper.loading("저장 중!\n 잠시만 기다려주세요.");
 
     await saveData().then((value) {
-      TipDialogHelper.dismiss();
-      TipDialogHelper.success("저장 완료!");
-      Future.delayed(Duration(seconds: 2))
-          .then((value) => Navigator.pop(context, true));
+      if (value.runtimeType == bool) {
+        if (value) {
+          TipDialogHelper.dismiss();
+          TipDialogHelper.success("저장 완료!");
+          Future.delayed(Duration(seconds: 2))
+              .then((value) => Navigator.pop(context, true));
+          return;
+        }
+      }
+      Navigator.pop(context, false);
+      return;
+      // TipDialogHelper.dismiss();
+      // TipDialogHelper.success("저장 완료!");
+      // Future.delayed(Duration(seconds: 2))
+      //     .then((value) => Navigator.pop(context, true));
+      // return true;
     }).whenComplete(() {});
   }
 
@@ -402,71 +413,6 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
           ],
         );
       },
-    );
-  }
-
-  blankImageContainer() {
-    return Container(
-      padding: EdgeInsets.all(5.0),
-      child: SizedBox(
-        height: 50,
-        width: 50,
-        child: GestureDetector(
-            onTap: () async {
-              if (imageCommentMap["IMAGE"].isNotEmpty) {
-                bool isInit = await showDialog(
-                  context: context,
-                  barrierDismissible: true,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: Text('사진 작성 중'),
-                      content: Text("작성중인 사진 및 설명이 있습니다. 초기화 하시겠습니까?"),
-                      actions: <Widget>[
-                        ElevatedButton(
-                          child: Text('초기화'),
-                          onPressed: () {
-                            Navigator.pop(context, true);
-                          },
-                        ),
-                        ElevatedButton(
-                          child: Text('유지'),
-                          onPressed: () {
-                            Navigator.pop(context, false);
-                          },
-                        ),
-                        ElevatedButton(
-                          child: Text('취소'),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                        ),
-                      ],
-                    );
-                  },
-                );
-                if (isInit != null) {
-                  if (isInit) {
-                    setState(() {
-                      imageCommentMap["IMAGE"].clear();
-                      imageCommentMap["COMMENT"].clear();
-                      imageCommentMap["COMMENT"].addAll(_initCommentList);
-                      getterImgCommentFromMapToTextEditingControl(
-                          imageCommentMap);
-                    });
-                  }
-                  checkCamStorePermission(_getImage);
-                }
-              } else {
-                checkCamStorePermission(_getImage);
-              }
-            },
-            child: Container(
-              child: Icon(Icons.add),
-              decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.all(Radius.circular(5.0))),
-            )),
-      ),
     );
   }
 
@@ -741,15 +687,16 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
                     setState(() {
                       imageCommentMap["IMAGE"].clear();
                       imageCommentMap["COMMENT"].clear();
-                      imageCommentMap["COMMENT"].addAll(_initCommentList);
+
+                      imageCommentMap["COMMENT"].addAll(initCommentList);
                       getterImgCommentFromMapToTextEditingControl(
                           imageCommentMap);
                     });
                   }
-                  checkCamStorePermission(_getImage);
+                  checkCamStorePermission(getImage);
                 }
               } else {
-                checkCamStorePermission(_getImage);
+                checkCamStorePermission(getImage);
               }
             },
             child: Container(
@@ -762,7 +709,7 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
     );
   }
 
-  _getImage() async {
+  getImage() async {
     List<Asset> resultList = [];
     if (imageCommentMap["IMAGE"].isNotEmpty) {
       for (var image in imageCommentMap["IMAGE"]) {
@@ -812,10 +759,13 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
   getterImgCommentFromMapToTextEditingControl(
     Map<String, dynamic> imgCommMap,
   ) {
-    for (int i = 0; i < maxImageCount; i++) {
-      getTextEditingImageTextField(
-        i,
-      );
+    for (int i = 0; i < imgCommMap["COMMENT"].length; i++) {
+      TextEditingController textEditingController;
+      textEditingController = getTextEditingImageTextField(i);
+      if (textEditingController != null)
+        getTextEditingImageTextField(
+          i,
+        )..text = imgCommMap["COMMENT"][i];
     }
   }
 
@@ -829,30 +779,25 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
       _tempTextEditing.add(getTextEditingImageTextField(i).text.trim());
     }
     imageCommentMap["COMMENT"].clear();
-    imageCommentMap["COMMENT"].addAll(_tempTextEditing);
+    imageCommentMap["COMMENT"].addAll(_tempTextEditing
+      ..addAll(
+          List<String>.generate(maxImageCount - mapSetLength, (index) => "")));
   }
 
   getTextEditingImageTextField(
     int index,
   ) {
-    switch (index) {
-      case 0:
-        return textEditingControllerImage1;
-      case 1:
-        return textEditingControllerImage2;
-      case 2:
-        return textEditingControllerImage3;
-      case 3:
-        return textEditingControllerImage4;
-      case 4:
-        return textEditingControllerImage5;
-      default:
-        return null;
-    }
+    if (index == 0)
+      return textEditingControllerImage1;
+    else if (index == 1)
+      return textEditingControllerImage2;
+    else if (index == 2)
+      return textEditingControllerImage3;
+    else if (index == 3)
+      return textEditingControllerImage4;
+    else if (index == 4)
+      return textEditingControllerImage5;
+    else
+      return null;
   }
-}
-
-class BuildingProblem {
-  static List<Icon> problemListIcons = [];
-  static List<String> problemListNames = [];
 }

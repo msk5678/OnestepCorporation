@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -35,51 +34,58 @@ class CommentProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  fetchUserWrittenComment(String uid) async {
-    if (_isFetching) return;
-    _isFetching = true;
-    _commentDataList = [];
-    List<UserWrittenCommentData> _userWrittenCommentList = [];
-    final db = FirebaseDatabase.instance;
-    final firestore = FirebaseFirestore.instance;
+  // fetchUserWrittenComment(String uid) async {
+  //   if (_isFetching) return;
+  //   _isFetching = true;
+  //   _commentDataList = [];
+  //   List<UserWrittenCommentData> _userWrittenCommentList = [];
+  //   final db = FirebaseDatabase.instance;
+  //   final firestore = FirebaseFirestore.instance;
+  //   try {
+  //     _userWrittenCommentList = await firestore
+  //         .collection('user')
+  //         .doc('aboutBoard')
+  //         .collection('comment')
+  //         .get()
+  //         .then((QuerySnapshot querySnapshot) {
+  //       return UserWrittenCommentData()
+  //           .fromFireStoreQuerySnapshot(querySnapshot);
+  //     });
+  //     await Future.forEach(_userWrittenCommentList,
+  //         (UserWrittenCommentData data) async {
+  //       var commentDb;
+  //       if (data.haveChildComment) {
+  //         commentDb = db
+  //             .reference()
+  //             .child('board')
+  //             .child(data.boardId)
+  //             .child(data.postId)
+  //             .child(data.parentCommentId)
+  //             .child("CoComment")
+  //             .child(data.commentId);
+  //       } else {
+  //         commentDb = db
+  //             .reference()
+  //             .child('board')
+  //             .child(data.boardId)
+  //             .child(data.postId)
+  //             .child(data.commentId);
+  //       }
+  //       _commentDataList
+  //           .add(await commentDb.once().then((DataSnapshot dataSnapshot) {
+  //         if (dataSnapshot.value.runtimeType == Null)
+  //           return CommentData.fromRealtimeData(dataSnapshot);
+  //       }).whenComplete(() {}));
 
-    _userWrittenCommentList = await firestore
-        .collection('user')
-        .doc('aboutBoard')
-        .collection('comment')
-        .get()
-        .then((QuerySnapshot querySnapshot) {
-      return UserWrittenCommentData().fromFireStoreQuerySnapshot(querySnapshot);
-    });
-    await Future.forEach(_userWrittenCommentList,
-        (UserWrittenCommentData data) async {
-      var commentDb;
-      if (data.haveChildComment) {
-        commentDb = db
-            .reference()
-            .child('board')
-            .child(data.boardId)
-            .child(data.postId)
-            .child(data.parentCommentId)
-            .child("CoComment")
-            .child(data.commentId);
-      } else {
-        commentDb = db
-            .reference()
-            .child('board')
-            .child(data.boardId)
-            .child(data.postId)
-            .child(data.commentId);
-      }
-      _commentDataList
-          .add(await commentDb.once().then((DataSnapshot dataSnapshot) {
-        return CommentData.fromRealtimeData(dataSnapshot);
-      }).whenComplete(() {}));
-      notifyListeners();
-    });
-    _isFetching = false;
-    notifyListeners();
-  }
+  //       notifyListeners();
+  //     });
+  //   } catch (e) {
+  //     _isFetching = false;
+  //   }
+
+  //   _isFetching = false;
+  //   notifyListeners();
+  // }
 
   refresh(String boardId, String postId) {
     // _commentDataList = [];
@@ -88,37 +94,4 @@ class CommentProvider with ChangeNotifier {
   }
 
   clear() {}
-}
-
-class UserWrittenCommentData {
-  final String boardId;
-  final bool haveChildComment;
-  final String parentCommentId;
-  final String postId;
-  final String commentId;
-  UserWrittenCommentData(
-      {this.boardId,
-      this.commentId,
-      this.haveChildComment,
-      this.parentCommentId,
-      this.postId});
-
-  factory UserWrittenCommentData.fromFireStoreDocumentSnapshot(
-      DocumentSnapshot documentSnapshot) {
-    Map data = documentSnapshot.data() ?? {};
-    return UserWrittenCommentData(
-        boardId: data["boardId"],
-        commentId: documentSnapshot.id,
-        haveChildComment: data["haveChildComment"] ?? false,
-        parentCommentId: data["parentCommentId"],
-        postId: data["postId"]);
-  }
-  fromFireStoreQuerySnapshot(QuerySnapshot querySnapshot) {
-    List<UserWrittenCommentData> list = [];
-    querySnapshot.docs.forEach((DocumentSnapshot documentSnapshot) {
-      list.add(UserWrittenCommentData.fromFireStoreDocumentSnapshot(
-          documentSnapshot));
-    });
-    return list;
-  }
 }

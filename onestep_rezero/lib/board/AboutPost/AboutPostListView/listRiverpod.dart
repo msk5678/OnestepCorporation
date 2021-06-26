@@ -15,6 +15,7 @@ class ListRiverPod extends ConsumerWidget {
   ListRiverPod({this.boardCategory, this.customPostListCallback});
   @override
   Widget build(BuildContext context, watch) {
+    print("PostLIst Rebuild");
     double deviceHeight = MediaQuery.of(context).size.height;
     double deviceWidth = MediaQuery.of(context).size.width;
     final listprovider = watch(listProvider);
@@ -50,13 +51,14 @@ class ListRiverPod extends ConsumerWidget {
       }
     } else {
       //This class is userPost list
-
       return Column(
         children: [
-          PostList(
-            postList: listprovider.posts,
-            customPostListCallback: customPostListCallback,
-          ),
+          !isFetching
+              ? PostList(
+                  postList: listprovider.posts,
+                  customPostListCallback: customPostListCallback,
+                )
+              : Container(),
           isFetching
               ? Center(
                   child: CupertinoActivityIndicator(),

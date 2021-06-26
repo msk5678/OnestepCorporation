@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_fadein/flutter_fadein.dart';
@@ -6,29 +7,27 @@ import 'package:onestep_rezero/board/AboutPost/AboutPostListView/listRiverpod.da
 import 'package:onestep_rezero/board/AboutPost/AboutPostListView/postList.dart';
 import 'package:onestep_rezero/board/AboutPost/AboutPostListView/postListMain.dart';
 import 'package:onestep_rezero/board/Animation/slideUpAnimationWidget.dart';
-import 'package:onestep_rezero/board/StateManage/Provider/userProvider.dart';
-import 'package:onestep_rezero/board/boardMain.dart';
 import 'package:onestep_rezero/board/declareData/categoryManageClass.dart';
 import 'package:onestep_rezero/board/declareData/boardData.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onestep_rezero/board/declareData/postData.dart';
 import 'package:onestep_rezero/main.dart';
 
-class UserFavoriteList extends StatefulWidget {
+class TopCommentPostList extends StatefulWidget {
   final dashBoardIconData;
-  UserFavoriteList({Key key, this.dashBoardIconData}) : super(key: key);
+  TopCommentPostList({Key key, this.dashBoardIconData}) : super(key: key);
 
   @override
-  _UserPostingListState createState() => _UserPostingListState();
+  _TopCommentPostListState createState() => _TopCommentPostListState();
 }
 
-class _UserPostingListState extends PostListParentWidget<UserFavoriteList> {
+class _TopCommentPostListState
+    extends PostListParentWidget<TopCommentPostList> {
   final currentUid = currentUserModel.uid;
   BoardInitData dashBoardIcon;
   @override
   void initState() {
     dashBoardIcon = widget.dashBoardIconData;
-
     super.initState();
   }
 
@@ -37,7 +36,7 @@ class _UserPostingListState extends PostListParentWidget<UserFavoriteList> {
       BoardData boardData, BoardCategory boardCategory) {}
   @override
   getPostList(BoardData currentBoard) {
-    context.read(userBoardDataProvider).getUserFavoriteList();
+    context.read(listProvider).fetchTopCommentPost();
   }
 
   @override
@@ -98,7 +97,7 @@ class _UserPostingListState extends PostListParentWidget<UserFavoriteList> {
 
   @override
   postListMainWidget(BoardCategory currentCategory) {
-    return UserFavoriteListRiverPod(
+    return TopCommentPostListRiverPod(
       postClickEventCallback: _postClickEventCallback,
     );
   }
@@ -111,36 +110,31 @@ class _UserPostingListState extends PostListParentWidget<UserFavoriteList> {
   }
 }
 
-class UserFavoriteListRiverPod extends ConsumerWidget {
+class TopCommentPostListRiverPod extends ConsumerWidget {
   final postClickEventCallback;
-  UserFavoriteListRiverPod({this.postClickEventCallback});
+  TopCommentPostListRiverPod({this.postClickEventCallback});
 
   @override
   Widget build(BuildContext context, watch) {
     double deviceHeight = MediaQuery.of(context).size.height;
     double deviceWidth = MediaQuery.of(context).size.width;
-    final userFavoriteProvider = watch(userBoardDataProvider);
-
-    // var user = userFavoriteProvider.userFavoritePostMap;
-    List<UserFavoriteData> _userFavoritePostIdList =
-        userFavoriteProvider.userFavoritePostMap.values.toList();
-    bool isFetching = userFavoriteProvider.isFetching;
-    print("user favorite : ${userFavoriteProvider.userFavoritePostMap}");
-    if (!isFetching && _userFavoritePostIdList.length == 0) {
+    final topFavoriteList = watch(listProvider);
+    bool isFetching = topFavoriteList.isFetch;
+    if (!isFetching && topFavoriteList.posts.length == 0) {
       return Container(
         height: deviceHeight / 2,
         width: deviceWidth,
         child: Center(
-          child: ShowUp(delay: 300, child: Text("좋아하는 게시글이 없습니다.")),
+          child: ShowUp(delay: 300, child: Text("핫 게시글이 없습니다.")),
         ),
       );
     } else
       return Column(
         children: [
           !isFetching
-              ? UserFavoriteListData(
-                  userFavoriteDataList: _userFavoritePostIdList,
-                  callback: postClickEventCallback,
+              ? PostList(
+                  postList: topFavoriteList.posts,
+                  customPostListCallback: postClickEventCallback,
                 )
               : Container(),
           isFetching
@@ -153,22 +147,5 @@ class UserFavoriteListRiverPod extends ConsumerWidget {
               : Container(),
         ],
       );
-  }
-}
-
-class UserFavoriteListData extends ConsumerWidget {
-  final List<UserFavoriteData> userFavoriteDataList;
-  final Function callback;
-  UserFavoriteListData({this.userFavoriteDataList, this.callback});
-  @override
-  Widget build(BuildContext context, watch) {
-    final userFavoriteProvider = watch(listProvider);
-    bool isFetching = userFavoriteProvider.isFetch;
-    return isFetching
-        ? Container()
-        : PostList(
-            postList: userFavoriteProvider.posts,
-            customPostListCallback: callback,
-          );
   }
 }

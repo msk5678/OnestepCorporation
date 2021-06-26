@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:onestep_rezero/board/StateManage/Provider/userProvider.dart';
 import 'package:onestep_rezero/board/declareData/postData.dart';
 import 'package:onestep_rezero/main.dart';
 
@@ -10,6 +11,7 @@ class PostListProvider with ChangeNotifier {
   int documentLimit = 15;
   bool _hasNext = true;
   bool _isFetching = false;
+
   List<PostData> boardData = [];
 
   String get errorMessage => _errorMessage;
@@ -70,109 +72,123 @@ class PostListProvider with ChangeNotifier {
     _hasNext = true;
 
     _productsSnapshot.clear();
-    try {
-      // final docList =
-      await getAllUserPostingList(currentUid);
-      // _productsSnapshot.addAll(docList);
 
-      // if (snap.docs.length < documentLimit) _hasNext = false;
+    try {
+      QuerySnapshot boardList = await FirebaseFirestore.instance
+          .collection('university')
+          .doc(currentUserModel.university)
+          .collection("board")
+          .get();
+
+      await Future.forEach(boardList.docs,
+          (DocumentSnapshot documentSnapshot) async {
+        String boardId = documentSnapshot.id;
+        QuerySnapshot postQuerySnapshot = await FirebaseFirestore.instance
+            .collection('university')
+            .doc(currentUserModel.university)
+            .collection("board")
+            .doc(boardId)
+            .collection(boardId)
+            .where("uid", isEqualTo: currentUid)
+            .get();
+
+        // return userAllPosting.addAll(postQuerySnapshot.docs);
+        _productsSnapshot.addAll(postQuerySnapshot.docs);
+        notifyListeners();
+      });
     } catch (error) {}
     _isFetching = false;
     notifyListeners();
   }
 
-  Future fetchUserFavorite(String currentUid) async {
+  Future fetchTopFavoritePost() async {
     if (_isFetching) return;
     _isFetching = true;
     _hasNext = true;
 
     _productsSnapshot.clear();
     try {
-      // final docList =
-      await getAllUserFavoriteList(currentUid);
-      // _productsSnapshot.addAll(docList);
-
-      // if (snap.docs.length < documentLimit) _hasNext = false;
+      QuerySnapshot boardList = await FirebaseFirestore.instance
+          .collection('university')
+          .doc(currentUserModel.university)
+          .collection("board")
+          .get();
+      await Future.forEach(boardList.docs,
+          (DocumentSnapshot documentSnapshot) async {
+        String boardId = documentSnapshot.id;
+        QuerySnapshot postQuerySnapshot = await FirebaseFirestore.instance
+            .collection('university')
+            .doc(currentUserModel.university)
+            .collection("board")
+            .doc(boardId)
+            .collection(boardId)
+            .where("favoriteCount", isGreaterThanOrEqualTo: 10)
+            .get();
+        _productsSnapshot.addAll(postQuerySnapshot.docs);
+        notifyListeners();
+      });
     } catch (error) {}
     _isFetching = false;
     notifyListeners();
   }
 
-  getAllUserFavoriteList(
-    String uid,
-  ) async {
-    QuerySnapshot getAllPostExceptEmptyFavoriteMapList;
+  Future fetchTopCommentPost() async {
+    if (_isFetching) return;
+    _isFetching = true;
+    _hasNext = true;
 
-    QuerySnapshot boardList = await FirebaseFirestore.instance
-        .collection('university')
-        .doc(currentUserModel.university)
-        .collection("board")
-        .get();
-
-    await Future.forEach(boardList.docs, (DocumentSnapshot element) async {
-      String boardId = element.id;
-
-      getAllPostExceptEmptyFavoriteMapList = await FirebaseFirestore.instance
+    _productsSnapshot.clear();
+    try {
+      QuerySnapshot boardList = await FirebaseFirestore.instance
           .collection('university')
           .doc(currentUserModel.university)
           .collection("board")
-          .doc(boardId)
-          .collection(boardId)
-          .where("favoriteUserList", isNotEqualTo: {}).get();
-
-      // return userAllPosting.addAll(postQuerySnapshot.docs);
-      await Future.forEach(getAllPostExceptEmptyFavoriteMapList.docs,
-          (DocumentSnapshot postDocumentSnapshot) async {
-        String postId = postDocumentSnapshot.id;
-        Map<String, dynamic> favoriteUserList =
-            postDocumentSnapshot.data()["favoriteUserList"] ?? {};
-        bool wasWrittenComment = favoriteUserList.containsKey(uid);
-        if (wasWrittenComment) {
-          DocumentSnapshot postQuerySnapshot;
-          postQuerySnapshot = await FirebaseFirestore.instance
-              .collection('university')
-              .doc(currentUserModel.university)
-              .collection("board")
-              .doc(boardId)
-              .collection(boardId)
-              .doc(postId)
-              .get();
-
-          _productsSnapshot.add(postQuerySnapshot);
-          notifyListeners();
-        }
+          .get();
+      await Future.forEach(boardList.docs,
+          (DocumentSnapshot documentSnapshot) async {
+        String boardId = documentSnapshot.id;
+        QuerySnapshot postQuerySnapshot = await FirebaseFirestore.instance
+            .collection('university')
+            .doc(currentUserModel.university)
+            .collection("board")
+            .doc(boardId)
+            .collection(boardId)
+            .where("commentCount", isGreaterThanOrEqualTo: 10)
+            .get();
+        _productsSnapshot.addAll(postQuerySnapshot.docs);
+        notifyListeners();
       });
-    });
-
-    // return userAllPosting;
+    } catch (error) {}
+    _isFetching = false;
+    notifyListeners();
   }
 
-  getAllUserPostingList(
-    String uid,
-  ) async {
-    QuerySnapshot boardList = await FirebaseFirestore.instance
-        .collection('university')
-        .doc(currentUserModel.university)
-        .collection("board")
-        .get();
+  Future fetchPostDataFromPostId(List<UserFavoriteData> postIdList) async {
+    if (_isFetching) return;
 
-    await Future.forEach(boardList.docs, (DocumentSnapshot element) async {
-      String boardId = element.id;
-      QuerySnapshot postQuerySnapshot = await FirebaseFirestore.instance
-          .collection('university')
-          .doc(currentUserModel.university)
-          .collection("board")
-          .doc(boardId)
-          .collection(boardId)
-          .where("uid", isEqualTo: uid)
-          .get();
+    _isFetching = true;
 
-      // return userAllPosting.addAll(postQuerySnapshot.docs);
-      _productsSnapshot.addAll(postQuerySnapshot.docs);
-      notifyListeners();
-    });
-
-    // return userAllPosting;
+    _productsSnapshot.clear();
+    try {
+      await Future.forEach(postIdList,
+          (UserFavoriteData userFavoriteData) async {
+        String boardId = userFavoriteData.boardId;
+        String postId = userFavoriteData.postId;
+        _productsSnapshot.add(await FirebaseFirestore.instance
+            .collection('university')
+            .doc(currentUserModel.university)
+            .collection("board")
+            .doc(boardId)
+            .collection(boardId)
+            .doc(postId)
+            .get());
+        notifyListeners();
+      });
+    } catch (e) {
+      _isFetching = false;
+    }
+    _isFetching = false;
+    notifyListeners();
   }
 }
 

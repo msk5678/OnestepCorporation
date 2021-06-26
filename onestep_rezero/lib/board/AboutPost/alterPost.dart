@@ -1,10 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:multi_image_picker2/multi_image_picker2.dart';
+import 'package:onestep_rezero/board/AboutPost/AboutPostContent/postContent.dart';
 import 'package:onestep_rezero/board/AboutPost/createPost.dart';
 import 'package:onestep_rezero/board/TipDialog/tip_dialog.dart';
 import 'package:onestep_rezero/board/declareData/boardData.dart';
-import 'package:onestep_rezero/board/declareData/categoryManageClass.dart';
 import 'package:onestep_rezero/board/declareData/postData.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AlterPost extends StatefulWidget {
   final postData;
@@ -16,6 +19,9 @@ class AlterPost extends StatefulWidget {
 
 class _AlterPostState extends CreatePageParent<AlterPost> {
   PostData alterPostData;
+  final bool isAlterPage = true;
+
+  int firstImageCount = 0;
 
   @override
   void initState() {
@@ -26,6 +32,33 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
     textEditingControllerContent..text = alterPostData.textContent;
     imageCommentMap =
         Map<String, List<dynamic>>.from(alterPostData.imageCommentMap);
+    firstImageCount = imageCommentMap["IMAGE"].length;
+    imageCommentMap.update(
+        "COMMENT",
+        (value) => value
+          ..addAll(List<String>.generate(
+              maxImageCount - firstImageCount, (index) => "")));
+    initImgCommentText(imageCommentMap);
+    // getterImgCommentFromMapToTextEditingControl(imageCommentMap);
+  }
+
+  initImgCommentText(Map<String, List<dynamic>> imgComment) {
+    for (int i = 0; i < imgComment["COMMENT"].length; i++) {
+      String commentText = imgComment["COMMENT"][i].toString();
+      if (i == 0) {
+        textEditingControllerImage1..text = commentText;
+      } else if (i == 1) {
+        textEditingControllerImage2..text = commentText;
+      } else if (i == 2) {
+        textEditingControllerImage3..text = commentText;
+      } else if (i == 3) {
+        textEditingControllerImage4..text = commentText;
+      } else if (i == 4) {
+        textEditingControllerImage5..text = commentText;
+      } else {
+        continue;
+      }
+    }
   }
 
   @override
@@ -36,7 +69,6 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
 
   @override
   Widget build(BuildContext context) {
-    // print("CreatePost AssetThumb change to ConvertImages ");
     return Stack(
       children: <Widget>[
         Scaffold(
@@ -60,12 +92,6 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
                     children: <Widget>[
                       firstContainer(),
                       displayCurrentBoard(currentBoardData.boardName),
-                      Container(
-                          padding: EdgeInsets.symmetric(vertical: 3),
-                          alignment: Alignment.bottomLeft,
-                          width: deviceWidth / 3,
-                          child: postCategory(
-                              ContentCategory.values, deviceHeight, category)),
                       setPostName(deviceHeight),
                       secondContainer(),
                       thirdContainer(imageCommentMap),
@@ -118,7 +144,6 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
                     saveDataInFirestore();
                   }
                 } else if (_result.runtimeType == String) {
-                  print(_result);
                   switch (_result.toString()) {
                     case "CONTENT":
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -131,8 +156,7 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
                     case "TITLE":
                       ScaffoldMessenger.of(context).showSnackBar(
                           showSnackBar(textMessage: Text("제목을 입력하세요.")));
-                      // _scaffoldKey.currentState.showSnackBar(
-                      // showSnackBar(textMessage: Text("제목을 입력하세요.")));
+
                       break;
                   }
                 }
@@ -152,13 +176,24 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
 
   @override
   saveDataInFirestore() async {
-    TipDialogHelper.loading("저장 중입니다.\n 잠시만 기다려주세요.");
+    TipDialogHelper.loading("수정 중!\n 잠시만 기다려주세요.");
 
     await updateData(alterPostData).then((value) {
-      TipDialogHelper.dismiss();
-      TipDialogHelper.success("저장 완료!");
-      Future.delayed(Duration(seconds: 2))
-          .then((value) => Navigator.pop(context, alterPostData));
+      if (value.runtimeType == bool) {
+        if (value) {
+          TipDialogHelper.dismiss();
+          TipDialogHelper.success("수정 완료!");
+
+          Future.delayed(Duration(seconds: 2)).then((value) {
+            Navigator.pop(context, true);
+            context.read(postProvider).getLatestPostData(alterPostData);
+          });
+
+          return;
+        }
+      }
+      Navigator.pop(context, false);
+      return;
     }).whenComplete(() {});
   }
 
@@ -171,26 +206,38 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
       contentCategory: category.toString(),
     );
 
-    return await postData.updatePostData(context, updatedData);
+    return await postData.updatePostData(context, updatedData, firstImageCount);
   }
 
   @override
   thirdContainer(Map<String, dynamic> imgCommMap) {
     List<Widget> _imageWidget = [];
     List<Widget> _emptyWidget = [];
-    int containImageCount =
-        imgCommMap["IMAGE"] != null ? imageCommentMap["IMAGE"].length : 0;
 
-    for (int i = 0; i < containImageCount; i++) {
+    for (int i = 0; i < firstImageCount; i++) {
       if (imgCommMap["IMAGE"][i].runtimeType != String) {
         continue;
       }
+
       _imageWidget.add(Container(
           padding: EdgeInsets.all(5.0),
           child: imageContainer(i, cachedImgWidget(imgCommMap["IMAGE"][i]),
-              imageCommentMap["COMMENT"][i])));
+              imgCommMap["COMMENT"][i])));
     }
-    for (int i = 0; i < maxImageCount - containImageCount; i++) {
+
+    for (int i = firstImageCount; i < imgCommMap["IMAGE"].length; i++) {
+      if (imgCommMap["IMAGE"][i].runtimeType != Asset) {
+        continue;
+      }
+
+      if (imgCommMap["IMAGE"][i] != null)
+        _imageWidget.add(Container(
+            padding: EdgeInsets.all(5.0),
+            child: imageContainer(
+                i, imgCommMap["IMAGE"][i], imgCommMap["COMMENT"][i])));
+    }
+
+    for (int i = 0; i < maxImageCount - imgCommMap["IMAGE"].length; i++) {
       _emptyWidget.add(emptyImageWidget(imgCommMap));
     }
     return Container(
@@ -205,12 +252,39 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
   }
 
   cachedImgWidget(String imageURL) {
-    return CachedNetworkImage(imageUrl: imageURL);
+    if (imageURL != null)
+      return CachedNetworkImage(
+          imageUrl: imageURL,
+          placeholder: (context, url) => CupertinoActivityIndicator(),
+          errorWidget: (context, url, error) => IconButton(
+                icon: Icon(Icons.refresh),
+                onPressed: () {
+                  setState(() {});
+                },
+              ));
+    else
+      return Container();
   }
 
   @override
   imageContainer(int index, image, String comment) {
-    Widget cachedImage = image;
+    TextEditingController textEditingController;
+    if (index == 0) {
+      textEditingController = textEditingControllerImage1;
+    } else if (index == 1) {
+      textEditingController = textEditingControllerImage2;
+    } else if (index == 2) {
+      textEditingController = textEditingControllerImage3;
+    } else if (index == 3) {
+      textEditingController = textEditingControllerImage4;
+    } else if (index == 4) {
+      textEditingController = textEditingControllerImage5;
+    }
+    bool isCachedImage = false;
+    if (index < firstImageCount)
+      isCachedImage = true;
+    else
+      isCachedImage = false;
     return Container(
       padding: EdgeInsets.only(top: 5.0),
       child: Row(
@@ -223,28 +297,30 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
               child: PopupMenuButton<int>(
                   onSelected: (value) async {
                     bool result = await showDialog(
-                        context: context,
-                        barrierDismissible: true,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text('사진 삭제'),
-                            content: Text("사진 및 설명이 삭제됩니다."),
-                            actions: <Widget>[
-                              ElevatedButton(
-                                child: Text('삭제'),
-                                onPressed: () {
-                                  Navigator.pop(context, true);
-                                },
-                              ),
-                              ElevatedButton(
-                                child: Text('유지'),
-                                onPressed: () {
-                                  Navigator.pop(context, false);
-                                },
-                              ),
-                            ],
-                          );
-                        });
+                            context: context,
+                            barrierDismissible: true,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text('사진 삭제'),
+                                content: Text("사진 및 설명이 삭제됩니다."),
+                                actions: <Widget>[
+                                  ElevatedButton(
+                                    child: Text('삭제'),
+                                    onPressed: () {
+                                      Navigator.pop(context, true);
+                                    },
+                                  ),
+                                  ElevatedButton(
+                                    child: Text('유지'),
+                                    onPressed: () {
+                                      Navigator.pop(context, false);
+                                    },
+                                  ),
+                                ],
+                              );
+                            }) ??
+                        false;
+
                     if (result) {
                       //Deleted
                       imageDismiss(imageCommentMap, value);
@@ -261,11 +337,19 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
                           ),
                         ),
                       ],
-                  child: Container(
-                    child: cachedImage,
-                    height: 200,
-                    width: 200,
-                  )),
+                  child: isCachedImage
+                      ? Container(
+                          child: image,
+                          height: 200,
+                          width: 200,
+                        )
+                      : Container(
+                          child: AssetThumb(
+                            asset: image,
+                            height: 200,
+                            width: 200,
+                          ),
+                        )),
             ),
           ),
           Expanded(
@@ -283,13 +367,138 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
                     labelText: "사진${index + 1}의 설명",
                     hintText: "내용을 입력하세요",
                   ),
-                  controller: getTextEditingImageTextField(
-                    index,
-                  )),
+                  controller: textEditingController),
             ),
           )
         ],
       ),
     );
+  }
+
+  getImage() async {
+    List<Asset> resultList = [];
+    // if (imageCommentMap["IMAGE"].isNotEmpty) {
+    //   for (var image in imageCommentMap["IMAGE"]) {
+    //     resultList.add(image);
+    //   }
+    // }
+    try {
+      resultList = await MultiImagePicker.pickImages(
+          maxImages: 5 - imageCommentMap["IMAGE"].length,
+          enableCamera: true,
+          selectedAssets: resultList);
+    } on NoImagesSelectedException {}
+
+    setState(() {
+      // imageCommentMap["IMAGE"].add(resultList);
+      // for (int i = firstImageCount; i < maxImageCount;i ++){
+      //   imageCommentMap["IMAGE"][i]
+      // }
+      //   alterImageCommentMap.update("IMAGE", (value) => resultList);
+      // if (imageCommentMap["IMAGE"].isNotEmpty) {
+      //   imageCommentMap["IMAGE"].addAll(resultList);
+      // } else
+      imageCommentMap.update("IMAGE", (value) => value..addAll(resultList));
+    });
+  }
+
+  @override
+  emptyImageWidget(Map<String, dynamic> imgCommMap) {
+    return Container(
+      padding: EdgeInsets.all(5.0),
+      child: SizedBox(
+        height: 50,
+        width: 50,
+        child: GestureDetector(
+            onTap: () async {
+              if (imgCommMap["IMAGE"].isNotEmpty) {
+                bool isInit = await showDialog(
+                  context: context,
+                  barrierDismissible: true,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('사진 작성 중'),
+                      content: Text("작성중인 사진 및 설명이 있습니다. 초기화 하시겠습니까?"),
+                      actions: <Widget>[
+                        ElevatedButton(
+                          child: Text('초기화'),
+                          onPressed: () {
+                            Navigator.pop(context, true);
+                          },
+                        ),
+                        ElevatedButton(
+                          child: Text('유지'),
+                          onPressed: () {
+                            Navigator.pop(context, false);
+                          },
+                        ),
+                        ElevatedButton(
+                          child: Text('취소'),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+                if (isInit != null) {
+                  if (isInit) {
+                    setState(() {
+                      firstImageCount = 0;
+                      imageCommentMap["IMAGE"].clear();
+                      imageCommentMap["COMMENT"] = initCommentList;
+
+                      getterImgCommentFromMapToTextEditingControl(
+                          imageCommentMap);
+                    });
+                  }
+                  checkCamStorePermission(getImage);
+                }
+              } else {
+                checkCamStorePermission(getImage);
+              }
+            },
+            child: Container(
+              child: Icon(Icons.add),
+              decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.all(Radius.circular(5.0))),
+            )),
+      ),
+    );
+  }
+
+  @override
+  imageDismiss(Map<String, dynamic> imgCommMap, int selectedIndex) {
+    setterImgCommentFromMapToTextEditingControl(imageCommentMap);
+    var _undoImage = imgCommMap["IMAGE"][selectedIndex];
+    String _undoComment = imgCommMap["COMMENT"][selectedIndex];
+    bool isDeletedFirstImage = selectedIndex < firstImageCount;
+    setState(() {
+      if (isDeletedFirstImage) --firstImageCount;
+      imageCommentMap["IMAGE"].removeAt(selectedIndex);
+      //setting comment List
+      imageCommentMap["COMMENT"] = imgCommMap["COMMENT"]
+        ..removeAt(selectedIndex);
+      imageCommentMap["COMMENT"].add("");
+      textEditingControllerImage5..text = '';
+      getterImgCommentFromMapToTextEditingControl(imageCommentMap);
+    });
+    ScaffoldMessenger.of(context).showSnackBar(showSnackBar(
+        textMessage: Text("${selectedIndex + 1}번째 이미지가 삭제되었습니다."),
+        duration: Duration(milliseconds: 1500),
+        snackBarAction: SnackBarAction(
+            label: "되돌리기",
+            onPressed: () {
+              setState(() {
+                if (isDeletedFirstImage) ++firstImageCount;
+                setterImgCommentFromMapToTextEditingControl(imageCommentMap);
+                imageCommentMap["IMAGE"].insert(selectedIndex, _undoImage);
+                imageCommentMap["COMMENT"].insert(selectedIndex, _undoComment);
+                imageCommentMap["COMMENT"].removeLast();
+                getterImgCommentFromMapToTextEditingControl(imageCommentMap);
+              });
+            })));
   }
 }

@@ -3,48 +3,60 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:onestep_rezero/board/AboutPost/AboutPostListView/listRiverpod.dart';
-import 'package:onestep_rezero/board/declareData/categoryManageClass.dart';
+import 'package:onestep_rezero/board/boardMain.dart';
 import 'package:onestep_rezero/board/declareData/postData.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/timeUtil.dart';
 
-class PostList extends ConsumerWidget {
+class PostList extends StatelessWidget {
   final List<PostData> postList;
   final customPostListCallback;
   PostList({this.postList, this.customPostListCallback});
 
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
+  Widget build(BuildContext context) {
+    print("PostLIst Rebuild");
     double deviceHeight = MediaQuery.of(context).size.height;
     double deviceWidth = MediaQuery.of(context).size.width;
     final String currentUid = currentUserModel.uid;
-    return Container(
-      child: AnimationLimiter(
-        child: ListView.builder(
-          key: PageStorageKey<String>("commentList"),
-          physics: NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          itemCount: postList.length,
-          itemBuilder: (BuildContext context, int index) {
-            return AnimationConfiguration.staggeredList(
-              position: index,
-              duration: const Duration(milliseconds: 375),
-              child: SlideAnimation(
-                verticalOffset: 50.0,
-                child: FadeInAnimation(
-                  child: _buildListCard(context, index, postList[index],
-                      deviceHeight, deviceWidth, currentUid),
+
+    if (postList.length != 0)
+      return Container(
+        child: AnimationLimiter(
+          child: ListView.builder(
+            key: PageStorageKey<String>("commentList"),
+            physics: NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: postList.length,
+            itemBuilder: (BuildContext context, int index) {
+              return AnimationConfiguration.staggeredList(
+                position: index,
+                duration: const Duration(milliseconds: 375),
+                child: SlideAnimation(
+                  verticalOffset: 50.0,
+                  child: FadeInAnimation(
+                    child: _buildListCard(context, index, postList[index],
+                        deviceHeight, deviceWidth, currentUid),
+                  ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
-      ),
-    );
+      );
+    else {
+      return Container(
+        height: deviceHeight,
+        child: Center(
+          child: Text("작성된 글이 없습니다!"),
+        ),
+      );
+    }
   }
 
   postClickEvent(BuildContext context, PostData postData) async {
+    // context.read(postProvider).setPostData = PostData(uid: "");
     await Navigator.of(context).pushNamed('/PostContent', arguments: {
       "CURRENTBOARDDATA": postData
     }).then((value) => context.read(listProvider).fetchPosts(postData.boardId));
@@ -53,6 +65,10 @@ class PostList extends ConsumerWidget {
   Widget _buildListCard(BuildContext context, int index, var postData,
       double deviceHeight, double deviceWidth, String currentUid) {
     bool isDeleted = postData.deleted ?? false;
+    bool isFavoriteClicked = context
+        .read(userBoardDataProvider)
+        .userFavoritePostMap
+        .containsKey(postData.documentId);
     if (!isDeleted)
       return SizedBox(
         height: deviceHeight / 9.2,
@@ -78,8 +94,8 @@ class PostList extends ConsumerWidget {
                     children: <Widget>[
                       firstColumnLine(postData, deviceHeight, deviceWidth),
                       secondColumnLine(postData, deviceHeight, deviceWidth),
-                      thirdColumnLine(
-                          postData, deviceHeight, deviceWidth, currentUid)
+                      thirdColumnLine(postData, deviceHeight, deviceWidth,
+                          currentUid, isFavoriteClicked)
                     ],
                   ))),
         ),
@@ -112,14 +128,14 @@ class PostList extends ConsumerWidget {
   }
 
   secondColumnLine(postData, double deviceHeight, double deviceWidth) {
-    String _checkCate = postData.contentCategory.split('.')[1];
-    String category;
-    if (_checkCate == ContentCategory.QUESTION.toString().split('.')[1]) {
-      category = ContentCategory.QUESTION.categoryData.title;
-    } else if (_checkCate ==
-        ContentCategory.SMALLTALK.toString().split('.')[1]) {
-      category = ContentCategory.SMALLTALK.categoryData.title;
-    }
+    // String _checkCate = postData.contentCategory.split('.')[1];
+    // String category;
+    // if (_checkCate == ContentCategory.QUESTION.toString().split('.')[1]) {
+    //   category = ContentCategory.QUESTION.categoryData.title;
+    // } else if (_checkCate ==
+    //     ContentCategory.SMALLTALK.toString().split('.')[1]) {
+    //   category = ContentCategory.SMALLTALK.categoryData.title;
+    // }
     // else if (kReleaseMode) {
     //   throw new CategoryException(
     //       "Does not match category. Please Update Enum in parentSate.dart Or If statement in boardListView.dart secondColumnLine");
@@ -161,9 +177,8 @@ class PostList extends ConsumerWidget {
     );
   }
 
-  thirdColumnLine(
-      PostData postData, double deviceHeight, double deviceWidth, String uid) {
-    bool clickedFavorite = postData.favoriteUserList.containsKey(uid);
+  thirdColumnLine(PostData postData, double deviceHeight, double deviceWidth,
+      String uid, bool clickedFavorite) {
     bool havePicture = postData.imageCommentMap["IMAGE"].length != 0;
     return Container(
         padding: EdgeInsets.only(left: deviceWidth / 50),

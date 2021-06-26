@@ -5,11 +5,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onestep_rezero/board/StateManage/Provider/boardCategoryList.dart';
 
 import 'package:onestep_rezero/board/Animation/Rive/AboutBoard/randomList.dart';
+import 'package:onestep_rezero/board/StateManage/Provider/userProvider.dart';
 import 'package:onestep_rezero/board/declareData/boardData.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/main.dart';
 
 import "dart:math" as math;
+
+final userBoardDataProvider =
+    ChangeNotifierProvider<UserProvider>((ref) => UserProvider());
 
 class BoardMain extends StatefulWidget {
   BoardMain({
@@ -24,42 +28,43 @@ class _BoardMainState extends State<BoardMain> {
   double deviceWidth;
   double deviceHeight;
   List<BoardInitData> initIconData = [];
-  StreamController<bool> streamControllerIcon1;
-  StreamController<bool> streamControllerIcon2;
-  StreamController<bool> streamControllerIcon3;
-  StreamController<bool> streamControllerIcon4;
-  StreamController<bool> streamControllerIcon5;
-  StreamController<bool> streamControllerIcon6;
-  Timer _updateRandomAnimationInterval;
-  Timer _animationInterval;
-  CreateRandomNumberNotDuplicated randomClass;
-  List<int> randomNuberList = [];
-  int animationPivot;
+  // StreamController<bool> streamControllerIcon1;
+  // StreamController<bool> streamControllerIcon2;
+  // StreamController<bool> streamControllerIcon3;
+  // StreamController<bool> streamControllerIcon4;
+  // StreamController<bool> streamControllerIcon5;
+  // StreamController<bool> streamControllerIcon6;
+  // Timer _updateRandomAnimationInterval;
+  // Timer _animationInterval;
+  // CreateRandomNumberNotDuplicated randomClass;
+  // List<int> randomNuberList = [];
+  // int animationPivot;
 
   @override
   void dispose() {
-    if (_updateRandomAnimationInterval != null)
-      _updateRandomAnimationInterval.cancel();
-    if (_animationInterval != null) _animationInterval.cancel();
-    streamControllerIcon1.close();
-    streamControllerIcon2.close();
-    streamControllerIcon3.close();
-    streamControllerIcon4.close();
-    streamControllerIcon5.close();
-    streamControllerIcon6.close();
+    // if (_updateRandomAnimationInterval != null)
+    //   _updateRandomAnimationInterval.cancel();
+    // if (_animationInterval != null) _animationInterval.cancel();
+    // streamControllerIcon1.close();
+    // streamControllerIcon2.close();
+    // streamControllerIcon3.close();
+    // streamControllerIcon4.close();
+    // streamControllerIcon5.close();
+    // streamControllerIcon6.close();
     super.dispose();
   }
 
   ScrollController scrollController = new ScrollController();
   @override
   void initState() {
-    streamControllerIcon1 = StreamController<bool>();
-    streamControllerIcon2 = StreamController<bool>();
-    streamControllerIcon3 = StreamController<bool>();
-    streamControllerIcon4 = StreamController<bool>();
-    streamControllerIcon5 = StreamController<bool>();
-    streamControllerIcon6 = StreamController<bool>();
-    animationPivot = 0;
+    context.read(userBoardDataProvider).getUserData();
+    // streamControllerIcon1 = StreamController<bool>();
+    // streamControllerIcon2 = StreamController<bool>();
+    // streamControllerIcon3 = StreamController<bool>();
+    // streamControllerIcon4 = StreamController<bool>();
+    // streamControllerIcon5 = StreamController<bool>();
+    // streamControllerIcon6 = StreamController<bool>();
+    // animationPivot = 0;
     context.read(boardListProvider).fetchBoards();
     setBoardIconData();
     // randomClass = CreateRandomNumberNotDuplicated(length: initIconData.length);
@@ -389,6 +394,10 @@ class _BoardMainState extends State<BoardMain> {
                         pageName = "/UserWrittenCommentList";
                       } else if (index == 2) {
                         pageName = "/UserFavoriteList";
+                      } else if (index == 3) {
+                        pageName = "/TopFavoritePostList";
+                      } else if (index == 4) {
+                        pageName = "/TopCommentPostList";
                       }
                       if (pageName != "")
                         Navigator.pushNamed(context, pageName, arguments: arg);

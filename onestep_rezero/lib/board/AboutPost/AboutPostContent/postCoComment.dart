@@ -218,8 +218,8 @@ class ChildComment extends StatelessWidget implements Comment {
   @override
   Widget commentWidget(
       int index, CommentData comment, double deviceWidth, double deviceHeight) {
-    DateTime uploadTime = DateTime.fromMillisecondsSinceEpoch(
-        int.tryParse(comment.uploadTime ?? 0) ?? 0);
+    DateTime uploadTime =
+        DateTime.fromMillisecondsSinceEpoch(comment.uploadTime);
     bool isWritter = comment.userName == "작성자";
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

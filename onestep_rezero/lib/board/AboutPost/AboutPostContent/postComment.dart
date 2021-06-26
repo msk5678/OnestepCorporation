@@ -147,7 +147,7 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
         itemCount: comment.length,
         itemBuilder: (BuildContext context, int index) {
           CommentData currentIndexCommentData = comment[index];
-          // print("currentIndexCommentData : ${currentIndexCommentData.}");
+
           bool isDeleted = currentIndexCommentData.deleted;
           bool haveChildComment = currentIndexCommentData.haveChildComment;
           currentIndexCommentData
@@ -398,8 +398,8 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
   @override
   commentWidget(
       int index, CommentData comment, double deviceWidth, double deviceHeight) {
-    DateTime uploadTime = DateTime.fromMillisecondsSinceEpoch(
-        int.tryParse(comment.uploadTime ?? 0) ?? 0);
+    DateTime uploadTime =
+        DateTime.fromMillisecondsSinceEpoch(comment.uploadTime);
     bool isWritter = comment.userName == "작성자";
     return Column(
       children: [

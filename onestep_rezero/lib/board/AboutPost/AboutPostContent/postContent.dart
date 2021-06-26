@@ -5,9 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:onestep_rezero/board/AboutPost/AboutPostContent/postComment.dart';
+import 'package:onestep_rezero/board/AboutPost/alterPost.dart';
+import 'package:onestep_rezero/board/StateManage/Provider/postProvider.dart';
 import 'package:onestep_rezero/board/TipDialog/tip_dialog.dart';
-import 'package:onestep_rezero/board/declareData/favoriteCommentWidget.dart';
+import 'package:onestep_rezero/board/AboutPost/AboutPostContent/favoriteCommentWidget.dart';
 import 'package:onestep_rezero/board/declareData/postData.dart';
 import 'package:onestep_rezero/board/declareData/commentData.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -16,8 +19,138 @@ import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/timeUtil.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
+final postProvider =
+    ChangeNotifierProvider<PostProvider>((ref) => PostProvider());
+
+class PostContentRiverPod extends ConsumerWidget {
+  final PostData currentPostData;
+  PostContentRiverPod({this.currentPostData});
+  @override
+  Widget build(BuildContext context, watch) {
+    final postRiverPod = watch(postProvider);
+    final currentUid = currentUserModel.uid;
+    double deviceWidth = MediaQuery.of(context).size.width;
+    double deviceHeight = MediaQuery.of(context).size.height;
+    PostData riverpodPostData = postRiverPod.latestPostData;
+    PostData currentPost;
+    if (riverpodPostData.uid != "" &&
+        riverpodPostData.documentId == currentPostData.documentId) {
+      currentPost = riverpodPostData;
+    } else {
+      currentPost = currentPostData;
+    }
+
+    if (!postRiverPod.isFetching)
+      return Column(
+          children: <Widget>[
+        postStatusBar(currentPost, currentUid),
+        Container(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            currentPost.textContent ?? "",
+            style: TextStyle(fontSize: 16),
+          ),
+        ),
+        SizedBox(
+          height: deviceHeight / 50,
+        )
+      ]..addAll(imageCommentContainer(
+              Map<String, List<dynamic>>.from(currentPost.imageCommentMap),
+              deviceWidth * 0.9,
+              deviceHeight)));
+    else
+      return Container(
+        height: deviceHeight / 2,
+        width: deviceWidth,
+        child: Center(
+          child: CupertinoActivityIndicator(),
+        ),
+      );
+  }
+
+  List<Widget> imageCommentContainer(
+      Map<String, List<dynamic>> imageCommentMap, double width, double height) {
+    List imageList = imageCommentMap["IMAGE"] ?? [];
+    List commentList = imageCommentMap["COMMENT"] ?? [];
+    return List<Widget>.generate(imageList.length, (index) {
+      if (imageList[index].runtimeType == String) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            GestureDetector(
+              onTap: () {},
+              child: ClipRRect(
+                borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                child: CachedNetworkImage(
+                  imageUrl: imageList[index].toString(),
+                  width: width,
+                  height: height,
+                  errorWidget: (context, url, error) =>
+                      Icon(Icons.error), // 로딩 오류 시 이미지
+
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+              alignment: Alignment.centerLeft,
+              child: Text(commentList[index], style: TextStyle(fontSize: 16)),
+            )
+          ],
+        );
+      } else {
+        return Container();
+      }
+    });
+  }
+
+  postStatusBar(PostData currentPost, String uid) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.watch_later_outlined,
+                size: 20,
+                color: OnestepColors().mainColor,
+              ),
+              Container(
+                margin: EdgeInsets.only(right: 5),
+                child: Text(
+                  "${TimeUtil.timeAgo(date: currentPost.uploadTime)}",
+                  style: TextStyle(color: Colors.grey, fontSize: 10),
+                ),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              Icon(
+                //foot icon
+                Icons.remove_red_eye,
+                size: 20,
+                color: OnestepColors().mainColor,
+              ),
+              Container(
+                margin: EdgeInsets.only(right: 5),
+                child: Text("${currentPost.views.keys.length}",
+                    style: TextStyle(color: Colors.grey, fontSize: 10)),
+              ),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+}
+
 class PostContent extends StatefulWidget {
   final PostData postData;
+
   PostContent({Key key, this.postData});
 
   @override
@@ -45,6 +178,7 @@ class _PostContentState extends State<PostContent>
   @override
   void initState() {
     currentPostData = widget.postData;
+
     updateViewers(currentUserModel.uid);
     context
         .read(commentProvider)
@@ -61,22 +195,20 @@ class _PostContentState extends State<PostContent>
 
   updateViewers(String uid) {
     if (!currentPostData.views.containsKey(uid)) {
-      final db = FirebaseFirestore.instance;
-      Map<String, dynamic> updatedViews = currentPostData.views
-        ..addAll({uid: true});
-      db
+      FirebaseFirestore.instance
           .collection('university')
           .doc(currentUserModel.university)
           .collection('board')
           .doc(currentPostData.boardId)
           .collection(currentPostData.boardId)
           .doc(currentPostData.documentId)
-          .update({"views": updatedViews});
+          .update({"views." + uid: true});
     }
   }
 
   @override
   void dispose() {
+    _arrowAnimationController.dispose();
     super.dispose();
   }
 
@@ -84,8 +216,11 @@ class _PostContentState extends State<PostContent>
   void didChangeDependencies() {
     deviceWidth = MediaQuery.of(context).size.width;
     deviceHeight = MediaQuery.of(context).size.height;
-
     super.didChangeDependencies();
+  }
+
+  setPostData(PostData postData) {
+    currentPostData = postData;
   }
 
   @override
@@ -117,30 +252,18 @@ class _PostContentState extends State<PostContent>
                     width: deviceWidth,
                     child: Column(
                       children: <Widget>[
-                        postStatusBar(currentPostData, currentUid),
-                        Container(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            currentPostData.textContent,
-                            style: TextStyle(fontSize: 16),
-                          ),
+                        PostContentRiverPod(
+                          currentPostData: currentPostData,
                         ),
-                        SizedBox(
-                          height: deviceHeight / 50,
-                        )
                       ]
-                        ..addAll(imageCommentContainer(
-                            deviceWidth * 0.9, deviceHeight))
-                        ..add(FavoriteButton(
-                          postData: currentPostData,
-                        ))
+                        ..add(buttonList(currentPostData))
                         ..add(Container(
                           width: deviceWidth / 2,
-                          margin:
-                              EdgeInsets.symmetric(vertical: deviceHeight / 50),
+                          margin: EdgeInsets.only(
+                              bottom: deviceHeight / 50, top: 10),
                           decoration: BoxDecoration(
                               border: Border(
-                                  top: BorderSide(
+                                  bottom: BorderSide(
                                       color: OnestepColors().thirdColor,
                                       width: 2.0))),
                         ))
@@ -154,7 +277,7 @@ class _PostContentState extends State<PostContent>
                           showDialogCallback: showingDismissCommentCallback,
                         ))
                         ..add(SizedBox(
-                          height: deviceHeight / 10,
+                          height: deviceHeight / 5,
                         )),
                     ),
                   ),
@@ -170,13 +293,28 @@ class _PostContentState extends State<PostContent>
     );
   }
 
-  clickedFavorite(PostData currentPost, String uid) async {
-    return await currentPost.updateFavorite(uid);
+  buttonList(PostData currentPost) {
+    return Row(children: [
+      FavoriteButton(
+        currentPost: currentPostData,
+      ),
+      Container(
+        margin: EdgeInsets.only(top: 10, left: 10),
+        alignment: Alignment.centerLeft,
+        child: IconButton(
+          icon: Icon(
+            Icons.send_rounded,
+            color: OnestepColors().mainColor,
+          ),
+          onPressed: () {},
+        ),
+      )
+    ]);
   }
 
   postStatusBar(PostData currentPost, String uid) {
     return Container(
-      margin: EdgeInsets.only(bottom: 10),
+      margin: EdgeInsets.only(bottom: 20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -196,8 +334,20 @@ class _PostContentState extends State<PostContent>
               ),
             ],
           ),
-          FavoriteCountWidget(
-            postData: currentPost,
+          Row(
+            children: [
+              Icon(
+                //foot icon
+                Icons.remove_red_eye,
+                size: 20,
+                color: OnestepColors().mainColor,
+              ),
+              Container(
+                margin: EdgeInsets.only(right: 5),
+                child: Text("${currentPost.views.keys.length}",
+                    style: TextStyle(color: Colors.grey, fontSize: 10)),
+              ),
+            ],
           )
         ],
       ),
@@ -217,7 +367,7 @@ class _PostContentState extends State<PostContent>
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           GestureDetector(
-            onTap: () async => await currentPost.updateFavorite(uid),
+            // onTap: () async => await currentPost.updateFavorite(uid),
             child: Container(
               width: deviceWidth / 2.5,
               color: Colors.grey,
@@ -345,7 +495,8 @@ class _PostContentState extends State<PostContent>
 
   PreferredSizeWidget appBar(PostData currentPost, String uid) {
     bool isWritter = currentPost.uid == uid;
-    print("currentPost Board Id : ${currentPost.boardId}");
+    String boardId = currentPost.boardId;
+    String postId = currentPost.documentId;
     return AppBar(
       title: GestureDetector(
         onTap: () {
@@ -353,7 +504,7 @@ class _PostContentState extends State<PostContent>
               .moveTo(0.5, duration: Duration(milliseconds: 200));
         },
         child: Text(
-          currentPostData.title,
+          currentPost.title ?? "",
           style: TextStyle(color: Colors.black),
         ),
       ),
@@ -361,60 +512,75 @@ class _PostContentState extends State<PostContent>
       backgroundColor: Colors.white,
       brightness: Brightness.light, // this makes status bar text color black
       actions: <Widget>[
-        // Icons.format_align_justify_sharp
-        IconButton(
-            icon: Icon(
-              isWritter ? Icons.settings : Icons.flag,
-              color: OnestepColors().mainColor,
+        PopupMenuButton(
+            icon: Icon(Icons.settings, color: OnestepColors().mainColor),
+            offset: Offset(0, 45),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
             ),
-            onPressed: () async {
-              if (isWritter) {
-                var result = await Navigator.of(context).pushNamed("/AlterPost",
-                        arguments: {"POSTDATA": currentPost}) ??
-                    false;
-                if (result == PostData) {
-                  setState(() {
-                    currentPostData = result;
-                  });
-                }
-              } else {
-                //This is Report button Event
+            onSelected: (route) async {
+              if (route == "Delete") {
+                TipDialogHelper.loading("삭제중입니다.");
+                await FirebaseFirestore.instance
+                    .collection('university')
+                    .doc(currentUserModel.university)
+                    .collection('board')
+                    .doc(boardId)
+                    .collection(boardId)
+                    .doc(postId)
+                    .update({
+                  "deleted": true,
+                  "deletedTime": DateTime.now().millisecondsSinceEpoch
+                }).then((value) {
+                  TipDialogHelper.dismiss();
+                  TipDialogHelper.success("삭제 완료!");
+                  Future.delayed(Duration(seconds: 2))
+                      .then((value) => Navigator.popUntil(
+                          context, ModalRoute.withName('/PostList')))
+                      .whenComplete(() {});
+                });
+              } else if (route == "Alter") {
+                await Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => AlterPost(
+                    postData: currentPost,
+                  ),
+                ));
               }
-            })
+            },
+            itemBuilder: (BuildContext bc) => setPopupMenuButton(isWritter))
       ],
     );
   }
 
-  List<Widget> imageCommentContainer(double width, double height) {
-    List imageList = currentPostData.imageCommentMap["IMAGE"] ?? [];
-    List commentList = currentPostData.imageCommentMap["COMMENT"] ?? [];
-    return List<Widget>.generate(imageList.length, (index) {
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          GestureDetector(
-            onTap: () {},
-            child: ClipRRect(
-              borderRadius: BorderRadius.all(Radius.circular(5.0)),
-              child: CachedNetworkImage(
-                imageUrl: imageList[index].toString(),
-                width: width,
-                height: height,
-                errorWidget: (context, url, error) =>
-                    Icon(Icons.error), // 로딩 오류 시 이미지
-
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-            alignment: Alignment.centerLeft,
-            child: Text(commentList[index], style: TextStyle(fontSize: 16)),
-          )
-        ],
-      );
-    });
+  setPopupMenuButton(bool isWritter) {
+    return isWritter
+        ? [
+            PopupMenuItem(child: Text("수정하기"), value: "Alter"),
+            PopupMenuItem(
+                child: Text(
+                  "삭제",
+                  style: TextStyle(color: Colors.redAccent),
+                ),
+                value: "Delete")
+          ]
+        : [
+            PopupMenuItem(
+                child: GestureDetector(
+                  child: Text(
+                    "신고하기",
+                    style: TextStyle(color: Colors.redAccent),
+                  ),
+                ),
+                value: "Report"),
+            PopupMenuItem(
+                child: GestureDetector(
+                  child: Text(
+                    "공유하기",
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+                value: "Share")
+          ];
   }
 
   void slidingUpDownMethod() {
@@ -431,8 +597,8 @@ class _PostContentState extends State<PostContent>
       textEditingControllerComment.clear();
       loadingDialogTipDialog(
           CommentData.toRealtimeDataWithPostData(postData).toRealtimeDatabase(
-              textContent: comment.trimRight(),
-              commentList: postData.commentUserList), thenFunction: (value) {
+            comment.trimRight(),
+          ), thenFunction: (value) {
         _panelOpen(false);
         context
             .read(commentProvider)
@@ -443,8 +609,7 @@ class _PostContentState extends State<PostContent>
     } else {
       if (!commentData.isUnderComment) {
         textEditingControllerComment.clear();
-        loadingDialogTipDialog(
-            commentData.addCoComment(comment, postData.commentUserList),
+        loadingDialogTipDialog(commentData.addCoComment(comment),
             thenFunction: (value) {
           _panelOpen(false);
           context
@@ -459,8 +624,7 @@ class _PostContentState extends State<PostContent>
         textEditingControllerComment.clear();
         loadingDialogTipDialog(
             CommentData.toRealtimeDataWithPostData(postData)
-                .addCoCoComment(comment, commentData, postData.commentUserList),
-            thenFunction: (value) {
+                .addCoCoComment(comment, commentData), thenFunction: (value) {
           _panelOpen(false);
           context
               .read(commentProvider)
@@ -572,7 +736,6 @@ class _PostContentState extends State<PostContent>
     _panelOpen(true);
     switchingFlag(to: true);
     setState(() {
-      print(commentData.userName);
       aboutCoComment = commentData;
     });
   }
@@ -587,6 +750,7 @@ class _PostContentState extends State<PostContent>
 
   loadingDialogTipDialog(Future futureFunction,
       {bool unFocusing, Function thenFunction, Function errorFunction}) async {
+    TipDialogHelper.loading("저장 중입니다.\n 잠시만 기다려주세요.");
     unFocusing = unFocusing ?? false;
     if (unFocusing) FocusScope.of(context).unfocus();
     bool result = await futureFunction ?? false;

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:multi_image_picker2/multi_image_picker2.dart';
 import 'package:random_string/random_string.dart';
 
 import '../../main.dart';
@@ -32,18 +32,22 @@ class PostData {
   int deletedTime;
 
   Future convertImage(var _imageArr) async {
-    List _imgUriarr = [];
+    List<String> _imgUriarr = [];
 
     for (var imaged in _imageArr) {
-      Reference storageReference = FirebaseStorage.instance
-          .ref()
-          .child("boardimages/freeboard/${randomAlphaNumeric(15)}");
-      UploadTask storageUploadTask = storageReference
-          .putData((await imaged.getByteData()).buffer.asUint8List());
-      await storageUploadTask.whenComplete(() async {
-        String downloadURL = await storageReference.getDownloadURL();
-        _imgUriarr.add(downloadURL);
-      });
+      if (imaged.runtimeType == String) {
+        _imgUriarr.add(imaged);
+      } else {
+        Reference storageReference = FirebaseStorage.instance
+            .ref()
+            .child("boardimages/freeboard/${randomAlphaNumeric(15)}");
+        UploadTask storageUploadTask = storageReference
+            .putData((await imaged.getByteData()).buffer.asUint8List());
+        await storageUploadTask.whenComplete(() async {
+          String downloadURL = await storageReference.getDownloadURL();
+          _imgUriarr.add(downloadURL);
+        });
+      }
     }
     return _imgUriarr;
   }
@@ -98,8 +102,8 @@ class PostData {
           "scrabUserList": scrabUserList ?? {},
           "favoriteUserList": favoriteUserList ?? {},
           "commentUserList": commentUserList ?? {},
+          "favoriteCount": 0
         })
-        .whenComplete(() => true)
         .then((value) => true)
         .timeout(
           Duration(seconds: 3),
@@ -110,8 +114,10 @@ class PostData {
         );
   }
 
-  Future updatePostData(BuildContext context, PostData updatingData) async {
+  Future updatePostData(
+      BuildContext context, PostData updatingData, int urlImageCount) async {
     String currentTimeStamp = DateTime.now().millisecondsSinceEpoch.toString();
+
     imgUriList = await convertImage(imageCommentMap["IMAGE"]);
     imageCommentMap.update("IMAGE", (value) => imgUriList);
     return await FirebaseFirestore.instance
@@ -126,7 +132,7 @@ class PostData {
           "title": updatingData.title ?? "",
           "contentCategory": updatingData.contentCategory.toString(),
           "textContent": updatingData.textContent ?? "",
-          "imageCommentList": updatingData.imageCommentMap ?? {},
+          "imageCommentList": imageCommentMap ?? {},
         })
         .whenComplete(() => true)
         .then((value) => true)
@@ -159,38 +165,69 @@ class PostData {
       favoriteUserList: postData["favoriteUserList"] ?? {},
       scrabUserList: postData["scrabUserList"] ?? {},
       imageCommentMap: postData["imageCommentList"] ?? {},
-      favoriteCount: postData["favoriteUserList"] != null
-          ? postData["favoriteUserList"].length
-          : 0,
+      favoriteCount: postData["favoriteCount"] ?? 0,
       scribeCount: postData["commentUserList"] != null
           ? postData["commentUserList"].length
           : 0,
     );
   }
-  Future<bool> updateFavorite(String uid) async {
-    final db = FirebaseFirestore.instance
+  Future<bool> updateFavorite(String uid, bool isUndo) async {
+    if (!isUndo) {
+      return FirebaseFirestore.instance
+          .collection('university')
+          .doc(currentUserModel.university)
+          .collection('board')
+          .doc(this.boardId)
+          .collection(this.boardId)
+          .doc(this.documentId)
+          .update({"favoriteCount": FieldValue.increment(1)})
+          .then((value) async {
+            await FirebaseFirestore.instance
+                .collection('user')
+                .doc('aboutBoard')
+                .collection('favorite')
+                .doc(this.documentId)
+                .set({
+              "postId": documentId,
+              "boardId": boardId,
+            });
+          })
+          .onError((error, stackTrace) {})
+          .then((value) => true);
+    } else {
+      return FirebaseFirestore.instance
+          .collection('university')
+          .doc(currentUserModel.university)
+          .collection('board')
+          .doc(this.boardId)
+          .collection(this.boardId)
+          .doc(this.documentId)
+          .update({"favoriteCount": FieldValue.increment(-1)})
+          .then((value) async {
+            await FirebaseFirestore.instance
+                .collection('user')
+                .doc('aboutBoard')
+                .collection('favorite')
+                .doc(this.documentId)
+                .delete();
+          })
+          .onError((error, stackTrace) {})
+          .then((value) => true);
+    }
+  }
+
+  updateViewers(String uid) async {
+    return await FirebaseFirestore.instance
         .collection('university')
         .doc(currentUserModel.university)
         .collection('board')
         .doc(this.boardId)
         .collection(this.boardId)
-        .doc(this.documentId);
-
-    DocumentSnapshot getLatestDb =
-        await db.get().onError((error, stackTrace) => null);
-
-    if (getLatestDb != null) {
-      Map<String, dynamic> latestFavoriteUserMap =
-          getLatestDb.data()["favoriteUserList"];
-
-      return await db
-          .update({
-            "favoriteUserList": latestFavoriteUserMap..addAll({uid: true})
-          })
-          .then((value) => true)
-          .onError((error, stackTrace) => false);
-    } else {
-      return false;
-    }
+        .doc(this.documentId)
+        .update(
+      {"views." + uid: true},
+    ).then((value) {
+      return true;
+    });
   }
 }
