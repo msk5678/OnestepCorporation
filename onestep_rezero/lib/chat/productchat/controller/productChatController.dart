@@ -4,8 +4,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
-import 'package:onestep_rezero/main.dart';
+import 'package:onestep_rezero/loggedInWidget.dart';
+
 import 'package:onestep_rezero/product/models/product.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -24,7 +26,7 @@ class ProductChatController {
   //채팅방 생성 시 상대방 정보 내부 저장 / 채팅방 정보 fb 저장
   Future<void> createProductChatToRealtimeDatabase(
       String friendUid, String postId, String chatId) async {
-    String myUid = googleSignIn.currentUser.id;
+    String myUid = currentUserModel.uid;
     // print("proChatController-createProductChatToRealtimeDatabase 1. 채팅방 생성");
     try {
       //1.
@@ -341,9 +343,9 @@ class ProductChatController {
   Future<void> setToFirebaseProductChatCount(int chatCount) async {
     await FirebaseFirestore.instance
         .collection("user")
-        .doc(googleSignIn.currentUser.id.toString())
+        .doc(currentUserModel.uid)
         .collection("chatCount")
-        .doc(googleSignIn.currentUser.id.toString())
+        .doc(currentUserModel.uid)
         .update({
       "productChatCount": chatCount,
     }).whenComplete(() {
@@ -395,7 +397,7 @@ class ProductChatController {
           productChatReference.child(chatId);
       // print("maptest2");
       productChatMessageReference.set({
-        "idFrom": googleSignIn.currentUser.id,
+        "idFrom": currentUserModel.uid,
         "idTo": {friendId: false},
         "sendTime": messageId,
         "content": content,
@@ -441,7 +443,7 @@ class ProductChatController {
         .child(messageId)
         .child("idTo");
     productChatMessageReference.update({
-      googleSignIn.currentUser.id: true,
+      currentUserModel.uid: true,
       //"111357489031227818227": true,
     });
     // print(
@@ -482,7 +484,7 @@ class ProductChatController {
     DatabaseReference productChatMyUidRefernce = productChatReference
         .child(chatId)
         .child("chatUsers")
-        .child(googleSignIn.currentUser.id);
+        .child(currentUserModel.uid);
     Map<String, dynamic> myConnectState;
     productChatMyUidRefernce.once().then((DataSnapshot snapshot) {
       if (snapshot.value['hide'] == true) {
@@ -503,7 +505,7 @@ class ProductChatController {
     productChatReference
         .child(chatId)
         .child("chatUsers")
-        .child(googleSignIn.currentUser.id)
+        .child(currentUserModel.uid)
         .update({
       "hide": true,
       "connectTime": exitTime,
@@ -515,9 +517,9 @@ class ProductChatController {
     return StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
             .collection('user')
-            .doc(googleSignIn.currentUser.id.toString())
+            .doc(currentUserModel.uid)
             .collection("chatCount")
-            .doc(googleSignIn.currentUser.id.toString())
+            .doc(currentUserModel.uid)
             .snapshots(),
         builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
           //return Text("dd");
@@ -600,9 +602,9 @@ class ProductChatController {
     return StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
             .collection('user')
-            .doc(googleSignIn.currentUser.id.toString())
+            .doc(currentUserModel.uid)
             .collection("chatCount")
-            .doc(googleSignIn.currentUser.id.toString())
+            .doc(currentUserModel.uid)
             .snapshots(),
         builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
           if (snapshot.hasData) {
@@ -624,9 +626,9 @@ class ProductChatController {
     return StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
             .collection('user')
-            .doc(googleSignIn.currentUser.id.toString())
+            .doc(currentUserModel.uid)
             .collection("chatCount")
-            .doc(googleSignIn.currentUser.id.toString())
+            .doc(currentUserModel.uid)
             .snapshots(),
         builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
           if (snapshot.hasData) {

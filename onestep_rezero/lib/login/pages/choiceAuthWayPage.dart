@@ -1,9 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:onestep_rezero/loggedInWidget.dart';
 import 'package:onestep_rezero/login/pages/loginAuthPage.dart';
 import 'package:onestep_rezero/login/pages/loginCertificatePage.dart';
-import 'package:onestep_rezero/main.dart';
 
 void _showDialog(BuildContext context) {
   showDialog(
@@ -27,7 +28,7 @@ void _showDialog(BuildContext context) {
 }
 
 class ChoiceAuthWayPage extends StatelessWidget {
-  final GoogleSignInAccount user;
+  final List<UserInfo> user;
   ChoiceAuthWayPage(this.user);
 
   @override
@@ -51,7 +52,7 @@ class ChoiceAuthWayPage extends StatelessWidget {
         body: FutureBuilder(
           future: FirebaseFirestore.instance
               .collection('user')
-              .doc(googleSignIn.currentUser.id)
+              .doc(currentUserModel.uid)
               .get(),
           builder:
               (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {

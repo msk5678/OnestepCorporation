@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:onestep_rezero/chat/boardchat/inRealTimeChattingRoom.dart';
 import 'package:onestep_rezero/chat/productchat/productchattingroom/productChattingRoom.dart';
+import 'package:onestep_rezero/loggedInWidget.dart';
 import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/product/models/product.dart';
 
@@ -14,12 +16,8 @@ class ChatNavigationManager {
         context,
         MaterialPageRoute(
             builder: (context) => ProductChattingRoomPage(
-                  myUid: googleSignIn.currentUser.id.toString() == myUid
-                      ? myUid
-                      : friendUid,
-                  friendId: googleSignIn.currentUser.id.toString() != myUid
-                      ? myUid
-                      : friendUid,
+                  myUid: currentUserModel.uid == myUid ? myUid : friendUid,
+                  friendId: currentUserModel.uid != myUid ? myUid : friendUid,
                   postId: postId,
                   product: null,
                 )));
@@ -33,12 +31,8 @@ class ChatNavigationManager {
         context,
         MaterialPageRoute(
             builder: (context) => ProductChattingRoomPage(
-                  myUid: googleSignIn.currentUser.id.toString() == myUid
-                      ? myUid
-                      : friendUid,
-                  friendId: googleSignIn.currentUser.id.toString() != myUid
-                      ? myUid
-                      : friendUid,
+                  myUid: currentUserModel.uid == myUid ? myUid : friendUid,
+                  friendId: currentUserModel.uid != myUid ? myUid : friendUid,
                   postId: postId,
                   product: product,
                 )));
@@ -53,12 +47,8 @@ class ChatNavigationManager {
         context,
         MaterialPageRoute(
             builder: (context) => InRealTimeChattingRoomPage(
-                  myUid: googleSignIn.currentUser.id.toString() == myUid
-                      ? myUid
-                      : friendUid,
-                  friendId: googleSignIn.currentUser.id.toString() != myUid
-                      ? myUid
-                      : friendUid,
+                  myUid: currentUserModel.uid == myUid ? myUid : friendUid,
+                  friendId: currentUserModel.uid != myUid ? myUid : friendUid,
                   postId: postId,
                 )));
   }

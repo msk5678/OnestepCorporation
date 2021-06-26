@@ -4,9 +4,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:onestep_rezero/animation/favoriteAnimation.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/favorite/utils/favoriteFirebaseApi.dart';
+import 'package:onestep_rezero/loggedInWidget.dart';
 import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/chat/navigator/chatNavigationManager.dart';
 import 'package:onestep_rezero/onestepCustomDialog.dart';
@@ -133,7 +135,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
         // 확인 취소 다이얼로그 띄우기
         FirebaseFirestore.instance
             .collection("product")
-            .doc(googleSignIn.currentUser.id)
+            .doc(currentUserModel.uid)
             .update({'hide': true});
         break;
       case '삭제':
@@ -190,8 +192,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
             elevation: 0,
             actions: [
               IconButton(onPressed: () {}, icon: _makeIcon(Icons.share)),
-              if (googleSignIn.currentUser.id != widget.product.uid)
-                popupMenuButton(),
+              if (currentUserModel.uid != widget.product.uid) popupMenuButton(),
             ],
           );
         },
@@ -653,9 +654,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
 
   Widget setFavorite() {
     bool chk = widget.product.favoriteUserList == null ||
-        widget.product
-                .favoriteUserList[googleSignIn.currentUser.id.toString()] ==
-            null;
+        widget.product.favoriteUserList[currentUserModel.uid] == null;
 
     return StreamBuilder<bool>(
       stream: _favoriteStreamController.stream,
@@ -702,13 +701,13 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
           ),
           onPressed: () {
             print("장터채팅누름");
-            print(googleSignIn.currentUser.id);
+            print(currentUserModel.uid);
             print(widget.product.uid);
             print(widget.product.firestoreid);
             print(widget.product);
             ChatNavigationManager.navigateProductToProductChat(
                 context,
-                googleSignIn.currentUser.id,
+                currentUserModel.uid,
                 widget.product.uid,
                 widget.product.firestoreid,
                 widget.product);
@@ -728,7 +727,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
   }
 
   Widget _bottomBarWidget() {
-    if (widget.product.uid == googleSignIn.currentUser.id) {
+    if (widget.product.uid == currentUserModel.uid) {
       return SizedBox(
         height: 55,
         child: Container(

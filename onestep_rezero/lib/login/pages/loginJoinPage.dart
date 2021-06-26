@@ -1,10 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:onestep_rezero/login/widgets/JoinBody.dart';
 
 class LoginJoinPage extends ConsumerWidget {
-  final GoogleSignInAccount user;
+  final List<UserInfo> user;
   LoginJoinPage(this.user);
 
   @override

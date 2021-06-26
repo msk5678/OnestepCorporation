@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -13,7 +14,7 @@ bool _firstEmailEnter = true;
 bool _firstNickNameEnter = true;
 
 class JoinBody extends ConsumerWidget {
-  final GoogleSignInAccount user;
+  final List<UserInfo> user;
   JoinBody(this.user);
 
   @override
@@ -211,15 +212,15 @@ class JoinBody extends ConsumerWidget {
                                 _isNickNameCheck == true) {
                               await FirebaseFirestore.instance
                                   .collection('user')
-                                  .doc(user.id)
+                                  .doc(user.single.uid)
                                   .set({
                                     // 원래 0 이었는데 일단 1로 변경
                                     "auth":
                                         1, // 대학인증여부 0 : 안됨, 1 : 인증대기중, 2 : 인증 완료
                                     "authTime": 0, // 학교 인증시간
-                                    "uid": user.id, // uid
+                                    "uid": user.single.uid, // uid
                                     "nickName": _nicknameController.text, // 닉네임
-                                    "imageUrl": user.photoUrl, // 사진
+                                    "imageUrl": user.single.photoURL, // 사진
                                     "email": _emailController.text, // 이메일
                                     "reportState": 0, // 제재 확인
                                     // "reportTime": 0, // 제재 시간
@@ -231,9 +232,9 @@ class JoinBody extends ConsumerWidget {
                                   .whenComplete(() => {
                                         FirebaseFirestore.instance
                                             .collection('user')
-                                            .doc(user.id)
+                                            .doc(user.single.uid)
                                             .collection("chatCount")
-                                            .doc(user.id)
+                                            .doc(user.single.uid)
                                             .set({
                                           "productChatCount": 0,
                                           "boardChatCount": 0,
@@ -242,9 +243,9 @@ class JoinBody extends ConsumerWidget {
                                   .whenComplete(() => {
                                         FirebaseFirestore.instance
                                             .collection('user')
-                                            .doc(user.id)
+                                            .doc(user.single.uid)
                                             .collection("notification")
-                                            .doc(user.id)
+                                            .doc(user.single.uid)
                                             .set({
                                           "marketing": 0,
                                           "push": 0,

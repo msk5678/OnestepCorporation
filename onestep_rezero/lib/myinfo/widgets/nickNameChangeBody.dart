@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
+import 'package:onestep_rezero/loggedInWidget.dart';
 import 'package:onestep_rezero/myinfo/providers/providers.dart';
 
 import '../../main.dart';
@@ -117,7 +118,7 @@ class NickNameChangeBody extends ConsumerWidget {
                     ? () {
                         FirebaseFirestore.instance
                             .collection("user")
-                            .doc(googleSignIn.currentUser.id)
+                            .doc(currentUserModel.uid)
                             .update({"nickName": _nicknameController.text});
                         _tempNickName = "";
                         _firstEnter = true;

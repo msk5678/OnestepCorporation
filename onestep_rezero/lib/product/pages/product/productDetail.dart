@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:onestep_rezero/loggedInWidget.dart';
 import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/product/models/product.dart';
 import 'package:onestep_rezero/product/widgets/detail/productDetailBody.dart';
@@ -24,7 +25,7 @@ class _ProductDetailState extends State<ProductDetail> {
     // 조회수 증가
 
     if (_product.views == null ||
-        _product.views[googleSignIn.currentUser.id] != true) {
+        _product.views[currentUserModel.uid] != true) {
       FirebaseFirestore.instance
           .collection("university")
           .doc(currentUserModel.university)
@@ -32,7 +33,7 @@ class _ProductDetailState extends State<ProductDetail> {
           .doc(widget.docId)
           .update(
         {
-          "views." + googleSignIn.currentUser.id: true,
+          "views." + currentUserModel.uid: true,
         },
       );
     }

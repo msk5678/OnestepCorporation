@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
+import 'package:onestep_rezero/loggedInWidget.dart';
 import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/onestepCustomDialog.dart';
 import 'package:onestep_rezero/product/models/product.dart';

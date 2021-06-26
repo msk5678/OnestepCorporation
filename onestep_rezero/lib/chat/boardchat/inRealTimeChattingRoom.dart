@@ -4,10 +4,12 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:onestep_rezero/chat/boardchat/realtimeProductChatController.dart';
 import 'package:onestep_rezero/chat/widget/FullmageWidget.dart';
 import 'package:onestep_rezero/chat/widget/message_list_time.dart';
+import 'package:onestep_rezero/loggedInWidget.dart';
 import 'package:onestep_rezero/main.dart';
 
 import 'dart:io' as io;
@@ -204,7 +206,7 @@ class _LastChatState extends State<ChatScreen> {
         .child("productchat");
 
     productchatdatabasereference
-        .orderByChild("users/${googleSignIn.currentUser.id.toString()}")
+        .orderByChild("users/${currentUserModel.uid}")
         .equalTo(true)
         .once()
         .then((DataSnapshot snapshot) {
@@ -475,7 +477,7 @@ class _LastChatState extends State<ChatScreen> {
                       values.forEach((key, values) {
                         //Message Read update
                         if (values["idTo"].keys.toList()[0] ==
-                                googleSignIn.currentUser.id.toString() &&
+                                currentUserModel.uid &&
                             values['idTo'].values.toList()[0] == false) {
                           //listProductMessage[0].
                           //
