@@ -114,7 +114,7 @@ class ProductChatController {
     }
   }
 
-  getChatUserimageUrl(String chatId) async {
+  getChatUserimageUrl(String chatId) {
     print("내부디비 저장 불러 ");
     String imageUrl = Hive.box('localChatList').get('$chatId + image');
     print("내부디비 저장 불러 완 : $imageUrl");
