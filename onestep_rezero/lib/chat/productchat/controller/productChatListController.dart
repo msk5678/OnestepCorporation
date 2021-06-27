@@ -34,86 +34,80 @@ class ProductChatListController {
     return FutureBuilder(
       future: getUserId(proUserId),
       builder: (context, snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.waiting:
-            //return CircularProgressIndicator();
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          String imageUrl =
+              ProductChatLocalController().getChatUserimageUrl(chatId);
+          //return CircularProgressIndicator();
+          if (chatId == null || imageUrl == null) {
+            return Text("");
+          }
+          return Material(
+            child: CachedNetworkImage(
+              imageUrl:
+                  ProductChatLocalController().getChatUserimageUrl(chatId),
+              fit: BoxFit.cover,
+              height: 50,
+              width: 50,
+            ),
+            borderRadius: BorderRadius.all(
+              Radius.circular(18.0),
+            ),
+            clipBehavior: Clip.hardEdge,
+          );
+        } else if (snapshot.hasData == false) {
+          return Material(
+            child: CachedNetworkImage(
+              imageUrl: chatId,
+              // productMessage.content.imageUrl,
+              fit: BoxFit.cover,
+              height: 35,
+              width: 35,
+            ),
+            borderRadius: BorderRadius.all(
+              Radius.circular(18.0),
+            ),
+            clipBehavior: Clip.hardEdge,
+          );
+        }
 
-            return
-                // Text("dd");
-                // Material(child: Text("대기1"));
-                Material(
-              child: CachedNetworkImage(
-                imageUrl:
-                    ProductChatLocalController().getChatUserimageUrl(chatId),
-                fit: BoxFit.cover,
-                height: 50,
-                width: 50,
-              ),
-              borderRadius: BorderRadius.all(
-                Radius.circular(18.0),
-              ),
-              clipBehavior: Clip.hardEdge,
+        if (snapshot.data['imageUrl'] == "") {
+          //프로필사진 미설정
+          return LayoutBuilder(builder: (context, constraint) {
+            return Icon(
+              Icons.supervised_user_circle,
+              size: 50,
+              //constraint.biggest.height,
             );
-          default:
-            if (snapshot.hasData == false) {
-              return Material(
+          });
+        } else if (snapshot.hasError) {
+          return Padding(
+            padding: const EdgeInsets.all(0.0),
+            child: Text(
+              'Error: ${snapshot.error}',
+              style: TextStyle(fontSize: 15),
+            ),
+          );
+        } else {
+          ProductChatLocalController()
+              .setChatUserimageUrl(chatId, snapshot.data['imageUrl']);
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Material(
                 child: CachedNetworkImage(
-                  imageUrl: chatId,
+                  imageUrl: snapshot.data['imageUrl'],
                   // productMessage.content.imageUrl,
                   fit: BoxFit.cover,
-                  height: 35,
-                  width: 35,
+                  height: 50,
+                  width: 50,
                 ),
                 borderRadius: BorderRadius.all(
                   Radius.circular(18.0),
                 ),
                 clipBehavior: Clip.hardEdge,
-              );
-            }
-
-            if (snapshot.data['imageUrl'] == "") {
-              //프로필사진 미설정
-              return LayoutBuilder(builder: (context, constraint) {
-                return Icon(
-                  Icons.supervised_user_circle,
-                  size: 50,
-                  //constraint.biggest.height,
-                );
-              });
-            } else if (snapshot.hasError) {
-              return Padding(
-                padding: const EdgeInsets.all(0.0),
-                child: Text(
-                  'Error: ${snapshot.error}',
-                  style: TextStyle(fontSize: 15),
-                ),
-              );
-            } else {
-              print("@@@@url");
-              // Hive.box('localChatList')
-              //     .put('$chatId + image', snapshot.data['imageUrl']);
-              ProductChatLocalController()
-                  .setChatUserimageUrl(chatId, snapshot.data['imageUrl']);
-              // print("1. 가져온 url  : ${snapshot.data['imageUrl']}");
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Material(
-                    child: CachedNetworkImage(
-                      imageUrl: snapshot.data['imageUrl'],
-                      // productMessage.content.imageUrl,
-                      fit: BoxFit.cover,
-                      height: 50,
-                      width: 50,
-                    ),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(18.0),
-                    ),
-                    clipBehavior: Clip.hardEdge,
-                  ),
-                ],
-              );
-            }
+              ),
+            ],
+          );
         }
       },
     );
@@ -122,27 +116,16 @@ class ProductChatListController {
   FutureBuilder getProductUserNickName(
       String chatId, String proUserId, double fontSize) {
     return FutureBuilder(
-      future: getUserId(proUserId),
-      //_fetchData(proUserId),
-      builder: (context, snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.waiting:
-            // return Text("대기");
+        future: getUserId(proUserId),
+        //_fetchData(proUserId),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            String name =
+                ProductChatLocalController().getChatUserNickName(chatId);
 
-            return AutoSizeText(
-              //
-              "장터 -> 채팅 넘어가면 null임 "
-              // +Hive.box('localChatList').get('$chatId + nickName')
-              ,
-              style: TextStyle(fontSize: fontSize, color: Colors.black), //15
-              minFontSize: 10,
-              stepGranularity: 10,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            );
-          // return Text("");
-          default:
-            if (snapshot.hasData == false) {
+            if (chatId == null || name == null) {
+              return Text("");
+            } else {
               return AutoSizeText(
                 ProductChatLocalController().getChatUserNickName(chatId),
                 style: TextStyle(fontSize: fontSize, color: Colors.black), //15
@@ -151,16 +134,13 @@ class ProductChatListController {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               );
+            }
+          } else {
+            if (snapshot.hasData == false) {
+              return Text("불러오기 실패");
             } else if (snapshot.hasError) {
-              print("nick 에러.");
-              return Text(
-                'Error: ${snapshot.error}',
-                style: TextStyle(fontSize: fontSize), //15
-              );
-            } else if (snapshot.data['nickName'] == "") {
-              return Text("닉오류");
+              return Text("불러오기 실패");
             } else {
-              print("@@@@name");
               ProductChatLocalController().setChatUserNickName(
                   chatId, snapshot.data.data()['nickName']);
               return AutoSizeText(
@@ -172,8 +152,7 @@ class ProductChatListController {
                 overflow: TextOverflow.ellipsis,
               );
             }
-        }
-      },
-    );
+          }
+        });
   }
 }
