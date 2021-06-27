@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:onestep_rezero/loggedInWidget.dart';
 import 'package:onestep_rezero/main.dart';
 
 import 'model/productSendMessage.dart';
@@ -21,7 +23,7 @@ class RealtimeProductChatController {
 
   Future<void> createProductChatingRoomToRealtimeFirebase(
       ProductSendMessage productSendMessage) async {
-    String myUid = googleSignIn.currentUser.id.toString();
+    String myUid = currentUserModel.uid;
     String title;
     String friendUid;
     String productImageUrl;
@@ -94,7 +96,7 @@ class RealtimeProductChatController {
   ) {
     String contentMsg = productSendMessage.contentMsg;
     int type = productSendMessage.type;
-    String myId = googleSignIn.currentUser.id.toString();
+    String myId = currentUserModel.uid;
     String friendId = productSendMessage.friendId;
     String chattingRoomId = productSendMessage.chattingRoomId;
     TextEditingController textEditingController =
@@ -258,10 +260,10 @@ class RealtimeProductChatController {
 
   Future<void> setToFirebaseProductChatCount(int chatCount) async {
     await FirebaseFirestore.instance
-        .collection("users")
-        .doc(googleSignIn.currentUser.id.toString())
+        .collection("user")
+        .doc(currentUserModel.uid)
         .collection("chatCount")
-        .doc(googleSignIn.currentUser.id.toString())
+        .doc(currentUserModel.uid)
         .update({
       "productChatCount": chatCount,
     }).whenComplete(() {
@@ -278,9 +280,9 @@ class RealtimeProductChatController {
     return StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
             .collection('user')
-            .doc(googleSignIn.currentUser.id.toString())
+            .doc(currentUserModel.uid)
             .collection("chatCount")
-            .doc(googleSignIn.currentUser.id.toString())
+            .doc(currentUserModel.uid)
             .snapshots(),
         builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
           if (snapshot.hasData) {
@@ -301,9 +303,9 @@ class RealtimeProductChatController {
     return StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
             .collection('user')
-            .doc(googleSignIn.currentUser.id.toString())
+            .doc(currentUserModel.uid)
             .collection("chatCount")
-            .doc(googleSignIn.currentUser.id.toString())
+            .doc(currentUserModel.uid)
             .snapshots(),
         builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
           //return Text("dd");
@@ -386,7 +388,7 @@ class RealtimeProductChatController {
         .child(messageId)
         .child("idTo");
     productChatMessageReference.update({
-      googleSignIn.currentUser.id.toString(): true,
+      currentUserModel.uid: true,
     });
     // print(
     //     "##updateReadMessage hasData value : ${snapshot.data.snapshot.value}");

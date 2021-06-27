@@ -5,6 +5,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:onestep_rezero/chat/productchat/controller/productChatController.dart';
 import 'package:onestep_rezero/chat/productchat/model/productChatMessage.dart';
@@ -12,6 +13,7 @@ import 'package:onestep_rezero/chat/widget/FullmageWidget.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/chat/widget/message_list_time.dart';
 import 'package:onestep_rezero/chat/widget/productChatMenu.dart';
+import 'package:onestep_rezero/loggedInWidget.dart';
 import 'package:onestep_rezero/main.dart';
 
 import 'dart:io' as io;
@@ -288,7 +290,7 @@ class _LastChatState extends State<ChatScreen> {
     //RealTime
 
     productChatReference
-        .orderByChild("chatUsers/${googleSignIn.currentUser.id}/friendUid")
+        .orderByChild("chatUsers/${currentUserModel.uid}/friendUid")
         .equalTo(friendId)
         .once()
         .then((DataSnapshot snapshot) {
@@ -590,7 +592,7 @@ class _LastChatState extends State<ChatScreen> {
 
                         //Message Read update
                         if (values["idTo"].keys.toList()[0] ==
-                                googleSignIn.currentUser.id.toString() &&
+                                currentUserModel.uid.toString() &&
                             values['idTo'].values.toList()[0] == false) {
                           ProductChatController()
                               .updateReadMessage(chatId, key);
@@ -672,7 +674,7 @@ class _LastChatState extends State<ChatScreen> {
 
   _createMessageTypeWithText(String uid, String content) {
     Color messageColor;
-    uid == googleSignIn.currentUser.id
+    uid == currentUserModel.uid
         ? messageColor = OnestepColors().fifColor
         : messageColor = Colors.grey[200];
 
@@ -766,11 +768,11 @@ class _LastChatState extends State<ChatScreen> {
       String uid, ProductChatMessage productMessage) {
     Color messageColor;
     Color btnColor;
-    uid == googleSignIn.currentUser.id
+    uid == currentUserModel.uid
         ? messageColor = OnestepColors().fifColor
         : messageColor = Colors.grey[200];
 
-    uid == googleSignIn.currentUser.id
+    uid == currentUserModel.uid
         ? btnColor = OnestepColors().mainColor
         : btnColor = Colors.grey[400];
 

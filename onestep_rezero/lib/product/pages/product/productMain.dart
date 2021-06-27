@@ -21,18 +21,12 @@ class ProductMain extends StatefulWidget {
   _ProductMainState createState() => _ProductMainState();
 }
 
-// test
-GoogleSignInAccount user = googleSignIn.currentUser;
-
 class _ProductMainState extends State<ProductMain> {
   final ScrollController _scrollController = ScrollController();
   final StreamController<bool> _scrollToTopstreamController =
       StreamController<bool>();
 
   bool _isVisibility = false;
-
-  // test 용
-  GoogleSignInAccount user = googleSignIn.currentUser;
 
   @override
   void initState() {

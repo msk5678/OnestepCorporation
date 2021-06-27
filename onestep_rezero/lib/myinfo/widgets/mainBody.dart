@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:onestep_rezero/loggedInWidget.dart';
 import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/myinfo/pages/infomation/noticePage.dart';
 import 'package:onestep_rezero/myinfo/pages/myinfoProfilePage.dart';
@@ -73,7 +74,7 @@ class MyinfoMainBody extends ConsumerWidget {
     return StreamBuilder(
       stream: FirebaseFirestore.instance
           .collection('user')
-          .doc(googleSignIn.currentUser.id)
+          .doc(currentUserModel.uid)
           .snapshots(),
       builder:
           (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {

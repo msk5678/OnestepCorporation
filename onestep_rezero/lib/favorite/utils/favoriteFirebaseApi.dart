@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:onestep_rezero/loggedInWidget.dart';
 import 'package:onestep_rezero/main.dart';
 
 class FavoriteFirebaseApi {
@@ -13,8 +14,7 @@ class FavoriteFirebaseApi {
         .collection("university")
         .doc(currentUserModel.university)
         .collection("product")
-        .orderBy("favoriteUserList." + googleSignIn.currentUser.id,
-            descending: true)
+        .orderBy("favoriteUserList." + currentUserModel.uid, descending: true)
         .limit(limit);
 
     if (startAfter == null) {
@@ -33,7 +33,7 @@ class FavoriteFirebaseApi {
         .collection("product")
         .doc(docId)
         .update({
-      "favoriteUserList." + googleSignIn.currentUser.id: time,
+      "favoriteUserList." + currentUserModel.uid: time,
     });
   }
 
@@ -43,8 +43,7 @@ class FavoriteFirebaseApi {
         .doc(currentUserModel.university)
         .collection("product")
         .doc(docId)
-        .update({
-      "favoriteUserList." + googleSignIn.currentUser.id: FieldValue.delete()
-    });
+        .update(
+            {"favoriteUserList." + currentUserModel.uid: FieldValue.delete()});
   }
 }

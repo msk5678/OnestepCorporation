@@ -1,11 +1,13 @@
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+
 import 'package:onestep_rezero/chat/widget/appColor.dart';
-import 'package:onestep_rezero/login/model/user.dart';
+import 'package:onestep_rezero/loggedInWidget.dart';
+import 'package:onestep_rezero/login/model/user.dart' as MYUSER;
 import 'package:onestep_rezero/login/providers/providers.dart';
 
 import '../../main.dart';
@@ -77,7 +79,7 @@ void init() {
 }
 
 class LoginAuthPage extends StatefulWidget {
-  final GoogleSignInAccount user;
+  final List<UserInfo> user;
   LoginAuthPage(this.user);
 
   @override
@@ -86,7 +88,7 @@ class LoginAuthPage extends StatefulWidget {
 
 class _LoginAuthPageState extends State<LoginAuthPage>
     with TickerProviderStateMixin {
-  final GoogleSignInAccount user;
+  final List<UserInfo> user;
   _LoginAuthPageState(this.user);
 
   @override
@@ -528,7 +530,7 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                           .contains('@stu.kmu.ac.kr')) {
                                         FirebaseFirestore.instance
                                             .collection('user')
-                                            .doc(user.id)
+                                            .doc(user.single.uid)
                                             .update({
                                           "auth": 2,
                                           "univerisityEmail":
@@ -543,7 +545,7 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                           .contains('@stu.knu.ac.kr')) {
                                         FirebaseFirestore.instance
                                             .collection('user')
-                                            .doc(user.id)
+                                            .doc(user.single.uid)
                                             .update({
                                           "auth": 2,
                                           "univerisityEmail":
@@ -558,7 +560,7 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                           .contains('@stu.yu.ac.kr')) {
                                         FirebaseFirestore.instance
                                             .collection('user')
-                                            .doc(user.id)
+                                            .doc(user.single.uid)
                                             .update({
                                           "auth": 2,
                                           "univerisityEmail":
@@ -573,7 +575,7 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                           .contains('@stu.daegu.ac.kr')) {
                                         FirebaseFirestore.instance
                                             .collection('user')
-                                            .doc(user.id)
+                                            .doc(user.single.uid)
                                             .update({
                                           "auth": 2,
                                           "univerisityEmail":
@@ -587,7 +589,7 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                       else {
                                         FirebaseFirestore.instance
                                             .collection('user')
-                                            .doc(user.id)
+                                            .doc(user.single.uid)
                                             .update({
                                           "auth": 2,
                                           "univerisityEmail":
@@ -597,13 +599,15 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                               .millisecondsSinceEpoch
                                         });
                                       }
+                                      var ref = FirebaseFirestore.instance
+                                          .collection('user');
 
                                       var time =
                                           DateTime.now().microsecondsSinceEpoch;
                                       DocumentSnapshot userRecord =
-                                          await ref.doc(user.id).get();
+                                          await ref.doc(user.single.uid).get();
                                       currentUserModel =
-                                          User.fromDocument(userRecord);
+                                          MYUSER.User.fromDocument(userRecord);
                                       ref
                                           .doc(currentUserModel.uid)
                                           .collection("log")

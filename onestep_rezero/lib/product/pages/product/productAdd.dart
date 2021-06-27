@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
+import 'package:onestep_rezero/loggedInWidget.dart';
 
 import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/product/models/categorySelectItem.dart';
@@ -362,7 +363,7 @@ class _ProductAddState extends State<ProductAdd> {
           .collection("product")
           .doc(time.toString())
           .set({
-        'uid': googleSignIn.currentUser.id,
+        'uid': currentUserModel.uid,
         'imagesUrl': _imgUriarr,
         'title': _titleTextEditingController.text,
         'category': categorySelectItem.category,

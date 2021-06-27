@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
@@ -7,7 +8,7 @@ import 'package:onestep_rezero/login/pages/termsServicePage.dart';
 import 'loginJoinPage.dart';
 
 class TermsPage extends StatefulWidget {
-  final GoogleSignInAccount user;
+  final List<UserInfo>  user;
   TermsPage(this.user);
 
   @override
@@ -19,7 +20,7 @@ bool personalFlag = false;
 bool allCheckFlag = false;
 
 class _TermsPageState extends State<TermsPage> {
-  GoogleSignInAccount user;
+  List<UserInfo> user;
   _TermsPageState(this.user);
 
   @override
