@@ -65,7 +65,13 @@ class _AppMainState extends State<AppMain> {
               fixedColor: Colors.black,
               currentIndex: _currentIndex,
               onTap: (int index) {
-                if (_currentIndex != index)
+                if (index == 2) {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              BottomNavigationItem.items[index].page));
+                } else if (_currentIndex != index)
                   setState(() => _currentIndex = index);
               },
               type: BottomNavigationBarType.fixed,

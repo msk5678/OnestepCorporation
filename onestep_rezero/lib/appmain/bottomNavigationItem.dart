@@ -26,14 +26,14 @@ class BottomNavigationItem {
           title: "홈",
         ),
         BottomNavigationItem(
-          page: ProductAdd(),
-          icon: Icon(Icons.add_rounded),
-          title: "물품 등록",
-        ),
-        BottomNavigationItem(
           page: BoardMain(),
           icon: Icon(Icons.list),
           title: "게시판",
+        ),
+        BottomNavigationItem(
+          page: ProductAdd(),
+          icon: Icon(Icons.add_rounded),
+          title: "물품 등록",
         ),
         BottomNavigationItem(
           page: ChatMain(),

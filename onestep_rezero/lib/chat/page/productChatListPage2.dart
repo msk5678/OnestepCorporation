@@ -11,6 +11,7 @@ import 'package:onestep_rezero/chat/productchat/model/productChatList.dart';
 import 'package:onestep_rezero/chat/productchat/model/productChatListCount.dart';
 import 'package:onestep_rezero/chat/widget/chatBadge.dart';
 import 'package:onestep_rezero/chat/widget/chat_list_time.dart';
+import 'package:onestep_rezero/loggedInWidget.dart';
 import 'package:onestep_rezero/main.dart';
 
 class ProductChatListPage2 extends StatefulWidget {
@@ -59,7 +60,7 @@ class _ProductChatListPageState extends State<ProductChatListPage2>
         //   child:
         StreamBuilder(
       stream: ProductChatController.productChatReference
-          .orderByChild("chatUsers/${googleSignIn.currentUser.id}/hide")
+          .orderByChild("chatUsers/${currentUserModel.uid}/hide")
           .equalTo(false)
           .onValue, //조건1.  타임스탬프 기준
       builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -186,8 +187,7 @@ class _ProductChatListPageState extends State<ProductChatListPage2>
 
                       mesageInValues.forEach((mIkey, mIvalue) {
                         //보낸 사람 분해.
-                        if (mIvalue == false &&
-                            mIkey == googleSignIn.currentUser.id) {
+                        if (mIvalue == false && mIkey == currentUserModel.uid) {
                           //수신 유저 정보가 나 and 읽음 false 이면
                           len++; //인트형 len 의 사이즈를 증가시킨다.
                           //print("stream values else1 message ForEach: 읽지 않은 메세지 있음. len : $len");
@@ -240,7 +240,7 @@ class _ProductChatListPageState extends State<ProductChatListPage2>
                                 (context, index) {
                                   String productsUserId; //장터 상대방 Id
                                   listProductChat[index].chatUsers.user1Uid ==
-                                          googleSignIn.currentUser.id
+                                          currentUserModel.uid
                                       ? productsUserId = listProductChat[index]
                                           .chatUsers
                                           .user2Uid
