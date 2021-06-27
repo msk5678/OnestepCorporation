@@ -22,13 +22,13 @@ class PostListProvider with ChangeNotifier {
         return PostData.fromFireStore(snap);
       }).toList();
 
-  fetchNextProducts(String boardName) async {
+  fetchNextProducts(String boardId) async {
     if (_isFetching) return;
     _isFetching = true;
 
     try {
       final snap = await PostFirebaseApi.getAllPost(
-        boardName,
+        boardId,
         documentLimit,
         startAfter:
             _productsSnapshot.isNotEmpty ? _productsSnapshot.last : null,
@@ -89,7 +89,11 @@ class PostListProvider with ChangeNotifier {
             .collection("board")
             .doc(boardId)
             .collection(boardId)
-            .where("uid", isEqualTo: currentUid)
+            .where(
+              "uid",
+              isEqualTo: currentUid,
+            )
+            .orderBy("uploadTime", descending: true)
             .get();
 
         // return userAllPosting.addAll(postQuerySnapshot.docs);

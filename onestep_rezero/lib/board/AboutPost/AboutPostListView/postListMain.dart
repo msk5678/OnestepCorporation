@@ -269,6 +269,15 @@ class _PostListWidget extends PostListParentWidget<PostListMain> {
   getPostList(BoardData currentBoard) {
     return super.getPostList(currentBoard);
   }
+
+  @override
+  void scrollListenerScroll() {
+    if ((scrollController.position.maxScrollExtent * 0.7) <
+        scrollController.position.pixels) {
+      context.read(listProvider).fetchNextProducts(currentBoardData.boardId);
+    }
+    super.scrollListenerScroll();
+  }
 }
 
 // class PostList extends ConsumerWidget {

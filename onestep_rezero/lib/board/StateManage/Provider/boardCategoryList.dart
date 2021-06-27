@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onestep_rezero/board/StateManage/Provider/boardListProvider.dart';
 import 'package:onestep_rezero/board/declareData/boardData.dart';
 import 'package:onestep_rezero/board/declareData/categoryManageClass.dart';
+import 'package:onestep_rezero/chat/widget/appColor.dart';
 
 final boardListProvider =
     ChangeNotifierProvider<BoardListProvider>((ref) => BoardListProvider());
@@ -33,17 +34,22 @@ class BoardListView extends ConsumerWidget {
     boardList.forEach((value) {
       BoardCategory boardCategory = value.boardCategory;
       categoryListWidget.add(ListTile(
-        leading: IconButton(
-          icon: Icon(
-            boardCategory.categoryData.icon,
-            size: 25,
-            // color: Colors.indigo[300],
-            color: Colors.black,
-          ),
-          onPressed: () {
-            print("Something to do");
-          },
+        leading: Icon(
+          boardCategory.categoryData.icon,
+          size: 28,
+          color: OnestepColors().mainColor,
         ),
+        //  IconButton(
+        //   icon: Icon(
+        //     boardCategory.categoryData.icon,
+        //     size: 25,
+        //     // color: Colors.indigo[300],
+        //     color: Colors.black,
+        //   ),
+        //   onPressed: () {
+        //     print("Something to do");
+        //   },
+        // ),
         trailing: IconButton(
           icon: Icon(
             Icons.star_border_rounded,
@@ -78,23 +84,22 @@ class BoardListView extends ConsumerWidget {
       ));
     });
 
-    return Column(children: categoryListWidget
-        // ..add(Center(
-        //   child: IconButton(
-        //     icon: Icon(Icons.add),
-        //     onPressed: () async {
-        //       manageAnimationTimer(false);
-        //       await Navigator.of(context)
-        //           .pushNamed("/BoardCreate")
-        //           .then((value) {
-        //         bool result = value ?? false;
-        //         if (result) context.read(boardListProvider).fetchBoards();
-        //         manageAnimationTimer(true);
-        //       });
-        //     },
-        //   ),
-        // )
-        // )
-        );
+    return Column(
+        children: categoryListWidget
+          ..add(Center(
+            child: IconButton(
+              icon: Icon(Icons.add),
+              onPressed: () async {
+                manageAnimationTimer(false);
+                await Navigator.of(context)
+                    .pushNamed("/BoardCreate")
+                    .then((value) {
+                  bool result = value ?? false;
+                  if (result) context.read(boardListProvider).fetchBoards();
+                  manageAnimationTimer(true);
+                });
+              },
+            ),
+          )));
   }
 }

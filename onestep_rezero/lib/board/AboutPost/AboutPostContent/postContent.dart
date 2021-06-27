@@ -55,6 +55,7 @@ class PostContentRiverPod extends ConsumerWidget {
           height: deviceHeight / 50,
         )
       ]..addAll(imageCommentContainer(
+              context,
               Map<String, List<dynamic>>.from(currentPost.imageCommentMap),
               deviceWidth * 0.9,
               deviceHeight)));
@@ -68,7 +69,7 @@ class PostContentRiverPod extends ConsumerWidget {
       );
   }
 
-  List<Widget> imageCommentContainer(
+  List<Widget> imageCommentContainer(BuildContext context,
       Map<String, List<dynamic>> imageCommentMap, double width, double height) {
     List imageList = imageCommentMap["IMAGE"] ?? [];
     List commentList = imageCommentMap["COMMENT"] ?? [];
@@ -78,7 +79,10 @@ class PostContentRiverPod extends ConsumerWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             GestureDetector(
-              onTap: () {},
+              onTap: () {
+                Navigator.of(context).pushNamed("/ImagesFullViewer",
+                    arguments: {"IMAGESURL": imageList, "INDEX": index});
+              },
               child: ClipRRect(
                 borderRadius: BorderRadius.all(Radius.circular(5.0)),
                 child: CachedNetworkImage(
@@ -239,55 +243,59 @@ class _PostContentState extends State<PostContent>
       },
       child: GestureDetector(
         onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
-        child: Scaffold(
-          appBar: appBar(currentPostData, currentUid),
-          body: Stack(
-            children: [
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-                child: SingleChildScrollView(
-                  controller: postScrollController,
-                  child: Container(
-                    width: deviceWidth,
-                    child: Column(
-                      children: <Widget>[
-                        PostContentRiverPod(
-                          currentPostData: currentPostData,
+        child: Stack(
+          children: [
+            Scaffold(
+              appBar: appBar(currentPostData, currentUid),
+              body: Stack(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 15, vertical: 20),
+                    child: SingleChildScrollView(
+                      controller: postScrollController,
+                      child: Container(
+                        width: deviceWidth,
+                        child: Column(
+                          children: <Widget>[
+                            PostContentRiverPod(
+                              currentPostData: currentPostData,
+                            ),
+                          ]
+                            ..add(buttonList(currentPostData))
+                            ..add(Container(
+                              width: deviceWidth / 2,
+                              margin: EdgeInsets.only(
+                                  bottom: deviceHeight / 50, top: 10),
+                              decoration: BoxDecoration(
+                                  border: Border(
+                                      bottom: BorderSide(
+                                          color: OnestepColors().thirdColor,
+                                          width: 2.0))),
+                            ))
+                            ..add(CommentWidget(
+                              boardId: currentPostData.boardId,
+                              postId: currentPostData.documentId,
+                              commentMap: currentPostData.commentUserList,
+                              postWriterUID: currentPostData.uid,
+                              openSlidingPanelCallback: slidingUpDownMethod,
+                              coCommentCallback: coCommentCallback,
+                              showDialogCallback: showingDismissCommentCallback,
+                            ))
+                            ..add(SizedBox(
+                              height: deviceHeight / 5,
+                            )),
                         ),
-                      ]
-                        ..add(buttonList(currentPostData))
-                        ..add(Container(
-                          width: deviceWidth / 2,
-                          margin: EdgeInsets.only(
-                              bottom: deviceHeight / 50, top: 10),
-                          decoration: BoxDecoration(
-                              border: Border(
-                                  bottom: BorderSide(
-                                      color: OnestepColors().thirdColor,
-                                      width: 2.0))),
-                        ))
-                        ..add(CommentWidget(
-                          boardId: currentPostData.boardId,
-                          postId: currentPostData.documentId,
-                          commentMap: currentPostData.commentUserList,
-                          postWriterUID: currentPostData.uid,
-                          openSlidingPanelCallback: slidingUpDownMethod,
-                          coCommentCallback: coCommentCallback,
-                          showDialogCallback: showingDismissCommentCallback,
-                        ))
-                        ..add(SizedBox(
-                          height: deviceHeight / 5,
-                        )),
+                      ),
                     ),
                   ),
-                ),
+                  commentSlidingPanel(currentUid, currentPostData.uid,
+                      currentPostData.commentUserList),
+                ],
               ),
-              commentSlidingPanel(currentUid, currentPostData.uid,
-                  currentPostData.commentUserList),
-              TipDialogContainer(duration: const Duration(seconds: 2))
-            ],
-          ),
+            ),
+            TipDialogContainer(duration: const Duration(seconds: 2))
+          ],
         ),
       ),
     );

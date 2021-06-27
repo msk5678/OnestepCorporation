@@ -125,7 +125,7 @@ class MyPostRiverPod extends ConsumerWidget {
         height: deviceHeight / 2,
         width: deviceWidth,
         child: Center(
-          child: ShowUp(delay: 300, child: Text("좋아하는 게시글이 없습니다.")),
+          child: ShowUp(delay: 300, child: Text("작성한 게시글이 없습니다.")),
         ),
       );
     } else

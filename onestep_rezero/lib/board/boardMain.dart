@@ -434,9 +434,7 @@ class _BoardMainState extends State<BoardMain> {
                   margin: EdgeInsets.all(deviceWidth / 50),
                   child: BoardListRiverpod(
                     animationStopCallback: manageAnimationTimer,
-                  )
-                  // BoardNameProvider().futureConsumerWidget
-                  ),
+                  )),
             ),
           ],
         ),
@@ -452,15 +450,6 @@ class _BoardMainState extends State<BoardMain> {
       ),
       elevation: 0,
       backgroundColor: Colors.white,
-      actions: <Widget>[
-        new IconButton(
-          icon: new Icon(
-            Icons.search,
-            color: Colors.black,
-          ),
-          onPressed: () {},
-        ),
-      ],
     );
   }
 }

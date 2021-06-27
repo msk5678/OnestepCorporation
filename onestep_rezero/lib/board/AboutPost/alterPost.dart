@@ -8,6 +8,7 @@ import 'package:onestep_rezero/board/TipDialog/tip_dialog.dart';
 import 'package:onestep_rezero/board/declareData/boardData.dart';
 import 'package:onestep_rezero/board/declareData/postData.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
 class AlterPost extends StatefulWidget {
   final postData;
@@ -176,6 +177,7 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
 
   @override
   saveDataInFirestore() async {
+    FocusScope.of(context).unfocus();
     TipDialogHelper.loading("수정 중!\n 잠시만 기다려주세요.");
 
     await updateData(alterPostData).then((value) {
@@ -226,7 +228,7 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
     }
 
     for (int i = firstImageCount; i < imgCommMap["IMAGE"].length; i++) {
-      if (imgCommMap["IMAGE"][i].runtimeType != Asset) {
+      if (imgCommMap["IMAGE"][i].runtimeType != AssetEntity) {
         continue;
       }
 
@@ -344,10 +346,12 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
                           width: 200,
                         )
                       : Container(
-                          child: AssetThumb(
-                            asset: image,
-                            height: 200,
+                          child: Image(
                             width: 200,
+                            height: 200,
+                            image: AssetEntityImageProvider(image,
+                                isOriginal: false),
+                            fit: BoxFit.cover,
                           ),
                         )),
             ),
@@ -376,18 +380,27 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
   }
 
   getImage() async {
-    List<Asset> resultList = [];
-    // if (imageCommentMap["IMAGE"].isNotEmpty) {
-    //   for (var image in imageCommentMap["IMAGE"]) {
-    //     resultList.add(image);
-    //   }
-    // }
-    try {
-      resultList = await MultiImagePicker.pickImages(
-          maxImages: 5 - imageCommentMap["IMAGE"].length,
-          enableCamera: true,
-          selectedAssets: resultList);
-    } on NoImagesSelectedException {}
+    List<AssetEntity> resultList = [];
+    if (imageCommentMap["IMAGE"] != null) {
+      if (imageCommentMap["IMAGE"].isNotEmpty)
+        for (int i = firstImageCount;
+            i < imageCommentMap["IMAGE"].length;
+            i++) {
+          resultList.add(imageCommentMap["IMAGE"][i]);
+        }
+    }
+    final List<AssetEntity> _entity = await AssetPicker.pickAssets(
+          context,
+          maxAssets: 5 - imageCommentMap["IMAGE"].length,
+          pageSize: 330,
+          pathThumbSize: 80,
+          gridCount: 3,
+          requestType: RequestType.image,
+          selectedAssets: resultList,
+          specialPickerType: SpecialPickerType.wechatMoment,
+          textDelegate: KoreaTextDelegate(),
+        ) ??
+        [];
 
     setState(() {
       // imageCommentMap["IMAGE"].add(resultList);
@@ -398,7 +411,7 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
       // if (imageCommentMap["IMAGE"].isNotEmpty) {
       //   imageCommentMap["IMAGE"].addAll(resultList);
       // } else
-      imageCommentMap.update("IMAGE", (value) => value..addAll(resultList));
+      imageCommentMap.update("IMAGE", (value) => value..addAll(_entity));
     });
   }
 

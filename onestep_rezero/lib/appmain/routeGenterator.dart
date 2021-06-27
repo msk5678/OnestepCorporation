@@ -11,6 +11,7 @@ import 'package:onestep_rezero/board/AboutPost/AboutPostListView/postListMain.da
 import 'package:onestep_rezero/board/AboutPost/alterPost.dart';
 import 'package:onestep_rezero/board/AboutPost/createPost.dart';
 import 'package:onestep_rezero/board/AboutBoard/boardCreate.dart';
+import 'package:onestep_rezero/product/widgets/detail/imagesFullViewer.dart';
 import 'package:page_transition/page_transition.dart';
 
 import 'package:path/path.dart' as p;
@@ -54,6 +55,13 @@ class RouteGenerator {
       case 'UserWrittenCommentList':
         _pageWidget = UserWrittenCommentList(
           dashBoardIconData: arguments["DASHBOARDDATA"],
+        );
+        break;
+
+      case 'ImagesFullViewer':
+        _pageWidget = ImagesFullViewer(
+          imagesUrl: arguments["IMAGESURL"],
+          index: arguments["INDEX"],
         );
         break;
 

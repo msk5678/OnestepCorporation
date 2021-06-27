@@ -208,7 +208,7 @@ class UserWrittenCommentListWidget extends ConsumerWidget implements Comment {
                             ),
                           ),
                         ),
-                        padding: EdgeInsets.symmetric(vertical: 15),
+                        padding: EdgeInsets.symmetric(vertical: 10),
                         child: !isDeleted
                             ? commentListSwipeMenu(
                                 currentIndexCommentData,
@@ -309,7 +309,7 @@ class UserWrittenCommentListWidget extends ConsumerWidget implements Comment {
               child: Text(comment.textContent ?? "NO"),
             ),
             Container(
-              margin: EdgeInsets.only(top: 10),
+              // margin: EdgeInsets.only(top: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [

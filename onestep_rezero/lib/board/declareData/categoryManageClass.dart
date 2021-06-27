@@ -22,7 +22,7 @@ extension BoardCategoryExtension on BoardCategory {
     switch (this) {
       case BoardCategory.POST:
         return BoardCategoryData(
-            icon: Icons.post_add, title: "글", explain: "글 위주의 게시판");
+            icon: Icons.article_outlined, title: "글", explain: "글 위주의 게시판");
       case BoardCategory.PICTURE:
         return BoardCategoryData(
             icon: Icons.photo_size_select_actual_outlined,

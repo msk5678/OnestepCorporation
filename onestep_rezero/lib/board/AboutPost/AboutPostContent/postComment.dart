@@ -305,8 +305,8 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
         int.tryParse(comment.deletedTime ?? 0) ?? 0);
     bool deletedTimeWithDay = DateTime.now().difference(deleteTime).inDays < 1;
     //Deleted Time with in 24h
-    DateTime uploadTime = DateTime.fromMillisecondsSinceEpoch(
-        int.tryParse(comment.uploadTime ?? 0) ?? 0);
+    DateTime uploadTime =
+        DateTime.fromMillisecondsSinceEpoch(comment.uploadTime ?? 0);
     return Container(
         alignment: Alignment.centerLeft,
         padding: EdgeInsets.only(

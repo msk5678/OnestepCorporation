@@ -12,44 +12,62 @@ import 'package:onestep_rezero/timeUtil.dart';
 class PostList extends StatelessWidget {
   final List<PostData> postList;
   final customPostListCallback;
-  PostList({this.postList, this.customPostListCallback});
+  final bool isfetch;
+  PostList({this.postList, this.customPostListCallback, this.isfetch});
 
   @override
   Widget build(BuildContext context) {
-    print("PostLIst Rebuild");
     double deviceHeight = MediaQuery.of(context).size.height;
     double deviceWidth = MediaQuery.of(context).size.width;
     final String currentUid = currentUserModel.uid;
-
-    if (postList.length != 0)
-      return Container(
-        child: AnimationLimiter(
-          child: ListView.builder(
-            key: PageStorageKey<String>("commentList"),
-            physics: NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            itemCount: postList.length,
-            itemBuilder: (BuildContext context, int index) {
-              return AnimationConfiguration.staggeredList(
-                position: index,
-                duration: const Duration(milliseconds: 375),
-                child: SlideAnimation(
-                  verticalOffset: 50.0,
-                  child: FadeInAnimation(
-                    child: _buildListCard(context, index, postList[index],
-                        deviceHeight, deviceWidth, currentUid),
-                  ),
-                ),
-              );
-            },
+    bool isfetching = isfetch ?? false;
+    if (!isfetching) if (postList.length != 0)
+      return Column(
+        children: [
+          Container(
+            child: AnimationLimiter(
+              child: ListView.builder(
+                key: PageStorageKey<String>("commentList"),
+                physics: NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: postList.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return AnimationConfiguration.staggeredList(
+                    position: index,
+                    duration: const Duration(milliseconds: 375),
+                    child: SlideAnimation(
+                      verticalOffset: 50.0,
+                      child: FadeInAnimation(
+                        child: _buildListCard(context, index, postList[index],
+                            deviceHeight, deviceWidth, currentUid),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
           ),
-        ),
+          isfetching
+              ? Container(
+                  child: Center(
+                  child: CupertinoActivityIndicator(),
+                ))
+              : Container()
+        ],
       );
     else {
       return Container(
-        height: deviceHeight,
+        height: deviceHeight / 2,
         child: Center(
           child: Text("작성된 글이 없습니다!"),
+        ),
+      );
+    }
+    else {
+      return Container(
+        height: deviceHeight / 2,
+        child: Center(
+          child: CupertinoActivityIndicator(),
         ),
       );
     }

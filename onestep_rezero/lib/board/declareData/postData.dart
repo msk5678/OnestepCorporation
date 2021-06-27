@@ -1,11 +1,11 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:onestep_rezero/loggedInWidget.dart';
-
-import 'package:random_string/random_string.dart';
-
-import '../../main.dart';
 
 class PostData {
   var uploadTime;
@@ -39,11 +39,22 @@ class PostData {
       if (imaged.runtimeType == String) {
         _imgUriarr.add(imaged);
       } else {
+        // Reference storageReference = FirebaseStorage.instance
+        //     .ref()
+        //     .child("boardimages/freeboard/${randomAlphaNumeric(15)}");
+        // UploadTask storageUploadTask = storageReference
+        //     .putData((await imaged.getByteData()).buffer.asUint8List());
+        // await storageUploadTask.whenComplete(() async {
+        //   String downloadURL = await storageReference.getDownloadURL();
+        //   _imgUriarr.add(downloadURL);
+        // });
         Reference storageReference = FirebaseStorage.instance
             .ref()
-            .child("boardimages/freeboard/${randomAlphaNumeric(15)}");
-        UploadTask storageUploadTask = storageReference
-            .putData((await imaged.getByteData()).buffer.asUint8List());
+            .child("productimage/${DateTime.now().microsecondsSinceEpoch}");
+
+        Uint8List uint8list = await assetCompressFile(await imaged.originFile);
+
+        UploadTask storageUploadTask = storageReference.putData(uint8list);
         await storageUploadTask.whenComplete(() async {
           String downloadURL = await storageReference.getDownloadURL();
           _imgUriarr.add(downloadURL);
@@ -51,6 +62,15 @@ class PostData {
       }
     }
     return _imgUriarr;
+  }
+
+  Future<Uint8List> assetCompressFile(File file) async {
+    var result = await FlutterImageCompress.compressWithFile(
+      file.absolute.path,
+      quality: 30,
+    );
+
+    return result;
   }
 
   PostData(

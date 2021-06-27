@@ -171,18 +171,19 @@ class TipDialogContainerState extends State<TipDialogContainer>
   bool get isShow => _show;
 
   void dismiss() {
-    setState(() {
-      if (_prepareDismiss || !_show) {
-        return;
-      }
-      if (_animationController.isAnimating) {
-        _show = false;
-        _animationController.stop(canceled: true);
-      } else {
-        _prepareDismiss = true;
-        _animationController.reverse();
-      }
-    });
+    if (mounted)
+      setState(() {
+        if (_prepareDismiss || !_show) {
+          return;
+        }
+        if (_animationController.isAnimating) {
+          _show = false;
+          _animationController.stop(canceled: true);
+        } else {
+          _prepareDismiss = true;
+          _animationController.reverse();
+        }
+      });
   }
 
   /// tipDialog: Need to display the widget
@@ -196,10 +197,12 @@ class TipDialogContainerState extends State<TipDialogContainer>
     _tipDialog = tipDialog;
     // when tip dialog equal null, isLoading must inherit the origin value
     _isAutoDismiss = isAutoDismiss;
-    setState(() {
-      _start();
-      _show = true;
-    });
+    if (this.mounted) {
+      setState(() {
+        _start();
+        _show = true;
+      });
+    }
   }
 
   @override
@@ -210,10 +213,11 @@ class TipDialogContainerState extends State<TipDialogContainer>
         value: 0.0, duration: new Duration(milliseconds: 200), vsync: this);
     _animationListener = () {
       if (_animationController.value == 0.0 && _prepareDismiss) {
-        setState(() {
-          _show = false;
-          _prepareDismiss = false;
-        });
+        if (mounted)
+          setState(() {
+            _show = false;
+            _prepareDismiss = false;
+          });
       }
     };
     _animationController.addListener(_animationListener);
