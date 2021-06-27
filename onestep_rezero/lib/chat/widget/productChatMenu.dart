@@ -3,7 +3,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onestep_rezero/chat/productchat/controller/productChatController.dart';
 import 'package:onestep_rezero/chat/productchat/model/productChatMenuItem.dart';
 import 'package:onestep_rezero/chat/widget/productMenuItems.dart';
-import 'package:onestep_rezero/onestepCustomDialog.dart';
+import 'package:onestep_rezero/utils/onestepCustom/dialog/onestepCustomDialog.dart';
 
 class ProductChatMenu {
   Widget getProductMenu(

@@ -18,7 +18,7 @@ class _ProductAddTitleTextFieldState extends State<ProductAddTitleTextField> {
         Align(
           alignment: Alignment.centerLeft,
           child: Text(
-            "물품명",
+            "상품명",
           ),
         ),
         Container(

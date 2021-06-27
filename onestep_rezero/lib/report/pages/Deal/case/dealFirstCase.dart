@@ -1,10 +1,9 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
-import 'package:onestep_rezero/loggedInWidget.dart';
-
-import '../../../../onestepCustomDialog.dart';
-import '../../../../onestepCustomDialogNotCancel.dart';
+import 'package:onestep_rezero/signIn/loggedInWidget.dart';
+import 'package:onestep_rezero/utils/onestepCustom/dialog/onestepCustomDialog.dart';
+import 'package:onestep_rezero/utils/onestepCustom/dialog/onestepCustomDialogNotCancel.dart';
 
 final myController = TextEditingController();
 

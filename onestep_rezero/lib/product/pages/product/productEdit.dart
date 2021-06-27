@@ -1,24 +1,21 @@
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
-import 'package:onestep_rezero/floatingSnackBar.dart';
-import 'package:onestep_rezero/loggedInWidget.dart';
+import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 
-import 'package:onestep_rezero/onestepCustomDialog.dart';
 import 'package:onestep_rezero/product/models/product.dart';
-import 'package:onestep_rezero/product/pages/product/productAddCategorySelect.dart';
 import 'package:onestep_rezero/product/widgets/addOrEdit/category.dart';
 import 'package:onestep_rezero/product/widgets/addOrEdit/explain.dart';
 import 'package:onestep_rezero/product/widgets/addOrEdit/price.dart';
 import 'package:onestep_rezero/product/widgets/addOrEdit/title.dart';
 import 'package:onestep_rezero/product/widgets/main/productMainBody.dart';
-import 'package:pattern_formatter/numeric_formatter.dart';
+import 'package:onestep_rezero/util/floatingSnackBar.dart';
+import 'package:onestep_rezero/util/imageCompress.dart';
+import 'package:onestep_rezero/utils/onestepCustom/dialog/onestepCustomDialog.dart';
 
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -61,15 +58,6 @@ class _ProductEditState extends State<ProductEdit> {
   @override
   void dispose() {
     super.dispose();
-  }
-
-  Future<Uint8List> assetCompressFile(File file) async {
-    var result = await FlutterImageCompress.compressWithFile(
-      file.absolute.path,
-      quality: 30,
-    );
-
-    return result;
   }
 
   Future<void> pickAssets() async {
@@ -181,7 +169,7 @@ class _ProductEditState extends State<ProductEdit> {
         Align(
           alignment: Alignment.centerLeft,
           child: Text(
-            "물품 사진",
+            "상품 사진",
           ),
         ),
         Container(
@@ -258,9 +246,9 @@ class _ProductEditState extends State<ProductEdit> {
   Future<void> updateProduct() async {
     print("@@@@@@@@@ ${_detailCategoryTextEditingController.text}");
     if (entity.length + _initImagesUrl.length < 1) {
-      FloatingSnackBar.show(context, "물품을 등록하려면 한장 이상의 사진이 필요합니다.");
+      FloatingSnackBar.show(context, "상품을 등록하려면 한장 이상의 사진이 필요합니다.");
     } else if (_titleTextEditingController.text.trim() == "") {
-      FloatingSnackBar.show(context, "물품명을 입력해주세요.");
+      FloatingSnackBar.show(context, "상품명을 입력해주세요.");
     } else if (_priceTextEditingController.text.trim() == "") {
       FloatingSnackBar.show(context, "가격을 입력해주세요.");
     } else if (_categoryTextEditingController.text.trim() == "") {
@@ -277,7 +265,8 @@ class _ProductEditState extends State<ProductEdit> {
             .ref()
             .child("productimage/${DateTime.now().microsecondsSinceEpoch}");
 
-        Uint8List uint8list = await assetCompressFile(await image.originFile);
+        Uint8List uint8list =
+            await ImageCompress.assetCompressFile(await image.originFile);
 
         UploadTask storageUploadTask = storageReference.putData(uint8list);
         await storageUploadTask.whenComplete(() async {
@@ -301,10 +290,7 @@ class _ProductEditState extends State<ProductEdit> {
         'explain': _explainTextEditingController.text,
         'updateTime': time,
       }).whenComplete(() {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          duration: Duration(seconds: 2),
-          content: Text("물품 수정이 완료되었습니다."),
-        ));
+        FloatingSnackBar.show(context, "상품 수정이 완료되었습니다.");
         context.read(productMainService).fetchProducts();
         Navigator.pop(context, "OK");
       });
@@ -320,7 +306,7 @@ class _ProductEditState extends State<ProductEdit> {
           color: Colors.black,
         ),
         backgroundColor: Colors.white,
-        title: Text("물품 수정", style: TextStyle(color: Colors.black)),
+        title: Text("상품 수정", style: TextStyle(color: Colors.black)),
       ),
       body: SingleChildScrollView(
         child: Container(

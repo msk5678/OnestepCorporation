@@ -9,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:firebase_core/firebase_core.dart' as firebase_core;
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
+import 'package:onestep_rezero/util/floatingSnackBar.dart';
 
 /// Enum representing the upload task types the example app supports.
 enum UploadType {
@@ -56,9 +57,8 @@ class _TaskManager extends State<TaskManager> {
   /// The user selects a file, and the task is added to the list.
   Future<firebase_storage.UploadTask> uploadFile(PickedFile file) async {
     if (file == null) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('No file was selected'),
-      ));
+      FloatingSnackBar.show(context, '선택된 이미지가 없습니다.');
+
       return null;
     }
 
@@ -149,12 +149,9 @@ class _TaskManager extends State<TaskManager> {
       text: link,
     ));
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text(
-          'Success!\n Copied download URL to Clipboard!',
-        ),
-      ),
+    FloatingSnackBar.show(
+      context,
+      'Success!\n Copied download URL to Clipboard!',
     );
   }
 
@@ -165,14 +162,11 @@ class _TaskManager extends State<TaskManager> {
 
     await ref.writeToFile(tempFile);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Success!\n Downloaded ${ref.name} \n from bucket: ${ref.bucket}\n '
-          'at path: ${ref.fullPath} \n'
-          'Wrote "${ref.fullPath}" to tmp-${ref.name}.txt',
-        ),
-      ),
+    FloatingSnackBar.show(
+      context,
+      'Success!\n Downloaded ${ref.name} \n from bucket: ${ref.bucket}\n '
+      'at path: ${ref.fullPath} \n'
+      'Wrote "${ref.fullPath}" to tmp-${ref.name}.txt',
     );
   }
 

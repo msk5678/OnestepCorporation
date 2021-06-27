@@ -2,7 +2,7 @@ import 'dart:collection';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:onestep_rezero/loggedInWidget.dart';
+import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 
 import 'package:onestep_rezero/product/models/categorySelectItem.dart';
 import 'package:onestep_rezero/product/pages/product/productAddDetailCategorySelect.dart';

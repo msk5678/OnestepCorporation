@@ -2,12 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:onestep_rezero/loggedInWidget.dart';
+import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 import 'package:onestep_rezero/myinfo/pages/infomation/noticePage.dart';
 import 'package:onestep_rezero/myinfo/pages/myinfoProfilePage.dart';
 import 'package:onestep_rezero/myinfo/pages/myinfoTransaction.dart';
 import 'package:onestep_rezero/myinfo/widgets/myProfileImage.dart';
-import '../../onestepCustomDialogNotCancel.dart';
+import 'package:onestep_rezero/utils/onestepCustom/dialog/onestepCustomDialogNotCancel.dart';
 
 // push, marketing 알림 dialog
 // void _testShowDialog(BuildContext context) {

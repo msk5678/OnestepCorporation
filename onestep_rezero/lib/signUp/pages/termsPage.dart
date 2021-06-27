@@ -1,13 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
-import 'package:onestep_rezero/login/pages/termsPersonalDataPage.dart';
-import 'package:onestep_rezero/login/pages/termsServicePage.dart';
+import 'package:onestep_rezero/signUp/pages/termsPersonalDataPage.dart';
+import 'package:onestep_rezero/signUp/pages/termsServicePage.dart';
 
 import 'loginJoinPage.dart';
 
 class TermsPage extends StatefulWidget {
-  final List<UserInfo>  user;
+  final List<UserInfo> user;
   TermsPage(this.user);
 
   @override

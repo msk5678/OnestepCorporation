@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:io' as io;
 // import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:image_picker/image_picker.dart';
-import 'package:onestep_rezero/login/pages/authWaitPage.dart';
+import 'package:onestep_rezero/signUp/pages/authWaitPage.dart';
 
 String downloadURL = "";
 bool _isDownloadCheck = false;

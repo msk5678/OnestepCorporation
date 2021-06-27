@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:onestep_rezero/login/google_sign_in.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:onestep_rezero/signIn/google_sign_in.dart';
 
 class SignUpWidget extends StatefulWidget {
   SignUpWidget({Key key}) : super(key: key);

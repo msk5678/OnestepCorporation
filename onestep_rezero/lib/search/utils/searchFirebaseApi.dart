@@ -1,5 +1,5 @@
 import 'package:algolia/algolia.dart';
-import 'package:onestep_rezero/loggedInWidget.dart';
+import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 
 Algolia algolia = Algolia.init(
   applicationId: 'SM0LVJM1EL',

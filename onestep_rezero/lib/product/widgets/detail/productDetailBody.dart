@@ -4,12 +4,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
-import 'package:onestep_rezero/animation/favoriteAnimation.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
+import 'package:onestep_rezero/favorite/animation/favoriteAnimation.dart';
 import 'package:onestep_rezero/favorite/utils/favoriteFirebaseApi.dart';
-import 'package:onestep_rezero/loggedInWidget.dart';
+import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 import 'package:onestep_rezero/chat/navigator/chatNavigationManager.dart';
-import 'package:onestep_rezero/onestepCustomDialog.dart';
 import 'package:onestep_rezero/product/models/product.dart';
 import 'package:onestep_rezero/product/pages/product/productBump.dart';
 import 'package:onestep_rezero/product/pages/product/productDetail.dart';
@@ -17,8 +16,10 @@ import 'package:onestep_rezero/product/pages/product/productEdit.dart';
 import 'package:onestep_rezero/product/widgets/detail/imagesFullViewer.dart';
 import 'package:onestep_rezero/product/widgets/main/productMainBody.dart';
 import 'package:onestep_rezero/product/widgets/public/productItem.dart';
-import 'package:onestep_rezero/timeUtil.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:onestep_rezero/util/floatingSnackBar.dart';
+import 'package:onestep_rezero/utils/onestepCustom/dialog/onestepCustomDialog.dart';
+import 'package:onestep_rezero/utils/timeUtil.dart';
 import 'package:rxdart/rxdart.dart';
 
 class ProductDetailBody extends StatefulWidget {
@@ -667,7 +668,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
               if (snapshot.data) {
                 FavoriteFirebaseApi.insertFavorite(widget.product.firestoreid);
                 _favoriteStreamController.sink.add(false);
-                FavoriteAnimation().showFavoriteDialog(context);
+                FavoriteAnimation.showFavoriteDialog(context);
                 _favoriteTextController.text =
                     (int.parse(_favoriteTextController.text) + 1).toString();
               } else {
@@ -753,10 +754,8 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
                             ProductBump(product: widget.product),
                       ));
                     } else {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        duration: Duration(seconds: 2),
-                        content: Text("물품을 등록하고 1시간 뒤에 끌올할 수 있어요."),
-                      ));
+                      FloatingSnackBar.show(
+                          context, "상품을 등록하고 1시간 뒤에 끌올할 수 있어요.");
                     }
                   },
                   child: Row(

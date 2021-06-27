@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:onestep_rezero/login/auth_repository.dart';
+import 'package:onestep_rezero/signUp/auth_repository.dart';
 
 final authControllerProvider = StateNotifierProvider<AuthController>(
   (ref) => AuthController(ref.read)..appStarted(),

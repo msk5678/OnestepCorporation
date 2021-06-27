@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+
 import 'package:onestep_rezero/chat/boardchat/inRealTimeChattingRoom.dart';
 import 'package:onestep_rezero/chat/productchat/productchattingroom/productChattingRoom.dart';
-import 'package:onestep_rezero/loggedInWidget.dart';
-import 'package:onestep_rezero/main.dart';
+import 'package:onestep_rezero/signIn/loggedInWidget.dart';
+
 import 'package:onestep_rezero/product/models/product.dart';
 
 class ChatNavigationManager {

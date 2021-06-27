@@ -2,12 +2,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:flutter/material.dart';
-import 'package:onestep_rezero/animation/favoriteAnimation.dart';
+import 'package:onestep_rezero/favorite/animation/favoriteAnimation.dart';
 import 'package:onestep_rezero/favorite/utils/favoriteFirebaseApi.dart';
-import 'package:onestep_rezero/loggedInWidget.dart';
 import 'package:onestep_rezero/product/models/product.dart';
 import 'package:onestep_rezero/product/pages/product/productDetail.dart';
-import 'package:onestep_rezero/timeUtil.dart';
+import 'package:onestep_rezero/signIn/loggedInWidget.dart';
+import 'package:onestep_rezero/utils/timeUtil.dart';
 
 class ProductItem extends StatefulWidget {
   final Product product;
@@ -79,7 +79,7 @@ class _ProductItemState extends State<ProductItem> {
                         if (chk) {
                           FavoriteFirebaseApi.insertFavorite(
                               widget.product.firestoreid);
-                          FavoriteAnimation().showFavoriteDialog(context);
+                          FavoriteAnimation.showFavoriteDialog(context);
                         } else {
                           FavoriteFirebaseApi.deleteFavorite(
                               widget.product.firestoreid);
