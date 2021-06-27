@@ -226,7 +226,27 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                               //     : true,
                               controller: _emailController,
                               onChanged: (text) {
+                                //sunghun
                                 _tempEmail = text;
+                                if (_isEmailCheck.authFlag.isEmailChecked) {
+                                  _firstEmailEnter = true;
+                                  _isEmailCheck.changedAuthEmailChecked(false);
+
+                                  _isEmailCheck
+                                      .changedAuthEmailErrorUnderLine(true);
+                                  _isEmailCheck
+                                      .changedAuthEmailDupliCheckUnderLine(
+                                          true);
+                                  _isEmailCheck.changedAuthSendUnderLine(true);
+                                  _isEmailCheck.changedAuthNumber(true);
+                                  _isEmailCheck
+                                      .changedAuthTimeOverChecked(true);
+                                  _isEmailCheck.changedAuthTimerChecked(false);
+                                  _isEmailCheck.changedAuthSendClick(false);
+                                  _isEmailCheck.changedShowBtn(false);
+                                  _isEmailCheck.authFlag.levelClock = 300;
+                                  _authNumberController.text = "";
+                                }
                               },
                               decoration: InputDecoration(
                                 hintText: "대학교 이메일",
@@ -370,8 +390,8 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                             );
 
                                         _controller.forward();
-                                        sendEmailAuth(checkPassword,
-                                            _emailController.text);
+                                        // sendEmailAuth(checkPassword,
+                                        //     _emailController.text);
                                       }
                                     : null,
                                 child: Text("전송"),

@@ -8,9 +8,7 @@ import 'package:onestep_rezero/login/pages/loginAuthPage.dart';
 import 'package:onestep_rezero/login/providers/providers.dart';
 import 'package:onestep_rezero/onestepCustomDialogNotCancel.dart';
 
-// String _tempEmail = "";
 String _tempNickName = "";
-// bool _firstEmailEnter = true;
 bool _firstNickNameEnter = true;
 
 class JoinBody extends ConsumerWidget {
@@ -28,6 +26,7 @@ class JoinBody extends ConsumerWidget {
     final TextEditingController _nicknameController =
         TextEditingController(text: _tempNickName);
     final _isNickNameCheck = watch(nickNameProvider.state);
+    // final _test = watch(resetProvider.state);
     _nicknameController.selection = TextSelection.fromPosition(
         TextPosition(offset: _nicknameController.text.length));
 
@@ -143,6 +142,10 @@ class JoinBody extends ConsumerWidget {
                       controller: _nicknameController,
                       onChanged: (text) {
                         _tempNickName = text;
+                        if (_isNickNameCheck) {
+                          context.read(nickNameProvider).resetCheck(false);
+                          _firstNickNameEnter = true;
+                        }
                       },
                       decoration: InputDecoration(
                         counterText: "",
@@ -162,17 +165,18 @@ class JoinBody extends ConsumerWidget {
                         suffix: _isNickNameCheck
                             ? GestureDetector(
                                 child: Text("확인완료"),
-                                onTap: () {
-                                  context
+                                onTap: () async {
+                                  await context
                                       .read(nickNameProvider)
                                       .authEmailNickNameCheck(_tempNickName);
+
                                   _firstNickNameEnter = false;
                                 },
                               )
                             : GestureDetector(
                                 child: Text("중복확인"),
-                                onTap: () {
-                                  context
+                                onTap: () async {
+                                  await context
                                       .read(nickNameProvider)
                                       .authEmailNickNameCheck(_tempNickName);
                                   _firstNickNameEnter = false;
@@ -217,7 +221,7 @@ class JoinBody extends ConsumerWidget {
                     //   documents.forEach((data) => print(data.id));
                     // },
 
-                    onPressed: _isNickNameCheck == true
+                    onPressed: _isNickNameCheck
                         ? () async {
                             if (_isNickNameCheck == true) {
                               await FirebaseFirestore.instance

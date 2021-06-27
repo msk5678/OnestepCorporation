@@ -46,6 +46,11 @@ class NickNameChangeBody extends ConsumerWidget {
                 controller: _nicknameController,
                 onChanged: (text) {
                   _tempNickName = text;
+
+                  if (_isNickNameCheck) {
+                    context.read(myinfoProvider).resetCheck(false);
+                    _firstEnter = true;
+                  }
                 },
                 decoration: InputDecoration(
                   counterText: "",
