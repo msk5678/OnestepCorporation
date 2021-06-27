@@ -7,7 +7,8 @@ import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 
 import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/myinfo/pages/myinfoNickNameChagnePage.dart';
-import 'package:onestep_rezero/util/floatingSnackBar.dart';
+import 'package:onestep_rezero/utils/floatingSnackBar.dart';
+
 import 'package:onestep_rezero/utils/onestepCustom/dialog/onestepCustomDialog.dart';
 import 'package:random_string/random_string.dart';
 import 'dart:io' as io;

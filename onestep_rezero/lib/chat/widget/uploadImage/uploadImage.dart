@@ -9,7 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:firebase_core/firebase_core.dart' as firebase_core;
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
-import 'package:onestep_rezero/util/floatingSnackBar.dart';
+import 'package:onestep_rezero/utils/floatingSnackBar.dart';
 
 /// Enum representing the upload task types the example app supports.
 enum UploadType {

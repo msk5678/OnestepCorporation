@@ -8,7 +8,7 @@ import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 import 'package:onestep_rezero/product/models/product.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onestep_rezero/product/widgets/main/productMainBody.dart';
-import 'package:onestep_rezero/util/floatingSnackBar.dart';
+import 'package:onestep_rezero/utils/floatingSnackBar.dart';
 import 'package:onestep_rezero/utils/onestepCustom/dialog/onestepCustomDialog.dart';
 import 'package:pattern_formatter/numeric_formatter.dart';
 

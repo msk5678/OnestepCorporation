@@ -17,7 +17,7 @@ import 'package:onestep_rezero/product/widgets/detail/imagesFullViewer.dart';
 import 'package:onestep_rezero/product/widgets/main/productMainBody.dart';
 import 'package:onestep_rezero/product/widgets/public/productItem.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:onestep_rezero/util/floatingSnackBar.dart';
+import 'package:onestep_rezero/utils/floatingSnackBar.dart';
 import 'package:onestep_rezero/utils/onestepCustom/dialog/onestepCustomDialog.dart';
 import 'package:onestep_rezero/utils/timeUtil.dart';
 import 'package:rxdart/rxdart.dart';

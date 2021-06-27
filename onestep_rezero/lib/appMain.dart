@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:onestep_rezero/admob/googleAdmob.dart';
 import 'package:onestep_rezero/appmain/bottomNavigationItem.dart';
-import 'package:onestep_rezero/util/floatingSnackBar.dart';
+import 'package:onestep_rezero/utils/floatingSnackBar.dart';
 
 class AppMain extends StatefulWidget {
   AppMain({Key key}) : super(key: key);

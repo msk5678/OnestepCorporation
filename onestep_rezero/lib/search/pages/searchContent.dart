@@ -5,7 +5,7 @@ import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/search/pages/searchMain.dart';
 import 'package:onestep_rezero/search/widgets/product/searchProductBody.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:onestep_rezero/util/floatingSnackBar.dart';
+import 'package:onestep_rezero/utils/floatingSnackBar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SearchContent extends StatefulWidget {
