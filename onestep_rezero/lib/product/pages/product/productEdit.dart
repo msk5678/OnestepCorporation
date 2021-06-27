@@ -256,6 +256,7 @@ class _ProductEditState extends State<ProductEdit> {
   }
 
   Future<void> updateProduct() async {
+    print("@@@@@@@@@ ${_detailCategoryTextEditingController.text}");
     if (entity.length + _initImagesUrl.length < 1) {
       FloatingSnackBar.show(context, "물품을 등록하려면 한장 이상의 사진이 필요합니다.");
     } else if (_titleTextEditingController.text.trim() == "") {
@@ -295,7 +296,7 @@ class _ProductEditState extends State<ProductEdit> {
         'imagesUrl': _imgUriarr,
         'title': _titleTextEditingController.text,
         'category': _categoryTextEditingController.text,
-        'detailcategory': "",
+        'detailCategory': _detailCategoryTextEditingController.text,
         'price': _priceTextEditingController.text,
         'explain': _explainTextEditingController.text,
         'updateTime': time,
