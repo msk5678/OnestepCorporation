@@ -4,12 +4,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:onestep_rezero/animation/favoriteAnimation.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/favorite/utils/favoriteFirebaseApi.dart';
 import 'package:onestep_rezero/loggedInWidget.dart';
-import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/chat/navigator/chatNavigationManager.dart';
 import 'package:onestep_rezero/onestepCustomDialog.dart';
 import 'package:onestep_rezero/product/models/product.dart';
@@ -815,26 +813,23 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
               ),
               GestureDetector(
                 onTap: () {
-                  showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return OnestepCustomDialog(
-                          title: '상품을 삭제하시겠습니까?',
-                          description: '삭제한 상품은 복구할 수 없습니다.',
-                          cancleButtonText: '취소',
-                          confirmButtonText: '삭제',
-                          confirmButtonOnPress: () {
-                            FirebaseFirestore.instance
-                                .collection("university")
-                                .doc(currentUserModel.university)
-                                .collection("product")
-                                .doc(widget.product.firestoreid)
-                                .update({'deleted': true});
+                  OnestepCustomDialog.show(
+                    context,
+                    title: '상품을 삭제하시겠습니까?',
+                    description: '삭제한 상품은 복구할 수 없습니다.',
+                    cancleButtonText: '취소',
+                    confirmButtonText: '삭제',
+                    confirmButtonOnPress: () {
+                      FirebaseFirestore.instance
+                          .collection("university")
+                          .doc(currentUserModel.university)
+                          .collection("product")
+                          .doc(widget.product.firestoreid)
+                          .update({'deleted': true});
 
-                            Navigator.pop(context);
-                          },
-                        );
-                      });
+                      Navigator.pop(context);
+                    },
+                  );
                 },
                 child:
                     Row(children: [Icon(Icons.delete_outline), Text("상품삭제")]),

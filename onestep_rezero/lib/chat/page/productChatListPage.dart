@@ -9,7 +9,6 @@ import 'package:onestep_rezero/chat/productchat/model/productChatListCount.dart'
 import 'package:onestep_rezero/chat/widget/chatBadge.dart';
 import 'package:onestep_rezero/chat/widget/chat_list_time.dart';
 import 'package:onestep_rezero/loggedInWidget.dart';
-import 'package:onestep_rezero/main.dart';
 
 class ProductChatListPage extends StatefulWidget {
   @override

@@ -1,6 +1,5 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/loggedInWidget.dart';
 
@@ -200,16 +199,12 @@ class DealFirstCase extends StatelessWidget {
                                           // 같은 글을 신고한다
                                           if (value['postUid'] == true) {
                                             flag = true;
-                                            showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return OnestepCustomDialogNotCancel(
-                                                  title: '이미 신고한 게시물입니다.',
-                                                  confirmButtonText: '확인',
-                                                  confirmButtonOnPress: () {
-                                                    Navigator.pop(context);
-                                                  },
-                                                );
+                                            OnestepCustomDialogNotCancel.show(
+                                              context,
+                                              title: '이미 신고한 게시물입니다.',
+                                              confirmButtonText: '확인',
+                                              confirmButtonOnPress: () {
+                                                Navigator.pop(context);
                                               },
                                             );
                                           }
@@ -223,18 +218,14 @@ class DealFirstCase extends StatelessWidget {
                                 });
                         // 처음 신고한다
                         if (flag == false) {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return OnestepCustomDialog(
-                                title: '신고하시겠습니까?',
-                                confirmButtonText: '확인',
-                                cancleButtonText: '취소',
-                                confirmButtonOnPress: () {
-                                  report();
-                                  Navigator.pop(context);
-                                },
-                              );
+                          OnestepCustomDialog.show(
+                            context,
+                            title: '신고하시겠습니까?',
+                            confirmButtonText: '확인',
+                            cancleButtonText: '취소',
+                            confirmButtonOnPress: () {
+                              report();
+                              Navigator.pop(context);
                             },
                           );
                         }

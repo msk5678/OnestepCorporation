@@ -5,7 +5,6 @@ import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/loggedInWidget.dart';
 import 'package:onestep_rezero/myinfo/providers/providers.dart';
 
-import '../../main.dart';
 import '../../onestepCustomDialogNotCancel.dart';
 
 // ignore: must_be_immutable
@@ -122,17 +121,13 @@ class NickNameChangeBody extends ConsumerWidget {
                             .update({"nickName": _nicknameController.text});
                         _tempNickName = "";
                         _firstEnter = true;
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return OnestepCustomDialogNotCancel(
-                              title: '닉네임 변경이 완료되었습니다.',
-                              confirmButtonText: '확인',
-                              confirmButtonOnPress: () {
-                                Navigator.pop(context);
-                                Navigator.pop(context);
-                              },
-                            );
+                        OnestepCustomDialogNotCancel.show(
+                          context,
+                          title: '닉네임 변경이 완료되었습니다.',
+                          confirmButtonText: '확인',
+                          confirmButtonOnPress: () {
+                            Navigator.pop(context);
+                            Navigator.pop(context);
                           },
                         );
                       }

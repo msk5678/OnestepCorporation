@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:onestep_rezero/loggedInWidget.dart';
 
-import '../../main.dart';
-
 class ProductFirebaseApi {
   static Future<QuerySnapshot> getAllProducts(
     // 장터 메인 모든상품 불러오기

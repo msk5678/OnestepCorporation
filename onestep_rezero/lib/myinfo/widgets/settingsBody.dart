@@ -284,41 +284,35 @@ class SettingsBody extends ConsumerWidget {
           // ),
           InkWell(
             onTap: () {
-              showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return OnestepCustomDialog(
-                        title: "로그아웃 하시겠습니까?",
-                        confirmButtonText: "확인",
-                        cancleButtonText: "취소",
-                        confirmButtonOnPress: () {
-                          context
-                              .read(googleSignInProvider)
-                              .logout()
-                              .catchError((error, stackTrace) {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              duration: Duration(seconds: 2),
-                              content: Text(
-                                "로그아웃 실패",
-                                textAlign: TextAlign.center,
-                              ),
-                            ));
-                          }).whenComplete(() {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              duration: Duration(seconds: 2),
-                              content: Text(
-                                "로그아웃 되었습니다.",
-                                textAlign: TextAlign.center,
-                              ),
-                            ));
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (BuildContext context) =>
-                                        MainPage()));
-                          });
-                        });
-                  });
+              OnestepCustomDialog.show(context,
+                  title: "로그아웃 하시겠습니까?",
+                  confirmButtonText: "확인",
+                  cancleButtonText: "취소", confirmButtonOnPress: () {
+                context
+                    .read(googleSignInProvider)
+                    .logout()
+                    .catchError((error, stackTrace) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    duration: Duration(seconds: 2),
+                    content: Text(
+                      "로그아웃 실패",
+                      textAlign: TextAlign.center,
+                    ),
+                  ));
+                }).whenComplete(() {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    duration: Duration(seconds: 2),
+                    content: Text(
+                      "로그아웃 되었습니다.",
+                      textAlign: TextAlign.center,
+                    ),
+                  ));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (BuildContext context) => MainPage()));
+                });
+              });
             },
             child: Padding(
               padding: EdgeInsets.fromLTRB(

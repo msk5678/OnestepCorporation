@@ -6,11 +6,17 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:onestep_rezero/chat/widget/appColor.dart';
+import 'package:onestep_rezero/floatingSnackBar.dart';
 import 'package:onestep_rezero/loggedInWidget.dart';
 
 import 'package:onestep_rezero/onestepCustomDialog.dart';
 import 'package:onestep_rezero/product/models/product.dart';
 import 'package:onestep_rezero/product/pages/product/productAddCategorySelect.dart';
+import 'package:onestep_rezero/product/widgets/addOrEdit/category.dart';
+import 'package:onestep_rezero/product/widgets/addOrEdit/explain.dart';
+import 'package:onestep_rezero/product/widgets/addOrEdit/price.dart';
+import 'package:onestep_rezero/product/widgets/addOrEdit/title.dart';
 import 'package:onestep_rezero/product/widgets/main/productMainBody.dart';
 import 'package:pattern_formatter/numeric_formatter.dart';
 
@@ -30,10 +36,10 @@ class _ProductEditState extends State<ProductEdit> {
   List<dynamic> _initImagesUrl;
 
   TextEditingController _titleTextEditingController;
-  TextEditingController _priceTextEditingController = TextEditingController();
-  TextEditingController _explainTextEditingController = TextEditingController();
-  TextEditingController _categoryTextEditingController =
-      TextEditingController();
+  TextEditingController _priceTextEditingController;
+  TextEditingController _explainTextEditingController;
+  TextEditingController _categoryTextEditingController;
+  TextEditingController _detailCategoryTextEditingController;
 
   @override
   void initState() {
@@ -47,7 +53,8 @@ class _ProductEditState extends State<ProductEdit> {
         TextEditingController(text: widget.product.explain);
     _categoryTextEditingController =
         TextEditingController(text: widget.product.category);
-
+    _detailCategoryTextEditingController =
+        TextEditingController(text: widget.product.detailCategory);
     super.initState();
   }
 
@@ -248,157 +255,17 @@ class _ProductEditState extends State<ProductEdit> {
     );
   }
 
-  Widget title() {
-    return Column(
-      children: <Widget>[
-        Align(
-          alignment: Alignment.centerLeft,
-          child: Text(
-            "물품명",
-          ),
-        ),
-        Container(
-          margin: EdgeInsets.only(top: 10, bottom: 20),
-          child: TextField(
-            controller: _titleTextEditingController,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              focusedBorder: OutlineInputBorder(
-                borderSide: const BorderSide(color: Colors.grey),
-              ),
-              counterText: "",
-              hintText: "최대 20자까지 입력 가능",
-            ),
-            maxLength: 20,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget price() {
-    return Column(children: <Widget>[
-      Align(
-        alignment: Alignment.centerLeft,
-        child: Text(
-          "가격",
-        ),
-      ),
-      Container(
-        margin: EdgeInsets.only(top: 10, bottom: 20),
-        child: TextField(
-          controller: _priceTextEditingController,
-          keyboardType: TextInputType.number,
-          inputFormatters: [
-            ThousandsFormatter(),
-          ],
-          decoration: InputDecoration(
-            border: OutlineInputBorder(),
-            focusedBorder: OutlineInputBorder(
-              borderSide: const BorderSide(color: Colors.grey),
-            ),
-            counterText: "",
-            hintText: "가격을 입력해주세요",
-          ),
-          maxLength: 11,
-        ),
-      ),
-    ]);
-  }
-
-  Widget category() {
-    return Column(children: <Widget>[
-      Align(
-        alignment: Alignment.centerLeft,
-        child: Text(
-          "카테고리",
-        ),
-      ),
-      Container(
-        margin: EdgeInsets.only(top: 10, bottom: 20),
-        child: TextField(
-          controller: _categoryTextEditingController,
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => ProductAddCategorySelect()),
-            ).then((value) {
-              if (value != null) {
-                _categoryTextEditingController.text = value;
-              }
-            });
-          },
-          decoration: InputDecoration(
-            focusedBorder: OutlineInputBorder(
-              borderSide: const BorderSide(color: Colors.grey),
-            ),
-            border: OutlineInputBorder(),
-            hintText: '카테고리를 선택해주세요',
-            // isDense: true,
-            suffixIcon: Icon(Icons.keyboard_arrow_right_rounded),
-          ),
-          readOnly: true,
-        ),
-      ),
-    ]);
-  }
-
-  Widget explain() {
-    return Column(children: <Widget>[
-      Align(
-        alignment: Alignment.centerLeft,
-        child: Text(
-          "설명",
-        ),
-      ),
-      Container(
-        margin: EdgeInsets.only(top: 10, bottom: 20),
-        child: TextField(
-          keyboardType: TextInputType.multiline,
-          minLines: 11,
-          maxLines: null,
-          controller: _explainTextEditingController,
-          decoration: InputDecoration(
-            focusedBorder: OutlineInputBorder(
-              borderSide: const BorderSide(color: Colors.grey),
-            ),
-            border: OutlineInputBorder(),
-            counterText: "",
-            hintMaxLines: 2,
-            hintText: "상세한 상품정보(사이즈, 색상, 사용기간 등)를 입력하면 더욱 수월하게 거래할 수 있습니다",
-          ),
-        ),
-      ),
-    ]);
-  }
-
   Future<void> updateProduct() async {
-    if (_titleTextEditingController.text.trim() == "") {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        duration: Duration(seconds: 2),
-        content: Text("물품명을 입력해주세요."),
-      ));
+    if (entity.length + _initImagesUrl.length < 1) {
+      FloatingSnackBar.show(context, "물품을 등록하려면 한장 이상의 사진이 필요합니다.");
+    } else if (_titleTextEditingController.text.trim() == "") {
+      FloatingSnackBar.show(context, "물품명을 입력해주세요.");
     } else if (_priceTextEditingController.text.trim() == "") {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        duration: Duration(seconds: 2),
-        content: Text("가격을 입력해주세요."),
-      ));
+      FloatingSnackBar.show(context, "가격을 입력해주세요.");
     } else if (_categoryTextEditingController.text.trim() == "") {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        duration: Duration(seconds: 2),
-        content: Text("카테고리를 선택해주세요."),
-      ));
+      FloatingSnackBar.show(context, "카테고리를 선택해주세요.");
     } else if (_explainTextEditingController.text.trim() == "") {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        duration: Duration(seconds: 2),
-        content: Text("설명을 입력해주세요."),
-      ));
-    } else if (entity.length + _initImagesUrl.length < 1) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        duration: Duration(seconds: 2),
-        content: Text("물품을 등록하려면 한장 이상의 사진이 필요합니다."),
-      ));
+      FloatingSnackBar.show(context, "설명을 입력해주세요.");
     } else {
       List _imgUriarr = [];
 
@@ -453,26 +320,6 @@ class _ProductEditState extends State<ProductEdit> {
         ),
         backgroundColor: Colors.white,
         title: Text("물품 수정", style: TextStyle(color: Colors.black)),
-        actions: <Widget>[
-          new IconButton(
-            icon: new Icon(Icons.check),
-            onPressed: () => {
-              showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return OnestepCustomDialog(
-                      title: '상품을 수정하시겠습니까?',
-                      cancleButtonText: '취소',
-                      confirmButtonText: '확인',
-                      confirmButtonOnPress: () {
-                        updateProduct();
-                        Navigator.pop(context);
-                      },
-                    );
-                  }),
-            },
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -481,11 +328,46 @@ class _ProductEditState extends State<ProductEdit> {
             child: Column(
               children: <Widget>[
                 images(),
-                title(),
-                price(),
-                category(),
-                explain(),
+                ProductAddTitleTextField(
+                    titleTextEditingController: _titleTextEditingController),
+                ProductAddOrEditPriceTextField(
+                    priceTextEditingController: _priceTextEditingController),
+                ProductAddOrEditCategoryTextField(
+                    categoryTextEditingController:
+                        _categoryTextEditingController,
+                    detailCategoryTextEditingController:
+                        _detailCategoryTextEditingController),
+                ProductAddOrEditExplainTextField(
+                    explainTextEditingController:
+                        _explainTextEditingController),
               ],
+            ),
+          ),
+        ),
+      ),
+      bottomNavigationBar: InkWell(
+        onTap: () {
+          OnestepCustomDialog.show(
+            context,
+            title: '상품을 수정하시겠습니까?',
+            cancleButtonText: '취소',
+            confirmButtonText: '확인',
+            confirmButtonOnPress: () {
+              updateProduct();
+              Navigator.pop(context);
+            },
+          );
+        },
+        child: Container(
+          height: 60,
+          color: OnestepColors().mainColor,
+          child: Center(
+            child: Text(
+              "수정완료",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+              ),
             ),
           ),
         ),
