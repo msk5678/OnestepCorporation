@@ -431,7 +431,6 @@ class _LastChatState extends State<ChatScreen> {
                         ),
                       ],
                     ),
-                    // Text("ge"),
                   ),
                   actions: [
                     ProductChatMenu().getProductMenu(
