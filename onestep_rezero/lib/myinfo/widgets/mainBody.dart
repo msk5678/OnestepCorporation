@@ -101,13 +101,13 @@ class MyinfoMainBody extends ConsumerWidget {
                                 style: TextStyle(fontSize: 20),
                               ),
                             ),
-                            Container(
-                              child: Text(
-                                // 아이디
-                                snapshot.data.data()['email'].toString(),
-                                style: TextStyle(fontSize: 15),
-                              ),
-                            ),
+                            // Container(
+                            //   child: Text(
+                            //     // 아이디
+                            //     snapshot.data.data()['email'].toString(),
+                            //     style: TextStyle(fontSize: 15),
+                            //   ),
+                            // ),
                           ],
                         ),
                       ),

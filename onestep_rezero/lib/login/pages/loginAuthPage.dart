@@ -229,6 +229,26 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                               controller: _emailController,
                               onChanged: (text) {
                                 _tempEmail = text;
+
+                                if (_isEmailCheck.authFlag.isEmailChecked) {
+                                  _firstEmailEnter = true;
+                                  _isEmailCheck.changedAuthEmailChecked(false);
+
+                                  _isEmailCheck
+                                      .changedAuthEmailErrorUnderLine(true);
+                                  _isEmailCheck
+                                      .changedAuthEmailDupliCheckUnderLine(
+                                          true);
+                                  _isEmailCheck.changedAuthSendUnderLine(true);
+                                  _isEmailCheck.changedAuthNumber(true);
+                                  _isEmailCheck
+                                      .changedAuthTimeOverChecked(true);
+                                  _isEmailCheck.changedAuthTimerChecked(false);
+                                  _isEmailCheck.changedAuthSendClick(false);
+                                  _isEmailCheck.changedShowBtn(false);
+                                  _isEmailCheck.authFlag.levelClock = 300;
+                                  _authNumberController.text = "";
+                                }
                               },
                               decoration: InputDecoration(
                                 hintText: "대학교 이메일",
