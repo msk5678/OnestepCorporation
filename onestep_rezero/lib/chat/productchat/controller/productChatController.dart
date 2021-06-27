@@ -251,11 +251,10 @@ class ProductChatController {
             // });
           }
         });
-        Fluttertoast.showToast(msg: "챗 생성 성공.");
-        print("챗 생성");
+        // Fluttertoast.showToast(msg: "챗 생성 성공.");
       } catch (e) {
-        Fluttertoast.showToast(msg: "$e 챗 생성 에러.");
-        print("챗 생성 에러 $e");
+        // Fluttertoast.showToast(msg: "$e 챗 생성 에러.");
+
       }
       return true;
     } //if

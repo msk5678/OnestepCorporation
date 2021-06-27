@@ -147,9 +147,9 @@ String _getMessageTime(String timestamp) {
   var time;
   var meridiem;
 
-  var nowtime = DateFormat("yyyy년 MM월 dd일/EEEE/a/kk:mm").format(
-      DateTime.fromMillisecondsSinceEpoch(
-          int.parse(DateTime.now().millisecondsSinceEpoch.toString())));
+  // var nowtime = DateFormat("yyyy년 MM월 dd일/EEEE/a/kk:mm").format(
+  //     DateTime.fromMillisecondsSinceEpoch(
+  //         int.parse(DateTime.now().millisecondsSinceEpoch.toString())));
   // var nowtimelist = nowtime.split('/');
 
   var gettime = DateFormat("yyyy년 MM월 dd일/EEEE/a/kk:mm")
