@@ -15,7 +15,7 @@ import 'package:onestep_rezero/board/declareData/postData.dart';
 import 'package:onestep_rezero/board/declareData/commentData.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
-import 'package:onestep_rezero/main.dart';
+import 'package:onestep_rezero/loggedInWidget.dart';
 import 'package:onestep_rezero/timeUtil.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 

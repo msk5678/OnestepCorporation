@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:onestep_rezero/board/declareData/postData.dart';
-import 'package:onestep_rezero/main.dart';
+import 'package:onestep_rezero/loggedInWidget.dart';
 
 class PostProvider with ChangeNotifier {
   String _errorMessage = "PostProvider Provider RuntimeError";

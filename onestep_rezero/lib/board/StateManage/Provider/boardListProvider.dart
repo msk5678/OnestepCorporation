@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:onestep_rezero/board/declareData/boardData.dart';
-import 'package:onestep_rezero/main.dart';
+import 'package:onestep_rezero/loggedInWidget.dart';
 
 // final futureBoardProvider = FutureProvider<Map<String, String>>((ref) async {
 //   Map<String, String> boardList = {};

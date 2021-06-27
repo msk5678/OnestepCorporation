@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:onestep_rezero/board/StateManage/Provider/userProvider.dart';
 import 'package:onestep_rezero/board/declareData/postData.dart';
-import 'package:onestep_rezero/main.dart';
+import 'package:onestep_rezero/loggedInWidget.dart';
 
 class PostListProvider with ChangeNotifier {
   // final boardName;

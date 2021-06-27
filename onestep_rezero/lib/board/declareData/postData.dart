@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:multi_image_picker2/multi_image_picker2.dart';
+import 'package:onestep_rezero/loggedInWidget.dart';
+
 import 'package:random_string/random_string.dart';
 
 import '../../main.dart';

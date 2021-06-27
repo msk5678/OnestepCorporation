@@ -349,8 +349,8 @@ class _BoardMainState extends State<BoardMain> {
 
   @override
   Widget build(BuildContext context) {
-    int bottomNaviIndex = currentBottomNaviIndex ?? 0;
-    manageAnimationTimer(bottomNaviIndex == 2);
+    // int bottomNaviIndex = currentBottomNaviIndex ?? 0;
+    // manageAnimationTimer(bottomNaviIndex == 2);
     double mintColorContainerHeight = deviceHeight / 10;
     // Color pColor = Color.fromRGBO(164, 227, 210, 1);
     return Scaffold(

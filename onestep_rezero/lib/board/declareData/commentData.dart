@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:onestep_rezero/board/declareData/postData.dart';
-import '../../main.dart';
+import 'package:onestep_rezero/loggedInWidget.dart';
 
 class CommentData {
   final uid;

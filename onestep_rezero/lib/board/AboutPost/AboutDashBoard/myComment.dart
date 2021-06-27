@@ -11,7 +11,8 @@ import 'package:onestep_rezero/board/declareData/boardData.dart';
 import 'package:onestep_rezero/board/declareData/commentData.dart';
 import 'package:onestep_rezero/board/declareData/postData.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
-import 'package:onestep_rezero/main.dart';
+import 'package:onestep_rezero/loggedInWidget.dart';
+
 import 'package:onestep_rezero/timeUtil.dart';
 // class UserWritenCommentList extends CommentWidget{
 
