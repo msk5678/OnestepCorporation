@@ -1,18 +1,22 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:onestep_rezero/chat/widget/appColor.dart';
+import 'package:onestep_rezero/floatingSnackBar.dart';
 import 'package:onestep_rezero/loggedInWidget.dart';
 
-import 'package:onestep_rezero/main.dart';
-import 'package:onestep_rezero/product/models/categorySelectItem.dart';
-import 'package:onestep_rezero/product/pages/product/productAddCategorySelect.dart';
-import 'package:onestep_rezero/product/utils/numericTextFormatter.dart';
+import 'package:onestep_rezero/product/widgets/addOrEdit/category.dart';
+import 'package:onestep_rezero/product/widgets/addOrEdit/explain.dart';
+import 'package:onestep_rezero/product/widgets/addOrEdit/price.dart';
+import 'package:onestep_rezero/product/widgets/addOrEdit/title.dart';
 
 import 'package:onestep_rezero/product/widgets/main/productMainBody.dart';
 import 'package:random_string/random_string.dart';
@@ -28,15 +32,24 @@ class ProductAdd extends StatefulWidget {
 class _ProductAddState extends State<ProductAdd> {
   List<AssetEntity> entity = [];
 
-  CategorySelectItem categorySelectItem;
   final _titleTextEditingController = TextEditingController();
   final _priceTextEditingController = TextEditingController();
   final _explainTextEditingController = TextEditingController();
   final _categoryTextEditingController = TextEditingController();
+  final _detailCategoryTextEditingController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
+  }
+
+  Future<Uint8List> assetCompressFile(File file) async {
+    var result = await FlutterImageCompress.compressWithFile(
+      file.absolute.path,
+      quality: 30,
+    );
+
+    return result;
   }
 
   Future<void> pickAssets() async {
@@ -176,178 +189,37 @@ class _ProductAddState extends State<ProductAdd> {
     );
   }
 
-  Widget title() {
-    return Column(
-      children: <Widget>[
-        Align(
-          alignment: Alignment.centerLeft,
-          child: Text(
-            "물품명",
-          ),
-        ),
-        Container(
-          margin: EdgeInsets.only(top: 10, bottom: 20),
-          child: TextField(
-            controller: _titleTextEditingController,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              focusedBorder: OutlineInputBorder(
-                borderSide: const BorderSide(color: Colors.grey),
-              ),
-              counterText: "",
-              hintText: "최대 50자까지 입력 가능",
-            ),
-            maxLength: 50,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget price() {
-    return Column(children: <Widget>[
-      Align(
-        alignment: Alignment.centerLeft,
-        child: Text(
-          "가격",
-        ),
+  void snackBar(String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      duration: Duration(seconds: 2),
+      behavior: SnackBarBehavior.floating,
+      content: Text(
+        msg,
+        textAlign: TextAlign.center,
       ),
-      Container(
-        margin: EdgeInsets.only(top: 10, bottom: 20),
-        child: TextField(
-          controller: _priceTextEditingController,
-          keyboardType: TextInputType.number,
-          inputFormatters: [NumericTextFormatter()],
-          decoration: InputDecoration(
-            border: OutlineInputBorder(),
-            focusedBorder: OutlineInputBorder(
-              borderSide: const BorderSide(color: Colors.grey),
-            ),
-            counterText: "",
-            hintText: "가격을 입력해주세요",
-          ),
-          maxLength: 11,
-        ),
-      ),
-    ]);
-  }
-
-  Widget category() {
-    return Column(children: <Widget>[
-      Align(
-        alignment: Alignment.centerLeft,
-        child: Text(
-          "카테고리",
-        ),
-      ),
-      Container(
-        margin: EdgeInsets.only(top: 10, bottom: 20),
-        child: TextField(
-          controller: _categoryTextEditingController,
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => ProductAddCategorySelect()),
-            ).then((value) {
-              if (value != null) {
-                categorySelectItem = value;
-                if (categorySelectItem.detailCategory == null) {
-                  _categoryTextEditingController.text =
-                      categorySelectItem.category;
-                } else {
-                  _categoryTextEditingController.text =
-                      categorySelectItem.category +
-                          " > " +
-                          categorySelectItem.detailCategory;
-                }
-              }
-            });
-          },
-          decoration: InputDecoration(
-              focusedBorder: OutlineInputBorder(
-                borderSide: const BorderSide(color: Colors.grey),
-              ),
-              border: OutlineInputBorder(),
-              hintText: '카테고리를 선택해주세요',
-              // isDense: true,
-              suffixIcon: Icon(Icons.keyboard_arrow_right_rounded,
-                  color: Colors.black)),
-          readOnly: true,
-        ),
-      ),
-    ]);
-  }
-
-  Widget explain() {
-    return Column(children: <Widget>[
-      Align(
-        alignment: Alignment.centerLeft,
-        child: Text(
-          "설명",
-        ),
-      ),
-      Container(
-        margin: EdgeInsets.only(top: 10, bottom: 20),
-        child: TextField(
-          keyboardType: TextInputType.multiline,
-          minLines: 11,
-          maxLines: null,
-          controller: _explainTextEditingController,
-          decoration: InputDecoration(
-            focusedBorder: OutlineInputBorder(
-              borderSide: const BorderSide(color: Colors.grey),
-            ),
-            border: OutlineInputBorder(),
-            counterText: "",
-            hintMaxLines: 2,
-            hintText: "상세한 상품정보(사이즈, 색상, 사용기간 등)를 입력하면 더욱 수월하게 거래할 수 있습니다",
-          ),
-        ),
-      ),
-    ]);
+    ));
   }
 
   Future<void> uploadProduct() async {
-    if (_titleTextEditingController.text.trim() == "") {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        duration: Duration(seconds: 2),
-        content: Text("물품명을 입력해주세요."),
-      ));
+    if (entity.length < 1) {
+      FloatingSnackBar.show(context, "물품을 등록하려면 한장 이상의 사진이 필요합니다.");
+    } else if (_titleTextEditingController.text.trim() == "") {
+      FloatingSnackBar.show(context, "물품명을 입력해주세요.");
     } else if (_priceTextEditingController.text.trim() == "") {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        duration: Duration(seconds: 2),
-        content: Text("가격을 입력해주세요."),
-      ));
+      FloatingSnackBar.show(context, "가격을 입력해주세요.");
     } else if (_categoryTextEditingController.text.trim() == "") {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        duration: Duration(seconds: 2),
-        content: Text("카테고리를 선택해주세요."),
-      ));
+      FloatingSnackBar.show(context, "카테고리를 선택해주세요.");
     } else if (_explainTextEditingController.text.trim() == "") {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        duration: Duration(seconds: 2),
-        content: Text("설명을 입력해주세요."),
-      ));
-    } else if (entity.length < 1) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        duration: Duration(seconds: 2),
-        content: Text("물품을 등록하려면 한장 이상의 사진이 필요합니다."),
-      ));
+      FloatingSnackBar.show(context, "설명을 입력해주세요.");
     } else {
       List _imgUriarr = [];
-      final Size size = MediaQuery.of(context).size;
-      final double scale = MediaQuery.of(context).devicePixelRatio;
 
       for (var image in entity) {
         Reference storageReference = FirebaseStorage.instance
             .ref()
             .child("productimage/${randomAlphaNumeric(15)}");
 
-        Uint8List uint8list = await image.thumbDataWithSize(
-          (size.width * scale).toInt(),
-          (size.height * scale).toInt(),
-        );
+        Uint8List uint8list = await assetCompressFile(await image.originFile);
 
         UploadTask storageUploadTask = storageReference.putData(uint8list);
         await storageUploadTask.whenComplete(() async {
@@ -366,8 +238,8 @@ class _ProductAddState extends State<ProductAdd> {
         'uid': currentUserModel.uid,
         'imagesUrl': _imgUriarr,
         'title': _titleTextEditingController.text,
-        'category': categorySelectItem.category,
-        'detailCategory': categorySelectItem.detailCategory,
+        'category': _categoryTextEditingController.text,
+        'detailCategory': _detailCategoryTextEditingController.text,
         'price': _priceTextEditingController.text,
         'explain': _explainTextEditingController.text,
         'favoriteUserList': {},
@@ -382,10 +254,7 @@ class _ProductAddState extends State<ProductAdd> {
         'updateTime': time,
         'bumpTime': time,
       }).whenComplete(() {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          duration: Duration(seconds: 2),
-          content: Text("물품 등록이 완료되었습니다."),
-        ));
+        FloatingSnackBar.show(context, "물품 등록이 완료되었습니다.");
         context.read(productMainService).fetchProducts();
         Navigator.pop(context);
       });
@@ -402,15 +271,6 @@ class _ProductAddState extends State<ProductAdd> {
         ),
         backgroundColor: Colors.white,
         title: Text("물품 등록", style: TextStyle(color: Colors.black)),
-        actions: <Widget>[
-          new IconButton(
-            icon: new Icon(Icons.check),
-            onPressed: () => {
-              uploadProduct(),
-              // uploadProductDialog(),
-            },
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -419,11 +279,35 @@ class _ProductAddState extends State<ProductAdd> {
             child: Column(
               children: <Widget>[
                 images(),
-                title(),
-                price(),
-                category(),
-                explain(),
+                ProductAddTitleTextField(
+                    titleTextEditingController: _titleTextEditingController),
+                ProductAddOrEditPriceTextField(
+                    priceTextEditingController: _priceTextEditingController),
+                ProductAddOrEditCategoryTextField(
+                    categoryTextEditingController:
+                        _categoryTextEditingController,
+                    detailCategoryTextEditingController:
+                        _detailCategoryTextEditingController),
+                ProductAddOrEditExplainTextField(
+                    explainTextEditingController:
+                        _explainTextEditingController),
               ],
+            ),
+          ),
+        ),
+      ),
+      bottomNavigationBar: InkWell(
+        onTap: () => uploadProduct(),
+        child: Container(
+          height: 60,
+          color: OnestepColors().mainColor,
+          child: Center(
+            child: Text(
+              "등록완료",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+              ),
             ),
           ),
         ),

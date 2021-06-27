@@ -83,4 +83,8 @@ class NickNameProvider extends StateNotifier<bool> {
       state = docRef.isEmpty;
     }
   }
+
+  void resetCheck(bool check) {
+    state = check;
+  }
 }

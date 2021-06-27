@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:onestep_rezero/loggedInWidget.dart';
-import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/myinfo/pages/infomation/noticePage.dart';
 import 'package:onestep_rezero/myinfo/pages/myinfoProfilePage.dart';
 import 'package:onestep_rezero/myinfo/pages/myinfoTransaction.dart';
@@ -102,13 +101,13 @@ class MyinfoMainBody extends ConsumerWidget {
                                 style: TextStyle(fontSize: 20),
                               ),
                             ),
-                            Container(
-                              child: Text(
-                                // 아이디
-                                snapshot.data.data()['email'].toString(),
-                                style: TextStyle(fontSize: 15),
-                              ),
-                            ),
+                            // Container(
+                            //   child: Text(
+                            //     // 아이디
+                            //     snapshot.data.data()['email'].toString(),
+                            //     style: TextStyle(fontSize: 15),
+                            //   ),
+                            // ),
                           ],
                         ),
                       ),
@@ -195,20 +194,17 @@ class MyinfoMainBody extends ConsumerWidget {
                   ),
                   InkWell(
                     onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return OnestepCustomDialogNotCancel(
-                            title: '대학교인증 완료',
-                            description:
-                                '${f.format(DateTime.fromMillisecondsSinceEpoch(snapshot.data.data()['authTime']))} 에 완료하셨습니다',
-                            confirmButtonText: '확인',
-                            confirmButtonOnPress: () {
-                              Navigator.pop(context);
-                            },
-                          );
+                      OnestepCustomDialogNotCancel.show(
+                        context,
+                        title: '대학교인증 완료',
+                        description:
+                            '${f.format(DateTime.fromMillisecondsSinceEpoch(snapshot.data.data()['authTime']))} 에 완료하셨습니다',
+                        confirmButtonText: '확인',
+                        confirmButtonOnPress: () {
+                          Navigator.pop(context);
                         },
                       );
+
                       //                     AsyncSnapshot<DocumentSnapshot> snapshot) {
                       // final f = DateFormat('yyyy-MM-dd hh:mm');
                       // showDialog(
@@ -263,20 +259,17 @@ class MyinfoMainBody extends ConsumerWidget {
                           IconButton(
                             icon: Icon(Icons.keyboard_arrow_right),
                             onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return OnestepCustomDialogNotCancel(
-                                    title: '대학교인증 완료',
-                                    description:
-                                        '${f.format(DateTime.fromMillisecondsSinceEpoch(snapshot.data.data()['authTime']))} 에 완료하셨습니다',
-                                    confirmButtonText: '확인',
-                                    confirmButtonOnPress: () {
-                                      Navigator.pop(context);
-                                    },
-                                  );
+                              OnestepCustomDialogNotCancel.show(
+                                context,
+                                title: '대학교인증 완료',
+                                description:
+                                    '${f.format(DateTime.fromMillisecondsSinceEpoch(snapshot.data.data()['authTime']))} 에 완료하셨습니다',
+                                confirmButtonText: '확인',
+                                confirmButtonOnPress: () {
+                                  Navigator.pop(context);
                                 },
                               );
+
                               // snapshot.data.data()['auth'] == 1
                               //     ? _showDialog(context, 1, snapshot)
                               //     : _showDialog(context, 2, snapshot);

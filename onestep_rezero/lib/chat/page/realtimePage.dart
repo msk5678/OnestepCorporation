@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:onestep_rezero/chat/boardchat/model/productChat.dart';
 import 'package:onestep_rezero/chat/boardchat/model/productChatCount.dart';
 import 'package:onestep_rezero/chat/boardchat/realtimeProductChatController.dart';
@@ -9,7 +8,6 @@ import 'package:onestep_rezero/chat/navigator/chatNavigationManager.dart';
 import 'package:onestep_rezero/chat/widget/chatBadge.dart';
 import 'package:onestep_rezero/chat/widget/chat_list_time.dart';
 import 'package:onestep_rezero/loggedInWidget.dart';
-import 'package:onestep_rezero/main.dart';
 
 class RealTimePage extends StatefulWidget {
   @override

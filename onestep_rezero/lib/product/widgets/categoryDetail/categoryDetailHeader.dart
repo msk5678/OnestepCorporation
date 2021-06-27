@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:onestep_rezero/loggedInWidget.dart';
-import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/product/widgets/categoryDetail/categoryDetailBody.dart';
 import 'package:rxdart/rxdart.dart';
 

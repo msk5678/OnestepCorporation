@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/login/pages/loginAuthPage.dart';
 import 'package:onestep_rezero/login/providers/providers.dart';
@@ -143,6 +142,10 @@ class JoinBody extends ConsumerWidget {
                       controller: _nicknameController,
                       onChanged: (text) {
                         _tempNickName = text;
+                        if (_isNickNameCheck) {
+                          context.read(nickNameProvider).resetCheck(false);
+                          _firstNickNameEnter = true;
+                        }
                       },
                       decoration: InputDecoration(
                         counterText: "",
@@ -265,22 +268,16 @@ class JoinBody extends ConsumerWidget {
                               // Navigator.of(context).push(MaterialPageRoute(
                               //     builder: (context) =>
                               //         ChoiceAuthWayPage(user)));
-
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return OnestepCustomDialogNotCancel(
-                                    title: '한발자국 회원가입을 환영합니다!',
-                                    description:
-                                        '한발자국을 이용하기 위해서는 \n 학교이메일 인증이 필수입니다. \n모든 서비스는 대학교인증을 하고 난 뒤에 \n 이용이 가능합니다.',
-                                    confirmButtonText: '확인',
-                                    confirmButtonOnPress: () {
-                                      Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  LoginAuthPage(user)));
-                                    },
-                                  );
+                              OnestepCustomDialogNotCancel.show(
+                                context,
+                                title: '한발자국 회원가입을 환영합니다!',
+                                description:
+                                    '한발자국을 이용하기 위해서는 \n 학교이메일 인증이 필수입니다. \n모든 서비스는 대학교인증을 하고 난 뒤에 \n 이용이 가능합니다.',
+                                confirmButtonText: '확인',
+                                confirmButtonOnPress: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) =>
+                                          LoginAuthPage(user)));
                                 },
                               );
                             }
