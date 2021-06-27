@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:onestep_rezero/loggedInWidget.dart';
-import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/myinfo/pages/infomation/noticePage.dart';
 import 'package:onestep_rezero/myinfo/pages/myinfoProfilePage.dart';
 import 'package:onestep_rezero/myinfo/pages/myinfoTransaction.dart';
@@ -102,13 +101,13 @@ class MyinfoMainBody extends ConsumerWidget {
                                 style: TextStyle(fontSize: 20),
                               ),
                             ),
-                            Container(
-                              child: Text(
-                                // 아이디
-                                snapshot.data.data()['email'].toString(),
-                                style: TextStyle(fontSize: 15),
-                              ),
-                            ),
+                            // Container(
+                            //   child: Text(
+                            //     // 아이디
+                            //     snapshot.data.data()['email'].toString(),
+                            //     style: TextStyle(fontSize: 15),
+                            //   ),
+                            // ),
                           ],
                         ),
                       ),

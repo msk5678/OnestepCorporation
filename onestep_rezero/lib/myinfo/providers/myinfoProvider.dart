@@ -57,4 +57,8 @@ class MyinfoProvider extends StateNotifier<bool> {
       state = docRef.isEmpty;
     }
   }
+
+  void resetCheck(bool check) {
+    state = check;
+  }
 }

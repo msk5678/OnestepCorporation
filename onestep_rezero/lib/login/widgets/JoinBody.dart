@@ -143,6 +143,10 @@ class JoinBody extends ConsumerWidget {
                       controller: _nicknameController,
                       onChanged: (text) {
                         _tempNickName = text;
+                        if (_isNickNameCheck) {
+                          context.read(nickNameProvider).resetCheck(false);
+                          _firstNickNameEnter = true;
+                        }
                       },
                       decoration: InputDecoration(
                         counterText: "",
