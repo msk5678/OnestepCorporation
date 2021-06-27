@@ -615,9 +615,6 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                           .set({
                                         "loginTime": time,
                                       });
-                                      categoryList = FirebaseFirestore.instance
-                                          .collection('category')
-                                          .get();
 
                                       Future.delayed(
                                           const Duration(milliseconds: 200),

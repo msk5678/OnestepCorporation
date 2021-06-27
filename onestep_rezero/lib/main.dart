@@ -10,6 +10,7 @@ import 'package:onestep_rezero/signUpWidget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onestep_rezero/timeUtil.dart';
 import 'appmain/routeGenterator.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // 비동기 함수 사용 처리

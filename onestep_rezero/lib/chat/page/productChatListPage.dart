@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onestep_rezero/chat/navigator/chatNavigationManager.dart';
 import 'package:onestep_rezero/chat/productchat/controller/productChatController.dart';
+import 'package:onestep_rezero/chat/productchat/controller/productChatListController.dart';
 
 import 'package:onestep_rezero/chat/productchat/model/productChatList.dart';
 import 'package:onestep_rezero/chat/productchat/model/productChatListCount.dart';
 import 'package:onestep_rezero/chat/widget/chatBadge.dart';
 import 'package:onestep_rezero/chat/widget/chat_list_time.dart';
 import 'package:onestep_rezero/loggedInWidget.dart';
-import 'package:onestep_rezero/main.dart';
 
 class ProductChatListPage extends StatefulWidget {
   @override
@@ -41,7 +41,16 @@ class _ProductChatListPageState extends State<ProductChatListPage>
           bottom: 30.0,
         ),
         child: FloatingActionButton(
-          onPressed: () {},
+          onPressed: () {
+            Fluttertoast.showToast(
+                msg: "This is Center Short Toast",
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.CENTER,
+                timeInSecForIosWeb: 1,
+                backgroundColor: Colors.red,
+                textColor: Colors.white,
+                fontSize: 16.0);
+          },
         ),
       ),
     );
@@ -194,7 +203,7 @@ class _ProductChatListPageState extends State<ProductChatListPage>
               listProductChatCount2.forEach((count) {
                 sum += count.chatCount;
               });
-              ProductChatController().setToFirebaseProductChatCount(sum);
+              ProductChatListController().setToFirebaseProductChatCount(sum);
               return userExist == true
                   ? Center(
                       child: Container(
@@ -239,7 +248,7 @@ class _ProductChatListPageState extends State<ProductChatListPage>
                                         leading: Padding(
                                           padding:
                                               const EdgeInsets.only(top: 5.0),
-                                          child: ProductChatController()
+                                          child: ProductChatListController()
                                               .getUserImage(
                                                   chatId, productsUserId),
                                         ),
@@ -253,64 +262,17 @@ class _ProductChatListPageState extends State<ProductChatListPage>
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.end,
                                               children: <Widget>[
-                                                ProductChatController()
+                                                ProductChatListController()
                                                     .getProductUserNickName(
                                                   chatId,
                                                   productsUserId,
                                                   14,
                                                 ),
-                                                // FutureBuilder(
-                                                //     future: ee,
-                                                //     builder:
-                                                //         (context, snapshot) {
-                                                //       switch (snapshot
-                                                //           .connectionState) {
-                                                //         case ConnectionState
-                                                //             .waiting:
-                                                //           return CircularProgressIndicator();
-                                                //         default:
-                                                //           if (snapshot
-                                                //                   .hasData ==
-                                                //               false) {
-                                                //             // print("YES ${snapshot.data.toString()}");
-                                                //             return CircularProgressIndicator();
-                                                //           } else {
-                                                //             // print("No ${snapshot.data.toString()}");
-                                                //             return Material(
-                                                //               child:
-                                                //                   CachedNetworkImage(
-                                                //                 imageUrl:
-                                                //                     snapshot
-                                                //                         .data,
-                                                //                 // productMessage.content.imageUrl,
-                                                //                 fit: BoxFit
-                                                //                     .cover,
-                                                //                 height: 40,
-                                                //                 width: 40,
-                                                //               ),
-                                                //               borderRadius:
-                                                //                   BorderRadius
-                                                //                       .all(
-                                                //                 Radius.circular(
-                                                //                     18.0),
-                                                //               ),
-                                                //               clipBehavior:
-                                                //                   Clip.hardEdge,
-                                                //             );
-                                                //           }
-                                                //       }
-                                                //     }),
-
                                                 SizedBox(width: 10, height: 10),
                                                 Spacer(),
                                                 getChatListTime(
                                                     listProductChat[index]
                                                         .recentTime),
-                                                // Container(
-                                                //   width: 130,
-                                                //   height: 530,
-                                                //   color: Colors.blue,
-                                                // ),
                                               ],
                                             ),
                                           ),

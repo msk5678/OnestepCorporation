@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 final googleSignInProvider =
@@ -18,7 +19,6 @@ class GoogleSignInProvider extends ChangeNotifier {
   Future googleLogin() async {
     try {
       final googleUser = await googleSignIn.signIn();
-
       if (googleUser == null) return;
       _user = googleUser;
 
@@ -33,6 +33,11 @@ class GoogleSignInProvider extends ChangeNotifier {
 
       notifyListeners();
     } catch (e) {
+      Fluttertoast.showToast(
+        msg: "로그인 실패",
+        backgroundColor: Colors.black,
+        textColor: Colors.white,
+      );
       print("@@@@@@@ google_sign_in googleLogin() 로그인 실패 ${e.toString()}");
     }
   }

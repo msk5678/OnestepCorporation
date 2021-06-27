@@ -1,10 +1,9 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:hive/hive.dart';
+import 'package:onestep_rezero/chat/productchat/controller/productChatLocalController.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/loggedInWidget.dart';
 
@@ -12,41 +11,32 @@ import 'package:onestep_rezero/product/models/product.dart';
 
 class ProductChatController {
   //Product Chat Count
-  static final DatabaseReference productChatReference =
-      FirebaseDatabase.instance
-          .reference()
-          .child("university")
-          .child(currentUserModel.university) //향후 대학교 id값 가져와서 추가
-          .child("chat")
-          .child("productchat");
+  static final DatabaseReference productChatReference = FirebaseDatabase
+      .instance
+      .reference()
+      .child("university")
+      .child(currentUserModel.university)
+      .child("chat")
+      .child("productchat");
 
-  int productChatcount = 0;
-
-  //채팅방 생성 시 상대방 정보 내부 저장 / 채팅방 정보 fb 저장
   Future<void> createProductChatToRealtimeDatabase(
       String friendUid, String postId, String chatId) async {
     String myUid = currentUserModel.uid;
     // print("proChatController-createProductChatToRealtimeDatabase 1. 채팅방 생성");
     try {
-      //1.
-
-      //2. users 판매자 정보 가져오기 : 판매자 닉네임, 이미지 가져오기
+      //2. users 판매자 정보 가져오기 : 닉네임, 이미지
       FirebaseFirestore.instance
           .collection("user")
           .doc(friendUid)
           .get()
           .then((uservalue) {
-        //읽어온 상대방 정보 내부db 저장
-        // print("FriendNickname test");
         // print("FriendNickname : ${uservalue["nickName"].toString()}");
         // print("FriendNickImage : ${uservalue["photoUrl"].toString()}");
       }).whenComplete(
         () {
           var nowTime = DateTime.now().millisecondsSinceEpoch.toString();
-//Realtime data base
-          productChatReference.child(chatId)
-              //.child("roominfo")
-              .set({
+          //Realtime data base
+          productChatReference.child(chatId).set({
             "chatId": chatId,
             "postId": postId,
             "createTime": nowTime,
@@ -65,8 +55,6 @@ class ProductChatController {
               },
             },
           }).whenComplete(() {
-            // print("proChatController-createProductChatToRealtimeDatabase 2. 채팅방 생성 완료, 초기 메세지 생성");
-
             // onSendToProductMessage(chatId, friendUid, product, 3);
             // onSendToProductAddMessage(chatId, friendUid);
 
@@ -90,46 +78,10 @@ class ProductChatController {
     onSendToProductMessage(chatId, friendUid, "이 상품에 관심있어요!", 0);
   }
 
-  Future getUserId(String proUserId) async {
-    // return this._memoizer.runOnce(() async {
-    return FirebaseFirestore.instance.collection('user').doc(proUserId).get();
-    // });
-  }
-
-  setChatUserimageUrl(String chatId, String imageUrl)
-  //async
-  {
-    //1. 없을 경우 저장
-    //2. 있는데 다를 경우 저장
-
-    // print("1. 유저 이미지 내부 저장");
-    // SharedPreferences prefsChatUserImageUrls =
-    //     await SharedPreferences.getInstance();
-    // await prefsChatUserImageUrls.setString(chatId, imageUrl);
-    print("내부디비 저장 ");
-    if (Hive.box('localChatList').get('$chatId + image') == null ||
-        Hive.box('localChatList').get('$chatId + image') != imageUrl) {
-      Hive.box('localChatList').put('$chatId + image', imageUrl);
-      print("내부디비 저장 완 : $imageUrl");
-    }
-  }
-
-  getChatUserimageUrl(String chatId) {
-    print("내부디비 저장 불러 ");
-    String imageUrl = Hive.box('localChatList').get('$chatId + image');
-    print("내부디비 저장 불러 완 : $imageUrl");
-    return imageUrl;
-
-    // SharedPreferences prefsChatUserImageUrls =
-    //     await SharedPreferences.getInstance();
-    // imageUrl = prefsChatUserImageUrls.getString(chatId);
-    // print("클 2. 내부 db 값 : GetChatUserPhotoUrl : $imageUrl");
-  }
-
-  getUserImageToChat(String chatId) {
+  Widget getUserImageToChat(String chatId) {
     return Material(
       child: CachedNetworkImage(
-        imageUrl: getChatUserimageUrl(chatId),
+        imageUrl: ProductChatLocalController().getChatUserimageUrl(chatId),
         // productMessage.content.imageUrl,
         fit: BoxFit.cover,
         height: 40,
@@ -142,200 +94,10 @@ class ProductChatController {
     );
   }
 
-  FutureBuilder getUserImagetoChatroom(String chatId) {
-    return FutureBuilder(
-        future: getChatUserimageUrl(chatId),
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.waiting:
-              return CircularProgressIndicator();
-            default:
-              if (snapshot.hasData == false) {
-                // print("YES ${snapshot.data.toString()}");
-                return CircularProgressIndicator();
-              } else {
-                // print("No ${snapshot.data.toString()}");
-                return Material(
-                  child: CachedNetworkImage(
-                    imageUrl: snapshot.data,
-                    // productMessage.content.imageUrl,
-                    fit: BoxFit.cover,
-                    height: 40,
-                    width: 40,
-                  ),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(18.0),
-                  ),
-                  clipBehavior: Clip.hardEdge,
-                );
-              }
-          }
-        });
-  }
-
-  FutureBuilder getUserImage(String chatId, String proUserId) {
-    return FutureBuilder(
-      future: getUserId(proUserId),
-      builder: (context, snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.waiting:
-            //return CircularProgressIndicator();
-
-            return
-                // Text("dd");
-                // Material(child: Text("대기1"));
-                Material(
-              child: CachedNetworkImage(
-                imageUrl: getChatUserimageUrl(chatId),
-                fit: BoxFit.cover,
-                height: 50,
-                width: 50,
-              ),
-              borderRadius: BorderRadius.all(
-                Radius.circular(18.0),
-              ),
-              clipBehavior: Clip.hardEdge,
-            );
-          default:
-            if (snapshot.hasData == false) {
-              print("클2");
-              return Material(
-                child: CachedNetworkImage(
-                  imageUrl: chatId,
-                  // productMessage.content.imageUrl,
-                  fit: BoxFit.cover,
-                  height: 35,
-                  width: 35,
-                ),
-                borderRadius: BorderRadius.all(
-                  Radius.circular(18.0),
-                ),
-                clipBehavior: Clip.hardEdge,
-              );
-              CircularProgressIndicator(
-                strokeWidth: 0,
-              );
-            }
-
-            if (snapshot.data['imageUrl'] == "") {
-              //프로필사진 미설정
-              return LayoutBuilder(builder: (context, constraint) {
-                return Icon(
-                  Icons.supervised_user_circle,
-                  size: 50,
-                  //constraint.biggest.height,
-                );
-              });
-            } else if (snapshot.hasError) {
-              return Padding(
-                padding: const EdgeInsets.all(0.0),
-                child: Text(
-                  'Error: ${snapshot.error}',
-                  style: TextStyle(fontSize: 15),
-                ),
-              );
-            } else {
-              print("@@@@url");
-              // Hive.box('localChatList')
-              //     .put('$chatId + image', snapshot.data['imageUrl']);
-              setChatUserimageUrl(chatId, snapshot.data['imageUrl']);
-              // print("1. 가져온 url  : ${snapshot.data['imageUrl']}");
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Material(
-                    child: CachedNetworkImage(
-                      imageUrl: snapshot.data['imageUrl'],
-                      // productMessage.content.imageUrl,
-                      fit: BoxFit.cover,
-                      height: 50,
-                      width: 50,
-                    ),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(18.0),
-                    ),
-                    clipBehavior: Clip.hardEdge,
-                  ),
-                ],
-              );
-            }
-        }
-      },
-    );
-  }
-
-  // final AsyncMemoizer _memoizer = AsyncMemoizer();
-
-  // _fetchData(String proUserId) {
-  //   return this._memoizer.runOnce(() async {
-  //     return await FirebaseFirestore.instance
-  //         .collection('user')
-  //         .doc(proUserId)
-  //         .get();
-  //   });
-  // }
-
-  FutureBuilder getProductUserNickName(
-      String chatId, String proUserId, double fontSize) {
-    return FutureBuilder(
-      future: getUserId(proUserId),
-      //_fetchData(proUserId),
-      builder: (context, snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.waiting:
-            // return Text("대기");
-
-            return AutoSizeText(
-              //
-              "장터 -> 채팅 넘어가면 null임 " +
-                  Hive.box('localChatList').get('$chatId + nickName'),
-              style: TextStyle(fontSize: fontSize, color: Colors.black), //15
-              minFontSize: 10,
-              stepGranularity: 10,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            );
-          // return Text("");
-          default:
-            if (snapshot.hasData == false) {
-              return AutoSizeText(
-                Hive.box('localChatList').get('$chatId + nickName'),
-                style: TextStyle(fontSize: fontSize, color: Colors.black), //15
-                minFontSize: 10,
-                stepGranularity: 10,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              );
-            } else if (snapshot.hasError) {
-              print("nick 에러.");
-              return Text(
-                'Error: ${snapshot.error}',
-                style: TextStyle(fontSize: fontSize), //15
-              );
-            } else if (snapshot.data['nickName'] == "") {
-              return Text("닉오류");
-            } else {
-              print("@@@@name");
-              Hive.box('localChatList')
-                  .put('$chatId + nickName', snapshot.data.data()['nickName']);
-              return AutoSizeText(
-                snapshot.data.data()['nickName'],
-                style: TextStyle(fontSize: fontSize, color: Colors.black), //15
-                minFontSize: 10,
-                stepGranularity: 10,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              );
-            }
-        }
-      },
-    );
-  }
-
   Future getProductInfo(String postId) async {
     return FirebaseFirestore.instance
         .collection('university')
-        .doc('kmu')
+        .doc(currentUserModel.university)
         .collection('product')
         .doc(postId)
         .get();
@@ -363,17 +125,6 @@ class ProductChatController {
                     padding: const EdgeInsets.fromLTRB(12, 12, 0, 8),
                     child: Row(
                       children: <Widget>[
-                        // Material(
-                        //   child: ExtendedImage.network(
-                        //     snapshot.data['images'][0],
-                        //     width: 55,
-                        //     height: 55,
-                        //     fit: BoxFit.cover,
-                        //     cache: true,
-                        //   ),
-                        //   borderRadius: BorderRadius.all(Radius.circular(6.0)),
-                        //   clipBehavior: Clip.hardEdge,
-                        // ),
                         Material(
                           child: CachedNetworkImage(
                             imageUrl: snapshot.data['imagesUrl'][0],
@@ -426,23 +177,6 @@ class ProductChatController {
     );
   }
 
-  Future<void> setToFirebaseProductChatCount(int chatCount) async {
-    await FirebaseFirestore.instance
-        .collection("user")
-        .doc(currentUserModel.uid)
-        .collection("chatCount")
-        .doc(currentUserModel.uid)
-        .update({
-      "productChatCount": chatCount,
-    }).whenComplete(() {
-      //Fluttertoast.showToast(msg: '채팅방카운트를 업데이트했습니다.');
-      // print("##챗카운트 업데이트 성공");
-    }).catchError((onError) {
-      //Fluttertoast.showToast(msg: '채팅방카운트를 업데이트 실패.');
-      print(onError);
-    });
-  }
-
   bool onSendToProductMessage(
       String chatId, String friendId, var contentMsg, int type) {
     // print("proChatController-onSendToProductMessage 1. 받은 값 확인, 문제없으면 채팅 생성 $chatId $friendId ${contentMsg.runtimeType} $type ");
@@ -476,44 +210,53 @@ class ProductChatController {
 
       // print("maptest1-1 $chatId $messageId");
 //RealTime
-      DatabaseReference productChatMessageReference =
-          productChatReference.child(chatId).child("message").child(messageId);
-      // print("maptest1-2");
-      DatabaseReference productChatListReference =
-          productChatReference.child(chatId);
-      // print("maptest2");
-      productChatMessageReference.set({
-        "idFrom": currentUserModel.uid,
-        "idTo": {friendId: false},
-        "sendTime": messageId,
-        "content": content,
-        "type": type,
-        // "isRead": false,
-        //"isRead": false,
-      }).whenComplete(() {
-        // print("proChatController-onSendToProductMessage 3. 메세지 저장 완료");
-        switch (type) {
-          case 1:
-            content = "사진을 보냈습니다.";
-            break;
-          case 2:
-            content = "이모티콘을 보냈습니다.";
-            break;
-        }
-        if (contentMsg.runtimeType == String) {
-          // print("proChatController-onSendToProductMessage 4. 채팅방 시간, 최근 정보 업데이트");
+      try {
+        DatabaseReference productChatMessageReference = productChatReference
+            .child(chatId)
+            .child("message")
+            .child(messageId);
+        // print("maptest1-2");
+        DatabaseReference productChatListReference =
+            productChatReference.child(chatId);
+        // print("maptest2");
+        productChatMessageReference.set({
+          "idFrom": currentUserModel.uid,
+          "idTo": {friendId: false},
+          "sendTime": messageId,
+          "content": content,
+          "type": type,
+          // "isRead": false,
+          //"isRead": false,
+        }).whenComplete(() {
+          // print("proChatController-onSendToProductMessage 3. 메세지 저장 완료");
+          switch (type) {
+            case 1:
+              content = "사진을 보냈습니다.";
+              break;
+            case 2:
+              content = "이모티콘을 보냈습니다.";
+              break;
+          }
+          if (contentMsg.runtimeType == String) {
+            // print("proChatController-onSendToProductMessage 4. 채팅방 시간, 최근 정보 업데이트");
 
-          productChatListReference.update({
-            "recentText": content,
-            "recentTime": messageId,
-          });
-        } else if (contentMsg.runtimeType == Product) {
-          // productChatListReference.update({
-          //   "recentText": content,
-          //   "recentTime": messageId,
-          // });
-        }
-      });
+            productChatListReference.update({
+              "recentText": content,
+              "recentTime": messageId,
+            });
+          } else if (contentMsg.runtimeType == Product) {
+            // productChatListReference.update({
+            //   "recentText": content,
+            //   "recentTime": messageId,
+            // });
+          }
+        });
+        Fluttertoast.showToast(msg: "챗 생성 성공.");
+        print("챗 생성");
+      } catch (e) {
+        Fluttertoast.showToast(msg: "$e 챗 생성 에러.");
+        print("챗 생성 에러 $e");
+      }
       return true;
     } //if
     else {
@@ -597,145 +340,5 @@ class ProductChatController {
       "connectTime": exitTime,
       //"111357489031227818227": true,
     });
-  }
-
-  StreamBuilder getTotalChatCountInBottomBar() {
-    return StreamBuilder<DocumentSnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('user')
-            .doc(currentUserModel.uid)
-            .collection("chatCount")
-            .doc(currentUserModel.uid)
-            .snapshots(),
-        builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-          //return Text("dd");
-          // if (snapshot == null) {
-          //   return Text("d");
-          // } else
-          if (snapshot.hasData) {
-            // print(snapshot.data.toString());
-          } else
-            return Icon(
-              Icons.notifications_none,
-              size: 25,
-              // color: Colors.black,
-            );
-
-          if (snapshot.data.data()['productChatCount'] == 0 &&
-              snapshot.data.data()['boardChatCount'] == 0) {
-            return Stack(
-              children: [
-                new Icon(
-                  Icons.notifications_none,
-                  size: 25,
-                  // color: Colors.black,
-                ),
-                Positioned(
-                  top: 1,
-                  right: 1,
-                  child: Stack(
-                    children: [
-                      Container(
-                        width: 15,
-                        height: 15,
-                        decoration: BoxDecoration(),
-                        child: Center(
-                          child: Text(""),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            );
-          } else if (snapshot.data.data()['productChatCount'] > 0 ||
-              snapshot.data.data()['boardChatCount'] > 0) {
-            return Stack(
-              children: [
-                new Icon(
-                  Icons.notifications_none,
-                  size: 25,
-                  // color: Colors.black,
-                ),
-                Positioned(
-                  top: 1,
-                  right: 1,
-                  child: Stack(
-                    children: [
-                      Container(
-                        width: 10,
-                        height: 10,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: OnestepColors().secondColor, //red??
-                        ),
-                        child: Center(
-                          child: Text(""),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            );
-          }
-          return Container();
-        });
-  }
-
-  //Chat Main ChatCount
-  StreamBuilder getProductChatCountText() {
-    return StreamBuilder<DocumentSnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('user')
-            .doc(currentUserModel.uid)
-            .collection("chatCount")
-            .doc(currentUserModel.uid)
-            .snapshots(),
-        builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-          if (snapshot.hasData) {
-            // print(snapshot.data.toString());
-          } else
-            return Text("error");
-          if (snapshot.data.data()['productChatCount'] != null) {
-            //print("####누적 채팅 : ${snapshot.data.data()['nickname']}");
-          }
-          return Text(
-            snapshot.data.data()['productChatCount'].toString(),
-            style: TextStyle(fontSize: 8, color: Colors.white),
-          );
-        });
-  }
-
-  //Chat Main ChatCount
-  StreamBuilder getNewProductChatCountText() {
-    return StreamBuilder<DocumentSnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('user')
-            .doc(currentUserModel.uid)
-            .collection("chatCount")
-            .doc(currentUserModel.uid)
-            .snapshots(),
-        builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-          if (snapshot.hasData) {
-            // print(snapshot.data.toString());
-          } else
-            return Text("error");
-          if (snapshot.data.data()['productChatCount'] != null) {
-            //print("####누적 채팅 : ${snapshot.data.data()['nickname']}");
-          }
-          return Text(
-            snapshot.data.data()['productChatCount'].toString() + '개',
-            style: TextStyle(
-              color: //
-                  // OnestepColors().mainColor,
-                  snapshot.data.data()['productChatCount'] == 0
-                      ? Colors.grey
-                      : Colors.green,
-              // Colors.green,
-              fontSize: 10,
-            ),
-          );
-        });
   }
 }
