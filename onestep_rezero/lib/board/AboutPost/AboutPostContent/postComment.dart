@@ -98,27 +98,6 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
       return commentWidget(index, comment, deviceWidth, deviceHeight);
   }
 
-  // @override
-  // commentName(commentUID, postWriterUid, commentList) {
-  //   Map<String, dynamic> commentUserMap = commentList ?? {};
-  //   List commentUserList = commentUserMap.keys.toList();
-  //   if (commentUID.toString() == postWriterUid) {
-  //     return Text("작성자",
-  //         style: TextStyle(color: OnestepColors().mainColor, fontSize: 13));
-  //   } else {
-  //     for (int i = 0; i < commentUserList.length; i++) {
-  //       if (commentUserList[i].toString() == commentUID) {
-  //         return Text("익명 ${i + 1}",
-  //             style:
-  //                 TextStyle(color: OnestepColors().secondColor, fontSize: 13));
-  //       } else {
-  //         return Text("익명 ${commentUserList.length + 1}",
-  //             style:
-  //                 TextStyle(color: OnestepColors().secondColor, fontSize: 13));
-  //       }
-  //     }
-  //   }
-  // }
   @override
   commentName(commentUID, postWriterUid, commentList) {
     Map<String, dynamic> commentUserMap = commentList ?? {};

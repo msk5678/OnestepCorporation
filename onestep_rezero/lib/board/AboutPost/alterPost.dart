@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:multi_image_picker2/multi_image_picker2.dart';
 import 'package:onestep_rezero/board/AboutPost/AboutPostContent/postContent.dart';
 import 'package:onestep_rezero/board/AboutPost/createPost.dart';
 import 'package:onestep_rezero/board/TipDialog/tip_dialog.dart';
@@ -41,6 +40,11 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
               maxImageCount - firstImageCount, (index) => "")));
     initImgCommentText(imageCommentMap);
     // getterImgCommentFromMapToTextEditingControl(imageCommentMap);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   initImgCommentText(Map<String, List<dynamic>> imgComment) {

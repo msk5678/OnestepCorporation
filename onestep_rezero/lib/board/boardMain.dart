@@ -1,14 +1,10 @@
-import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onestep_rezero/board/StateManage/Provider/boardCategoryList.dart';
-
-import 'package:onestep_rezero/board/Animation/Rive/AboutBoard/randomList.dart';
 import 'package:onestep_rezero/board/StateManage/Provider/userProvider.dart';
 import 'package:onestep_rezero/board/declareData/boardData.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
-import 'package:onestep_rezero/main.dart';
 
 import "dart:math" as math;
 

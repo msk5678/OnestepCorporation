@@ -43,7 +43,7 @@ class PostContentRiverPod extends ConsumerWidget {
     if (!postRiverPod.isFetching)
       return Column(
           children: <Widget>[
-        postStatusBar(currentPost, currentUid),
+        postTopStatusBar(currentPost, currentUid),
         Container(
           alignment: Alignment.centerLeft,
           child: Text(
@@ -109,7 +109,7 @@ class PostContentRiverPod extends ConsumerWidget {
     });
   }
 
-  postStatusBar(PostData currentPost, String uid) {
+  postTopStatusBar(PostData currentPost, String uid) {
     return Container(
       margin: EdgeInsets.only(bottom: 20),
       child: Row(
@@ -261,9 +261,8 @@ class _PostContentState extends State<PostContent>
                             PostContentRiverPod(
                               currentPostData: currentPostData,
                             ),
-                          ]
-                            ..add(buttonList(currentPostData))
-                            ..add(Container(
+                            buttonList(currentPostData),
+                            Container(
                               width: deviceWidth / 2,
                               margin: EdgeInsets.only(
                                   bottom: deviceHeight / 50, top: 10),
@@ -272,7 +271,11 @@ class _PostContentState extends State<PostContent>
                                       bottom: BorderSide(
                                           color: OnestepColors().thirdColor,
                                           width: 2.0))),
-                            ))
+                            ),
+                            postBottomStatusBar(
+                              currentPostData,
+                            ),
+                          ]
                             ..add(CommentWidget(
                               boardId: currentPostData.boardId,
                               postId: currentPostData.documentId,
@@ -301,10 +304,71 @@ class _PostContentState extends State<PostContent>
     );
   }
 
+  favoriteClickCallback(bool isClicked) {
+    setState(() {
+      if (!isClicked)
+        ++currentPostData.favoriteCount;
+      else
+        --currentPostData.favoriteCount;
+    });
+  }
+
+  commentWrittemCallback() {
+    setState(() {
+      ++currentPostData.commentCount;
+    });
+  }
+
+  postBottomStatusBar(
+    PostData currentPost,
+  ) {
+    int favoriteCount = currentPost.favoriteCount;
+    int commentCount = currentPost.commentCount;
+    return Container(
+      margin: EdgeInsets.only(bottom: 20),
+      child: Row(
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.favorite,
+                size: 20,
+                color: Colors.grey,
+              ),
+              Container(
+                margin: EdgeInsets.only(right: 5),
+                child: Text(
+                  "$favoriteCount",
+                  style: TextStyle(color: Colors.grey, fontSize: 10),
+                ),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              Icon(
+                //foot icon
+                Icons.comment,
+                size: 20,
+                color: Colors.grey,
+              ),
+              Container(
+                margin: EdgeInsets.only(right: 5),
+                child: Text("$commentCount",
+                    style: TextStyle(color: Colors.grey, fontSize: 10)),
+              ),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
   buttonList(PostData currentPost) {
     return Row(children: [
       FavoriteButton(
         currentPost: currentPostData,
+        clickCallback: favoriteClickCallback,
       ),
       Container(
         margin: EdgeInsets.only(top: 10, left: 10),
@@ -318,48 +382,6 @@ class _PostContentState extends State<PostContent>
         ),
       )
     ]);
-  }
-
-  postStatusBar(PostData currentPost, String uid) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              Icon(
-                Icons.watch_later_outlined,
-                size: 20,
-                color: OnestepColors().mainColor,
-              ),
-              Container(
-                margin: EdgeInsets.only(right: 5),
-                child: Text(
-                  "${TimeUtil.timeAgo(date: currentPost.uploadTime)}",
-                  style: TextStyle(color: Colors.grey, fontSize: 10),
-                ),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Icon(
-                //foot icon
-                Icons.remove_red_eye,
-                size: 20,
-                color: OnestepColors().mainColor,
-              ),
-              Container(
-                margin: EdgeInsets.only(right: 5),
-                child: Text("${currentPost.views.keys.length}",
-                    style: TextStyle(color: Colors.grey, fontSize: 10)),
-              ),
-            ],
-          )
-        ],
-      ),
-    );
   }
 
   updatePostDataCallback(PostData latestData) {
@@ -611,6 +633,7 @@ class _PostContentState extends State<PostContent>
         context
             .read(commentProvider)
             .refresh(currentPostData.boardId, currentPostData.documentId);
+        commentWrittemCallback();
       }, errorFunction: () {
         Navigator.pop(context, true);
       }, unFocusing: true);
@@ -625,6 +648,7 @@ class _PostContentState extends State<PostContent>
               .refresh(currentPostData.boardId, currentPostData.documentId);
           switchingFlag();
           aboutCoComment = null;
+          commentWrittemCallback();
         }, errorFunction: () {
           Navigator.pop(context, true);
         }, unFocusing: true);
@@ -638,6 +662,7 @@ class _PostContentState extends State<PostContent>
               .read(commentProvider)
               .refresh(currentPostData.boardId, currentPostData.documentId);
           switchingFlag();
+          commentWrittemCallback();
           aboutCoComment = null;
         }, errorFunction: () {
           Navigator.pop(context, true);

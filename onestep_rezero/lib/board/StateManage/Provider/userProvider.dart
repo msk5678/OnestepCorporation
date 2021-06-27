@@ -103,7 +103,6 @@ class UserProvider with ChangeNotifier {
     _isFetching = true;
     _userFavoritePostList = {};
     _userCommentList = [];
-    final firestore = FirebaseFirestore.instance;
 
     try {
       //User Favorite Post List

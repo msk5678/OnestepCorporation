@@ -16,7 +16,7 @@ class PostData {
   final int reportCount;
   final String textContent;
   final String uid;
-  final int commentCount;
+  int commentCount;
   final String boardName;
   final String boardId;
   final Map<String, dynamic> favoriteUserList;

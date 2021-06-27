@@ -8,8 +8,9 @@ import 'package:onestep_rezero/loggedInWidget.dart';
 
 class FavoriteButton extends ConsumerWidget {
   final PostData currentPost;
+  final clickCallback;
 
-  FavoriteButton({this.currentPost});
+  FavoriteButton({this.currentPost, this.clickCallback});
 
   @override
   Widget build(BuildContext context, watch) {
@@ -23,6 +24,7 @@ class FavoriteButton extends ConsumerWidget {
         if (!fetching) {
           await provider.updateFavorite(currentPost, uid, isClicked);
           provider.getUserFavoriteList();
+          clickCallback(isClicked);
         }
       },
       child: Container(

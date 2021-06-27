@@ -333,7 +333,6 @@ class UserWrittenCommentListWidget extends ConsumerWidget implements Comment {
   @override
   deletedCommentWidget(
       int index, CommentData comment, double deviceWidth, double deviceHeight) {
-    // TODO: implement deletedCommentWidget
     return Container();
   }
 }
