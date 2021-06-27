@@ -114,7 +114,7 @@ class ProductChatController {
     }
   }
 
-  getChatUserimageUrl(String chatId) async {
+  getChatUserimageUrl(String chatId) {
     print("내부디비 저장 불러 ");
     String imageUrl = Hive.box('localChatList').get('$chatId + image');
     print("내부디비 저장 불러 완 : $imageUrl");
@@ -284,8 +284,11 @@ class ProductChatController {
         switch (snapshot.connectionState) {
           case ConnectionState.waiting:
             // return Text("대기");
+
             return AutoSizeText(
-              Hive.box('localChatList').get('$chatId + nickName'),
+              //
+              "장터 -> 채팅 넘어가면 null임 " +
+                  Hive.box('localChatList').get('$chatId + nickName'),
               style: TextStyle(fontSize: fontSize, color: Colors.black), //15
               minFontSize: 10,
               stepGranularity: 10,

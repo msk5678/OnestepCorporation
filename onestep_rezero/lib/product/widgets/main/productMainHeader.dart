@@ -114,8 +114,6 @@ class ProductMainHeader extends ConsumerWidget {
                   });
           }
         });
-
-   
   }
 
   @override
