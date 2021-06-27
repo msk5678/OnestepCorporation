@@ -32,71 +32,19 @@ class ProductChatListController {
 
   FutureBuilder getUserImage(String chatId, String proUserId) {
     return FutureBuilder(
-      future: getUserId(proUserId),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          String imageUrl =
-              ProductChatLocalController().getChatUserimageUrl(chatId);
-          //return CircularProgressIndicator();
-          if (chatId == null || imageUrl == null) {
-            return Text("");
-          }
-          return Material(
-            child: CachedNetworkImage(
-              imageUrl:
-                  ProductChatLocalController().getChatUserimageUrl(chatId),
-              fit: BoxFit.cover,
-              height: 50,
-              width: 50,
-            ),
-            borderRadius: BorderRadius.all(
-              Radius.circular(18.0),
-            ),
-            clipBehavior: Clip.hardEdge,
-          );
-        } else if (snapshot.hasData == false) {
-          return Material(
-            child: CachedNetworkImage(
-              imageUrl: chatId,
-              // productMessage.content.imageUrl,
-              fit: BoxFit.cover,
-              height: 35,
-              width: 35,
-            ),
-            borderRadius: BorderRadius.all(
-              Radius.circular(18.0),
-            ),
-            clipBehavior: Clip.hardEdge,
-          );
-        }
-
-        if (snapshot.data['imageUrl'] == "") {
-          //프로필사진 미설정
-          return LayoutBuilder(builder: (context, constraint) {
-            return Icon(
-              Icons.supervised_user_circle,
-              size: 50,
-              //constraint.biggest.height,
-            );
-          });
-        } else if (snapshot.hasError) {
-          return Padding(
-            padding: const EdgeInsets.all(0.0),
-            child: Text(
-              'Error: ${snapshot.error}',
-              style: TextStyle(fontSize: 15),
-            ),
-          );
-        } else {
-          ProductChatLocalController()
-              .setChatUserimageUrl(chatId, snapshot.data['imageUrl']);
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Material(
+        future: getUserId(proUserId),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            String imageUrl =
+                ProductChatLocalController().getChatUserimageUrl(chatId);
+            //return CircularProgressIndicator();
+            if (chatId == null || imageUrl == null) {
+              return Text("");
+            } else {
+              return Material(
                 child: CachedNetworkImage(
-                  imageUrl: snapshot.data['imageUrl'],
-                  // productMessage.content.imageUrl,
+                  imageUrl:
+                      ProductChatLocalController().getChatUserimageUrl(chatId),
                   fit: BoxFit.cover,
                   height: 50,
                   width: 50,
@@ -105,12 +53,50 @@ class ProductChatListController {
                   Radius.circular(18.0),
                 ),
                 clipBehavior: Clip.hardEdge,
-              ),
-            ],
-          );
-        }
-      },
-    );
+              );
+            }
+          } else {
+            if (snapshot.hasData == false || snapshot.hasError) {
+              return LayoutBuilder(builder: (context, constraint) {
+                return Icon(
+                  Icons.error,
+                  size: 50,
+                  //constraint.biggest.height,
+                );
+              });
+            } else if (snapshot.data['imageUrl'] == "") {
+              //프로필사진 미설정
+              return LayoutBuilder(builder: (context, constraint) {
+                return Icon(
+                  Icons.supervised_user_circle,
+                  size: 50,
+                  //constraint.biggest.height,
+                );
+              });
+            } else {
+              ProductChatLocalController()
+                  .setChatUserimageUrl(chatId, snapshot.data['imageUrl']);
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Material(
+                    child: CachedNetworkImage(
+                      imageUrl: snapshot.data['imageUrl'],
+                      // productMessage.content.imageUrl,
+                      fit: BoxFit.cover,
+                      height: 50,
+                      width: 50,
+                    ),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(18.0),
+                    ),
+                    clipBehavior: Clip.hardEdge,
+                  ),
+                ],
+              );
+            }
+          }
+        });
   }
 
   FutureBuilder getProductUserNickName(
