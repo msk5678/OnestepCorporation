@@ -41,7 +41,7 @@ class CommentData {
   factory CommentData.toRealtimeDataWithPostData(PostData postData) {
     String currentTimeStamp = DateTime.now().millisecondsSinceEpoch.toString();
     return CommentData(
-      uid: googleSignIn.currentUser.id,
+      uid: currentUserModel.uid,
       boardId: postData.boardId,
       boardName: postData.boardName,
       postId: postData.documentId,
@@ -506,7 +506,7 @@ class CommentData {
         .doc(this.boardId)
         .collection(this.boardId)
         .doc(this.postId)
-        .update({"commentUserList." + googleSignIn.currentUser.id: saveResult})
+        .update({"commentUserList." + currentUserModel.uid: saveResult})
         .then((value) => true)
         .whenComplete(() => true);
   }

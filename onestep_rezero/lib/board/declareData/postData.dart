@@ -85,7 +85,7 @@ class PostData {
         .collection(this.boardId)
         .doc(currentTimeStamp)
         .set({
-          "uid": googleSignIn.currentUser.id,
+          "uid": currentUserModel.uid,
           "uploadTime": Timestamp.fromDate(DateTime.now()),
           "updateTime": 0,
           "commentCount": commentCount ?? 0,
