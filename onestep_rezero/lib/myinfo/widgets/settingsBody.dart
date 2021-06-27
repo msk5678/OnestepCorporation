@@ -149,9 +149,9 @@ class SettingsBody extends ConsumerWidget {
             child: Padding(
               padding: EdgeInsets.fromLTRB(
                   MediaQuery.of(context).size.width / 20,
-                  MediaQuery.of(context).size.width / 30,
+                  MediaQuery.of(context).size.width / 15,
                   0,
-                  0),
+                  MediaQuery.of(context).size.height / 60),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -161,50 +161,55 @@ class SettingsBody extends ConsumerWidget {
                       style: TextStyle(fontSize: 15),
                     ),
                   ),
-                  IconButton(
-                    icon: Icon(Icons.keyboard_arrow_right),
-                    onPressed: () async {
-                      // // storage 삭제 보류
-                      // Reference ref = FirebaseStorage.instance
-                      //     .refFromURL(
-                      //         snapshot.data.data()['imageUrl'].toString());
-                      // await ref.delete();
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(
+                        0, 0, MediaQuery.of(context).size.width / 20, 0),
+                    child: Icon(Icons.keyboard_arrow_right),
+                  ),
+                  // IconButton(
+                  //   icon: Icon(Icons.keyboard_arrow_right),
+                  //   onPressed: () async {
+                  //     // // storage 삭제 보류
+                  //     // Reference ref = FirebaseStorage.instance
+                  //     //     .refFromURL(
+                  //     //         snapshot.data.data()['imageUrl'].toString());
+                  //     // await ref.delete();
 
-                      // firebase_storage.FirebaseStorage.instance
-                      //     .refFromURL(
-                      //         snapshot.data.data()['imageUrl'].toString())
-                      //     .delete();
+                  //     // firebase_storage.FirebaseStorage.instance
+                  //     //     .refFromURL(
+                  //     //         snapshot.data.data()['imageUrl'].toString())
+                  //     //     .delete();
 
-                      // 프사 변경할때 image 가져오고 storage 저장 후 photoUrl 업데이트
-                      io.File _image;
-                      final picker = ImagePicker();
-                      final pickedFile =
-                          await picker.getImage(source: ImageSource.gallery);
-                      if (pickedFile != null) {
-                        _image = io.File(pickedFile.path);
-                        firebase_storage.Reference ref = firebase_storage
-                            .FirebaseStorage.instance
-                            .ref()
-                            .child("user images/${randomAlphaNumeric(15)}");
-                        ref.putFile(io.File(_image.path));
-                        firebase_storage.UploadTask storageUploadTask =
-                            ref.putFile(io.File(_image.path));
+                  //     // 프사 변경할때 image 가져오고 storage 저장 후 photoUrl 업데이트
+                  //     io.File _image;
+                  //     final picker = ImagePicker();
+                  //     final pickedFile =
+                  //         await picker.getImage(source: ImageSource.gallery);
+                  //     if (pickedFile != null) {
+                  //       _image = io.File(pickedFile.path);
+                  //       firebase_storage.Reference ref = firebase_storage
+                  //           .FirebaseStorage.instance
+                  //           .ref()
+                  //           .child("user images/${randomAlphaNumeric(15)}");
+                  //       ref.putFile(io.File(_image.path));
+                  //       firebase_storage.UploadTask storageUploadTask =
+                  //           ref.putFile(io.File(_image.path));
 
-                        await storageUploadTask.whenComplete(() async => {
-                              downloadURL = await ref.getDownloadURL(),
-                              FirebaseFirestore.instance
-                                  .collection("user")
-                                  .doc(googleSignIn.currentUser.id)
-                                  .update({
-                                "imageUrl": downloadURL,
-                              }),
-                            });
-                        print("_image = $_image");
-                      } else {
-                        print('No image selected.');
-                      }
-                    },
-                  )
+                  //       await storageUploadTask.whenComplete(() async => {
+                  //             downloadURL = await ref.getDownloadURL(),
+                  //             FirebaseFirestore.instance
+                  //                 .collection("user")
+                  //                 .doc(googleSignIn.currentUser.id)
+                  //                 .update({
+                  //               "imageUrl": downloadURL,
+                  //             }),
+                  //           });
+                  //       print("_image = $_image");
+                  //     } else {
+                  //       print('No image selected.');
+                  //     }
+                  //   },
+                  // )
                 ],
               ),
             ),
@@ -218,7 +223,10 @@ class SettingsBody extends ConsumerWidget {
             },
             child: Padding(
               padding: EdgeInsets.fromLTRB(
-                  MediaQuery.of(context).size.width / 20, 0, 0, 0),
+                  MediaQuery.of(context).size.width / 20,
+                  MediaQuery.of(context).size.width / 30,
+                  0,
+                  MediaQuery.of(context).size.height / 60),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -228,15 +236,11 @@ class SettingsBody extends ConsumerWidget {
                       style: TextStyle(fontSize: 15),
                     ),
                   ),
-                  IconButton(
-                    icon: Icon(Icons.keyboard_arrow_right),
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                            builder: (context) => MyinfoNickNameChangePage()),
-                      );
-                    },
-                  )
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(
+                        0, 0, MediaQuery.of(context).size.width / 20, 0),
+                    child: Icon(Icons.keyboard_arrow_right),
+                  ),
                 ],
               ),
             ),
@@ -284,9 +288,9 @@ class SettingsBody extends ConsumerWidget {
             child: Padding(
               padding: EdgeInsets.fromLTRB(
                   MediaQuery.of(context).size.width / 20,
-                  MediaQuery.of(context).size.width / 30,
+                  MediaQuery.of(context).size.width / 15,
                   0,
-                  0),
+                  MediaQuery.of(context).size.height / 60),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -296,10 +300,11 @@ class SettingsBody extends ConsumerWidget {
                       style: TextStyle(fontSize: 15, color: Colors.red[200]),
                     ),
                   ),
-                  IconButton(
-                    icon: Icon(Icons.keyboard_arrow_right),
-                    onPressed: () {},
-                  )
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(
+                        0, 0, MediaQuery.of(context).size.width / 20, 0),
+                    child: Icon(Icons.keyboard_arrow_right),
+                  ),
                 ],
               ),
             ),

@@ -311,9 +311,9 @@ class MyinfoMainBody extends ConsumerWidget {
                     child: Padding(
                       padding: EdgeInsets.fromLTRB(
                           MediaQuery.of(context).size.width / 20,
-                          MediaQuery.of(context).size.width / 40,
+                          MediaQuery.of(context).size.width / 15,
                           0,
-                          0),
+                          MediaQuery.of(context).size.height / 60),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -323,28 +323,11 @@ class MyinfoMainBody extends ConsumerWidget {
                               style: TextStyle(fontSize: 15),
                             ),
                           ),
-                          IconButton(
-                            icon: Icon(Icons.keyboard_arrow_right),
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return OnestepCustomDialogNotCancel(
-                                    title: '대학교인증 완료',
-                                    description:
-                                        '${f.format(DateTime.fromMillisecondsSinceEpoch(snapshot.data.data()['authTime']))} 에 완료하셨습니다',
-                                    confirmButtonText: '확인',
-                                    confirmButtonOnPress: () {
-                                      Navigator.pop(context);
-                                    },
-                                  );
-                                },
-                              );
-                              // snapshot.data.data()['auth'] == 1
-                              //     ? _showDialog(context, 1, snapshot)
-                              //     : _showDialog(context, 2, snapshot);
-                            },
-                          )
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(0, 0,
+                                MediaQuery.of(context).size.width / 20, 0),
+                            child: Icon(Icons.keyboard_arrow_right),
+                          ),
                         ],
                       ),
                     ),
@@ -374,9 +357,9 @@ class MyinfoMainBody extends ConsumerWidget {
                     child: Padding(
                       padding: EdgeInsets.fromLTRB(
                           MediaQuery.of(context).size.width / 20,
-                          MediaQuery.of(context).size.width / 40,
+                          MediaQuery.of(context).size.width / 15,
                           0,
-                          0),
+                          MediaQuery.of(context).size.height / 60),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -386,20 +369,21 @@ class MyinfoMainBody extends ConsumerWidget {
                               style: TextStyle(fontSize: 15),
                             ),
                           ),
-                          IconButton(
-                            icon: Icon(Icons.keyboard_arrow_right),
-                            onPressed: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => NoticePage()));
-                            },
-                          )
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(0, 0,
+                                MediaQuery.of(context).size.width / 20, 0),
+                            child: Icon(Icons.keyboard_arrow_right),
+                          ),
                         ],
                       ),
                     ),
                   ),
                   Padding(
                     padding: EdgeInsets.fromLTRB(
-                        MediaQuery.of(context).size.width / 20, 0, 0, 0),
+                        MediaQuery.of(context).size.width / 20,
+                        MediaQuery.of(context).size.width / 30,
+                        0,
+                        MediaQuery.of(context).size.height / 60),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -409,16 +393,20 @@ class MyinfoMainBody extends ConsumerWidget {
                             style: TextStyle(fontSize: 15),
                           ),
                         ),
-                        IconButton(
-                          icon: Icon(Icons.keyboard_arrow_right),
-                          onPressed: () {},
-                        )
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(
+                              0, 0, MediaQuery.of(context).size.width / 20, 0),
+                          child: Icon(Icons.keyboard_arrow_right),
+                        ),
                       ],
                     ),
                   ),
                   Padding(
                     padding: EdgeInsets.fromLTRB(
-                        MediaQuery.of(context).size.width / 20, 0, 0, 0),
+                        MediaQuery.of(context).size.width / 20,
+                        MediaQuery.of(context).size.width / 30,
+                        0,
+                        MediaQuery.of(context).size.height / 60),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -428,16 +416,20 @@ class MyinfoMainBody extends ConsumerWidget {
                             style: TextStyle(fontSize: 15),
                           ),
                         ),
-                        IconButton(
-                          icon: Icon(Icons.keyboard_arrow_right),
-                          onPressed: () {},
-                        )
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(
+                              0, 0, MediaQuery.of(context).size.width / 20, 0),
+                          child: Icon(Icons.keyboard_arrow_right),
+                        ),
                       ],
                     ),
                   ),
                   Padding(
                     padding: EdgeInsets.fromLTRB(
-                        MediaQuery.of(context).size.width / 20, 0, 0, 0),
+                        MediaQuery.of(context).size.width / 20,
+                        MediaQuery.of(context).size.width / 30,
+                        0,
+                        MediaQuery.of(context).size.height / 60),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -447,16 +439,20 @@ class MyinfoMainBody extends ConsumerWidget {
                             style: TextStyle(fontSize: 15),
                           ),
                         ),
-                        IconButton(
-                          icon: Icon(Icons.keyboard_arrow_right),
-                          onPressed: () {},
-                        )
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(
+                              0, 0, MediaQuery.of(context).size.width / 20, 0),
+                          child: Icon(Icons.keyboard_arrow_right),
+                        ),
                       ],
                     ),
                   ),
                   Padding(
                     padding: EdgeInsets.fromLTRB(
-                        MediaQuery.of(context).size.width / 20, 0, 0, 0),
+                        MediaQuery.of(context).size.width / 20,
+                        MediaQuery.of(context).size.width / 30,
+                        0,
+                        MediaQuery.of(context).size.height / 60),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -466,16 +462,20 @@ class MyinfoMainBody extends ConsumerWidget {
                             style: TextStyle(fontSize: 15),
                           ),
                         ),
-                        IconButton(
-                          icon: Icon(Icons.keyboard_arrow_right),
-                          onPressed: () {},
-                        )
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(
+                              0, 0, MediaQuery.of(context).size.width / 20, 0),
+                          child: Icon(Icons.keyboard_arrow_right),
+                        ),
                       ],
                     ),
                   ),
                   Padding(
                     padding: EdgeInsets.fromLTRB(
-                        MediaQuery.of(context).size.width / 20, 0, 0, 0),
+                        MediaQuery.of(context).size.width / 20,
+                        MediaQuery.of(context).size.width / 30,
+                        0,
+                        MediaQuery.of(context).size.height / 60),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -485,10 +485,11 @@ class MyinfoMainBody extends ConsumerWidget {
                             style: TextStyle(fontSize: 15),
                           ),
                         ),
-                        IconButton(
-                          icon: Icon(Icons.keyboard_arrow_right),
-                          onPressed: () {},
-                        )
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(
+                              0, 0, MediaQuery.of(context).size.width / 20, 0),
+                          child: Icon(Icons.keyboard_arrow_right),
+                        ),
                       ],
                     ),
                   ),
