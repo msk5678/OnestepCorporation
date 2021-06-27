@@ -1,6 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:onestep_rezero/main.dart';
+import 'package:onestep_rezero/loggedInWidget.dart';
 
 class ChatBlockController {
   static final DatabaseReference blockToChatReference = FirebaseDatabase
@@ -17,7 +17,7 @@ class ChatBlockController {
       var nowTime = DateTime.now().millisecondsSinceEpoch.toString();
       //2. users 판매자 정보 가져오기 : 판매자 닉네임, 이미지 가져오기
       blockToChatReference.child(nowTime).set({
-        "blockFromUid": googleSignIn.currentUser.id,
+        "blockFromUid": currentUserModel.uid,
         "blockToUid": friendId,
         "blockTime": nowTime,
       }).then((uservalue) {
@@ -35,7 +35,7 @@ class ChatBlockController {
     try {
       blockToChatReference
           .orderByChild("blockFromUid")
-          .equalTo(googleSignIn.currentUser.id)
+          .equalTo(currentUserModel.uid)
           .once()
           .then((DataSnapshot snapshot) {
         if (snapshot.value == null) {

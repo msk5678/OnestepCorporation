@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -7,12 +8,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:onestep_rezero/chat/productchat/controller/productChatController.dart';
+import 'package:onestep_rezero/chat/productchat/controller/productChatListController.dart';
 import 'package:onestep_rezero/chat/productchat/model/productChatMessage.dart';
 import 'package:onestep_rezero/chat/widget/FullmageWidget.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/chat/widget/message_list_time.dart';
 import 'package:onestep_rezero/chat/widget/productChatMenu.dart';
-import 'package:onestep_rezero/main.dart';
+import 'package:onestep_rezero/loggedInWidget.dart';
 
 import 'dart:io' as io;
 
@@ -288,7 +290,7 @@ class _LastChatState extends State<ChatScreen> {
     //RealTime
 
     productChatReference
-        .orderByChild("chatUsers/${googleSignIn.currentUser.id}/friendUid")
+        .orderByChild("chatUsers/${currentUserModel.uid}/friendUid")
         .equalTo(friendId)
         .once()
         .then((DataSnapshot snapshot) {
@@ -318,13 +320,6 @@ class _LastChatState extends State<ChatScreen> {
             chatId = key.toString();
             connectTime = values['chatUsers'][myId]['connectTime'];
             // print("2.-1. $chatId");
-
-            // if (localImageUrl == "") {
-            //   print("이미지 널, 한번만 읽음.");
-            //   localImageUrl =
-            //       await ProductChatController().getChatUserimageUrl(chatId);
-            //   print("이미지 널, : $localImageUrl.");
-            // }
             // print("getc 커넥타임 $connectTime ");
             //채팅방 있으면서 & 장터에서 넘어온 경우
             if (checkProductExist() == true) {
@@ -394,7 +389,7 @@ class _LastChatState extends State<ChatScreen> {
         //alignment: Alignment.bottomCenter,
         children: <Widget>[
           Container(
-            color: Colors.white,
+            color: Colors.grey[50],
             child: Column(
 //            mainAxisSize: MainAxisSize.max,
               //mainAxisAlignment: MainAxisAlignment.center,
@@ -406,13 +401,14 @@ class _LastChatState extends State<ChatScreen> {
                   ),
                   // shadowColor: Colors.white,
                   elevation: 0,
-                  backgroundColor: Colors.white,
+                  backgroundColor: Colors.grey[50],
+                  // Colors.white,
                   // OnestepColors().thirdColor,
                   title: Center(
                     child: Column(
                       children: [
-                        ProductChatController()
-                            .getProductUserNickName(friendId, 15),
+                        ProductChatListController()
+                            .getProductUserNickName(chatId, friendId, 15),
                         SizedBox(
                           height: 1,
                         ),
@@ -435,7 +431,6 @@ class _LastChatState extends State<ChatScreen> {
                         ),
                       ],
                     ),
-                    // Text("ge"),
                   ),
                   actions: [
                     ProductChatMenu().getProductMenu(
@@ -597,7 +592,7 @@ class _LastChatState extends State<ChatScreen> {
 
                         //Message Read update
                         if (values["idTo"].keys.toList()[0] ==
-                                googleSignIn.currentUser.id.toString() &&
+                                currentUserModel.uid.toString() &&
                             values['idTo'].values.toList()[0] == false) {
                           ProductChatController()
                               .updateReadMessage(chatId, key);
@@ -679,15 +674,19 @@ class _LastChatState extends State<ChatScreen> {
 
   _createMessageTypeWithText(String uid, String content) {
     Color messageColor;
-    uid == googleSignIn.currentUser.id
+    uid == currentUserModel.uid
         ? messageColor = OnestepColors().fifColor
         : messageColor = Colors.grey[200];
 
     return Container(
       // color: Colors.red,
-      padding: EdgeInsets.all(
-        9,
+      padding: EdgeInsets.fromLTRB(
+        13,
+        10,
+        13,
+        13,
       ),
+
       // height: 30,
       constraints: BoxConstraints(
         maxWidth: 270,
@@ -696,6 +695,7 @@ class _LastChatState extends State<ChatScreen> {
       child: Text(
         content,
         style: TextStyle(
+          fontSize: 15,
           // height: 1.5,
           color: Colors.black,
           fontWeight: FontWeight.w500,
@@ -715,7 +715,7 @@ class _LastChatState extends State<ChatScreen> {
       constraints: BoxConstraints(maxHeight: 200, maxWidth: 200),
       width: 200,
       height: 200,
-      // color: Colors.black,
+      // color: Colors.black,width: double.infinity,
       child: TextButton(
         onPressed: () {
           Navigator.push(
@@ -773,11 +773,11 @@ class _LastChatState extends State<ChatScreen> {
       String uid, ProductChatMessage productMessage) {
     Color messageColor;
     Color btnColor;
-    uid == googleSignIn.currentUser.id
+    uid == currentUserModel.uid
         ? messageColor = OnestepColors().fifColor
         : messageColor = Colors.grey[200];
 
-    uid == googleSignIn.currentUser.id
+    uid == currentUserModel.uid
         ? btnColor = OnestepColors().mainColor
         : btnColor = Colors.grey[400];
 
@@ -937,7 +937,9 @@ class _LastChatState extends State<ChatScreen> {
           children: [
             Container(
               margin: EdgeInsets.only(right: 6.0),
-              child: ProductChatController().getUserImagetoChatroom(chatId),
+              child: //2
+                  ProductChatController().getUserImageToChat(chatId),
+              // ProductChatController().getUserImagetoChatroom(chatId),
             ),
             Row(
               crossAxisAlignment: CrossAxisAlignment.end,
@@ -980,15 +982,30 @@ class _LastChatState extends State<ChatScreen> {
   }
 
   createInput() {
-    Color _inputWidgetColor = Colors.white10;
+    Color _inputWidgetColor = Colors.white;
     return Container(
-      // color: Colors.blue,
-      child: Row(
-        children: <Widget>[
-          //pick image icon button
-          Material(
-            color: _inputWidgetColor,
-            child: Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        // border: Border(
+        //   top: BorderSide(
+        //     // color: Colors.green,
+        //     width: 0.5,
+        //   ),
+        // ),
+        color: _inputWidgetColor,
+      ),
+      child: new ConstrainedBox(
+        constraints: BoxConstraints(
+          minHeight: 50,
+          maxHeight: 400.0,
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: <Widget>[
+            //pick image icon button
+            Container(
+              // color: Colors.red,
+              // height: a, //안됨
               margin: EdgeInsets.symmetric(horizontal: 1.0),
               child: IconButton(
                 icon: Icon(Icons.image),
@@ -996,36 +1013,49 @@ class _LastChatState extends State<ChatScreen> {
                 onPressed: getImage, //getImageFromGallery,
               ),
             ),
-          ),
 
-          //emoji icon button
-          // Material(
-          //   child: Container(
-          //     margin: EdgeInsets.symmetric(horizontal: 1.0),
-          //     child: IconButton(
-          //       icon: Icon(Icons.face),
-          //       color: OnestepColors().mainColor,
-          //       onPressed: getSticker, //getImageFromGallery,
-          //     ),
-          //   ),
-          //   color: Colors.white,
-          // ),
+            //emoji icon button
+            // Material(
+            //   child: Container(
+            //     margin: EdgeInsets.symmetric(horizontal: 1.0),
+            //     child: IconButton(
+            //       icon: Icon(Icons.face),
+            //       color: OnestepColors().mainColor,
+            //       onPressed: getSticker, //getImageFromGallery,
+            //     ),
+            //   ),
+            //   color: Colors.white,
+            // ),
 
-          //Text Field
-          Flexible(
-            child: Container(
-              // width: 250,
-              height: 35,
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(18.0),
-              ),
-              child: Center(
+            //Text Field
+            Container(
+              // color: Colors.red,
+              // decoration: BoxDecoration(
+              //   color: Colors.amber,
+              //   // Colors.grey[200],
+              //   borderRadius: BorderRadius.circular(18.0),
+              // ),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  // minWidth: 200,
+                  maxWidth: 300,
+                  minHeight: 35,
+                  maxHeight: 200.0,
+                ),
+                // width: 250,
+                // height: b,
+
                 child: Padding(
-                  padding: const EdgeInsets.only(
-                    left: 15,
+                  padding: const EdgeInsets.fromLTRB(
+                    10,
+                    10,
+                    10,
+                    14,
                   ),
                   child: TextField(
+                    // cursorHeight: 24.0,
+                    // cursorWidth: 5,
+                    // cursorRadius: Radius.zero,
                     // onChanged: (value) {
                     //   textEditingController.text == ""
                     //   ?
@@ -1034,30 +1064,34 @@ class _LastChatState extends State<ChatScreen> {
                     enabled: true,
                     style: TextStyle(
                       color: Colors.black,
-                      fontSize: 15.0,
+                      fontSize: 16.0,
                     ),
                     controller: textEditingController,
-                    maxLines: null,
+                    minLines: 1,
+                    maxLines: 4,
                     decoration: InputDecoration.collapsed(
-                      hintText: "메세지를 입력하세요.",
+                      hintText: "",
                       hintStyle: TextStyle(
                         color: Colors.grey[600],
                       ),
+                      // border: OutlineInputBorder(),
                     ),
                     focusNode: focusNode,
                   ),
                 ),
               ),
             ),
-          ),
+            Spacer(),
 
-          //Send Message Icon Button
-          Material(
-            color: _inputWidgetColor, //Send icon background color
-            child: Container(
-              margin: EdgeInsets.symmetric(
-                horizontal: 8.0,
-              ),
+            Container(
+              //Send Icon Button Color
+              // color: Colors.blue,
+              // _inputWidgetColor,
+              // height: c,
+              // width: 40,
+              // margin: EdgeInsets.symmetric(
+              //   horizontal: 8.0,
+              // ),
               child: IconButton(
                   icon: Icon(Icons.send),
                   color: OnestepColors().mainColor,
@@ -1079,23 +1113,9 @@ class _LastChatState extends State<ChatScreen> {
                           chatId, friendId, textEditingController.text, 0);
                     }
                   }),
-              color: //Send Icon Button Color
-                  // Colors.red,
-                  _inputWidgetColor,
             ),
-          ),
-        ],
-      ),
-      width: double.infinity,
-      height: 50,
-      decoration: BoxDecoration(
-        // border: Border(
-        //   top: BorderSide(
-        //     // color: Colors.green,
-        //     width: 0.5,
-        //   ),
-        // ),
-        color: _inputWidgetColor,
+          ],
+        ),
       ),
     );
   }

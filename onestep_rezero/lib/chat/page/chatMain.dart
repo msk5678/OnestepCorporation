@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:onestep_rezero/chat/page/admobListPage.dart';
 import 'package:onestep_rezero/chat/page/productChatListPage.dart';
-import 'package:onestep_rezero/chat/productchat/controller/productChatController.dart';
+import 'package:onestep_rezero/chat/productchat/controller/productChatMainController.dart';
 
 class ChatMain extends StatefulWidget {
   const ChatMain({Key key}) : super(key: key);
@@ -135,7 +135,7 @@ class _StackListState extends State<ChatMain>
                                   fontSize: 10,
                                 ),
                               ),
-                              ProductChatController()
+                              ProductChatMainController()
                                   .getNewProductChatCountText(),
                               // Text(
                               //   '1개',
@@ -277,7 +277,9 @@ class _StackListState extends State<ChatMain>
                       width: 20,
                       color: Colors.white,
                       child: (position == 0 && page.text == '장터채팅')
-                          ? ProductChatListPage()
+                          ? //
+                          ProductChatListPage()
+                          // ProductChatListPage2()
                           : AdmobListPage(),
                     );
                   },

@@ -7,7 +7,7 @@ import 'package:onestep_rezero/chat/boardchat/realtimeProductChatController.dart
 import 'package:onestep_rezero/chat/navigator/chatNavigationManager.dart';
 import 'package:onestep_rezero/chat/widget/chatBadge.dart';
 import 'package:onestep_rezero/chat/widget/chat_list_time.dart';
-import 'package:onestep_rezero/main.dart';
+import 'package:onestep_rezero/loggedInWidget.dart';
 
 class RealTimePage extends StatefulWidget {
   @override
@@ -74,7 +74,7 @@ class _RealTimePageState extends State<RealTimePage>
           productchatdatabasereference
               // .child("roominfo")
               // .orderByChild("users/1")
-              .orderByChild("users/${googleSignIn.currentUser.id.toString()}")
+              .orderByChild("users/${currentUserModel.uid}")
               .equalTo(true)
               .onValue, //조건1.  타임스탬프 기준
       builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -125,7 +125,7 @@ class _RealTimePageState extends State<RealTimePage>
                 print("stream values else3-1 :" + key.toString());
                 print("stream values else3-2 :" + values['users'].toString());
                 print("stream values else3-3 :" +
-                    values['users'][googleSignIn.currentUser.id].toString());
+                    values['users'][currentUserModel.uid]);
                 print("stream values else3-3 :" + values['users'].toString());
                 var obj = values['users'].keys.toString();
                 var obj3 = values['users'].keys.toList()[0];
@@ -161,10 +161,9 @@ class _RealTimePageState extends State<RealTimePage>
                   mesageInValues.forEach((mIkey, mIvalue) {
                     //보낸 사람 분해.
                     print(
-                        "stream values else1 message ForEach: MyUid : ${googleSignIn.currentUser.id}");
+                        "stream values else1 message ForEach: MyUid : ${currentUserModel.uid}");
 
-                    if (mIvalue == false &&
-                        mIkey == googleSignIn.currentUser.id) {
+                    if (mIvalue == false && mIkey == currentUserModel.uid) {
                       len++;
                       // print(
                       //     "stream values else1 message ForEach: 읽지 않은 메세지 있음. len : $len");
@@ -198,8 +197,7 @@ class _RealTimePageState extends State<RealTimePage>
                       itemCount: listProductChat.length,
                       itemBuilder: (context, index) {
                         String productsUserId; //장터 상대방 Id
-                        listProductChat[index].user1 ==
-                                googleSignIn.currentUser.id
+                        listProductChat[index].user1 == currentUserModel.uid
                             ? productsUserId = listProductChat[index].user2
                             : productsUserId = listProductChat[index].user1;
                         print(

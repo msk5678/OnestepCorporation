@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/login/pages/loginAuthPage.dart';
 import 'package:onestep_rezero/login/providers/providers.dart';
@@ -13,7 +13,7 @@ String _tempNickName = "";
 bool _firstNickNameEnter = true;
 
 class JoinBody extends ConsumerWidget {
-  final GoogleSignInAccount user;
+  final List<UserInfo> user;
   JoinBody(this.user);
 
   @override
@@ -142,6 +142,10 @@ class JoinBody extends ConsumerWidget {
                       controller: _nicknameController,
                       onChanged: (text) {
                         _tempNickName = text;
+                        if (_isNickNameCheck) {
+                          context.read(nickNameProvider).resetCheck(false);
+                          _firstNickNameEnter = true;
+                        }
                       },
                       decoration: InputDecoration(
                         counterText: "",
@@ -221,15 +225,15 @@ class JoinBody extends ConsumerWidget {
                             if (_isNickNameCheck == true) {
                               await FirebaseFirestore.instance
                                   .collection('user')
-                                  .doc(user.id)
+                                  .doc(user.single.uid)
                                   .set({
                                     // 원래 0 이었는데 일단 1로 변경
                                     "auth":
                                         1, // 대학인증여부 0 : 안됨, 1 : 인증대기중, 2 : 인증 완료
                                     "authTime": 0, // 학교 인증시간
-                                    "uid": user.id, // uid
+                                    "uid": user.single.uid, // uid
                                     "nickName": _nicknameController.text, // 닉네임
-                                    "imageUrl": user.photoUrl, // 사진
+                                    "imageUrl": user.single.photoURL, // 사진
                                     // "email": _emailController.text, // 이메일
                                     "reportState": 0, // 제재 확인
                                     // "reportTime": 0, // 제재 시간
@@ -241,9 +245,9 @@ class JoinBody extends ConsumerWidget {
                                   .whenComplete(() => {
                                         FirebaseFirestore.instance
                                             .collection('user')
-                                            .doc(user.id)
+                                            .doc(user.single.uid)
                                             .collection("chatCount")
-                                            .doc(user.id)
+                                            .doc(user.single.uid)
                                             .set({
                                           "productChatCount": 0,
                                           "boardChatCount": 0,
@@ -252,9 +256,9 @@ class JoinBody extends ConsumerWidget {
                                   .whenComplete(() => {
                                         FirebaseFirestore.instance
                                             .collection('user')
-                                            .doc(user.id)
+                                            .doc(user.single.uid)
                                             .collection("notification")
-                                            .doc(user.id)
+                                            .doc(user.single.uid)
                                             .set({
                                           "marketing": 0,
                                           "push": 0,
@@ -264,22 +268,16 @@ class JoinBody extends ConsumerWidget {
                               // Navigator.of(context).push(MaterialPageRoute(
                               //     builder: (context) =>
                               //         ChoiceAuthWayPage(user)));
-
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return OnestepCustomDialogNotCancel(
-                                    title: '한발자국 회원가입을 환영합니다!',
-                                    description:
-                                        '한발자국을 이용하기 위해서는 \n 학교이메일 인증이 필수입니다. \n모든 서비스는 대학교인증을 하고 난 뒤에 \n 이용이 가능합니다.',
-                                    confirmButtonText: '확인',
-                                    confirmButtonOnPress: () {
-                                      Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  LoginAuthPage(user)));
-                                    },
-                                  );
+                              OnestepCustomDialogNotCancel.show(
+                                context,
+                                title: '한발자국 회원가입을 환영합니다!',
+                                description:
+                                    '한발자국을 이용하기 위해서는 \n 학교이메일 인증이 필수입니다. \n모든 서비스는 대학교인증을 하고 난 뒤에 \n 이용이 가능합니다.',
+                                confirmButtonText: '확인',
+                                confirmButtonOnPress: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) =>
+                                          LoginAuthPage(user)));
                                 },
                               );
                             }

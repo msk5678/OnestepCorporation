@@ -4,7 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
-import 'package:onestep_rezero/main.dart';
+import 'package:onestep_rezero/loggedInWidget.dart';
 import 'package:onestep_rezero/onestepCustomDialog.dart';
 import 'package:onestep_rezero/product/models/product.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -208,14 +208,12 @@ class _ProductBumpState extends State<ProductBump> {
               height: 50,
               child: ElevatedButton(
                 onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) => OnestepCustomDialog(
-                      title: '상품을 끌어올리시겠습니까?',
-                      confirmButtonText: '확인',
-                      cancleButtonText: '취소',
-                      confirmButtonOnPress: _saveDataInFirestore,
-                    ),
+                  OnestepCustomDialog.show(
+                    context,
+                    title: '상품을 끌어올리시겠습니까?',
+                    confirmButtonText: '확인',
+                    cancleButtonText: '취소',
+                    confirmButtonOnPress: _saveDataInFirestore,
                   );
                 },
                 child: Text('끌어올리기'),

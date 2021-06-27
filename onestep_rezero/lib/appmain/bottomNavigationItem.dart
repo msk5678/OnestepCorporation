@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:onestep_rezero/board/boardMain.dart';
-import 'package:onestep_rezero/chat/productchat/controller/productChatController.dart';
+import 'package:onestep_rezero/chat/productchat/controller/productChatMainController.dart';
 import 'package:onestep_rezero/myinfo/pages/myinfoMain.dart';
-// import 'package:onestep_rezero/notification/page/chatMain.dart';
 import 'package:onestep_rezero/chat/page/chatMain.dart';
 import 'package:onestep_rezero/product/pages/product/productAdd.dart';
 import 'package:onestep_rezero/product/pages/product/productMain.dart';
-// import 'package:onestep_rezero/notification/realtime/realtimeProductChatController.dart' aaaaa;
 
 class BottomNavigationItem {
   final Widget page;
@@ -26,18 +24,18 @@ class BottomNavigationItem {
           title: "홈",
         ),
         BottomNavigationItem(
-          page: ProductAdd(),
-          icon: Icon(Icons.add_rounded),
-          title: "물품 등록",
-        ),
-        BottomNavigationItem(
           page: BoardMain(),
           icon: Icon(Icons.list),
           title: "게시판",
         ),
         BottomNavigationItem(
+          page: ProductAdd(),
+          icon: Icon(Icons.add_rounded),
+          title: "물품 등록",
+        ),
+        BottomNavigationItem(
           page: ChatMain(),
-          icon: ProductChatController().getTotalChatCountInBottomBar(),
+          icon: ProductChatMainController().getTotalChatCountInBottomBar(),
           //Icon(Icons.chat_outlined),
           title: "알림",
         ),

@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:onestep_rezero/animation/favoriteAnimation.dart';
 import 'package:onestep_rezero/favorite/utils/favoriteFirebaseApi.dart';
-import 'package:onestep_rezero/main.dart';
+import 'package:onestep_rezero/loggedInWidget.dart';
 import 'package:onestep_rezero/product/models/product.dart';
 import 'package:onestep_rezero/product/pages/product/productDetail.dart';
 import 'package:onestep_rezero/timeUtil.dart';
@@ -63,7 +63,7 @@ class _ProductItemState extends State<ProductItem> {
                 Product.fromJson(snapshot.data.data(), snapshot.data.id);
 
             bool chk = p.favoriteUserList == null ||
-                p.favoriteUserList[googleSignIn.currentUser.id] == null;
+                p.favoriteUserList[currentUserModel.uid] == null;
 
             _fChk = chk;
             return Positioned(

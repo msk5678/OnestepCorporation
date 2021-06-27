@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-
-import '../../main.dart';
+import 'package:onestep_rezero/loggedInWidget.dart';
 
 class ProductFirebaseApi {
   static Future<QuerySnapshot> getAllProducts(

@@ -123,6 +123,9 @@ dependencies:
   flutter_native_admob: ^2.1.0+3
   google_mobile_ads: ^0.12.1
   
+  #async
+  async: ^2.5.0
+
   #SlideUpPanel
   sliding_up_panel: ^2.0.0+1
   #LikeButton
@@ -133,6 +136,10 @@ dependencies:
   flutter_staggered_animations: ^1.0.0
   #slidable panel
   flutter_slidable: ^0.6.0
+
+  #hive
+  hive: ^2.0.4
+  hive_flutter: ^1.0.0
 
   #Chat Test
   #stream_chat_flutter: ^1.5.1
@@ -147,7 +154,6 @@ dev_dependencies:
     sdk: flutter
   #moor
   build_runner: ^1.11.5
-  moor_generator: ^4.1.0  
   ############
 
 

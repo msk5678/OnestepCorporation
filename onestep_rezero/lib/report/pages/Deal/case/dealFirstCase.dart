@@ -1,8 +1,8 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
+import 'package:onestep_rezero/loggedInWidget.dart';
 
-import '../../../../main.dart';
 import '../../../../onestepCustomDialog.dart';
 import '../../../../onestepCustomDialogNotCancel.dart';
 
@@ -15,7 +15,7 @@ void report() {
   FirebaseDatabase.instance
       .reference()
       .child('reportUser')
-      .child(googleSignIn.currentUser.id)
+      .child(currentUserModel.uid)
       .set({'postUid': true});
 
   FirebaseDatabase.instance
@@ -42,9 +42,9 @@ void report() {
                   'content': myController.text.toString(),
                   'title': "case first",
                   // 신고 당한 사람
-                  'reportedUid': googleSignIn.currentUser.id,
+                  'reportedUid': currentUserModel.uid,
                   // 신고 한 사람
-                  'reportingUid': googleSignIn.currentUser.id,
+                  'reportingUid': currentUserModel.uid,
                   'time': DateTime.now().millisecondsSinceEpoch.toString(),
                 })
               }
@@ -70,9 +70,9 @@ void report() {
                       'content': myController.text.toString(),
                       'title': "case first",
                       // 신고 당한 사람
-                      'reportedUid': googleSignIn.currentUser.id,
+                      'reportedUid': currentUserModel.uid,
                       // 신고 한 사람
-                      'reportingUid': googleSignIn.currentUser.id,
+                      'reportingUid': currentUserModel.uid,
                       'time': DateTime.now().millisecondsSinceEpoch.toString(),
                     });
                   } else {
@@ -90,9 +90,9 @@ void report() {
                       'content': myController.text.toString(),
                       'title': "case first",
                       // 신고 당한 사람
-                      'reportedUid': googleSignIn.currentUser.id,
+                      'reportedUid': currentUserModel.uid,
                       // 신고 한 사람
-                      'reportingUid': googleSignIn.currentUser.id,
+                      'reportingUid': currentUserModel.uid,
                       'time': DateTime.now().millisecondsSinceEpoch.toString(),
                     });
                   }
@@ -195,21 +195,16 @@ class DealFirstCase extends StatelessWidget {
                                       values = value.value,
                                       values.forEach((key, value) {
                                         // 한번이라도 신고한적이 있다
-                                        if (key ==
-                                            googleSignIn.currentUser.id) {
+                                        if (key == currentUserModel.uid) {
                                           // 같은 글을 신고한다
                                           if (value['postUid'] == true) {
                                             flag = true;
-                                            showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return OnestepCustomDialogNotCancel(
-                                                  title: '이미 신고한 게시물입니다.',
-                                                  confirmButtonText: '확인',
-                                                  confirmButtonOnPress: () {
-                                                    Navigator.pop(context);
-                                                  },
-                                                );
+                                            OnestepCustomDialogNotCancel.show(
+                                              context,
+                                              title: '이미 신고한 게시물입니다.',
+                                              confirmButtonText: '확인',
+                                              confirmButtonOnPress: () {
+                                                Navigator.pop(context);
                                               },
                                             );
                                           }
@@ -223,18 +218,14 @@ class DealFirstCase extends StatelessWidget {
                                 });
                         // 처음 신고한다
                         if (flag == false) {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return OnestepCustomDialog(
-                                title: '신고하시겠습니까?',
-                                confirmButtonText: '확인',
-                                cancleButtonText: '취소',
-                                confirmButtonOnPress: () {
-                                  report();
-                                  Navigator.pop(context);
-                                },
-                              );
+                          OnestepCustomDialog.show(
+                            context,
+                            title: '신고하시겠습니까?',
+                            confirmButtonText: '확인',
+                            cancleButtonText: '취소',
+                            confirmButtonOnPress: () {
+                              report();
+                              Navigator.pop(context);
                             },
                           );
                         }

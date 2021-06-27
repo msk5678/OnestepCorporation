@@ -1,13 +1,15 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onestep_rezero/chat/navigator/chatNavigationManager.dart';
 import 'package:onestep_rezero/chat/productchat/controller/productChatController.dart';
+import 'package:onestep_rezero/chat/productchat/controller/productChatListController.dart';
 
 import 'package:onestep_rezero/chat/productchat/model/productChatList.dart';
 import 'package:onestep_rezero/chat/productchat/model/productChatListCount.dart';
 import 'package:onestep_rezero/chat/widget/chatBadge.dart';
 import 'package:onestep_rezero/chat/widget/chat_list_time.dart';
-import 'package:onestep_rezero/main.dart';
+import 'package:onestep_rezero/loggedInWidget.dart';
 
 class ProductChatListPage extends StatefulWidget {
   @override
@@ -34,6 +36,23 @@ class _ProductChatListPageState extends State<ProductChatListPage>
     super.build(context);
     return Scaffold(
       body: _buildChatListListTileStream(),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(
+          bottom: 30.0,
+        ),
+        child: FloatingActionButton(
+          onPressed: () {
+            Fluttertoast.showToast(
+                msg: "This is Center Short Toast",
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.CENTER,
+                timeInSecForIosWeb: 1,
+                backgroundColor: Colors.red,
+                textColor: Colors.white,
+                fontSize: 16.0);
+          },
+        ),
+      ),
     );
   }
 
@@ -48,7 +67,7 @@ class _ProductChatListPageState extends State<ProductChatListPage>
         //   child:
         StreamBuilder(
       stream: ProductChatController.productChatReference
-          .orderByChild("chatUsers/${googleSignIn.currentUser.id}/hide")
+          .orderByChild("chatUsers/${currentUserModel.uid}/hide")
           .equalTo(false)
           .onValue, //조건1.  타임스탬프 기준
       builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -65,7 +84,7 @@ class _ProductChatListPageState extends State<ProductChatListPage>
                 ),
               ),
             );
-          // CircularProgressIndicator();
+
           default:
             if (snapshot == null ||
                 !snapshot.hasData ||
@@ -150,8 +169,7 @@ class _ProductChatListPageState extends State<ProductChatListPage>
 
                       mesageInValues.forEach((mIkey, mIvalue) {
                         //보낸 사람 분해.
-                        if (mIvalue == false &&
-                            mIkey == googleSignIn.currentUser.id) {
+                        if (mIvalue == false && mIkey == currentUserModel.uid) {
                           //수신 유저 정보가 나 and 읽음 false 이면
                           len++; //인트형 len 의 사이즈를 증가시킨다.
                           //print("stream values else1 message ForEach: 읽지 않은 메세지 있음. len : $len");
@@ -185,7 +203,7 @@ class _ProductChatListPageState extends State<ProductChatListPage>
               listProductChatCount2.forEach((count) {
                 sum += count.chatCount;
               });
-              ProductChatController().setToFirebaseProductChatCount(sum);
+              ProductChatListController().setToFirebaseProductChatCount(sum);
               return userExist == true
                   ? Center(
                       child: Container(
@@ -204,7 +222,7 @@ class _ProductChatListPageState extends State<ProductChatListPage>
                                 (context, index) {
                                   String productsUserId; //장터 상대방 Id
                                   listProductChat[index].chatUsers.user1Uid ==
-                                          googleSignIn.currentUser.id
+                                          currentUserModel.uid
                                       ? productsUserId = listProductChat[index]
                                           .chatUsers
                                           .user2Uid
@@ -216,77 +234,110 @@ class _ProductChatListPageState extends State<ProductChatListPage>
                                     children: [
                                       // Text('.'),
                                       ListTile(
-                                        tileColor: Colors.white,
-                                        // onLongPress: () {
-                                        //   Fluttertoast.showToast(msg: "꾹");
-                                        // },
+                                        contentPadding: EdgeInsets.fromLTRB(
+                                          12,
+                                          5,
+                                          12,
+                                          5,
+                                        ),
+                                        // tileColor: Colors.red,
+                                        onLongPress: () {
+                                          Fluttertoast.showToast(msg: "꾹");
+                                        },
                                         // selected: true,
                                         leading: Padding(
                                           padding:
-                                              const EdgeInsets.only(top: 7.0),
-                                          child: ProductChatController()
+                                              const EdgeInsets.only(top: 5.0),
+                                          child: ProductChatListController()
                                               .getUserImage(
                                                   chatId, productsUserId),
                                         ),
                                         // borderRadius: Bo
-                                        title: Padding(
-                                          padding: const EdgeInsets.fromLTRB(
-                                              0, 0, 0, 3),
-                                          child: Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.end,
-                                            children: <Widget>[
-                                              ProductChatController()
-                                                  .getProductUserNickName(
-                                                      productsUserId, 15),
-                                              SizedBox(width: 10, height: 10),
-                                              Spacer(),
-                                              getChatListTime(
-                                                  listProductChat[index]
-                                                      .recentTime),
-                                              // Container(
-                                              //   width: 130,
-                                              //   height: 530,
-                                              //   color: Colors.blue,
-                                              // ),
-                                            ],
-                                          ),
-                                        ),
-                                        subtitle: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: <Widget>[
-                                            Container(
-                                              width: 220,
-                                              height: 30,
-                                              child: Text(
-                                                listProductChat[index]
-                                                    .recentText,
-                                                overflow: TextOverflow.ellipsis,
-                                                maxLines: 2,
-                                              ),
+                                        title: Container(
+                                          // color: Colors.blue,
+                                          child: Padding(
+                                            padding: const EdgeInsets.fromLTRB(
+                                                0, 5, 0, 0),
+                                            child: Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.end,
+                                              children: <Widget>[
+                                                ProductChatListController()
+                                                    .getProductUserNickName(
+                                                  chatId,
+                                                  productsUserId,
+                                                  14,
+                                                ),
+                                                SizedBox(width: 10, height: 10),
+                                                Spacer(),
+                                                getChatListTime(
+                                                    listProductChat[index]
+                                                        .recentTime),
+                                              ],
                                             ),
-                                            SizedBox(width: 10, height: 10),
-                                            Spacer(),
-                                            chatCountBadge(
-                                                listProductChatCount2[index]
-                                                    .chatCount),
-                                          ],
-                                        ),
-                                        trailing: Padding(
-                                          padding: const EdgeInsets.fromLTRB(
-                                              0, 0, 0, 0),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: <Widget>[
-                                              Text("menu"),
-                                            ],
                                           ),
                                         ),
+                                        subtitle: Center(
+                                          child: Container(
+                                            // color: Colors.blue,
+                                            child: Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: <Widget>[
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                    top: 3,
+                                                  ),
+                                                  child: Container(
+                                                    // color: Colors.pink,
+                                                    width: 220,
+                                                    height: 30,
+                                                    child: Text(
+                                                      listProductChat[index]
+                                                          .recentText,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      maxLines: 2,
+                                                      style: TextStyle(
+                                                        fontSize: 12,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(width: 10, height: 10),
+                                                Spacer(),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                    top: 0,
+                                                  ),
+                                                  child: chatCountBadge(
+                                                      listProductChatCount2[
+                                                              index]
+                                                          .chatCount),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        // trailing: Padding(
+                                        //   padding: const EdgeInsets.fromLTRB(
+                                        //       0, 0, 0, 0),
+                                        //   child: Row(
+                                        //     mainAxisSize: MainAxisSize.min,
+                                        //     mainAxisAlignment:
+                                        //         MainAxisAlignment.center,
+                                        //     crossAxisAlignment:
+                                        //         CrossAxisAlignment.center,
+                                        //     children: <Widget>[
+                                        //       Text("menu"),
+                                        //     ],
+                                        //   ),
+                                        // ),
                                         onTap: () {
                                           ChatNavigationManager
                                               .navigateToProductChattingRoom(

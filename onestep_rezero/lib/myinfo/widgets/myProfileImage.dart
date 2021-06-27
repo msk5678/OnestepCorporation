@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:onestep_rezero/main.dart';
+import 'package:onestep_rezero/loggedInWidget.dart';
 
 String downloadURL = "";
 
@@ -28,7 +28,7 @@ class MyProfileImage extends ConsumerWidget {
     return StreamBuilder(
       stream: FirebaseFirestore.instance
           .collection("user")
-          .doc(googleSignIn.currentUser.id)
+          .doc(currentUserModel.uid)
           .snapshots(),
       builder:
           (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {

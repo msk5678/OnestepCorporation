@@ -1,7 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-
-import '../../../../main.dart';
+import 'package:onestep_rezero/loggedInWidget.dart';
 
 final myController = TextEditingController();
 
@@ -32,9 +31,9 @@ void report() {
                   'content': myController.text.toString(),
                   'title': "case first",
                   // 신고 당한 사람
-                  'reportedUid': googleSignIn.currentUser.id,
+                  'reportedUid': currentUserModel.uid,
                   // 신고 한 사람
-                  'reportingUid': googleSignIn.currentUser.id,
+                  'reportingUid': currentUserModel.uid,
                   'time': DateTime.now().millisecondsSinceEpoch.toString(),
                 })
               }
@@ -60,9 +59,9 @@ void report() {
                       'content': myController.text.toString(),
                       'title': "case first",
                       // 신고 당한 사람
-                      'reportedUid': googleSignIn.currentUser.id,
+                      'reportedUid': currentUserModel.uid,
                       // 신고 한 사람
-                      'reportingUid': googleSignIn.currentUser.id,
+                      'reportingUid': currentUserModel.uid,
                       'time': DateTime.now().millisecondsSinceEpoch.toString(),
                     });
                   } else {
@@ -80,9 +79,9 @@ void report() {
                       'content': myController.text.toString(),
                       'title': "case first",
                       // 신고 당한 사람
-                      'reportedUid': googleSignIn.currentUser.id,
+                      'reportedUid': currentUserModel.uid,
                       // 신고 한 사람
-                      'reportingUid': googleSignIn.currentUser.id,
+                      'reportingUid': currentUserModel.uid,
                       'time': DateTime.now().millisecondsSinceEpoch.toString(),
                     });
                   }

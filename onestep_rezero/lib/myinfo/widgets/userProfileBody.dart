@@ -3,14 +3,14 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:onestep_rezero/main.dart';
+import 'package:onestep_rezero/loggedInWidget.dart';
 
 class UserProfileBody extends ConsumerWidget {
   Widget getUserName() {
     return FutureBuilder(
       future: FirebaseFirestore.instance
           .collection("user")
-          .doc(googleSignIn.currentUser.id)
+          .doc(currentUserModel.uid)
           .get(),
       builder:
           (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
@@ -37,7 +37,7 @@ class UserProfileBody extends ConsumerWidget {
     return FutureBuilder(
       future: FirebaseFirestore.instance
           .collection("user")
-          .doc(googleSignIn.currentUser.id)
+          .doc(currentUserModel.uid)
           .get(),
       builder:
           (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
