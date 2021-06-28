@@ -297,7 +297,7 @@ class _PostContentState extends State<PostContent>
                 ],
               ),
             ),
-            TipDialogContainer(duration: const Duration(seconds: 2))
+            TipDialogContainer(duration: const Duration(seconds: 1))
           ],
         ),
       ),
@@ -564,7 +564,7 @@ class _PostContentState extends State<PostContent>
                 }).then((value) {
                   TipDialogHelper.dismiss();
                   TipDialogHelper.success("삭제 완료!");
-                  Future.delayed(Duration(seconds: 2))
+                  Future.delayed(Duration(seconds: 1))
                       .then((value) => Navigator.popUntil(
                           context, ModalRoute.withName('/PostList')))
                       .whenComplete(() {});
@@ -627,8 +627,7 @@ class _PostContentState extends State<PostContent>
       textEditingControllerComment.clear();
       loadingDialogTipDialog(
           CommentData.toRealtimeDataWithPostData(postData).toRealtimeDatabase(
-            comment.trimRight(),
-          ), thenFunction: (value) {
+              comment.trimRight(), currentUid), thenFunction: (value) {
         _panelOpen(false);
         context
             .read(commentProvider)
@@ -640,7 +639,7 @@ class _PostContentState extends State<PostContent>
     } else {
       if (!commentData.isUnderComment) {
         textEditingControllerComment.clear();
-        loadingDialogTipDialog(commentData.addCoComment(comment),
+        loadingDialogTipDialog(commentData.addCoComment(comment, currentUid),
             thenFunction: (value) {
           _panelOpen(false);
           context
@@ -655,8 +654,8 @@ class _PostContentState extends State<PostContent>
       } else {
         textEditingControllerComment.clear();
         loadingDialogTipDialog(
-            CommentData.toRealtimeDataWithPostData(postData)
-                .addCoCoComment(comment, commentData), thenFunction: (value) {
+            CommentData.toRealtimeDataWithPostData(postData).addCoCoComment(
+                comment, commentData, currentUid), thenFunction: (value) {
           _panelOpen(false);
           context
               .read(commentProvider)
@@ -790,11 +789,11 @@ class _PostContentState extends State<PostContent>
     if (result) {
       TipDialogHelper.dismiss();
       TipDialogHelper.success("저장 완료!");
-      Future.delayed(Duration(seconds: 2)).then((value) => thenFunction(value));
+      Future.delayed(Duration(seconds: 1)).then((value) => thenFunction(value));
     } else {
       TipDialogHelper.dismiss();
       TipDialogHelper.fail("저장 실패\n Error : CANNOT UPLOAD COMMENT");
-      Future.delayed(Duration(seconds: 2)).then((value) => errorFunction);
+      Future.delayed(Duration(seconds: 1)).then((value) => errorFunction);
     }
   }
 

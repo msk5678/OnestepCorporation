@@ -167,15 +167,14 @@ class PostListProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future fetchPostDataFromPostId(List<UserFavoriteData> postIdList) async {
+  Future fetchPostDataFromPostId(List<UserData> postIdList) async {
     if (_isFetching) return;
 
     _isFetching = true;
 
     _productsSnapshot.clear();
     try {
-      await Future.forEach(postIdList,
-          (UserFavoriteData userFavoriteData) async {
+      await Future.forEach(postIdList, (UserData userFavoriteData) async {
         String boardId = userFavoriteData.boardId;
         String postId = userFavoriteData.postId;
         _productsSnapshot.add(await FirebaseFirestore.instance

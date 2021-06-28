@@ -15,15 +15,15 @@ class FavoriteButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, watch) {
     final provider = watch(userBoardDataProvider);
-    final uid = currentUserModel.uid;
+    final currentUid = currentUserModel.uid;
     bool fetching = provider.isFetching;
     bool isClicked =
         provider.userFavoritePostMap.containsKey(currentPost.documentId);
     return GestureDetector(
       onTap: () async {
         if (!fetching) {
-          await provider.updateFavorite(currentPost, uid, isClicked);
-          provider.getUserFavoriteList();
+          await provider.updateFavorite(currentPost, currentUid, isClicked);
+          provider.getUserFavoriteList(currentUid);
           clickCallback(isClicked);
         }
       },

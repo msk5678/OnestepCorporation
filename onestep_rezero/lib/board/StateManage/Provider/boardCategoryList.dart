@@ -50,15 +50,15 @@ class BoardListView extends ConsumerWidget {
         //     print("Something to do");
         //   },
         // ),
-        trailing: IconButton(
-          icon: Icon(
-            Icons.star_border_rounded,
-            // color: Colors.yellow[600],
-          ),
-          onPressed: () {
-            print("Something to do");
-          },
-        ),
+        // trailing: IconButton(
+        //   icon: Icon(
+        //     Icons.star_border_rounded,
+        //     // color: Colors.yellow[600],
+        //   ),
+        //   onPressed: () {
+        //     print("Something to do");
+        //   },
+        // ),
         subtitle: GestureDetector(
             onTap: () async {
               manageAnimationTimer(false);
@@ -84,22 +84,25 @@ class BoardListView extends ConsumerWidget {
       ));
     });
 
-    return Column(
-        children: categoryListWidget
-          ..add(Center(
-            child: IconButton(
-              icon: Icon(Icons.add),
-              onPressed: () async {
-                manageAnimationTimer(false);
-                await Navigator.of(context)
-                    .pushNamed("/BoardCreate")
-                    .then((value) {
-                  bool result = value ?? false;
-                  if (result) context.read(boardListProvider).fetchBoards();
-                  manageAnimationTimer(true);
-                });
-              },
-            ),
-          )));
+    return Padding(
+      padding: EdgeInsets.only(left: 10),
+      child: Column(
+          children: categoryListWidget
+            ..add(Center(
+              child: IconButton(
+                icon: Icon(Icons.add),
+                onPressed: () async {
+                  manageAnimationTimer(false);
+                  await Navigator.of(context)
+                      .pushNamed("/BoardCreate")
+                      .then((value) {
+                    bool result = value ?? false;
+                    if (result) context.read(boardListProvider).fetchBoards();
+                    manageAnimationTimer(true);
+                  });
+                },
+              ),
+            ))),
+    );
   }
 }

@@ -257,7 +257,6 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
                     saveDataInFirestore();
                   }
                 } else if (_result.runtimeType == String) {
-                  print(_result);
                   switch (_result.toString()) {
                     case "CONTENT":
                       ScaffoldMessenger.of(context).showSnackBar(

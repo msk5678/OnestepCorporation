@@ -118,25 +118,25 @@ class CommentData {
         .update({"commentCount": FieldValue.increment(1)});
   }
 
-  Future<bool> saveCommentToUserCollection(String timeStampId,
+  Future<bool> saveCommentToUserDb(String timeStampId, String currentUid,
       {String parentCommentid}) async {
-    final firestoreDb = FirebaseFirestore.instance;
-    return firestoreDb
-        .collection('user')
-        .doc('aboutBoard')
-        .collection('comment')
-        .doc(timeStampId)
+    final realtimeDb = FirebaseDatabase.instance.reference();
+    return realtimeDb
+        .child('user')
+        .child(currentUid)
+        .child('aboutBoard')
+        .child('comment')
+        .child(timeStampId)
         .set({
           "boardId": boardId,
           "postId": postId,
-          "haveChildComment": haveChildComment ?? false,
           "parentCommentId": parentCommentid ?? ""
         })
         .then((value) => true)
         .onError((error, stackTrace) => false);
   }
 
-  Future toRealtimeDatabase(String textContent) async {
+  Future toRealtimeDatabase(String textContent, String currentUid) async {
     final realtimeDb = FirebaseDatabase.instance.reference();
 
     if (await updateCommentMap(false)) {
@@ -144,7 +144,7 @@ class CommentData {
         String currentTimeStamp =
             DateTime.now().millisecondsSinceEpoch.toString();
         bool result =
-            await saveCommentToUserCollection(currentTimeStamp) ?? false;
+            await saveCommentToUserDb(currentTimeStamp, currentUid) ?? false;
         if (result)
           return realtimeDb
               .child('board')
@@ -346,11 +346,11 @@ class CommentData {
         .whenComplete(() => null);
   }
 
-  addCoComment(String comment) async {
+  addCoComment(String comment, String currentUid) async {
     if (await increaseCommentCount()) if (await updateCommentMap(false)) {
       String currentTimeStamp =
           DateTime.now().millisecondsSinceEpoch.toString();
-      bool result = await saveCommentToUserCollection(currentTimeStamp,
+      bool result = await saveCommentToUserDb(currentTimeStamp, currentUid,
               parentCommentid: commentId) ??
           false;
       if (result) {
@@ -399,15 +399,13 @@ class CommentData {
   }
 
   Future addCoCoComment(
-    String textContent,
-    CommentData parentComment,
-  ) async {
+      String textContent, CommentData parentComment, String currentUid) async {
     final realtimeDb = FirebaseDatabase.instance.reference();
     String parentCommentId = parentComment.parentCommentId;
     if (await increaseCommentCount()) if (await updateCommentMap(false)) {
       String currentTimeStamp =
           DateTime.now().millisecondsSinceEpoch.toString();
-      bool result = await saveCommentToUserCollection(currentTimeStamp,
+      bool result = await saveCommentToUserDb(currentTimeStamp, currentUid,
               parentCommentid: parentCommentId) ??
           false;
       if (result)

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -192,49 +193,43 @@ class PostData {
           : 0,
     );
   }
-  Future<bool> updateFavorite(String uid, bool isUndo) async {
-    if (!isUndo) {
-      return FirebaseFirestore.instance
-          .collection('university')
-          .doc(currentUserModel.university)
-          .collection('board')
-          .doc(this.boardId)
-          .collection(this.boardId)
-          .doc(this.documentId)
-          .update({"favoriteCount": FieldValue.increment(1)})
-          .then((value) async {
-            await FirebaseFirestore.instance
-                .collection('user')
-                .doc('aboutBoard')
-                .collection('favorite')
-                .doc(this.documentId)
+  Future<bool> updateFavorite(String currentUid, bool isUndo) async {
+    final firebaseRealtimeDb = FirebaseDatabase.instance.reference();
+    return FirebaseFirestore.instance
+        .collection('university')
+        .doc(currentUserModel.university)
+        .collection('board')
+        .doc(this.boardId)
+        .collection(this.boardId)
+        .doc(this.documentId)
+        .update({
+          "favoriteCount":
+              !isUndo ? FieldValue.increment(1) : FieldValue.increment(-1)
+        })
+        .then((value) async {
+          if (!isUndo) {
+            await firebaseRealtimeDb
+                .child('user')
+                .child(currentUid)
+                .child('aboutBoard')
+                .child('favorite')
+                .child(this.documentId)
                 .set({
               "postId": documentId,
               "boardId": boardId,
             });
-          })
-          .onError((error, stackTrace) {})
-          .then((value) => true);
-    } else {
-      return FirebaseFirestore.instance
-          .collection('university')
-          .doc(currentUserModel.university)
-          .collection('board')
-          .doc(this.boardId)
-          .collection(this.boardId)
-          .doc(this.documentId)
-          .update({"favoriteCount": FieldValue.increment(-1)})
-          .then((value) async {
-            await FirebaseFirestore.instance
-                .collection('user')
-                .doc('aboutBoard')
-                .collection('favorite')
-                .doc(this.documentId)
-                .delete();
-          })
-          .onError((error, stackTrace) {})
-          .then((value) => true);
-    }
+          } else {
+            await firebaseRealtimeDb
+                .child('user')
+                .child(currentUid)
+                .child('aboutBoard')
+                .child('favorite')
+                .child(this.documentId)
+                .remove();
+          }
+        })
+        .onError((error, stackTrace) {})
+        .then((value) => true);
   }
 
   updateViewers(String uid) async {

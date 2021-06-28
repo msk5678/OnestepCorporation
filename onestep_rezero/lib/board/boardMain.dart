@@ -8,6 +8,8 @@ import 'package:onestep_rezero/chat/widget/appColor.dart';
 
 import "dart:math" as math;
 
+import 'package:onestep_rezero/loggedInWidget.dart';
+
 final userBoardDataProvider =
     ChangeNotifierProvider<UserProvider>((ref) => UserProvider());
 
@@ -21,6 +23,7 @@ class BoardMain extends StatefulWidget {
 }
 
 class _BoardMainState extends State<BoardMain> {
+  final currentUid = currentUserModel.uid;
   double deviceWidth;
   double deviceHeight;
   List<BoardInitData> initIconData = [];
@@ -53,7 +56,7 @@ class _BoardMainState extends State<BoardMain> {
   ScrollController scrollController = new ScrollController();
   @override
   void initState() {
-    context.read(userBoardDataProvider).getUserData();
+    context.read(userBoardDataProvider).getUserData(currentUid);
     // streamControllerIcon1 = StreamController<bool>();
     // streamControllerIcon2 = StreamController<bool>();
     // streamControllerIcon3 = StreamController<bool>();

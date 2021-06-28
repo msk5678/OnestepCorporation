@@ -27,11 +27,12 @@ class UserWrittenCommentList extends StatefulWidget {
 }
 
 class _UserWrittenCommentListState extends State<UserWrittenCommentList> {
+  final currentUid = currentUserModel.uid;
   double deviceWidth;
   BoardInitData dashBoardIcon;
   @override
   void initState() {
-    context.read(userBoardDataProvider).getUserCommentList();
+    context.read(userBoardDataProvider).getUserCommentList(currentUid);
     dashBoardIcon = widget.dashBoardIconData;
     super.initState();
   }
@@ -123,32 +124,6 @@ class UserWrittenCommentListWidget extends ConsumerWidget implements Comment {
   commentListSwipeMenu(comment, BuildContext context, currentLogInUid,
       {Widget child, Key slidableKey}) {
     return child;
-    // return GestureDetector(
-    //     onTap: () async {
-    //       PostData clickedPostData = await FirebaseFirestore.instance
-    //           .collection('university')
-    //           .doc(currentUserModel.university)
-    //           .collection("board")
-    //           .doc(comment.boardId)
-    //           .collection(comment.boardId)
-    //           .doc(comment.postId)
-    //           .get()
-    //           .then((DocumentSnapshot documentSnapshot) =>
-    //               PostData.fromFireStore(documentSnapshot));
-    //       print("clickedPostData.deleted : ${clickedPostData.deleted}");
-    //       if (!clickedPostData.deleted) {
-    //         Navigator.of(context).pushNamed("/PostContent",
-    //             arguments: {"CURRENTBOARDDATA": clickedPostData}).then((value) {
-    //           // context
-    //           //     .read(writtenCommentProvider)
-    //           //     .fetchUserWrittenComment(currentUserModel.uid);
-    //         });
-    //       } else {
-    //         ScaffoldMessenger.of(context)
-    //             .showSnackBar(showSnackBar(textMessage: Text("삭제된 게시글입니다.")));
-    //       }
-    //     },
-    //     child: child);
   }
 
   @override
@@ -229,8 +204,6 @@ class UserWrittenCommentListWidget extends ConsumerWidget implements Comment {
                                 deviceHeight),
                       ),
                     ),
-                    // coCommentWidget(currentIndexCommentData.haveChildComment,
-                    //     currentIndexCommentData)
                   ],
                 ),
               ),
@@ -277,29 +250,17 @@ class UserWrittenCommentListWidget extends ConsumerWidget implements Comment {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Container(
-                    alignment: Alignment.centerLeft,
-                    child:
-                        // child: commentName(comment.uid, postWriterUID, commentList),
-
-                        Text(
-                            commentName(
-                              comment.uid,
-                              null,
-                              null,
-                            ),
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: OnestepColors().mainColor))),
-                comment.deleted
-                    ? Text(" (삭제됨)",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, color: Colors.red))
-                    : Container(),
-              ],
-            ),
+            Container(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                    commentName(
+                      null,
+                      null,
+                      null,
+                    ),
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: OnestepColors().mainColor))),
             Container(
               padding: EdgeInsets.only(
                 left: 8,

@@ -28,7 +28,6 @@ class _UserPostingListState extends PostListParentWidget<UserFavoriteList> {
   @override
   void initState() {
     dashBoardIcon = widget.dashBoardIconData;
-
     super.initState();
   }
 
@@ -37,7 +36,7 @@ class _UserPostingListState extends PostListParentWidget<UserFavoriteList> {
       BoardData boardData, BoardCategory boardCategory) {}
   @override
   getPostList(BoardData currentBoard) {
-    context.read(userBoardDataProvider).getUserFavoriteList();
+    context.read(userBoardDataProvider).getUserFavoriteList(currentUid);
   }
 
   @override
@@ -122,10 +121,10 @@ class UserFavoriteListRiverPod extends ConsumerWidget {
     final userFavoriteProvider = watch(userBoardDataProvider);
 
     // var user = userFavoriteProvider.userFavoritePostMap;
-    List<UserFavoriteData> _userFavoritePostIdList =
+    List<UserData> _userFavoritePostIdList =
         userFavoriteProvider.userFavoritePostMap.values.toList();
     bool isFetching = userFavoriteProvider.isFetching;
-    print("user favorite : ${userFavoriteProvider.userFavoritePostMap}");
+    print("user favorite : ${userFavoriteProvider.userFavoritePostMap.keys}");
     if (!isFetching && _userFavoritePostIdList.length == 0) {
       return Container(
         height: deviceHeight / 2,
@@ -157,7 +156,7 @@ class UserFavoriteListRiverPod extends ConsumerWidget {
 }
 
 class UserFavoriteListData extends ConsumerWidget {
-  final List<UserFavoriteData> userFavoriteDataList;
+  final List<UserData> userFavoriteDataList;
   final Function callback;
   UserFavoriteListData({this.userFavoriteDataList, this.callback});
   @override

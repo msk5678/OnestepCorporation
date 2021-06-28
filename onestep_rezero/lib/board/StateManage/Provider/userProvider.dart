@@ -2,40 +2,36 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-
 import 'package:onestep_rezero/board/declareData/commentData.dart';
-
 import 'package:onestep_rezero/board/declareData/postData.dart';
 
 class UserProvider with ChangeNotifier {
   String _errorMessage = "UserProvider Provider RuntimeError";
   String get errorMessage => _errorMessage;
   List<CommentData> _userCommentList = [];
-  Map<String, UserFavoriteData> _userFavoritePostList = {};
-  Map<String, UserFavoriteData> get userFavoritePostMap =>
-      _userFavoritePostList;
+  Map<String, UserData> _userFavoritePostList = {};
+  Map<String, UserData> get userFavoritePostMap => _userFavoritePostList;
   List<CommentData> get userCommentList => _userCommentList;
   bool get isFetching => _isFetching;
   bool _isFetching = false;
 
-  getUserFavoriteList() async {
+  getUserFavoriteList(String currentUid) async {
     if (_isFetching) return;
+    final firebaseRealtimeDb = FirebaseDatabase.instance.reference();
     _isFetching = true;
     _userFavoritePostList = {};
     try {
       //UserComment List
-      await FirebaseFirestore.instance
-          .collection('user')
-          .doc("aboutBoard")
-          .collection('favorite')
-          .get()
-          .then((QuerySnapshot querySnapshot) async {
-        await Future.forEach(querySnapshot.docs,
-            (DocumentSnapshot documentSnapshot) {
-          _userFavoritePostList.addAll({
-            documentSnapshot.id:
-                UserFavoriteData.fromFirestore(documentSnapshot)
-          });
+      await firebaseRealtimeDb
+          .child('user')
+          .child(currentUid.toString())
+          .child('aboutBoard')
+          .child('favorite')
+          .once()
+          .then((DataSnapshot dataSnapshot) {
+        dataSnapshot.value.forEach((key, value) {
+          _userFavoritePostList
+              .addAll({key: UserData.fromRealtimeUserFavoriteList(value)});
           notifyListeners();
         });
       });
@@ -46,26 +42,31 @@ class UserProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  getUserCommentList() async {
+  getUserCommentList(String currentUid) async {
     if (_isFetching) return;
     _isFetching = true;
     _userCommentList = [];
     try {
-      List<UserWrittenCommentData> _userWrittenCommentList = [];
+      List<UserData> _userWrittenCommentList = [];
+      final firebaseRealtimeDb = FirebaseDatabase.instance.reference();
       final db = FirebaseDatabase.instance;
-      _userWrittenCommentList = await FirebaseFirestore.instance
-          .collection('user')
-          .doc('aboutBoard')
-          .collection('comment')
-          .get()
-          .then((QuerySnapshot querySnapshot) {
-        return UserWrittenCommentData()
-            .fromFireStoreQuerySnapshot(querySnapshot);
+      await firebaseRealtimeDb
+          .child('user')
+          .child(currentUid)
+          .child('aboutBoard')
+          .child('comment')
+          .once()
+          .then((DataSnapshot dataSnapshot) {
+        Map<dynamic, dynamic> userCommentedMap =
+            Map<dynamic, dynamic>.from(dataSnapshot.value);
+        userCommentedMap.forEach((key, value) {
+          _userWrittenCommentList
+              .add(UserData.fromRealtimeUserWrittenCommentList(key, value));
+        });
       });
-      await Future.forEach(_userWrittenCommentList,
-          (UserWrittenCommentData data) async {
+      await Future.forEach(_userWrittenCommentList, (UserData data) async {
         var commentDb;
-        if (data.haveChildComment || data.parentCommentId != "") {
+        if (data.parentCommentId != "") {
           commentDb = db
               .reference()
               .child('board')
@@ -98,7 +99,7 @@ class UserProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  getUserData() async {
+  getUserData(String currentUid) async {
     if (_isFetching) return;
     _isFetching = true;
     _userFavoritePostList = {};
@@ -106,10 +107,9 @@ class UserProvider with ChangeNotifier {
 
     try {
       //User Favorite Post List
-      await getUserFavoriteList();
-
+      await getUserFavoriteList(currentUid);
       //UserComment List
-      await getUserCommentList();
+      await getUserCommentList(currentUid);
     } catch (e) {
       _isFetching = false;
     }
@@ -120,13 +120,14 @@ class UserProvider with ChangeNotifier {
 
   updateFavorite(
     PostData currentPost,
-    String uid,
+    String currentUid,
     bool isUndo,
   ) async {
     if (_isFetching) return;
     _isFetching = true;
     try {
-      var result = await currentPost.updateFavorite(uid, isUndo) ?? false;
+      var result =
+          await currentPost.updateFavorite(currentUid, isUndo) ?? false;
       try {
         if (result) {
           _isFetching = false;
@@ -141,45 +142,23 @@ class UserProvider with ChangeNotifier {
   }
 }
 
-class UserWrittenCommentData {
+class UserData {
   final String boardId;
-  final bool haveChildComment;
+  final String postId;
   final String parentCommentId;
-  final String postId;
-  final String commentId;
-  UserWrittenCommentData(
-      {this.boardId,
-      this.commentId,
-      this.haveChildComment,
-      this.parentCommentId,
-      this.postId});
+  String commentId;
 
-  factory UserWrittenCommentData.fromFireStoreDocumentSnapshot(
-      DocumentSnapshot documentSnapshot) {
-    Map data = documentSnapshot.data() ?? {};
-    return UserWrittenCommentData(
-        boardId: data["boardId"],
-        commentId: documentSnapshot.id,
-        haveChildComment: data["haveChildComment"] ?? false,
-        parentCommentId: data["parentCommentId"] ?? "",
-        postId: data["postId"]);
+  UserData({this.boardId, this.postId, this.parentCommentId, this.commentId});
+  factory UserData.fromRealtimeUserFavoriteList(var mapData) {
+    mapData = Map<dynamic, dynamic>.from(mapData);
+    return UserData(boardId: mapData["boardId"], postId: mapData["postId"]);
   }
-  fromFireStoreQuerySnapshot(QuerySnapshot querySnapshot) {
-    List<UserWrittenCommentData> list = [];
-    querySnapshot.docs.forEach((DocumentSnapshot documentSnapshot) {
-      list.add(UserWrittenCommentData.fromFireStoreDocumentSnapshot(
-          documentSnapshot));
-    });
-    return list;
-  }
-}
-
-class UserFavoriteData {
-  final String boardId;
-  final String postId;
-  UserFavoriteData({this.boardId, this.postId});
-  factory UserFavoriteData.fromFirestore(DocumentSnapshot documentSnapshot) {
-    Map data = documentSnapshot.data() ?? {};
-    return UserFavoriteData(boardId: data["boardId"], postId: data["postId"]);
+  factory UserData.fromRealtimeUserWrittenCommentList(
+      String commId, var mapData) {
+    return UserData(
+        boardId: mapData["boardId"],
+        postId: mapData["postId"],
+        commentId: commId,
+        parentCommentId: mapData["parentCommentId"]);
   }
 }
