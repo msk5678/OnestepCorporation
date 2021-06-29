@@ -168,8 +168,8 @@ class _ProductMainState extends State<ProductMain> {
             // sunghun
 
             // 회원가입 넘어가는 부분
-            Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => LoginJoinPage(user))),
+            // Navigator.of(context).push(
+            //     MaterialPageRoute(builder: (context) => LoginJoinPage(user))),
 
             // 알림으로 넘어가는 부분
             // Navigator.of(context).push(MaterialPageRoute(
@@ -181,8 +181,8 @@ class _ProductMainState extends State<ProductMain> {
             //     MaterialPageRoute(builder: (context) => ReportPageTest())),
 
             // 약관 page
-            // Navigator.of(context)
-            //     .push(MaterialPageRoute(builder: (context) => TermsPage(user))),
+            Navigator.of(context)
+                .push(MaterialPageRoute(builder: (context) => TermsPage(user))),
 
             // spinkit test
             // Navigator.of(context)

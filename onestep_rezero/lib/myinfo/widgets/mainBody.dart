@@ -68,7 +68,7 @@ import '../../spinkitTest.dart';
 //       });
 // }
 
-final f = DateFormat('yyyy-MM-dd hh:mm');
+final f = DateFormat('yyyy-MM-dd hh:mm a');
 
 class MyinfoMainBody extends ConsumerWidget {
   @override

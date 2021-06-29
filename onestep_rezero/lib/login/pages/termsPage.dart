@@ -147,7 +147,7 @@ class _TermsPageState extends State<TermsPage> {
                                     : Colors.white),
                             child: Padding(
                               // 동그라미 크기
-                              padding: const EdgeInsets.all(5.0),
+                              padding: const EdgeInsets.all(6.0),
                             ),
                           )),
                       Padding(
@@ -230,7 +230,7 @@ class _TermsPageState extends State<TermsPage> {
                                     ? OnestepColors().mainColor
                                     : Colors.white),
                             child: Padding(
-                              padding: const EdgeInsets.all(5.0),
+                              padding: const EdgeInsets.all(6.0),
                             ),
                           )),
                       Padding(
@@ -320,7 +320,7 @@ class _TermsPageState extends State<TermsPage> {
                                     ? OnestepColors().mainColor
                                     : Colors.white),
                             child: Padding(
-                              padding: const EdgeInsets.all(5.0),
+                              padding: const EdgeInsets.all(6.0),
                             ),
                           )),
                       Padding(
