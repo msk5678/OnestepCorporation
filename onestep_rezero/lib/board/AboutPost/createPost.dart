@@ -143,7 +143,7 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
           ),
           // )),
         ),
-        TipDialogContainer(duration: const Duration(seconds: 2))
+        TipDialogContainer(duration: const Duration(seconds: 1))
       ],
     );
   }
@@ -297,7 +297,7 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
         if (value) {
           TipDialogHelper.dismiss();
           TipDialogHelper.success("저장 완료!");
-          Future.delayed(Duration(seconds: 2))
+          Future.delayed(Duration(seconds: 1))
               .then((value) => Navigator.pop(context, true));
           return;
         }
@@ -627,24 +627,6 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
       });
     }
   }
-
-  // getImage() async {
-
-  //   List<Asset> resultList = [];
-  //   if (imageCommentMap["IMAGE"].isNotEmpty) {
-  //     for (var image in imageCommentMap["IMAGE"]) {
-  //       resultList.add(image);
-  //     }
-  //   }
-  //   try {
-  //     resultList = await MultiImagePicker.pickImages(
-  //         maxImages: 5, enableCamera: true, selectedAssets: resultList);
-  //   } on NoImagesSelectedException {}
-
-  //   setState(() {
-  //     imageCommentMap.update("IMAGE", (value) => resultList);
-  //   });
-  // }
 
   thirdContainer(Map<String, dynamic> imgCommMap) {
     List<Widget> _imageWidget = [];

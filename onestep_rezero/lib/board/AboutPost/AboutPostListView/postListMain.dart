@@ -165,38 +165,41 @@ abstract class PostListParentWidget<T extends StatefulWidget> extends State<T>
         stream: productAddStreamController.stream,
         initialData: false,
         builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-          return Visibility(
-            visible: snapshot.data,
-            child: Container(
-              height: 40,
-              child: FloatingActionButton.extended(
-                  heroTag: null,
-                  onPressed: () async {
-                    var result = await Navigator.of(context).pushNamed(
-                            "/CreatePost",
-                            arguments: {"CURRENTBOARDDATA": currentBoard}) ??
-                        false;
-                    if (result.runtimeType == bool) if (result)
-                      context
-                          .read(listProvider)
-                          .fetchPosts(currentBoard.boardId);
-                  },
-                  backgroundColor: Colors.white,
-                  // icon: Icon(
-                  //   Icons.save,
-                  //   color: Colors.black,
-                  // ),
-                  label: Icon(
-                    Icons.edit_outlined,
-                    color: Colors.black,
-                  )
-                  // Text(
-                  //   "게시글 등록",
-                  //   style: TextStyle(
-                  //     color: Colors.black,
-                  //   ),
-                  // ),
-                  ),
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 50),
+            child: Visibility(
+              visible: snapshot.data,
+              child: Container(
+                height: 40,
+                child: FloatingActionButton.extended(
+                    heroTag: null,
+                    onPressed: () async {
+                      var result = await Navigator.of(context).pushNamed(
+                              "/CreatePost",
+                              arguments: {"CURRENTBOARDDATA": currentBoard}) ??
+                          false;
+                      if (result.runtimeType == bool) if (result)
+                        context
+                            .read(listProvider)
+                            .fetchPosts(currentBoard.boardId);
+                    },
+                    backgroundColor: Colors.white,
+                    // icon: Icon(
+                    //   Icons.save,
+                    //   color: Colors.black,
+                    // ),
+                    label: Icon(
+                      Icons.edit_outlined,
+                      color: Colors.black,
+                    )
+                    // Text(
+                    //   "게시글 등록",
+                    //   style: TextStyle(
+                    //     color: Colors.black,
+                    //   ),
+                    // ),
+                    ),
+              ),
             ),
           );
         });

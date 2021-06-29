@@ -24,7 +24,8 @@ final postProvider =
 
 class PostContentRiverPod extends ConsumerWidget {
   final PostData currentPostData;
-  PostContentRiverPod({this.currentPostData});
+  final Widget postStatusbar;
+  PostContentRiverPod({this.currentPostData, this.postStatusbar});
   @override
   Widget build(BuildContext context, watch) {
     final postRiverPod = watch(postProvider);
@@ -43,7 +44,7 @@ class PostContentRiverPod extends ConsumerWidget {
     if (!postRiverPod.isFetching)
       return Column(
           children: <Widget>[
-        postTopStatusBar(currentPost, currentUid),
+        postTopStatusBar(currentPost, currentUid, postStatusbar),
         Container(
           alignment: Alignment.centerLeft,
           child: Text(
@@ -109,7 +110,7 @@ class PostContentRiverPod extends ConsumerWidget {
     });
   }
 
-  postTopStatusBar(PostData currentPost, String uid) {
+  postTopStatusBar(PostData currentPost, String uid, Widget status) {
     return Container(
       margin: EdgeInsets.only(bottom: 20),
       child: Row(
@@ -144,6 +145,7 @@ class PostContentRiverPod extends ConsumerWidget {
                 child: Text("${currentPost.views.keys.length}",
                     style: TextStyle(color: Colors.grey, fontSize: 10)),
               ),
+              status
             ],
           )
         ],
@@ -260,8 +262,12 @@ class _PostContentState extends State<PostContent>
                           children: <Widget>[
                             PostContentRiverPod(
                               currentPostData: currentPostData,
+                              postStatusbar: commentStatusWidget(
+                                currentPostData,
+                              ),
                             ),
                             buttonList(currentPostData),
+                            favoriteCountWidget(currentPostData),
                             Container(
                               width: deviceWidth / 2,
                               margin: EdgeInsets.only(
@@ -271,9 +277,6 @@ class _PostContentState extends State<PostContent>
                                       bottom: BorderSide(
                                           color: OnestepColors().thirdColor,
                                           width: 2.0))),
-                            ),
-                            postBottomStatusBar(
-                              currentPostData,
                             ),
                           ]
                             ..add(CommentWidget(
@@ -319,37 +322,19 @@ class _PostContentState extends State<PostContent>
     });
   }
 
-  postBottomStatusBar(
+  commentStatusWidget(
     PostData currentPost,
   ) {
-    int favoriteCount = currentPost.favoriteCount;
     int commentCount = currentPost.commentCount;
     return Container(
-      margin: EdgeInsets.only(bottom: 20),
       child: Row(
         children: [
           Row(
             children: [
               Icon(
-                Icons.favorite,
-                size: 20,
-                color: Colors.grey,
-              ),
-              Container(
-                margin: EdgeInsets.only(right: 5),
-                child: Text(
-                  "$favoriteCount",
-                  style: TextStyle(color: Colors.grey, fontSize: 10),
-                ),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Icon(
                 //foot icon
                 Icons.comment,
-                size: 20,
+                size: 18,
                 color: Colors.grey,
               ),
               Container(
@@ -364,8 +349,20 @@ class _PostContentState extends State<PostContent>
     );
   }
 
+  favoriteCountWidget(PostData currentPost) {
+    int favoriteCount = currentPost.favoriteCount;
+    return Container(
+      alignment: Alignment.topLeft,
+      margin: EdgeInsets.only(right: 5),
+      child: Text(
+        "좋아요 : $favoriteCount",
+        style: TextStyle(color: Colors.grey, fontSize: 13),
+      ),
+    );
+  }
+
   buttonList(PostData currentPost) {
-    return Row(children: [
+    return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
       FavoriteButton(
         currentPost: currentPostData,
         clickCallback: favoriteClickCallback,

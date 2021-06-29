@@ -21,6 +21,7 @@ class BoardListProvider with ChangeNotifier {
   bool _hasNext = true;
   bool _isFetching = false;
   List<BoardData> boardData = [];
+  bool get isFetch => _isFetching;
 
   String get errorMessage => _errorMessage;
   bool get hasNext => _hasNext;

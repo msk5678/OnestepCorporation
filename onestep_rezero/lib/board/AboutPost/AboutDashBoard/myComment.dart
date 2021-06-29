@@ -12,11 +12,7 @@ import 'package:onestep_rezero/board/declareData/commentData.dart';
 import 'package:onestep_rezero/board/declareData/postData.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/loggedInWidget.dart';
-
 import 'package:onestep_rezero/timeUtil.dart';
-// class UserWritenCommentList extends CommentWidget{
-
-// }
 
 class UserWrittenCommentList extends StatefulWidget {
   final dashBoardIconData;
@@ -100,6 +96,7 @@ class UserWrittenCommentListWidget extends ConsumerWidget implements Comment {
     final deviceHeight = MediaQuery.of(context).size.height;
     final userProvider = watch(userBoardDataProvider);
     List<CommentData> commentList = userProvider.userCommentList;
+
     bool isFetch = userProvider.isFetching;
     bool isEmpty = commentList.length == 0 ? true : false;
     if (!isEmpty)

@@ -9,9 +9,13 @@ class UserProvider with ChangeNotifier {
   String _errorMessage = "UserProvider Provider RuntimeError";
   String get errorMessage => _errorMessage;
   List<CommentData> _userCommentList = [];
+  Map<String, CommentData> _postIdListAboutWrittenComment = {};
   Map<String, UserData> _userFavoritePostList = {};
   Map<String, UserData> get userFavoritePostMap => _userFavoritePostList;
   List<CommentData> get userCommentList => _userCommentList;
+  Map<String, CommentData> get postIdListAboutWrittenComment =>
+      _postIdListAboutWrittenComment;
+
   bool get isFetching => _isFetching;
   bool _isFetching = false;
 
@@ -46,6 +50,7 @@ class UserProvider with ChangeNotifier {
     if (_isFetching) return;
     _isFetching = true;
     _userCommentList = [];
+    _postIdListAboutWrittenComment = {};
     try {
       List<UserData> _userWrittenCommentList = [];
       final firebaseRealtimeDb = FirebaseDatabase.instance.reference();
@@ -59,9 +64,10 @@ class UserProvider with ChangeNotifier {
           .then((DataSnapshot dataSnapshot) {
         Map<dynamic, dynamic> userCommentedMap =
             Map<dynamic, dynamic>.from(dataSnapshot.value);
-        userCommentedMap.forEach((key, value) {
-          _userWrittenCommentList
-              .add(UserData.fromRealtimeUserWrittenCommentList(key, value));
+        userCommentedMap.forEach((commentId, commentData) {
+          _userWrittenCommentList.add(
+              UserData.fromRealtimeUserWrittenCommentList(
+                  commentId, commentData));
         });
       });
       await Future.forEach(_userWrittenCommentList, (UserData data) async {
@@ -85,14 +91,17 @@ class UserProvider with ChangeNotifier {
         }
         CommentData _commentData =
             await commentDb.once().then((DataSnapshot dataSnapshot) {
-          if (dataSnapshot.value.runtimeType != Null)
-            return CommentData.fromRealtimeData(dataSnapshot);
+          return CommentData.fromRealtimeData(dataSnapshot);
         });
+
+        _postIdListAboutWrittenComment
+            .addAll({_commentData.postId: _commentData});
         _userCommentList.add(_commentData);
 
-        notifyListeners();
+        // notifyListeners();
       });
     } catch (e) {
+      print(e);
       _isFetching = false;
     }
     _isFetching = false;
@@ -104,6 +113,7 @@ class UserProvider with ChangeNotifier {
     _isFetching = true;
     _userFavoritePostList = {};
     _userCommentList = [];
+    _postIdListAboutWrittenComment = {};
 
     try {
       //User Favorite Post List

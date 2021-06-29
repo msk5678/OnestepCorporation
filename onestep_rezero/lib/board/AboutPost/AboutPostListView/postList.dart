@@ -74,7 +74,6 @@ class PostList extends StatelessWidget {
   }
 
   postClickEvent(BuildContext context, PostData postData) async {
-    // context.read(postProvider).setPostData = PostData(uid: "");
     await Navigator.of(context).pushNamed('/PostContent', arguments: {
       "CURRENTBOARDDATA": postData
     }).then((value) => context.read(listProvider).fetchPosts(postData.boardId));
@@ -82,11 +81,18 @@ class PostList extends StatelessWidget {
 
   Widget _buildListCard(BuildContext context, int index, var postData,
       double deviceHeight, double deviceWidth, String currentUid) {
+    String currentPostId = postData.documentId;
     bool isDeleted = postData.deleted ?? false;
     bool isFavoriteClicked = context
         .read(userBoardDataProvider)
         .userFavoritePostMap
-        .containsKey(postData.documentId);
+        .containsKey(currentPostId);
+
+    bool wasWrittenComment = context
+        .read(userBoardDataProvider)
+        .postIdListAboutWrittenComment
+        .containsKey(currentPostId);
+
     if (!isDeleted)
       return SizedBox(
         height: deviceHeight / 9.2,
@@ -113,7 +119,7 @@ class PostList extends StatelessWidget {
                       firstColumnLine(postData, deviceHeight, deviceWidth),
                       secondColumnLine(postData, deviceHeight, deviceWidth),
                       thirdColumnLine(postData, deviceHeight, deviceWidth,
-                          currentUid, isFavoriteClicked)
+                          currentUid, isFavoriteClicked, wasWrittenComment)
                     ],
                   ))),
         ),
@@ -196,7 +202,7 @@ class PostList extends StatelessWidget {
   }
 
   thirdColumnLine(PostData postData, double deviceHeight, double deviceWidth,
-      String uid, bool clickedFavorite) {
+      String uid, bool clickedFavorite, bool wasWrittenComment) {
     bool havePicture = postData.imageCommentMap["IMAGE"].length != 0;
     return Container(
         padding: EdgeInsets.only(left: deviceWidth / 50),
@@ -221,41 +227,48 @@ class PostList extends StatelessWidget {
                 ),
               ),
 
-              IconTheme(
-                  child: havePicture
-                      ? Icon(
-                          Icons.photo_rounded,
-                          size: 14,
-                          color: OnestepColors().mainColor,
-                        )
-                      : Icon(Icons.photo_outlined,
-                          color: Colors.grey, size: 14),
-                  data: new IconThemeData(color: Colors.red)),
               // Icon(Icons.favorite),
-
-              Text(
-                ' | ',
-                style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold),
-              ),
-              Container(
-                child: Text('${TimeUtil.timeAgo(date: postData.uploadTime)}'),
-              ),
-              Spacer(),
 
               Container(
                   child: Icon(
-                Icons.remove_red_eye,
-                color: Colors.grey,
+                wasWrittenComment
+                    ? Icons.mode_comment
+                    : Icons.mode_comment_outlined,
+                color: OnestepColors().mainColor,
                 size: 14,
               )),
               Container(
+                padding: EdgeInsets.only(right: 5),
+                child: Text(
+                  postData.views.length.toString(),
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
+
+              // Icon(
+              //   havePicture ? Icons.photo_rounded : Icons.photo_outlined,
+              //   size: 14,
+              //   color: OnestepColors().mainColor,
+              // ),
+
+              havePicture
+                  ? Icon(
+                      Icons.photo_rounded,
+                      size: 14,
+                      color: OnestepColors().mainColor,
+                    )
+                  : Container(),
+
+              Spacer(),
+
+              Container(
                 padding: EdgeInsets.only(left: 3),
                 margin: EdgeInsets.only(right: 3),
-                child: Text(postData.views.length.toString()),
-              )
+                child: Text('${TimeUtil.timeAgo(date: postData.uploadTime)}'),
+              ),
             ],
             // Icon(Icons.favorite), child: Text('Date')
           )),

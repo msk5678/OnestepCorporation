@@ -111,7 +111,7 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
           ),
           // )),
         ),
-        TipDialogContainer(duration: const Duration(seconds: 2))
+        TipDialogContainer(duration: const Duration(seconds: 1))
       ],
     );
   }
@@ -190,7 +190,7 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
           TipDialogHelper.dismiss();
           TipDialogHelper.success("수정 완료!");
 
-          Future.delayed(Duration(seconds: 2)).then((value) {
+          Future.delayed(Duration(seconds: 1)).then((value) {
             Navigator.pop(context, true);
             context.read(postProvider).getLatestPostData(alterPostData);
           });
@@ -407,14 +407,6 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
         [];
 
     setState(() {
-      // imageCommentMap["IMAGE"].add(resultList);
-      // for (int i = firstImageCount; i < maxImageCount;i ++){
-      //   imageCommentMap["IMAGE"][i]
-      // }
-      //   alterImageCommentMap.update("IMAGE", (value) => resultList);
-      // if (imageCommentMap["IMAGE"].isNotEmpty) {
-      //   imageCommentMap["IMAGE"].addAll(resultList);
-      // } else
       imageCommentMap.update("IMAGE", (value) => value..addAll(_entity));
     });
   }

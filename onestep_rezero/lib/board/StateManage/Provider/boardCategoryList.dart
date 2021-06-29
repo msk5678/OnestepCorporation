@@ -14,11 +14,18 @@ class BoardListRiverpod extends ConsumerWidget {
   BoardListRiverpod({this.animationStopCallback});
   @override
   Widget build(BuildContext context, watch) {
-    final boardlistProvider = watch(boardListProvider).boards;
-    return BoardListView(
-      boardList: boardlistProvider,
-      manageAnimationTimer: animationStopCallback,
-    );
+    final boardlistProvider = watch(boardListProvider);
+    if (!boardlistProvider.isFetch)
+      return BoardListView(
+        boardList: boardlistProvider.boards,
+        manageAnimationTimer: animationStopCallback,
+      );
+    else
+      return Container(
+        child: Center(
+          child: CupertinoActivityIndicator(),
+        ),
+      );
   }
 }
 
