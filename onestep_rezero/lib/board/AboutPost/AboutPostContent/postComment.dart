@@ -15,8 +15,8 @@ final commentProvider =
     ChangeNotifierProvider<CommentProvider>((ref) => CommentProvider());
 
 abstract class Comment {
-  commentBoxDesignMethod(
-      int index, CommentData comment, double deviceWidth, double deviceHeight);
+  commentBoxDesignMethod(BuildContext context, int index, CommentData comment,
+      double deviceWidth, double deviceHeight);
 
   commentName(String commentUID, String postWriterUid, commentList);
   animationLimiterListView(
@@ -26,8 +26,8 @@ abstract class Comment {
       {Widget child});
   deletedCommentWidget(
       int index, CommentData comment, double deviceWidth, double deviceHeight);
-  commentWidget(
-      int index, CommentData comment, double deviceWidth, double deviceHeight);
+  commentWidget(BuildContext context, int index, CommentData comment,
+      double deviceWidth, double deviceHeight);
 }
 
 class CommentWidget extends CommentParent {
@@ -88,14 +88,14 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
       this.showDialogCallback});
 
   @override
-  Widget commentBoxDesignMethod(
-      int index, CommentData comment, double deviceWidth, double deviceHeight) {
+  Widget commentBoxDesignMethod(BuildContext context, int index,
+      CommentData comment, double deviceWidth, double deviceHeight) {
     //Check Deleted
     if (comment.deleted)
       return deletedCommentWidget(index, comment, deviceWidth, deviceHeight);
     else
       //is deleted
-      return commentWidget(index, comment, deviceWidth, deviceHeight);
+      return commentWidget(context, index, comment, deviceWidth, deviceHeight);
   }
 
   @override
@@ -159,12 +159,14 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
                               slidableKey:
                                   Key(currentIndexCommentData.commentId),
                               child: commentBoxDesignMethod(
+                                  context,
                                   index,
                                   currentIndexCommentData,
                                   deviceWidth,
                                   deviceHeight),
                             )
                           : commentBoxDesignMethod(
+                              context,
                               index,
                               currentIndexCommentData,
                               deviceWidth,
@@ -207,17 +209,17 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
           delay: 300,
           child: Text("작성된 댓글이 없습니다."),
         ),
-        ShowUp(
-            delay: 350,
-            child: ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                    elevation: 0, primary: OnestepColors().secondColor),
-                onPressed: () => openSlidingPanelCallback(),
-                // onPressed: () {
-                // context.read(commentProvider).refresh(boardId, postId);
-                // },
-                icon: Icon(Icons.add_comment_rounded),
-                label: Text("작성하기"))),
+        // ShowUp(
+        //     delay: 350,
+        //     child: ElevatedButton.icon(
+        //         style: ElevatedButton.styleFrom(
+        //             elevation: 0, primary: OnestepColors().secondColor),
+        //         onPressed: () => openSlidingPanelCallback(),
+        //         // onPressed: () {
+        //         // context.read(commentProvider).refresh(boardId, postId);
+        //         // },
+        //         icon: Icon(Icons.add_comment_rounded),
+        //         label: Text("작성하기"))),
       ],
     );
   }
@@ -375,8 +377,8 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
   // }
 
   @override
-  commentWidget(
-      int index, CommentData comment, double deviceWidth, double deviceHeight) {
+  commentWidget(BuildContext context, int index, CommentData comment,
+      double deviceWidth, double deviceHeight) {
     DateTime uploadTime =
         DateTime.fromMillisecondsSinceEpoch(comment.uploadTime);
     bool isWritter = comment.userName == "작성자";
@@ -412,17 +414,38 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Container(
-                    padding: EdgeInsets.only(left: 10),
-                    alignment: Alignment.centerRight,
-                    child: GestureDetector(
-                      onTap: () =>
-                          coCommentCallback(comment..isUnderComment = true),
-                      child: Text(
-                        "댓글달기",
-                        style: TextStyle(color: Colors.grey, fontSize: 10),
+                  Row(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.only(left: 10),
+                        alignment: Alignment.centerRight,
+                        child: GestureDetector(
+                          onTap: () =>
+                              coCommentCallback(comment..isUnderComment = true),
+                          child: Text(
+                            "댓글달기",
+                            style: TextStyle(color: Colors.grey, fontSize: 10),
+                          ),
+                        ),
                       ),
-                    ),
+                      Container(
+                        padding: EdgeInsets.only(left: 10),
+                        alignment: Alignment.centerRight,
+                        child: GestureDetector(
+                          onTap: () async {
+                            bool result =
+                                await comment.dismissComment() ?? false;
+                            if (result)
+                              refreshComment(context, boardId, postId);
+                          },
+                          child: Text(
+                            "삭제",
+                            style: TextStyle(
+                                color: Colors.redAccent, fontSize: 10),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   Container(
                     alignment: Alignment.centerRight,

@@ -56,14 +56,14 @@ class ChildComment extends StatelessWidget implements Comment {
   }
 
   @override
-  Widget commentBoxDesignMethod(
-      int index, CommentData comment, double deviceWidth, double deviceHeight) {
+  Widget commentBoxDesignMethod(BuildContext context, int index,
+      CommentData comment, double deviceWidth, double deviceHeight) {
     //Check Deleted
     if (comment.deleted)
       return deletedCommentWidget(index, comment, deviceWidth, deviceHeight);
     else
       //is deleted
-      return commentWidget(index, comment, deviceWidth, deviceHeight);
+      return commentWidget(context, index, comment, deviceWidth, deviceHeight);
   }
 
   @override
@@ -89,20 +89,35 @@ class ChildComment extends StatelessWidget implements Comment {
               child: FadeInAnimation(
                 child: Container(
                   padding: EdgeInsets.symmetric(vertical: 15),
-                  child: !isDeleted
-                      ? commentListSwipeMenu(
-                          currentIndexCommentData,
-                          context,
-                          currentUserModel.uid,
-                          slidableKey: Key(currentIndexCommentData.commentId),
-                          child: commentBoxDesignMethod(
-                              index,
-                              currentIndexCommentData,
-                              deviceWidth,
-                              deviceHeight),
-                        )
-                      : commentBoxDesignMethod(index, currentIndexCommentData,
-                          deviceWidth, deviceHeight),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(Icons.subdirectory_arrow_right, size: 10),
+                      Expanded(
+                        child: !isDeleted
+                            ? commentListSwipeMenu(
+                                currentIndexCommentData,
+                                context,
+                                currentUserModel.uid,
+                                slidableKey:
+                                    Key(currentIndexCommentData.commentId),
+                                child: commentBoxDesignMethod(
+                                    context,
+                                    index,
+                                    currentIndexCommentData,
+                                    deviceWidth,
+                                    deviceHeight),
+                              )
+                            : commentBoxDesignMethod(
+                                context,
+                                index,
+                                currentIndexCommentData,
+                                deviceWidth,
+                                deviceHeight),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -216,8 +231,8 @@ class ChildComment extends StatelessWidget implements Comment {
   }
 
   @override
-  Widget commentWidget(
-      int index, CommentData comment, double deviceWidth, double deviceHeight) {
+  Widget commentWidget(BuildContext context, int index, CommentData comment,
+      double deviceWidth, double deviceHeight) {
     DateTime uploadTime =
         DateTime.fromMillisecondsSinceEpoch(comment.uploadTime);
     bool isWritter = comment.userName == "작성자";
@@ -250,17 +265,46 @@ class ChildComment extends StatelessWidget implements Comment {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
-                padding: EdgeInsets.only(left: 10),
-                alignment: Alignment.centerRight,
-                child: GestureDetector(
-                  onTap: () =>
-                      coCommentCallback(comment..isUnderComment = true),
-                  child: Text(
-                    "댓글달기",
-                    style: TextStyle(color: Colors.grey[700], fontSize: 10),
+              Row(
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.only(left: 10),
+                        alignment: Alignment.centerRight,
+                        child: GestureDetector(
+                          onTap: () =>
+                              coCommentCallback(comment..isUnderComment = true),
+                          child: Text(
+                            "댓글달기",
+                            style: TextStyle(
+                                color: Colors.grey[700], fontSize: 10),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.only(left: 10),
+                        alignment: Alignment.centerRight,
+                        child: GestureDetector(
+                          onTap: () async {
+                            bool result =
+                                await comment.dismissComment() ?? false;
+
+                            if (result)
+                              context
+                                  .read(commentProvider)
+                                  .refresh(comment.boardId, comment.postId);
+                          },
+                          child: Text(
+                            "삭제",
+                            style: TextStyle(
+                                color: Colors.redAccent, fontSize: 10),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
+                ],
               ),
               Container(
                 alignment: Alignment.centerRight,

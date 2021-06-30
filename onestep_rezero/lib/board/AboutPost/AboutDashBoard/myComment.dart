@@ -189,12 +189,14 @@ class UserWrittenCommentListWidget extends ConsumerWidget implements Comment {
                                 slidableKey:
                                     Key(currentIndexCommentData.commentId),
                                 child: commentBoxDesignMethod(
+                                    context,
                                     index,
                                     currentIndexCommentData,
                                     deviceWidth,
                                     deviceHeight),
                               )
                             : commentBoxDesignMethod(
+                                context,
                                 index,
                                 currentIndexCommentData,
                                 deviceWidth,
@@ -212,9 +214,9 @@ class UserWrittenCommentListWidget extends ConsumerWidget implements Comment {
   }
 
   @override
-  Widget commentBoxDesignMethod(
-      int index, CommentData comment, double deviceWidth, double deviceHeight) {
-    return commentWidget(index, comment, deviceWidth, deviceHeight);
+  Widget commentBoxDesignMethod(BuildContext context, int index,
+      CommentData comment, double deviceWidth, double deviceHeight) {
+    return commentWidget(context, index, comment, deviceWidth, deviceHeight);
   }
 
   @override
@@ -237,8 +239,8 @@ class UserWrittenCommentListWidget extends ConsumerWidget implements Comment {
   }
 
   @override
-  commentWidget(
-      int index, CommentData comment, double deviceWidth, double deviceHeight) {
+  commentWidget(BuildContext context, int index, CommentData comment,
+      double deviceWidth, double deviceHeight) {
     DateTime uploadTime =
         DateTime.fromMillisecondsSinceEpoch(comment.uploadTime);
 
