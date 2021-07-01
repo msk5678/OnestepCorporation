@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
@@ -8,6 +10,8 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/favorite/pages/favoriteMain.dart';
+import 'package:onestep_rezero/home/pages/homeNotificationPage.dart';
+import 'package:onestep_rezero/home/widgets/test.dart';
 import 'package:onestep_rezero/login/pages/loginJoinPage.dart';
 import 'package:onestep_rezero/login/pages/termsPage.dart';
 import 'package:onestep_rezero/main.dart';
@@ -40,8 +44,75 @@ class _ProductMainState extends State<ProductMain> {
   // test 용
   GoogleSignInAccount user = googleSignIn.currentUser;
 
+  // push, marketing 알림 dialog test
+  void _testShowDialog(BuildContext context) {
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("OneStep 회원가입을 진심으로 환영합니다!"),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text("마케팅 및 이벤트성 알림을 받으시겠습니까?"),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(
+                      0, MediaQuery.of(context).size.height / 30, 0, 0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      SizedBox(
+                        width: 100,
+                        child: ElevatedButton(
+                          child: Text("취소"),
+                          onPressed: () {
+                            // FirebaseFirestore.instance
+                            //     .collection('user')
+                            //     .doc(googleSignIn.currentUser.id)
+                            //     .collection('notification')
+                            //     .doc('setting')
+                            //     .set({"marketing": 0, "push": 1});
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ),
+                      SizedBox(
+                        width: 100,
+                        child: ElevatedButton(
+                          child: Text("확인"),
+                          onPressed: () {
+                            // FirebaseFirestore.instance
+                            //     .collection('user')
+                            //     .doc(googleSignIn.currentUser.id)
+                            //     .collection('notification')
+                            //     .doc('setting')
+                            //     .set({"marketing": 1, "push": 1});
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        });
+  }
+
   @override
   void initState() {
+    FirebaseFirestore.instance
+        .collection('user')
+        .doc(googleSignIn.currentUser.id)
+        .get()
+        .then((value) => {
+              if (value.data()['push'] == 0)
+                {
+                  _testShowDialog(context),
+                }
+            });
     _scrollController.addListener(scrollListener);
     context.read(productMainService).fetchProducts();
     super.initState();
@@ -172,21 +243,28 @@ class _ProductMainState extends State<ProductMain> {
             //     MaterialPageRoute(builder: (context) => LoginJoinPage(user))),
 
             // 알림으로 넘어가는 부분
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => HomeNotificationPage(),
+            )),
+
             // Navigator.of(context).push(MaterialPageRoute(
-            //   builder: (context) => HomeNotificationPage(),
-            // ));
+            //   builder: (context) => Test(),
+            // )),
 
             // 신고 page test
             // Navigator.of(context).push(
             //     MaterialPageRoute(builder: (context) => ReportPageTest())),
 
             // 약관 page
-            Navigator.of(context)
-                .push(MaterialPageRoute(builder: (context) => TermsPage(user))),
+            // Navigator.of(context)
+            //     .push(MaterialPageRoute(builder: (context) => TermsPage(user))),
 
             // spinkit test
             // Navigator.of(context)
             //     .push(MaterialPageRoute(builder: (context) => SpinkitTest())),
+
+            // // 푸시알림 test
+            // _testShowDialog(context),
 
             // Navigator.of(context).push(
             //   PageRouteBuilder(

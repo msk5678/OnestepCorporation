@@ -83,6 +83,9 @@ dependencies:
     
   #flutter_easyloading
   flutter_easyloading: ^3.0.0
+
+  #pull_to_refresh 
+  pull_to_refresh: ^2.0.0
   
   #permission
   permission_handler: ^6.1.0   # 권한 요청
