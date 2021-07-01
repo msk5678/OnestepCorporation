@@ -243,17 +243,17 @@ class _ProductMainState extends State<ProductMain> {
             //     MaterialPageRoute(builder: (context) => LoginJoinPage(user))),
 
             // 알림으로 넘어가는 부분
-            Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => HomeNotificationPage(),
-            )),
+            // Navigator.of(context).push(MaterialPageRoute(
+            //   builder: (context) => HomeNotificationPage(),
+            // )),
 
             // Navigator.of(context).push(MaterialPageRoute(
             //   builder: (context) => Test(),
             // )),
 
             // 신고 page test
-            // Navigator.of(context).push(
-            //     MaterialPageRoute(builder: (context) => ReportPageTest())),
+            Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => ReportPageTest())),
 
             // 약관 page
             // Navigator.of(context)

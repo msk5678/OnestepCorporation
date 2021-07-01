@@ -10,13 +10,15 @@ final myController = TextEditingController();
 
 void report() {
   Map<dynamic, dynamic> values;
+  List reportKeys;
 
   // 중복신고 방지
-  FirebaseDatabase.instance
-      .reference()
-      .child('reportUser')
-      .child(googleSignIn.currentUser.id)
-      .set({'postUid': true});
+  // FirebaseDatabase.instance
+  //     .reference()
+  //     .child('reportUser')
+  //     .child(googleSignIn.currentUser.id)
+  //     .child('deal')
+  //     .set({'postUid': true});
 
   FirebaseDatabase.instance
       .reference()
@@ -52,49 +54,60 @@ void report() {
               {
                 // 같은 post 인지 확인
                 values = value.value,
+                // print('values.keys = ${values.keys.toList()}'),
+                reportKeys = values.keys.toList(),
+                reportKeys.sort(),
                 values.forEach((key, value) {
                   // 최초신고 timestamp 마지막 꺼 확인해서 value['reportCount'] 이용 25 면 꽉 찬거고 25 아니면 ++
-                  if (value['reportCount'] == 25) {
-                    FirebaseDatabase.instance
-                        .reference()
-                        .child('report')
-                        .child('reportedUid')
-                        // 처음신고 시간 2
-                        .child(DateTime.now().millisecondsSinceEpoch.toString())
-                        .child('deal')
-                        .child('postUid')
-                        .child('value')
-                        .child(DateTime.now().millisecondsSinceEpoch.toString())
-                        .set({
-                      'case': '1',
-                      'content': myController.text.toString(),
-                      'title': "case first",
-                      // 신고 당한 사람
-                      'reportedUid': googleSignIn.currentUser.id,
-                      // 신고 한 사람
-                      'reportingUid': googleSignIn.currentUser.id,
-                      'time': DateTime.now().millisecondsSinceEpoch.toString(),
-                    });
-                  } else {
-                    FirebaseDatabase.instance
-                        .reference()
-                        .child('report')
-                        .child('reportedUid')
-                        .child(key.toString())
-                        .child('deal')
-                        .child('postUid')
-                        .child('value')
-                        .child(DateTime.now().millisecondsSinceEpoch.toString())
-                        .set({
-                      'case': '1',
-                      'content': myController.text.toString(),
-                      'title': "case first",
-                      // 신고 당한 사람
-                      'reportedUid': googleSignIn.currentUser.id,
-                      // 신고 한 사람
-                      'reportingUid': googleSignIn.currentUser.id,
-                      'time': DateTime.now().millisecondsSinceEpoch.toString(),
-                    });
+                  // print("key = ${key}");
+                  if (key == reportKeys.last) {
+                    if (value['reportCount'] == 25) {
+                      FirebaseDatabase.instance
+                          .reference()
+                          .child('report')
+                          .child('reportedUid')
+                          // 처음신고 시간 2
+                          .child(
+                              DateTime.now().millisecondsSinceEpoch.toString())
+                          .child('deal')
+                          .child('postUid')
+                          .child('value')
+                          .child(
+                              DateTime.now().millisecondsSinceEpoch.toString())
+                          .set({
+                        'case': '1',
+                        'content': myController.text.toString(),
+                        'title': "case first",
+                        // 신고 당한 사람
+                        'reportedUid': googleSignIn.currentUser.id,
+                        // 신고 한 사람
+                        'reportingUid': googleSignIn.currentUser.id,
+                        'time':
+                            DateTime.now().millisecondsSinceEpoch.toString(),
+                      });
+                    } else {
+                      FirebaseDatabase.instance
+                          .reference()
+                          .child('report')
+                          .child('reportedUid')
+                          .child(key.toString())
+                          .child('deal')
+                          .child('postUid')
+                          .child('value')
+                          .child(
+                              DateTime.now().millisecondsSinceEpoch.toString())
+                          .set({
+                        'case': '1',
+                        'content': myController.text.toString(),
+                        'title': "case first",
+                        // 신고 당한 사람
+                        'reportedUid': googleSignIn.currentUser.id,
+                        // 신고 한 사람
+                        'reportingUid': googleSignIn.currentUser.id,
+                        'time':
+                            DateTime.now().millisecondsSinceEpoch.toString(),
+                      });
+                    }
                   }
                 })
               }
@@ -184,6 +197,8 @@ class DealFirstCase extends StatelessWidget {
                         await FirebaseDatabase.instance
                             .reference()
                             .child('reportUser')
+                            .child(googleSignIn.currentUser.id)
+                            .child('deal')
                             .once()
                             .then((value) => {
                                   if (value.value == null)
@@ -195,10 +210,9 @@ class DealFirstCase extends StatelessWidget {
                                       values = value.value,
                                       values.forEach((key, value) {
                                         // 한번이라도 신고한적이 있다
-                                        if (key ==
-                                            googleSignIn.currentUser.id) {
+                                        if (key == 'postUid') {
                                           // 같은 글을 신고한다
-                                          if (value['postUid'] == true) {
+                                          if (value == true) {
                                             flag = true;
                                             showDialog(
                                               context: context,

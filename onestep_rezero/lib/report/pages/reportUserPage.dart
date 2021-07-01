@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'User/reportUserController.dart';
 
 class ReportUserPage extends StatelessWidget {
-  final String uid;
-  ReportUserPage(this.uid);
+  final String postUid;
+  final String reportedUid;
+  ReportUserPage(this.postUid, this.reportedUid);
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +23,7 @@ class ReportUserPage extends StatelessWidget {
           children: [
             InkWell(
               onTap: () {
-                reportUserController(context, 1);
+                reportUserController(context, 1, postUid, reportedUid);
               },
               child: Padding(
                 padding: EdgeInsets.fromLTRB(
@@ -42,7 +43,7 @@ class ReportUserPage extends StatelessWidget {
                     IconButton(
                       icon: Icon(Icons.keyboard_arrow_right),
                       onPressed: () {
-                        reportUserController(context, 1);
+                        reportUserController(context, 1, postUid, reportedUid);
                       },
                     )
                   ],
