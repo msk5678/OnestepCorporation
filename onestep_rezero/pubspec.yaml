@@ -145,12 +145,22 @@ dependencies:
 #   stream_chat_flutter: "1.5.1"
 #   pattern_formatter: "2.0.0"
 
+  #Loading
+  flutter_launcher_icons: ^0.9.0
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: 'assets/icons/icon.png'
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
   #moor
   build_runner: ^1.11.5
   ############
+
+  
 
 
 

@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.onestep_rezero">
    <application
-        android:label="onestep_rezero"
+        android:label="한발자국"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

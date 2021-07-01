@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -42,18 +43,37 @@ class _ProductChatListPageState extends State<ProductChatListPage>
         ),
         child: FloatingActionButton(
           onPressed: () {
-            Fluttertoast.showToast(
-                msg: "This is Center Short Toast",
-                toastLength: Toast.LENGTH_SHORT,
-                gravity: ToastGravity.CENTER,
-                timeInSecForIosWeb: 1,
-                backgroundColor: Colors.red,
-                textColor: Colors.white,
-                fontSize: 16.0);
+            setToFirebaseProductChatSlash();
+            // Fluttertoast.showToast(
+            //     msg: "This is Center Short Toast",
+            //     toastLength: Toast.LENGTH_SHORT,
+            //     gravity: ToastGravity.CENTER,
+            //     timeInSecForIosWeb: 1,
+            //     backgroundColor: Colors.red,
+            //     textColor: Colors.white,
+            //     fontSize: 16.0);
           },
         ),
       ),
     );
+  }
+
+  Future<void> setToFirebaseProductChatSlash() async {
+    await FirebaseFirestore.instance
+        .collection("user")
+        .doc(currentUserModel.uid)
+        .collection("chatCount")
+        .doc(currentUserModel.uid)
+        .update({
+      "test": {"3daad22sfsf": "df"},
+    }).whenComplete(() {
+      Fluttertoast.showToast(msg: '슬래시 업데이트했습니다.');
+      // print("##챗카운트 업데이트 성공");
+    }).catchError((onError) {
+      Fluttertoast.showToast(msg: '슬래시 업데이트 실패.');
+      print("@@@2 " + onError);
+      print(onError);
+    });
   }
 
   Widget _buildChatListListTileStream() {
