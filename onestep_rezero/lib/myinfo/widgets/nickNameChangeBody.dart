@@ -1,8 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
-import 'package:onestep_rezero/loggedInWidget.dart';
+import 'package:onestep_rezero/myinfo/dml/myinfoSetDml.dart';
 import 'package:onestep_rezero/myinfo/providers/providers.dart';
 
 import '../../onestepCustomDialogNotCancel.dart';
@@ -119,10 +118,7 @@ class NickNameChangeBody extends ConsumerWidget {
                 ),
                 onPressed: _isNickNameCheck == true
                     ? () {
-                        FirebaseFirestore.instance
-                            .collection("user")
-                            .doc(currentUserModel.uid)
-                            .update({"nickName": _nicknameController.text});
+                        nickNameChange(_nicknameController.text);
                         _tempNickName = "";
                         _firstEnter = true;
                         OnestepCustomDialogNotCancel.show(

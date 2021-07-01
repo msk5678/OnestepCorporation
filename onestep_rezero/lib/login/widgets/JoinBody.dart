@@ -1,8 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
+import 'package:onestep_rezero/login/dml/joinDml.dart';
 import 'package:onestep_rezero/login/pages/loginAuthPage.dart';
 import 'package:onestep_rezero/login/providers/providers.dart';
 import 'package:onestep_rezero/onestepCustomDialogNotCancel.dart';
@@ -211,63 +211,10 @@ class JoinBody extends ConsumerWidget {
                     style: ElevatedButton.styleFrom(
                       primary: OnestepColors().mainColor,
                     ),
-                    // onPressed: () async {
-                    //   final QuerySnapshot result = await FirebaseFirestore
-                    //       .instance
-                    //       .collection('university')
-                    //       .get();
-                    //   final List<DocumentSnapshot> documents = result.docs;
-                    //   documents.forEach((data) => print(data.id));
-                    // },
-
                     onPressed: _isNickNameCheck == true
                         ? () async {
                             if (_isNickNameCheck == true) {
-                              await FirebaseFirestore.instance
-                                  .collection('user')
-                                  .doc(user.single.uid)
-                                  .set({
-                                    // 원래 0 이었는데 일단 1로 변경
-                                    "auth":
-                                        1, // 대학인증여부 0 : 안됨, 1 : 인증대기중, 2 : 인증 완료
-                                    "authTime": 0, // 학교 인증시간
-                                    "uid": user.single.uid, // uid
-                                    "nickName": _nicknameController.text, // 닉네임
-                                    "imageUrl": user.single.photoURL, // 사진
-                                    // "email": _emailController.text, // 이메일
-                                    "reportState": 0, // 제재 확인
-                                    // "reportTime": 0, // 제재 시간
-                                    "university": "", // 학교이름
-                                    "universityEmail": "", // 학교이메일
-                                    "joinTime": DateTime.now()
-                                        .microsecondsSinceEpoch, // 가입시간
-                                  })
-                                  .whenComplete(() => {
-                                        FirebaseFirestore.instance
-                                            .collection('user')
-                                            .doc(user.single.uid)
-                                            .collection("chatCount")
-                                            .doc(user.single.uid)
-                                            .set({
-                                          "productChatCount": 0,
-                                          "boardChatCount": 0,
-                                        })
-                                      })
-                                  .whenComplete(() => {
-                                        FirebaseFirestore.instance
-                                            .collection('user')
-                                            .doc(user.single.uid)
-                                            .collection("notification")
-                                            .doc(user.single.uid)
-                                            .set({
-                                          "marketing": 0,
-                                          "push": 0,
-                                        })
-                                      });
-
-                              // Navigator.of(context).push(MaterialPageRoute(
-                              //     builder: (context) =>
-                              //         ChoiceAuthWayPage(user)));
+                              joinNickNameDML(user, _nicknameController.text);
                               OnestepCustomDialogNotCancel.show(
                                 context,
                                 title: '한발자국 회원가입을 환영합니다!',

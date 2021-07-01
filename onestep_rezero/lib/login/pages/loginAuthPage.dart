@@ -6,8 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:onestep_rezero/chat/widget/appColor.dart';
-import 'package:onestep_rezero/loggedInWidget.dart';
-import 'package:onestep_rezero/login/model/user.dart' as MYUSER;
+import 'package:onestep_rezero/login/dml/authDml.dart';
 import 'package:onestep_rezero/login/providers/providers.dart';
 
 import '../../main.dart';
@@ -17,7 +16,6 @@ import '../../sendMail.dart';
 String _tempEmail;
 bool _firstEmailEnter;
 String checkPassword;
-// int levelClock;
 AnimationController _controller;
 bool timeOver;
 
@@ -26,24 +24,6 @@ Random _rnd = Random();
 
 String getRandomString(int length) => String.fromCharCodes(Iterable.generate(
     length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
-
-// Future getRandomNumber() async {
-
-//   var _random = Random();
-//   var numMin = 0x30;
-//   var charMax = 0x5A;
-//   var skipCharacter = [0x3A, 0x3B, 0x3C, 0x3D, 0x3E, 0x3F, 0x40];
-//   var checkNumber = [];
-
-//   while (checkNumber.length <= 6) {
-//     var tmp = numMin + _random.nextInt(charMax - numMin);
-//     if (skipCharacter.contains(skipCharacter)) {
-//       continue;
-//     }
-//     checkNumber.add(tmp);
-//   }
-//   return String.fromCharCodes(checkNumber.cast<int>());
-// }
 
 class Countdown extends AnimatedWidget {
   Countdown({Key key, this.animation}) : super(key: key, listenable: animation);
@@ -96,8 +76,8 @@ class _LoginAuthPageState extends State<LoginAuthPage>
     super.initState();
     init();
     _controller = AnimationController(
-        duration: Duration(seconds: 30),
-        // duration: Duration(seconds: 300),
+        // duration: Duration(seconds: 30),
+        duration: Duration(seconds: 300),
         vsync:
             this // gameData.levelClock is a user entered number elsewhere in the applciation
         );
@@ -107,8 +87,6 @@ class _LoginAuthPageState extends State<LoginAuthPage>
   Widget build(BuildContext context) {
     final TextEditingController _emailController =
         TextEditingController(text: _tempEmail);
-    // _emailController.selection = TextSelection.fromPosition(
-    //     TextPosition(offset: _emailController.text.length));
     final _authNumberController = TextEditingController();
 
     // StatefulWidget 쓰면서 riverpod (consumer) 쓰기
@@ -220,12 +198,6 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                             width: MediaQuery.of(context).size.width / 1.2,
                             child: TextField(
                               style: TextStyle(color: Colors.black),
-                              // color: _isEmailCheck.authFlag.isEmailChecked
-                              //     ? Colors.grey
-                              //     : Colors.black),
-                              // enabled: _isEmailCheck.authFlag.isEmailChecked
-                              //     ? false
-                              //     : true,
                               controller: _emailController,
                               onChanged: (text) {
                                 _tempEmail = text;
@@ -520,124 +492,31 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
                                 primary: OnestepColors().mainColor),
-                            // onPressed: () async {
-                            //   showDialog(
-                            //     context: context,
-                            //     builder: (BuildContext context) {
-                            //       return OnestepCustomDialogNotCancel(
-                            //         title: '한발자국 학교인증 성공!',
-                            //         description: '이제 한발자국의 기능들을 이용할 수 있습니다.',
-                            //         confirmButtonText: '확인',
-                            //         confirmButtonOnPress: () {
-                            //           Navigator.of(context).push(
-                            //               MaterialPageRoute(
-                            //                   builder: (context) =>
-                            //                       MainPage()));
-                            //         },
-                            //       );
-                            //     },
-                            //   );
-                            // },
-
                             onPressed: _isEmailCheck.authFlag.isShowBtn == true
                                 ? () async {
                                     // 5분 안에 인증해야함
                                     if (timeOver == false &&
                                         checkPassword ==
                                             _authNumberController.text) {
-                                      // 계명대
-                                      if (_emailController.text
-                                          .contains('@stu.kmu.ac.kr')) {
-                                        FirebaseFirestore.instance
-                                            .collection('user')
-                                            .doc(user.single.uid)
-                                            .update({
-                                          "auth": 2,
-                                          "univerisityEmail":
-                                              _emailController.text,
-                                          "university": "kmu",
-                                          "authTime": DateTime.now()
-                                              .millisecondsSinceEpoch
-                                        });
-                                      }
-                                      // 경대
-                                      else if (_emailController.text
-                                          .contains('@stu.knu.ac.kr')) {
-                                        FirebaseFirestore.instance
-                                            .collection('user')
-                                            .doc(user.single.uid)
-                                            .update({
-                                          "auth": 2,
-                                          "univerisityEmail":
-                                              _emailController.text,
-                                          "university": "knu",
-                                          "authTime": DateTime.now()
-                                              .millisecondsSinceEpoch
-                                        });
-                                      }
-                                      // 영대
-                                      else if (_emailController.text
-                                          .contains('@stu.yu.ac.kr')) {
-                                        FirebaseFirestore.instance
-                                            .collection('user')
-                                            .doc(user.single.uid)
-                                            .update({
-                                          "auth": 2,
-                                          "univerisityEmail":
-                                              _emailController.text,
-                                          "university": "yu",
-                                          "authTime": DateTime.now()
-                                              .millisecondsSinceEpoch
-                                        });
-                                      }
-                                      // 대구대
-                                      else if (_emailController.text
-                                          .contains('@stu.daegu.ac.kr')) {
-                                        FirebaseFirestore.instance
-                                            .collection('user')
-                                            .doc(user.single.uid)
-                                            .update({
-                                          "auth": 2,
-                                          "univerisityEmail":
-                                              _emailController.text,
-                                          "university": "daegu",
-                                          "authTime": DateTime.now()
-                                              .millisecondsSinceEpoch
-                                        });
-                                      }
-                                      // 대가대
-                                      else {
-                                        FirebaseFirestore.instance
-                                            .collection('user')
-                                            .doc(user.single.uid)
-                                            .update({
-                                          "auth": 2,
-                                          "univerisityEmail":
-                                              _emailController.text,
-                                          "university": "cu",
-                                          "authTime": DateTime.now()
-                                              .millisecondsSinceEpoch
-                                        });
-                                      }
-                                      var ref = FirebaseFirestore.instance
-                                          .collection('user');
-
-                                      var time =
-                                          DateTime.now().microsecondsSinceEpoch;
-                                      DocumentSnapshot userRecord =
-                                          await ref.doc(user.single.uid).get();
-                                      currentUserModel =
-                                          MYUSER.User.fromDocument(userRecord);
-                                      ref
-                                          .doc(currentUserModel.uid)
-                                          .collection("log")
-                                          .doc(time.toString())
-                                          .set({
-                                        "loginTime": time,
-                                      });
+                                      final QuerySnapshot result =
+                                          await FirebaseFirestore.instance
+                                              .collection('university')
+                                              .get();
+                                      final List<DocumentSnapshot> documents =
+                                          result.docs;
+                                      documents.forEach((data) => {
+                                            if (_emailController.text.contains(
+                                                "@${data.data()['email']}"))
+                                              {
+                                                authEmailDML(
+                                                    user,
+                                                    data.id.toString(),
+                                                    _emailController.text)
+                                              }
+                                          });
 
                                       Future.delayed(
-                                          const Duration(milliseconds: 200),
+                                          const Duration(milliseconds: 100),
                                           () {
                                         OnestepCustomDialogNotCancel.show(
                                           context,
@@ -657,21 +536,10 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                       _isEmailCheck
                                           .changedAuthTimeOverChecked(false);
                                       _isEmailCheck.changedAuthNumber(true);
-
-                                      // setState(() {
-                                      //   _isTimeOverChecked = false;
-                                      //   _isAuthNumber = true;
-                                      // });
-
                                     } else {
                                       _isEmailCheck
                                           .changedAuthTimeOverChecked(true);
                                       _isEmailCheck.changedAuthNumber(false);
-
-                                      // setState(() {
-                                      //   _isTimeOverChecked = true;
-                                      //   _isAuthNumber = false;
-                                      // });
                                     }
                                   }
                                 : null,

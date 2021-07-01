@@ -45,12 +45,12 @@ class MyinfoProvider extends StateNotifier<bool> {
 
   void authEmailNickNameCheck(String tempNickName) async {
     int nickNameLength = tempNickName.length;
-    if (tempNickName == "" || !(nickNameLength >= 3 && nickNameLength < 8)) {
+    if (tempNickName == "" || !(nickNameLength >= 2 && nickNameLength < 9)) {
       state = false;
     } else {
       QuerySnapshot ref = await FirebaseFirestore.instance
-          .collection('users')
-          .where("nickname", isEqualTo: tempNickName)
+          .collection('user')
+          .where("nickName", isEqualTo: tempNickName)
           .get();
 
       List<QueryDocumentSnapshot> docRef = ref.docs;
