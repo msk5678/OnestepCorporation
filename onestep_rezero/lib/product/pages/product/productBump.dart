@@ -4,11 +4,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
-import 'package:onestep_rezero/loggedInWidget.dart';
-import 'package:onestep_rezero/onestepCustomDialog.dart';
+import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 import 'package:onestep_rezero/product/models/product.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onestep_rezero/product/widgets/main/productMainBody.dart';
+import 'package:onestep_rezero/utils/floatingSnackBar.dart';
+import 'package:onestep_rezero/utils/onestepCustom/dialog/onestepCustomDialog.dart';
 import 'package:pattern_formatter/numeric_formatter.dart';
 
 class ProductBump extends StatefulWidget {
@@ -55,19 +56,14 @@ class _ProductBumpState extends State<ProductBump> {
     ).whenComplete(
       () {
         context.read(productMainService).fetchProducts();
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          duration: Duration(seconds: 2),
-          content: Text("물품을 끌어올렸어요"),
-        ));
+        FloatingSnackBar.show(context, "상품을 끌어올렸어요");
+
         FocusScope.of(context).unfocus(); // keyboard unfocus
         int count = 0;
         Navigator.of(context).popUntil((_) => count++ >= 3);
       },
     ).onError((error, stackTrace) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        duration: Duration(seconds: 2),
-        content: Text("물품을 끌어올리기에 실패했어요"),
-      ));
+      FloatingSnackBar.show(context, "상품을 끌어올리기에 실패했어요");
     });
   }
 

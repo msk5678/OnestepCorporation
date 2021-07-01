@@ -1,130 +1,157 @@
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:flutter/material.dart';
-// import 'package:flutter_riverpod/flutter_riverpod.dart';
-// import 'package:onestep_rezero/main.dart';
-// import 'package:onestep_rezero/product/models/categoryItem.dart';
-// import 'package:onestep_rezero/product/pages/category/categoryDetail.dart';
+import 'dart:collection';
 
-// final categoryStateProvider = StateProvider<bool>((ref) {
-//   return false;
-// });
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-// class ProductMainHeader extends ConsumerWidget {
-//   const ProductMainHeader({Key key}) : super(key: key);
+import 'package:onestep_rezero/product/pages/category/categoryDetail.dart';
+import 'package:onestep_rezero/product/pages/category/categorySidebar.dart';
+import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 
-//   Widget allCategory(BuildContext context) {
-//     return GridView(
-//       physics: NeverScrollableScrollPhysics(),
-//       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-//         crossAxisCount: 5,
-//         childAspectRatio: (MediaQuery.of(context).size.width * 0.0025),
-//         crossAxisSpacing: 1.0,
-//       ),
-//       shrinkWrap: true,
-//       children: [
-//         ...CategoryItem.items
-//             .map(
-//               (item) => InkWell(
-//                 splashColor: Colors.red,
-//                 onTap: () {
-//                   // Navigator.of(context).push(
-//                   //   MaterialPageRoute(
-//                   //     builder: (context) => Consumer<CategoryProuductProvider>(
-//                   //       builder: (context, prouductProvider, _) =>
-//                   //           ClothCategoryWidget(
-//                   //         productProvider: prouductProvider,
-//                   //         category: item.name,
-//                   //       ),
-//                   //     ),
-//                   //   ),
-//                   // );
-//                 },
-//                 child: Column(
-//                   children: <Widget>[
-//                     Padding(
-//                         padding: EdgeInsets.only(bottom: 5.0),
-//                         child: Image(image: item.image, width: 45, height: 45)),
-//                     Text(item.name, style: TextStyle(fontSize: 12)),
-//                   ],
-//                 ),
-//               ),
-//             )
-//             .toList(),
-//         GestureDetector(
-//           child: Column(
-//             children: <Widget>[
-//               Padding(
-//                   padding: EdgeInsets.only(bottom: 5.0),
-//                   child: Icon(Icons.arrow_drop_up, size: 45)),
-//               Text("접기", style: TextStyle(fontSize: 12)),
-//             ],
-//           ),
-//           onTap: () {
-//             context.read(categoryStateProvider).state =
-//                 !context.read(categoryStateProvider).state;
-//           },
-//         ),
-//       ],
-//     );
-//   }
+class ProductMainHeader extends StatefulWidget {
+  const ProductMainHeader({Key key}) : super(key: key);
 
-//   Widget categoryItem(QueryDocumentSnapshot data) {
-//     return Column(
-//       children: <Widget>[
-//         Padding(
-//             padding: EdgeInsets.only(bottom: 5.0),
-//             child: Image.asset(data['image'], width: 45, height: 45)),
-//         Text(data.id, style: TextStyle(fontSize: 12)),
-//       ],
-//     );
-//   }
+  @override
+  _ProductMainHeaderState createState() => _ProductMainHeaderState();
+}
 
-//   Widget header(BuildContext context) {
-//     return FutureBuilder(
-//         future: categoryList,
-//         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-//           switch (snapshot.connectionState) {
-//             case ConnectionState.waiting:
-//               return Container();
-//             default:
-//               return GridView.builder(
-//                   physics: NeverScrollableScrollPhysics(),
-//                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-//                     crossAxisCount: 5,
-//                     childAspectRatio:
-//                         (MediaQuery.of(context).size.width * 0.0025),
-//                     crossAxisSpacing: 1.0,
-//                   ),
-//                   shrinkWrap: true,
-//                   itemCount: snapshot.data.docs.length,
-//                   itemBuilder: (context, index) {
-//                     return InkWell(
-//                       splashColor: Colors.red,
-//                       onTap: () {
-//                         Navigator.of(context).push(
-//                           MaterialPageRoute(
-//                             builder: (context) => CategoryDetail(
-//                               category: snapshot.data.docs[index].id,
-//                             ),
-//                           ),
-//                         );
-//                       },
-//                       child: categoryItem(snapshot.data.docs[index]),
-//                     );
-//                   });
-//           }
-//         });
+class _ProductMainHeaderState extends State<ProductMainHeader> {
+  Future<DocumentSnapshot> myFuture;
 
-//   }
+  @override
+  void initState() {
+    super.initState();
+    myFuture = FirebaseFirestore.instance
+        .collection("category")
+        .doc(currentUserModel.university)
+        .get();
+  }
 
-//   @override
-//   Widget build(BuildContext context, ScopedReader watch) {
-//     final categoryboll = watch(categoryStateProvider);
+  Widget header() {
+    return FutureBuilder(
+      future: myFuture,
+      builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.waiting:
+            return Container();
+          default:
+            Map<String, dynamic> map = snapshot.data.data();
 
-//     return Column(
-//       children: <Widget>[
-//         categoryboll.state ? allCategory(context) : header(context),
-//       ],
-//     );
-//   }
-// }
+            List<String> sortedKeys = map.keys.toList(growable: true)
+              ..sort((k2, k1) => map[k1]['total'].compareTo(map[k2]['total']));
+
+            sortedKeys.removeRange(4, sortedKeys.length);
+
+            LinkedHashMap sortedMap = new LinkedHashMap.fromIterable(sortedKeys,
+                key: (k) => k, value: (k) => map[k]);
+
+            return Container(
+              height: 80,
+              child: Padding(
+                padding: EdgeInsets.only(top: 5, bottom: 5),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ...sortedMap
+                        .map(
+                          (key, value) => MapEntry(
+                            key,
+                            InkWell(
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => CategoryDetail(
+                                      total: value['total'],
+                                      category: key,
+                                      detailCategory: value['detail'],
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Column(
+                                children: <Widget>[
+                                  Padding(
+                                    padding: EdgeInsets.only(bottom: 5.0),
+                                    child: Image.asset(value['image'],
+                                        width: 45, height: 45),
+                                  ),
+                                  Text(key, style: TextStyle(fontSize: 12)),
+                                ],
+                              ),
+                            ),
+                          ),
+                        )
+                        .values
+                        .toList(),
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => CategorySidebar()));
+                      },
+                      child: Column(
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 5.0),
+                            child: Image.asset('icons/category/viewAll.png',
+                                width: 45, height: 45),
+                          ),
+                          Text("전체보기", style: TextStyle(fontSize: 12)),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+
+            return Container(
+              height: 80,
+              child: Padding(
+                padding: EdgeInsets.only(left: 15, top: 10),
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  scrollDirection: Axis.horizontal,
+                  itemCount: 4,
+                  itemBuilder: (context, index) {
+                    Map map = sortedMap[sortedMap.keys.elementAt(index)];
+
+                    return InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => CategoryDetail(
+                              total: map['total'],
+                              category: sortedMap.keys.elementAt(index),
+                              detailCategory: map['detail'],
+                            ),
+                          ),
+                        );
+                      },
+                      child: Column(
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 5.0),
+                            child: Image.asset(map['image'],
+                                width: 45, height: 45),
+                          ),
+                          Text(sortedMap.keys.elementAt(index),
+                              style: TextStyle(fontSize: 12)),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+            );
+        }
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return header();
+  }
+}

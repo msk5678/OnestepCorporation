@@ -1,17 +1,13 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
-import 'package:onestep_rezero/floatingSnackBar.dart';
-import 'package:onestep_rezero/loggedInWidget.dart';
+import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 
 import 'package:onestep_rezero/product/widgets/addOrEdit/category.dart';
 import 'package:onestep_rezero/product/widgets/addOrEdit/explain.dart';
@@ -19,6 +15,10 @@ import 'package:onestep_rezero/product/widgets/addOrEdit/price.dart';
 import 'package:onestep_rezero/product/widgets/addOrEdit/title.dart';
 
 import 'package:onestep_rezero/product/widgets/main/productMainBody.dart';
+import 'package:onestep_rezero/utils/floatingSnackBar.dart';
+
+import 'package:onestep_rezero/utils/imageCompress.dart';
+import 'package:onestep_rezero/utils/onestepCustom/dialog/onestepCustomDialog.dart';
 import 'package:random_string/random_string.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
@@ -41,15 +41,6 @@ class _ProductAddState extends State<ProductAdd> {
   @override
   void initState() {
     super.initState();
-  }
-
-  Future<Uint8List> assetCompressFile(File file) async {
-    var result = await FlutterImageCompress.compressWithFile(
-      file.absolute.path,
-      quality: 30,
-    );
-
-    return result;
   }
 
   Future<void> pickAssets() async {
@@ -161,7 +152,7 @@ class _ProductAddState extends State<ProductAdd> {
         Align(
           alignment: Alignment.centerLeft,
           child: Text(
-            "물품 사진",
+            "상품 사진",
           ),
         ),
         Container(
@@ -189,22 +180,11 @@ class _ProductAddState extends State<ProductAdd> {
     );
   }
 
-  void snackBar(String msg) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      duration: Duration(seconds: 2),
-      behavior: SnackBarBehavior.floating,
-      content: Text(
-        msg,
-        textAlign: TextAlign.center,
-      ),
-    ));
-  }
-
   Future<void> uploadProduct() async {
     if (entity.length < 1) {
-      FloatingSnackBar.show(context, "물품을 등록하려면 한장 이상의 사진이 필요합니다.");
+      FloatingSnackBar.show(context, "상품을 등록하려면 한장 이상의 사진이 필요합니다.");
     } else if (_titleTextEditingController.text.trim() == "") {
-      FloatingSnackBar.show(context, "물품명을 입력해주세요.");
+      FloatingSnackBar.show(context, "상품명을 입력해주세요.");
     } else if (_priceTextEditingController.text.trim() == "") {
       FloatingSnackBar.show(context, "가격을 입력해주세요.");
     } else if (_categoryTextEditingController.text.trim() == "") {
@@ -212,52 +192,62 @@ class _ProductAddState extends State<ProductAdd> {
     } else if (_explainTextEditingController.text.trim() == "") {
       FloatingSnackBar.show(context, "설명을 입력해주세요.");
     } else {
-      List _imgUriarr = [];
+      OnestepCustomDialog.show(
+        context,
+        title: "상품 등록을 하시겠습니까?",
+        confirmButtonText: "확인",
+        cancleButtonText: "취소",
+        confirmButtonOnPress: () async {
+          List _imgUriarr = [];
 
-      for (var image in entity) {
-        Reference storageReference = FirebaseStorage.instance
-            .ref()
-            .child("productimage/${randomAlphaNumeric(15)}");
+          for (var image in entity) {
+            Reference storageReference = FirebaseStorage.instance
+                .ref()
+                .child("productimage/${randomAlphaNumeric(15)}");
 
-        Uint8List uint8list = await assetCompressFile(await image.originFile);
+            Uint8List uint8list =
+                await ImageCompress.assetCompressFile(await image.originFile);
 
-        UploadTask storageUploadTask = storageReference.putData(uint8list);
-        await storageUploadTask.whenComplete(() async {
-          String downloadURL = await storageReference.getDownloadURL();
-          _imgUriarr.add(downloadURL);
-        });
-      }
+            UploadTask storageUploadTask = storageReference.putData(uint8list);
+            await storageUploadTask.whenComplete(() async {
+              String downloadURL = await storageReference.getDownloadURL();
+              _imgUriarr.add(downloadURL);
+            });
+          }
 
-      int time = DateTime.now().microsecondsSinceEpoch;
-      FirebaseFirestore.instance
-          .collection("university")
-          .doc(currentUserModel.university)
-          .collection("product")
-          .doc(time.toString())
-          .set({
-        'uid': currentUserModel.uid,
-        'imagesUrl': _imgUriarr,
-        'title': _titleTextEditingController.text,
-        'category': _categoryTextEditingController.text,
-        'detailCategory': _detailCategoryTextEditingController.text,
-        'price': _priceTextEditingController.text,
-        'explain': _explainTextEditingController.text,
-        'favoriteUserList': {},
-        'chatUserList': [],
-        'trading': false,
-        'completed': false,
-        'hide': false,
-        'deleted': false,
-        'reported': false,
-        'views': {},
-        'uploadTime': time,
-        'updateTime': time,
-        'bumpTime': time,
-      }).whenComplete(() {
-        FloatingSnackBar.show(context, "물품 등록이 완료되었습니다.");
-        context.read(productMainService).fetchProducts();
-        Navigator.pop(context);
-      });
+          int time = DateTime.now().microsecondsSinceEpoch;
+          FirebaseFirestore.instance
+              .collection("university")
+              .doc(currentUserModel.university)
+              .collection("product")
+              .doc(time.toString())
+              .set({
+            'uid': currentUserModel.uid,
+            'imagesUrl': _imgUriarr,
+            'title': _titleTextEditingController.text,
+            'category': _categoryTextEditingController.text,
+            'detailCategory': _detailCategoryTextEditingController.text,
+            'price': _priceTextEditingController.text,
+            'explain': _explainTextEditingController.text,
+            'favoriteUserList': {},
+            'chatUserList': [],
+            'trading': false,
+            'completed': false,
+            'hide': false,
+            'deleted': false,
+            'reported': false,
+            'views': {},
+            'uploadTime': time,
+            'updateTime': time,
+            'bumpTime': time,
+          }).whenComplete(() {
+            FloatingSnackBar.show(context, "상품 등록이 완료되었습니다.");
+            context.read(productMainService).fetchProducts();
+            Navigator.pop(context);
+            Navigator.pop(context);
+          });
+        },
+      );
     }
   }
 
@@ -270,7 +260,7 @@ class _ProductAddState extends State<ProductAdd> {
           color: Colors.black,
         ),
         backgroundColor: Colors.white,
-        title: Text("물품 등록", style: TextStyle(color: Colors.black)),
+        title: Text("상품 등록", style: TextStyle(color: Colors.black)),
       ),
       body: SingleChildScrollView(
         child: Container(

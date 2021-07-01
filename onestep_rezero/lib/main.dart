@@ -5,10 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
-import 'package:onestep_rezero/loggedInWidget.dart';
-import 'package:onestep_rezero/signUpWidget.dart';
+import 'package:onestep_rezero/signIn/loggedInWidget.dart';
+import 'package:onestep_rezero/signUp/pages/signUpWidget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:onestep_rezero/timeUtil.dart';
+import 'package:onestep_rezero/utils/timeUtil.dart';
 import 'appmain/routeGenterator.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 

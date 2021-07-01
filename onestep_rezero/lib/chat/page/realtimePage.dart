@@ -7,7 +7,7 @@ import 'package:onestep_rezero/chat/boardchat/realtimeProductChatController.dart
 import 'package:onestep_rezero/chat/navigator/chatNavigationManager.dart';
 import 'package:onestep_rezero/chat/widget/chatBadge.dart';
 import 'package:onestep_rezero/chat/widget/chat_list_time.dart';
-import 'package:onestep_rezero/loggedInWidget.dart';
+import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 
 class RealTimePage extends StatefulWidget {
   @override

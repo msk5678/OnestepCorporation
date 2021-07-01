@@ -4,13 +4,12 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+
 import 'package:image_picker/image_picker.dart';
 import 'package:onestep_rezero/chat/boardchat/realtimeProductChatController.dart';
 import 'package:onestep_rezero/chat/widget/FullmageWidget.dart';
 import 'package:onestep_rezero/chat/widget/message_list_time.dart';
-import 'package:onestep_rezero/loggedInWidget.dart';
-import 'package:onestep_rezero/main.dart';
+import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 
 import 'dart:io' as io;
 

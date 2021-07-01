@@ -1,9 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:onestep_rezero/loggedInWidget.dart';
-import 'package:onestep_rezero/login/pages/loginAuthPage.dart';
-import 'package:onestep_rezero/login/pages/loginCertificatePage.dart';
+
+import 'package:onestep_rezero/signIn/loggedInWidget.dart';
+import 'package:onestep_rezero/signUp/pages/loginAuthPage.dart';
+import 'package:onestep_rezero/signUp/pages/loginCertificatePage.dart';
 
 void _showDialog(BuildContext context) {
   showDialog(

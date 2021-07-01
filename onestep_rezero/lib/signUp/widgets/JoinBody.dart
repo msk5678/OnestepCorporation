@@ -3,9 +3,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
-import 'package:onestep_rezero/login/pages/loginAuthPage.dart';
-import 'package:onestep_rezero/login/providers/providers.dart';
-import 'package:onestep_rezero/onestepCustomDialogNotCancel.dart';
+import 'package:onestep_rezero/signUp/pages/loginAuthPage.dart';
+
+import 'package:onestep_rezero/signUp/providers/providers.dart';
+import 'package:onestep_rezero/utils/onestepCustom/dialog/onestepCustomDialogNotCancel.dart';
 
 // String _tempEmail = "";
 String _tempNickName = "";

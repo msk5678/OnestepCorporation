@@ -5,6 +5,7 @@ import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/search/pages/searchMain.dart';
 import 'package:onestep_rezero/search/widgets/product/searchProductBody.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:onestep_rezero/utils/floatingSnackBar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SearchContent extends StatefulWidget {
@@ -97,9 +98,7 @@ class _SearchContentState extends State<SearchContent> {
         // 게시판 검색
       }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: const Text('두 글자 이상 입력해주세요.'),
-      ));
+      FloatingSnackBar.show(context, '두 글자 이상 입력해주세요.');
     }
   }
 

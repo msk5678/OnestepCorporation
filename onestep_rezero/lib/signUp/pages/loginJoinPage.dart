@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:onestep_rezero/login/widgets/JoinBody.dart';
+import 'package:onestep_rezero/signUp/widgets/JoinBody.dart';
 
 class LoginJoinPage extends ConsumerWidget {
   final List<UserInfo> user;

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:onestep_rezero/admob/googleAdmob.dart';
 import 'package:onestep_rezero/appmain/bottomNavigationItem.dart';
+import 'package:onestep_rezero/utils/floatingSnackBar.dart';
 
 class AppMain extends StatefulWidget {
   AppMain({Key key}) : super(key: key);
@@ -30,13 +31,11 @@ class _AppMainState extends State<AppMain> {
           now.difference(currentBackPressTime) > Duration(seconds: 2)) {
         currentBackPressTime = now;
 
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          duration: Duration(seconds: 2),
-          content: Text(
-            "버튼을 한번 더 누르시면 종료됩니다.",
-            textAlign: TextAlign.center,
-          ),
-        ));
+        FloatingSnackBar.show(
+          context,
+          "버튼을 한번 더 누르시면 종료됩니다.",
+        );
+
         return false;
       }
       return true;

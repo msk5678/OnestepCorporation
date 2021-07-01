@@ -14,7 +14,7 @@ import 'package:onestep_rezero/chat/widget/FullmageWidget.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/chat/widget/message_list_time.dart';
 import 'package:onestep_rezero/chat/widget/productChatMenu.dart';
-import 'package:onestep_rezero/loggedInWidget.dart';
+import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 
 import 'dart:io' as io;
 

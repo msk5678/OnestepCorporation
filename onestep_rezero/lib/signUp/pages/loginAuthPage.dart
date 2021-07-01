@@ -1,17 +1,17 @@
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as FBA;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:onestep_rezero/chat/widget/appColor.dart';
-import 'package:onestep_rezero/loggedInWidget.dart';
-import 'package:onestep_rezero/login/model/user.dart' as MYUSER;
-import 'package:onestep_rezero/login/providers/providers.dart';
+import 'package:onestep_rezero/signIn/loggedInWidget.dart';
+import 'package:onestep_rezero/signUp/model/user.dart';
+import 'package:onestep_rezero/signUp/providers/providers.dart';
+import 'package:onestep_rezero/utils/onestepCustom/dialog/onestepCustomDialogNotCancel.dart';
 
 import '../../main.dart';
-import '../../onestepCustomDialogNotCancel.dart';
 import '../../sendMail.dart';
 
 String _tempEmail;
@@ -79,7 +79,7 @@ void init() {
 }
 
 class LoginAuthPage extends StatefulWidget {
-  final List<UserInfo> user;
+  final List<FBA.UserInfo> user;
   LoginAuthPage(this.user);
 
   @override
@@ -88,7 +88,7 @@ class LoginAuthPage extends StatefulWidget {
 
 class _LoginAuthPageState extends State<LoginAuthPage>
     with TickerProviderStateMixin {
-  final List<UserInfo> user;
+  final List<FBA.UserInfo> user;
   _LoginAuthPageState(this.user);
 
   @override
@@ -627,7 +627,7 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                       DocumentSnapshot userRecord =
                                           await ref.doc(user.single.uid).get();
                                       currentUserModel =
-                                          MYUSER.User.fromDocument(userRecord);
+                                          User.fromDocument(userRecord);
                                       ref
                                           .doc(currentUserModel.uid)
                                           .collection("log")

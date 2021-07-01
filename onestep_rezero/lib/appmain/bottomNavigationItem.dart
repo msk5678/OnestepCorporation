@@ -31,7 +31,7 @@ class BottomNavigationItem {
         BottomNavigationItem(
           page: ProductAdd(),
           icon: Icon(Icons.add_rounded),
-          title: "물품 등록",
+          title: "상품 등록",
         ),
         BottomNavigationItem(
           page: ChatMain(),

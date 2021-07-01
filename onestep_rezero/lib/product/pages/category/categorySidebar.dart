@@ -2,8 +2,9 @@ import 'dart:collection';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:onestep_rezero/chat/widget/appColor.dart';
-import 'package:onestep_rezero/loggedInWidget.dart';
+import 'package:onestep_rezero/admob/googleAdmob.dart';
+
+import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 
 import 'package:onestep_rezero/product/pages/category/categoryDetail.dart';
 
@@ -37,11 +38,12 @@ class _CategorySidebarState extends State<CategorySidebar> {
             return Padding(
                 padding: EdgeInsets.only(left: 15, top: 10),
                 child: GridView.builder(
+                    physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     itemCount: sortedMap.length,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
-                      childAspectRatio: (3.5 / 1),
+                      childAspectRatio: (3.3 / 1),
                       // mainAxisSpacing: 20,
                       // crossAxisSpacing: 7,
                     ),
@@ -78,15 +80,17 @@ class _CategorySidebarState extends State<CategorySidebar> {
   }
 
   Widget body() {
+    Size _size = MediaQuery.of(context).size;
     return Container(
+      height: _size.height,
       color: Colors.white,
-      child: Column(
+      child: Stack(
         children: <Widget>[
           categoryList(),
-          Container(
-            height: 40,
-            color: OnestepColors().mainColor,
-          )
+          Positioned(
+            child: GoogleAdmob().getChatMainBottomBanner(_size.width),
+            bottom: 0,
+          ),
         ],
       ),
     );

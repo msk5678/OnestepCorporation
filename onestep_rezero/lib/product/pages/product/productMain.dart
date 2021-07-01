@@ -9,6 +9,7 @@ import 'package:onestep_rezero/favorite/pages/favoriteMain.dart';
 import 'package:onestep_rezero/product/pages/category/categorySidebar.dart';
 
 import 'package:onestep_rezero/product/widgets/main/productMainBody.dart';
+import 'package:onestep_rezero/product/widgets/main/productMainHeader.dart';
 import 'package:onestep_rezero/search/pages/searchMain.dart';
 
 class ProductMain extends StatefulWidget {
@@ -58,41 +59,41 @@ class _ProductMainState extends State<ProductMain> {
 
   PreferredSizeWidget appBar() {
     return AppBar(
-      // title: Text(
-      //   '장터',
-      //   style: TextStyle(color: Colors.black),
-      // ),
+      title: Text(
+        '장터',
+        style: TextStyle(color: Colors.black),
+      ),
       elevation: 0,
       backgroundColor: Colors.white,
-      leading: IconButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            PageRouteBuilder(
-              pageBuilder: (
-                BuildContext context,
-                Animation<double> animation,
-                Animation<double> secondaryAnimation,
-              ) =>
-                  CategorySidebar(),
-              transitionsBuilder: (
-                BuildContext context,
-                Animation<double> animation,
-                Animation<double> secondaryAnimation,
-                Widget child,
-              ) =>
-                  SlideTransition(
-                position: Tween<Offset>(
-                  begin: const Offset(-1, 0),
-                  end: Offset.zero,
-                ).animate(animation),
-                child: child,
-              ),
-            ),
-          );
-        },
-        icon: Icon(Icons.menu_rounded, color: Colors.black),
-      ),
+      // leading: IconButton(
+      //   onPressed: () {
+      //     Navigator.push(
+      //       context,
+      //       PageRouteBuilder(
+      //         pageBuilder: (
+      //           BuildContext context,
+      //           Animation<double> animation,
+      //           Animation<double> secondaryAnimation,
+      //         ) =>
+      //             CategorySidebar(),
+      //         transitionsBuilder: (
+      //           BuildContext context,
+      //           Animation<double> animation,
+      //           Animation<double> secondaryAnimation,
+      //           Widget child,
+      //         ) =>
+      //             SlideTransition(
+      //           position: Tween<Offset>(
+      //             begin: const Offset(-1, 0),
+      //             end: Offset.zero,
+      //           ).animate(animation),
+      //           child: child,
+      //         ),
+      //       ),
+      //     );
+      //   },
+      //   icon: Icon(Icons.menu_rounded, color: Colors.black),
+      // ),
       actions: <Widget>[
         // new IconButton(
         //   icon: new Icon(
@@ -468,17 +469,16 @@ class _ProductMainState extends State<ProductMain> {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 Container(
-                  height: 180,
-                  color: OnestepColors().mainColor,
-                  child: Center(
-                    child: Text("광고"),
+                  width: MediaQuery.of(context).size.width,
+                  height: 200,
+                  child: Image.asset(
+                    "icons/banner.png",
+                    fit: BoxFit.cover,
                   ),
                 ),
                 SizedBox(height: 10),
-                // ProductMainHeader(),
-                // SizedBox(
-                //     height: 10,
-                //     child: Container(color: Color.fromRGBO(240, 240, 240, 1))),
+                ProductMainHeader(),
+                SizedBox(height: 10),
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Padding(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class FavoriteAnimation {
-  void showFavoriteDialog(BuildContext context) {
+  static void showFavoriteDialog(BuildContext context) {
     Future.delayed(Duration(milliseconds: 300), () {
       Navigator.pop(context);
     });

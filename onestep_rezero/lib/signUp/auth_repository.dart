@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:onestep_rezero/login/general_provider.dart';
+import 'package:onestep_rezero/signUp/general_provider.dart';
 
 import 'custom_exeption.dart';
 

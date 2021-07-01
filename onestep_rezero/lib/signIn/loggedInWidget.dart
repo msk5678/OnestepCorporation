@@ -2,9 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as FBA;
 import 'package:flutter/material.dart';
 import 'package:onestep_rezero/appMain.dart';
-import 'package:onestep_rezero/login/model/user.dart';
-import 'package:onestep_rezero/login/pages/loginAuthPage.dart';
-import 'package:onestep_rezero/login/pages/termsPage.dart';
+
+import 'package:onestep_rezero/signUp/model/user.dart';
+import 'package:onestep_rezero/signUp/pages/loginAuthPage.dart';
+import 'package:onestep_rezero/signUp/pages/termsPage.dart';
 
 User currentUserModel;
 

@@ -2,11 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:onestep_rezero/loggedInWidget.dart';
-import 'package:onestep_rezero/login/google_sign_in.dart';
+import 'package:onestep_rezero/signIn/google_sign_in.dart';
+import 'package:onestep_rezero/signIn/loggedInWidget.dart';
+
 import 'package:onestep_rezero/main.dart';
 import 'package:onestep_rezero/myinfo/pages/myinfoNickNameChagnePage.dart';
-import 'package:onestep_rezero/onestepCustomDialog.dart';
+import 'package:onestep_rezero/utils/floatingSnackBar.dart';
+
+import 'package:onestep_rezero/utils/onestepCustom/dialog/onestepCustomDialog.dart';
 import 'package:random_string/random_string.dart';
 import 'dart:io' as io;
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
@@ -292,21 +295,15 @@ class SettingsBody extends ConsumerWidget {
                     .read(googleSignInProvider)
                     .logout()
                     .catchError((error, stackTrace) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    duration: Duration(seconds: 2),
-                    content: Text(
-                      "로그아웃 실패",
-                      textAlign: TextAlign.center,
-                    ),
-                  ));
+                  FloatingSnackBar.show(
+                    context,
+                    "로그아웃 실패",
+                  );
                 }).whenComplete(() {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    duration: Duration(seconds: 2),
-                    content: Text(
-                      "로그아웃 되었습니다.",
-                      textAlign: TextAlign.center,
-                    ),
-                  ));
+                  FloatingSnackBar.show(
+                    context,
+                    "로그아웃 되었습니다.",
+                  );
                   Navigator.push(
                       context,
                       MaterialPageRoute(
