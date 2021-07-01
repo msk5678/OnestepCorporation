@@ -44,8 +44,10 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
   bool _isRunning;
 
   final ScrollController _customScrollViewScrollController = ScrollController();
+  final ScrollController _bottomListviewScrollController = ScrollController();
 
   final StreamController _imageStreamController = BehaviorSubject();
+  final StreamController _bottomListviewStreamController = BehaviorSubject();
   final StreamController<int> _customScrollViewStreamController =
       StreamController<int>();
   final StreamController<bool> _favoriteStreamController =
@@ -61,6 +63,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
     _componentInit();
 
     _customScrollViewScrollController.addListener(scrollListener);
+    _bottomListviewScrollController.addListener(bottomListviewScrollListener);
 
     _isRunning = false;
     super.initState();
@@ -105,12 +108,22 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
     _animationController.value = _locationAlpha / 255;
   }
 
+  void bottomListviewScrollListener() {
+    if (_bottomListviewScrollController.offset >=
+        _bottomListviewScrollController.position.maxScrollExtent - 50) {
+      _bottomListviewStreamController.sink.add(false);
+    } else {
+      _bottomListviewStreamController.sink.add(true);
+    }
+  }
+
   @override
   void dispose() {
     _customScrollViewStreamController.close();
     _customScrollViewScrollController.dispose();
     _imageStreamController.close();
     _favoriteStreamController.close();
+    _bottomListviewStreamController.close();
     super.dispose();
   }
 
@@ -329,8 +342,9 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
                   Padding(
                     padding: const EdgeInsets.only(right: 2.0),
                   ),
-                  Text(
-                      "${widget.product.category} > ${widget.product.detailCategory}"),
+                  Text(widget.product.detailCategory == ""
+                      ? "${widget.product.category}"
+                      : "${widget.product.category} > ${widget.product.detailCategory}"),
                 ],
               ),
               Row(
@@ -737,101 +751,136 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
               top: BorderSide(color: Colors.grey.withOpacity(0.3), width: 0.5),
             ),
           ),
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            padding: EdgeInsets.only(left: 20, right: 20),
+          child: Row(
             children: [
-              Padding(
-                padding: EdgeInsets.only(right: 20),
-                child: GestureDetector(
-                  onTap: () {
-                    if (DateTime.now()
-                            .difference(widget.product.bumpTime)
-                            .inHours >=
-                        1) {
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) =>
-                            ProductBump(product: widget.product),
-                      ));
-                    } else {
-                      FloatingSnackBar.show(
-                          context, "상품을 등록하고 1시간 뒤에 끌올할 수 있어요.");
-                    }
-                  },
-                  child: Row(
-                    children: [Icon(Icons.upload_outlined), Text("끌올하기")],
-                  ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(right: 20),
-                child: GestureDetector(
-                  onTap: () {},
-                  child: Row(children: [
-                    Icon(Icons.favorite_border_outlined),
-                    Text("찜한사람")
-                  ]),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(right: 20),
-                child: GestureDetector(
-                  onTap: () {
-                    _productStateChangeModal();
-                  },
-                  child: Row(children: [
-                    Icon(Icons.check_circle_outline_rounded),
-                    Text("상태변경")
-                  ]),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(right: 20),
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.of(context)
-                        .push(
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            ProductEdit(product: widget.product),
+              Expanded(
+                child: ListView(
+                  controller: _bottomListviewScrollController,
+                  scrollDirection: Axis.horizontal,
+                  padding: EdgeInsets.only(left: 20, right: 20),
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(right: 20),
+                      child: GestureDetector(
+                        onTap: () {
+                          if (DateTime.now()
+                                  .difference(widget.product.bumpTime)
+                                  .inHours >=
+                              1) {
+                            Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) =>
+                                  ProductBump(product: widget.product),
+                            ));
+                          } else {
+                            FloatingSnackBar.show(
+                                context, "상품을 등록하고 1시간 뒤에 끌올할 수 있어요.");
+                          }
+                        },
+                        child: Row(
+                          children: [Icon(Icons.upload_outlined), Text("끌올하기")],
+                        ),
                       ),
-                    )
-                        .then((value) {
-                      if (value == "OK") {
-                        Navigator.pushReplacement(
-                            context,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(right: 20),
+                      child: GestureDetector(
+                        onTap: () {},
+                        child: Row(children: [
+                          Icon(Icons.chat_outlined),
+                          Text("채팅목록")
+                        ]),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(right: 20),
+                      child: GestureDetector(
+                        onTap: () {},
+                        child: Row(children: [
+                          Icon(Icons.favorite_border_outlined),
+                          Text("찜한사람")
+                        ]),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(right: 20),
+                      child: GestureDetector(
+                        onTap: () {
+                          _productStateChangeModal();
+                        },
+                        child: Row(children: [
+                          Icon(Icons.check_circle_outline_rounded),
+                          Text("상태변경")
+                        ]),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(right: 20),
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.of(context)
+                              .push(
                             MaterialPageRoute(
-                                builder: (context) => ProductDetail(
-                                    docId: widget.product.firestoreid)));
-                      }
-                    });
-                  },
-                  child:
-                      Row(children: [Icon(Icons.edit_outlined), Text("상품수정")]),
+                              builder: (context) =>
+                                  ProductEdit(product: widget.product),
+                            ),
+                          )
+                              .then((value) {
+                            if (value == "OK") {
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => ProductDetail(
+                                          docId: widget.product.firestoreid)));
+                            }
+                          });
+                        },
+                        child: Row(children: [
+                          Icon(Icons.edit_outlined),
+                          Text("상품수정")
+                        ]),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        OnestepCustomDialog.show(
+                          context,
+                          title: '상품을 삭제하시겠습니까?',
+                          description: '삭제한 상품은 복구할 수 없습니다.',
+                          cancleButtonText: '취소',
+                          confirmButtonText: '삭제',
+                          confirmButtonOnPress: () {
+                            FirebaseFirestore.instance
+                                .collection("university")
+                                .doc(currentUserModel.university)
+                                .collection("product")
+                                .doc(widget.product.firestoreid)
+                                .update({'deleted': true});
+
+                            Navigator.pop(context);
+                          },
+                        );
+                      },
+                      child: Row(
+                          children: [Icon(Icons.delete_outline), Text("상품삭제")]),
+                    ),
+                  ],
                 ),
               ),
-              GestureDetector(
-                onTap: () {
-                  OnestepCustomDialog.show(
-                    context,
-                    title: '상품을 삭제하시겠습니까?',
-                    description: '삭제한 상품은 복구할 수 없습니다.',
-                    cancleButtonText: '취소',
-                    confirmButtonText: '삭제',
-                    confirmButtonOnPress: () {
-                      FirebaseFirestore.instance
-                          .collection("university")
-                          .doc(currentUserModel.university)
-                          .collection("product")
-                          .doc(widget.product.firestoreid)
-                          .update({'deleted': true});
-
-                      Navigator.pop(context);
-                    },
-                  );
+              StreamBuilder(
+                initialData: true,
+                stream: _bottomListviewStreamController.stream,
+                builder: (context, snapshot) {
+                  if (snapshot.data) {
+                    return Padding(
+                      padding: EdgeInsets.all(0),
+                      child: Icon(
+                        Icons.keyboard_arrow_right_rounded,
+                        color: Colors.grey,
+                      ),
+                    );
+                  } else
+                    return Container();
                 },
-                child:
-                    Row(children: [Icon(Icons.delete_outline), Text("상품삭제")]),
               ),
             ],
           ),

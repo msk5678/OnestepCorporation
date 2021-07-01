@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:onestep_rezero/myinfo/pages/mySaleProductMain.dart';
 import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 
 class UserProfileBody extends ConsumerWidget {
@@ -171,7 +172,14 @@ class UserProfileBody extends ConsumerWidget {
                     Expanded(
                       child: ListTile(
                         title: Text("판매 상품"),
-                        onTap: () => {},
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => MySaleProductMain(),
+                            ),
+                          );
+                        },
                       ),
                     ),
                     IconButton(
