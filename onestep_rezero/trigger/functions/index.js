@@ -95,6 +95,7 @@ exports.onDealReportCreate = functions.database.ref('/report/{reportedUid}/{firs
     })
     
     // board -> 
+    // 이게 board 가 아니라 댓글이었음.. board는 store 에 있음.. 수정해야함
     const countRef2 = snapshot.ref.parent.parent.parent.parent.parent.parent.parent.child('board').child('test')
     await countRef2.transaction(count =>{
         postReportPoint = count + 1;
