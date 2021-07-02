@@ -1,19 +1,54 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/favorite/pages/favoriteMain.dart';
+import 'package:onestep_rezero/home/pages/homeNotificationPage.dart';
+import 'package:onestep_rezero/loggedInWidget.dart';
 import 'package:onestep_rezero/product/pages/category/categorySidebar.dart';
 
 import 'package:onestep_rezero/product/widgets/main/productMainBody.dart';
+import 'package:onestep_rezero/report/reportPageTest.dart';
 import 'package:onestep_rezero/search/pages/searchMain.dart';
+
+import '../../../onestepCustomDialog.dart';
 
 class ProductMain extends StatefulWidget {
   @override
   _ProductMainState createState() => _ProductMainState();
+}
+
+// push, marketing 알림 dialog test
+void _testShowDialog(BuildContext context) {
+  return OnestepCustomDialog.show(
+    context,
+    title: 'OneStep 회원가입을 진심으로 환영합니다!',
+    description: '마케팅 및 이벤트성 알림을 받으시겠습니까?',
+    confirmButtonText: '확인',
+    cancleButtonText: '취소',
+    confirmButtonOnPress: () {
+      // FirebaseFirestore.instance
+      //     .collection('user')
+      //     .doc(googleSignIn.currentUser.id)
+      //     .collection('notification')
+      //     .doc('setting')
+      //     .set({"marketing": 1, "push": 1});
+      Navigator.of(context).pop();
+    },
+    cancleButtonOnPress: () {
+      // FirebaseFirestore.instance
+      //     .collection('user')
+      //     .doc(googleSignIn.currentUser.id)
+      //     .collection('notification')
+      //     .doc('setting')
+      //     .set({"marketing": 0, "push": 1});
+      Navigator.of(context).pop();
+    },
+  );
 }
 
 class _ProductMainState extends State<ProductMain> {
@@ -25,6 +60,16 @@ class _ProductMainState extends State<ProductMain> {
 
   @override
   void initState() {
+    FirebaseFirestore.instance
+        .collection('user')
+        .doc(currentUserModel.uid)
+        .get()
+        .then((value) => {
+              if (value.data()['pushCheck'] == 0)
+                {
+                  _testShowDialog(context),
+                }
+            });
     _scrollController.addListener(scrollListener);
     context.read(productMainService).fetchProducts();
     super.initState();
@@ -148,11 +193,11 @@ class _ProductMainState extends State<ProductMain> {
                   // 알림으로 넘어가는 부분
                   // Navigator.of(context).push(MaterialPageRoute(
                   //   builder: (context) => HomeNotificationPage(),
-                  // ));
+                  // )),
 
                   // 신고 page test
-                  // Navigator.of(context).push(
-                  //     MaterialPageRoute(builder: (context) => ReportPageTest())),
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => ReportPageTest())),
 
                   // 약관 page
                   // Navigator.of(context).push(

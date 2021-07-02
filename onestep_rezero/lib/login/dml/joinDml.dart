@@ -18,6 +18,7 @@ Future<void> joinNickNameDML(List<UserInfo> user, String text) async {
         "university": "", // 학교이름
         "universityEmail": "", // 학교이메일
         "joinTime": DateTime.now().microsecondsSinceEpoch, // 가입시간
+        "pushCheck": 0 // push 알림 체크
       })
       .whenComplete(() => {
             FirebaseFirestore.instance

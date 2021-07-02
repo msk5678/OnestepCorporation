@@ -93,13 +93,22 @@ exports.onDealReportCreate = functions.database.ref('/report/{reportedUid}/{firs
         ReportPoint = count + 1;
         return ReportPoint;
     })
-
-    const countRef1 = snapshot.ref.parent.parent.child('postReportCount')
-    await countRef1.transaction(count => {
+    
+    // board -> 
+    // 이게 board 가 아니라 댓글이었음.. board는 store 에 있음.. 수정해야함
+    const countRef2 = snapshot.ref.parent.parent.parent.parent.parent.parent.parent.child('board').child('test')
+    await countRef2.transaction(count =>{
         postReportPoint = count + 1;
         return postReportPoint;
     })
-
+    
+    // board report count 5 -> 제재 넣어야하는데 접근 어케하노 -> ㅎㅎ 성공
+    if(postReportPoint === 5){
+        console.log('hihihihihi')
+        admin.database().ref('board/').update({
+            'test1' : 1,
+        })
+    }
 
     // // case count
     // postFirstCasePoint = (await snapshot.ref.parent.parent.child('firstCase').get()).val();
@@ -131,6 +140,8 @@ exports.onDealReportCreate = functions.database.ref('/report/{reportedUid}/{firs
         //     "dealCase.four": postFourCasePoint,
         // })
     }
+
+  
 });
 
 exports.onUserReportCreate = functions.database.ref('/report/{reportedUid}/{firstReportTime}}/user/{postUid}/value/{timestamp}').onCreate(async (snapshot, context) => {
