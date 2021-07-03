@@ -50,7 +50,10 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
   BoardData currentBoardData;
   setBoardData();
   List<String> initCommentList = ['', '', '', '', ''];
-  Map<String, List<dynamic>> imageCommentMap = {"IMAGE": [], "COMMENT": []};
+  Map<String, List<dynamic>> imageCommentMap = {
+    "IMAGE": <String>[],
+    "COMMENT": [],
+  };
 
   textEditingInitNDispose(bool isInit) {
     if (isInit) {
@@ -485,7 +488,7 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
               child: TextField(
                   keyboardType: TextInputType.multiline,
                   minLines: 2,
-                  maxLines: null,
+                  maxLines: 4,
                   decoration: InputDecoration(
                     contentPadding:
                         EdgeInsets.symmetric(vertical: 20.0, horizontal: 5.0),
@@ -686,7 +689,7 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
           List<String>.generate(maxImageCount - mapSetLength, (index) => "")));
   }
 
-  getTextEditingImageTextField(
+  TextEditingController getTextEditingImageTextField(
     int index,
   ) {
     if (index == 0)

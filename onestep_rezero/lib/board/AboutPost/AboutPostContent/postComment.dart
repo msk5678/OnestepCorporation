@@ -27,7 +27,7 @@ abstract class Comment {
   deletedCommentWidget(
       int index, CommentData comment, double deviceWidth, double deviceHeight);
   commentWidget(BuildContext context, int index, CommentData comment,
-      double deviceWidth, double deviceHeight);
+      String uid, double deviceWidth, double deviceHeight);
 }
 
 class CommentWidget extends CommentParent {
@@ -95,7 +95,8 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
       return deletedCommentWidget(index, comment, deviceWidth, deviceHeight);
     else
       //is deleted
-      return commentWidget(context, index, comment, deviceWidth, deviceHeight);
+      return commentWidget(context, index, comment, currentUserModel.uid,
+          deviceWidth, deviceHeight);
   }
 
   @override
@@ -142,14 +143,16 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
                 child: Column(
                   children: [
                     Container(
-                      decoration: BoxDecoration(
-                        border: Border(
-                          top: BorderSide(
-                            color: OnestepColors().mainColor,
-                            width: 0.5,
-                          ),
-                        ),
-                      ),
+                      decoration: index != 0
+                          ? BoxDecoration(
+                              border: Border(
+                                top: BorderSide(
+                                  color: OnestepColors().mainColor,
+                                  width: 0.5,
+                                ),
+                              ),
+                            )
+                          : null,
                       padding: EdgeInsets.symmetric(vertical: 15),
                       child: !isDeleted
                           ? commentListSwipeMenu(
@@ -378,7 +381,7 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
 
   @override
   commentWidget(BuildContext context, int index, CommentData comment,
-      double deviceWidth, double deviceHeight) {
+      String uid, double deviceWidth, double deviceHeight) {
     DateTime uploadTime =
         DateTime.fromMillisecondsSinceEpoch(comment.uploadTime);
     bool isWritter = comment.userName == "작성자";
@@ -428,23 +431,25 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
                           ),
                         ),
                       ),
-                      Container(
-                        padding: EdgeInsets.only(left: 10),
-                        alignment: Alignment.centerRight,
-                        child: GestureDetector(
-                          onTap: () async {
-                            bool result =
-                                await comment.dismissComment() ?? false;
-                            if (result)
-                              refreshComment(context, boardId, postId);
-                          },
-                          child: Text(
-                            "삭제",
-                            style: TextStyle(
-                                color: Colors.redAccent, fontSize: 10),
-                          ),
-                        ),
-                      ),
+                      comment.uid == uid
+                          ? Container(
+                              padding: EdgeInsets.only(left: 10),
+                              alignment: Alignment.centerRight,
+                              child: GestureDetector(
+                                onTap: () async {
+                                  bool result =
+                                      await comment.dismissComment() ?? false;
+                                  if (result)
+                                    refreshComment(context, boardId, postId);
+                                },
+                                child: Text(
+                                  "삭제",
+                                  style: TextStyle(
+                                      color: Colors.redAccent, fontSize: 10),
+                                ),
+                              ),
+                            )
+                          : Container(),
                     ],
                   ),
                   Container(

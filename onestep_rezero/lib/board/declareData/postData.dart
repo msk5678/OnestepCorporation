@@ -37,9 +37,7 @@ class PostData {
     List<String> _imgUriarr = [];
 
     for (var imaged in _imageArr) {
-      if (imaged.runtimeType == String) {
-        _imgUriarr.add(imaged);
-      } else {
+      try {
         // Reference storageReference = FirebaseStorage.instance
         //     .ref()
         //     .child("boardimages/freeboard/${randomAlphaNumeric(15)}");
@@ -60,6 +58,8 @@ class PostData {
           String downloadURL = await storageReference.getDownloadURL();
           _imgUriarr.add(downloadURL);
         });
+      } catch (e) {
+        print("Save Image Error in Board $e");
       }
     }
     return _imgUriarr;
@@ -136,11 +136,10 @@ class PostData {
         );
   }
 
-  Future updatePostData(
-      BuildContext context, PostData updatingData, int urlImageCount) async {
+  Future updatePostData(BuildContext context, PostData updatingData) async {
     String currentTimeStamp = DateTime.now().millisecondsSinceEpoch.toString();
 
-    imgUriList = await convertImage(imageCommentMap["IMAGE"]);
+    imgUriList = await convertImage(imageCommentMap["ALTERIMAGE"]);
     imageCommentMap.update("IMAGE", (value) => imgUriList);
     return await FirebaseFirestore.instance
         .collection('university')

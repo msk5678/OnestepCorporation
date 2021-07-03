@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -178,9 +177,6 @@ class _PostContentState extends State<PostContent>
 
   CommentData aboutCoComment;
 
-  Animation _arrowAnimation;
-  AnimationController _arrowAnimationController;
-
   @override
   void initState() {
     currentPostData = widget.postData;
@@ -189,12 +185,6 @@ class _PostContentState extends State<PostContent>
     context
         .read(commentProvider)
         .fetchData(currentPostData.boardId, currentPostData.documentId);
-
-    _arrowAnimationController =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 300))
-          ..forward();
-    _arrowAnimation =
-        Tween(begin: 0.0, end: pi).animate(_arrowAnimationController);
 
     super.initState();
   }
@@ -214,7 +204,6 @@ class _PostContentState extends State<PostContent>
 
   @override
   void dispose() {
-    _arrowAnimationController.dispose();
     super.dispose();
   }
 
@@ -268,7 +257,12 @@ class _PostContentState extends State<PostContent>
                               ),
                             ),
                             buttonList(currentPostData),
-                            favoriteCountWidget(currentPostData),
+                            // favoriteCountWidget(currentPostData, currentUid),
+
+                            // child: postTopStatusBar(
+                            //       currentPostData,
+                            //       currentUid,
+                            //       commentStatusWidget(currentPostData)),
                             Container(
                               width: deviceWidth / 2,
                               margin: EdgeInsets.only(
@@ -313,6 +307,49 @@ class _PostContentState extends State<PostContent>
     );
   }
 
+  postTopStatusBar(PostData currentPost, String uid, Widget status) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 10, top: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // Row(
+          //   children: [
+          //     Icon(
+          //       //foot icon
+          //       Icons.remove_red_eye,
+          //       size: 20,
+          //       color: OnestepColors().mainColor,
+          //     ),
+          //     Container(
+          //       margin: EdgeInsets.only(right: 5),
+          //       child: Text("${currentPost.views.keys.length}",
+          //           style: TextStyle(color: Colors.grey, fontSize: 10)),
+          //     ),
+          //     status
+          //   ],
+          // ),
+          Row(
+            children: [
+              Icon(
+                Icons.watch_later_outlined,
+                size: 20,
+                color: OnestepColors().mainColor,
+              ),
+              Container(
+                margin: EdgeInsets.only(right: 5),
+                child: Text(
+                  "${TimeUtil.timeAgo(date: currentPost.uploadTime)}",
+                  style: TextStyle(color: Colors.grey, fontSize: 10),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   commentTextFieldStack(
       bool commentFlag, double deviceWidth, String postDataUid,
       {CommentData commentData}) {
@@ -346,13 +383,13 @@ class _PostContentState extends State<PostContent>
                       //       border: InputBorder.none),
                       // ),
                       ),
-                  SizedBox(
-                    width: 15,
-                  ),
-                  textEditingControllerComment.text.length > 0
-                      ? IconButton(
-                          icon: Icon(Icons.arrow_upward), onPressed: () {})
-                      : Container()
+                  // SizedBox(
+                  //   width: 15,
+                  // ),
+                  // textEditingControllerComment.text.length > 0
+                  //     ? IconButton(
+                  //         icon: Icon(Icons.arrow_upward), onPressed: () {})
+                  //     : Container()
                   //     FloatingActionButton(
                   //       onPressed: () {},
                   //       child: Icon(
@@ -454,15 +491,21 @@ class _PostContentState extends State<PostContent>
     );
   }
 
-  favoriteCountWidget(PostData currentPost) {
+  favoriteCountWidget(PostData currentPost, String uid) {
     int favoriteCount = currentPost.favoriteCount;
-    return Container(
-      alignment: Alignment.topLeft,
-      margin: EdgeInsets.only(right: 5),
-      child: Text(
-        "좋아요 : $favoriteCount",
-        style: TextStyle(color: Colors.grey, fontSize: 13),
-      ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Container(
+          alignment: Alignment.topLeft,
+          margin: EdgeInsets.only(right: 5),
+          child: Text(
+            "좋아요 : $favoriteCount",
+            style: TextStyle(color: Colors.grey, fontSize: 13),
+          ),
+        ),
+        postTopStatusBar(currentPost, uid, commentStatusWidget(currentPost))
+      ],
     );
   }
 

@@ -240,7 +240,7 @@ class PostList extends StatelessWidget {
               Container(
                 padding: EdgeInsets.only(right: 5),
                 child: Text(
-                  postData.views.length.toString(),
+                  postData.commentCount.toString(),
                   style: TextStyle(
                       color: Colors.black,
                       fontSize: 14,

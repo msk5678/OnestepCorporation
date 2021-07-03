@@ -120,7 +120,7 @@ class CommentData {
           await saveCommentToUserDb(currentTimeStamp, currentUid) ?? false;
       if (result)
         return realtimeDb
-            .child('board')
+            .child('commentInBoard')
             .child(boardId)
             .child(postId)
             .child(currentTimeStamp)
@@ -266,6 +266,11 @@ class CommentData {
           childCommentList: childCommentList,
           commentId: snapshot.key));
     });
+    commentList.sort((a, b) {
+      int aUploadTime = a.uploadTime;
+      int bUploadTime = b.uploadTime;
+      return aUploadTime.compareTo(bUploadTime);
+    });
     return commentList;
   }
 
@@ -275,7 +280,7 @@ class CommentData {
 
     return await db
         .reference()
-        .child('board')
+        .child('commentInBoard')
         .child(boardId)
         .child(postId)
         .child(parentId)
@@ -292,16 +297,16 @@ class CommentData {
       if (this.parentCommentId != "") {
         realtimeDb = FirebaseDatabase.instance
             .reference()
-            .child('board')
+            .child('commentInBoard')
             .child(this.boardId)
             .child(this.postId)
             .child(this.parentCommentId)
             .child("CoComment")
-            .child(this.commentId);
+            .child(this.uploadTime.toString());
       } else {
         realtimeDb = FirebaseDatabase.instance
             .reference()
-            .child('board')
+            .child('commentInBoard')
             .child(this.boardId)
             .child(this.postId)
             .child(this.commentId);
@@ -309,6 +314,7 @@ class CommentData {
     }
 
     String currentTimeStamp = DateTime.now().millisecondsSinceEpoch.toString();
+
     return realtimeDb
         .update({
           "deleted": 'true',
@@ -328,7 +334,7 @@ class CommentData {
       if (result) {
         bool isDone = await FirebaseDatabase.instance
             .reference()
-            .child('board')
+            .child('commentInBoard')
             .child(this.boardId)
             .child(this.postId)
             .child(this.commentId)
@@ -341,7 +347,7 @@ class CommentData {
         return isDone
             ? FirebaseDatabase.instance
                 .reference()
-                .child('board')
+                .child('commentInBoard')
                 .child(this.boardId)
                 .child(this.postId)
                 .child(this.commentId)
@@ -382,7 +388,7 @@ class CommentData {
           false;
       if (result)
         return realtimeDb
-            .child('board')
+            .child('commentInBoard')
             .child(this.boardId)
             .child(this.postId)
             .child(parentCommentId)
@@ -457,7 +463,7 @@ class CommentData {
           haveChildComment: haveChildComment,
           parentCommentId: value["parentCommentId"] ?? "",
           childCommentList: childCommentList,
-          commentId: snapshot.key));
+          commentId: uploadTime.toString()));
     });
     commentList.sort((a, b) => int.tryParse(a.commentId ?? 0)
         .compareTo(int.tryParse(b.commentId ?? 0)));

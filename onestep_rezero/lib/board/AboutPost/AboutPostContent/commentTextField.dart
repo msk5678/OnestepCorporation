@@ -54,7 +54,10 @@ class SearchTextFieldState extends State<CustomCommentTextField> {
                 ),
                 _textController.text.length > 0
                     ? new IconButton(
-                        icon: new Icon(Icons.arrow_upward),
+                        icon: new Icon(
+                          Icons.send_rounded,
+                          color: OnestepColors().mainColor,
+                        ),
                         onPressed: () {
                           setState(() {
                             callback(_textController.text);

@@ -216,7 +216,8 @@ class UserWrittenCommentListWidget extends ConsumerWidget implements Comment {
   @override
   Widget commentBoxDesignMethod(BuildContext context, int index,
       CommentData comment, double deviceWidth, double deviceHeight) {
-    return commentWidget(context, index, comment, deviceWidth, deviceHeight);
+    return commentWidget(context, index, comment, currentUserModel.uid,
+        deviceWidth, deviceHeight);
   }
 
   @override
@@ -240,7 +241,7 @@ class UserWrittenCommentListWidget extends ConsumerWidget implements Comment {
 
   @override
   commentWidget(BuildContext context, int index, CommentData comment,
-      double deviceWidth, double deviceHeight) {
+      String uid, double deviceWidth, double deviceHeight) {
     DateTime uploadTime =
         DateTime.fromMillisecondsSinceEpoch(comment.uploadTime);
 

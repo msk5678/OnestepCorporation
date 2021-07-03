@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -75,7 +74,7 @@ class UserProvider with ChangeNotifier {
         if (data.parentCommentId != "") {
           commentDb = db
               .reference()
-              .child('board')
+              .child('commentInBoard')
               .child(data.boardId)
               .child(data.postId)
               .child(data.parentCommentId)
@@ -84,7 +83,7 @@ class UserProvider with ChangeNotifier {
         } else {
           commentDb = db
               .reference()
-              .child('board')
+              .child('commentInBoard')
               .child(data.boardId)
               .child(data.postId)
               .child(data.commentId);
@@ -100,10 +99,12 @@ class UserProvider with ChangeNotifier {
 
         // notifyListeners();
       });
+      _userCommentList.sort((a, b) => b.uploadTime.compareTo(a.uploadTime));
     } catch (e) {
       print(e);
       _isFetching = false;
     }
+
     _isFetching = false;
     notifyListeners();
   }

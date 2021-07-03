@@ -63,7 +63,8 @@ class ChildComment extends StatelessWidget implements Comment {
       return deletedCommentWidget(index, comment, deviceWidth, deviceHeight);
     else
       //is deleted
-      return commentWidget(context, index, comment, deviceWidth, deviceHeight);
+      return commentWidget(context, index, comment, currentUserModel.uid,
+          deviceWidth, deviceHeight);
   }
 
   @override
@@ -232,7 +233,7 @@ class ChildComment extends StatelessWidget implements Comment {
 
   @override
   Widget commentWidget(BuildContext context, int index, CommentData comment,
-      double deviceWidth, double deviceHeight) {
+      String uid, double deviceWidth, double deviceHeight) {
     DateTime uploadTime =
         DateTime.fromMillisecondsSinceEpoch(comment.uploadTime);
     bool isWritter = comment.userName == "작성자";
@@ -282,26 +283,27 @@ class ChildComment extends StatelessWidget implements Comment {
                           ),
                         ),
                       ),
-                      Container(
-                        padding: EdgeInsets.only(left: 10),
-                        alignment: Alignment.centerRight,
-                        child: GestureDetector(
-                          onTap: () async {
-                            bool result =
-                                await comment.dismissComment() ?? false;
+                      comment.uid == uid
+                          ? Container(
+                              padding: EdgeInsets.only(left: 10),
+                              alignment: Alignment.centerRight,
+                              child: GestureDetector(
+                                onTap: () async {
+                                  bool result =
+                                      await comment.dismissComment() ?? false;
 
-                            if (result)
-                              context
-                                  .read(commentProvider)
-                                  .refresh(comment.boardId, comment.postId);
-                          },
-                          child: Text(
-                            "삭제",
-                            style: TextStyle(
-                                color: Colors.redAccent, fontSize: 10),
-                          ),
-                        ),
-                      ),
+                                  if (result)
+                                    context.read(commentProvider).refresh(
+                                        comment.boardId, comment.postId);
+                                },
+                                child: Text(
+                                  "삭제",
+                                  style: TextStyle(
+                                      color: Colors.redAccent, fontSize: 10),
+                                ),
+                              ),
+                            )
+                          : Container(),
                     ],
                   ),
                 ],

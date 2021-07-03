@@ -7,6 +7,7 @@ import 'package:onestep_rezero/board/TipDialog/tip_dialog.dart';
 import 'package:onestep_rezero/board/declareData/boardData.dart';
 import 'package:onestep_rezero/board/declareData/postData.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
 class AlterPost extends StatefulWidget {
@@ -21,8 +22,6 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
   PostData alterPostData;
   final bool isAlterPage = true;
 
-  int firstImageCount = 0;
-
   @override
   void initState() {
     alterPostData = widget.postData;
@@ -32,37 +31,52 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
     textEditingControllerContent..text = alterPostData.textContent;
     imageCommentMap =
         Map<String, List<dynamic>>.from(alterPostData.imageCommentMap);
-    firstImageCount = imageCommentMap["IMAGE"].length;
+    imageCommentMap.addAll({"ALTERIMAGE": <AssetEntity>[]});
+
     imageCommentMap.update(
         "COMMENT",
         (value) => value
           ..addAll(List<String>.generate(
-              maxImageCount - firstImageCount, (index) => "")));
+              maxImageCount - imageCommentMap["IMAGE"].length, (index) => "")));
     initImgCommentText(imageCommentMap);
     // getterImgCommentFromMapToTextEditingControl(imageCommentMap);
   }
 
   @override
   void dispose() {
+    for (int i = imageCommentMap["IMAGE"].length;
+        i < imageCommentMap["ALTERIMAGE"].length;
+        i++) {
+      imageCommentMap["COMMENT"].removeAt(imageCommentMap["IMAGE"].length);
+    }
+
+    imageCommentMap.remove("ALTERIMAGE");
+
     super.dispose();
   }
 
   initImgCommentText(Map<String, List<dynamic>> imgComment) {
     for (int i = 0; i < imgComment["COMMENT"].length; i++) {
       String commentText = imgComment["COMMENT"][i].toString();
-      if (i == 0) {
-        textEditingControllerImage1..text = commentText;
-      } else if (i == 1) {
-        textEditingControllerImage2..text = commentText;
-      } else if (i == 2) {
-        textEditingControllerImage3..text = commentText;
-      } else if (i == 3) {
-        textEditingControllerImage4..text = commentText;
-      } else if (i == 4) {
-        textEditingControllerImage5..text = commentText;
-      } else {
-        continue;
+      TextEditingController textEditingController =
+          getTextEditingImageTextField(i);
+      if (textEditingController != null) {
+        textEditingController..text = commentText;
       }
+
+      // if (i == 0) {
+      //   textEditingControllerImage1..text = commentText;
+      // } else if (i == 1) {
+      //   textEditingControllerImage2..text = commentText;
+      // } else if (i == 2) {
+      //   textEditingControllerImage3..text = commentText;
+      // } else if (i == 3) {
+      //   textEditingControllerImage4..text = commentText;
+      // } else if (i == 4) {
+      //   textEditingControllerImage5..text = commentText;
+      // } else {
+      //   continue;
+      // }
     }
   }
 
@@ -212,7 +226,7 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
       contentCategory: category.toString(),
     );
 
-    return await postData.updatePostData(context, updatedData, firstImageCount);
+    return await postData.updatePostData(context, updatedData);
   }
 
   @override
@@ -220,30 +234,29 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
     List<Widget> _imageWidget = [];
     List<Widget> _emptyWidget = [];
 
-    for (int i = 0; i < firstImageCount; i++) {
-      if (imgCommMap["IMAGE"][i].runtimeType != String) {
-        continue;
-      }
-
+    for (int i = 0; i < imgCommMap["IMAGE"].length; i++) {
       _imageWidget.add(Container(
           padding: EdgeInsets.all(5.0),
           child: imageContainer(i, cachedImgWidget(imgCommMap["IMAGE"][i]),
               imgCommMap["COMMENT"][i])));
     }
 
-    for (int i = firstImageCount; i < imgCommMap["IMAGE"].length; i++) {
-      if (imgCommMap["IMAGE"][i].runtimeType != AssetEntity) {
-        continue;
-      }
-
-      if (imgCommMap["IMAGE"][i] != null)
+    for (int i = imgCommMap["IMAGE"].length;
+        i < imgCommMap["ALTERIMAGE"].length;
+        i++) {
+      if (imgCommMap["ALTERIMAGE"][i] != null)
         _imageWidget.add(Container(
             padding: EdgeInsets.all(5.0),
             child: imageContainer(
-                i, imgCommMap["IMAGE"][i], imgCommMap["COMMENT"][i])));
+                i, imgCommMap["ALTERIMAGE"][i], imgCommMap["COMMENT"][i])));
     }
 
-    for (int i = 0; i < maxImageCount - imgCommMap["IMAGE"].length; i++) {
+    for (int i = 0;
+        i <
+            maxImageCount -
+                imgCommMap["IMAGE"].length -
+                imgCommMap["ALTERIMAGE"].length;
+        i++) {
       _emptyWidget.add(emptyImageWidget(imgCommMap));
     }
     return Container(
@@ -274,20 +287,24 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
 
   @override
   imageContainer(int index, image, String comment) {
-    TextEditingController textEditingController;
-    if (index == 0) {
-      textEditingController = textEditingControllerImage1;
-    } else if (index == 1) {
-      textEditingController = textEditingControllerImage2;
-    } else if (index == 2) {
-      textEditingController = textEditingControllerImage3;
-    } else if (index == 3) {
-      textEditingController = textEditingControllerImage4;
-    } else if (index == 4) {
-      textEditingController = textEditingControllerImage5;
-    }
+    var style = ElevatedButton.styleFrom(
+        elevation: 0, primary: OnestepColors().secondColor);
+    TextEditingController textEditingController =
+        getTextEditingImageTextField(index);
+
+    // if (index == 0) {
+    //   textEditingController = textEditingControllerImage1;
+    // } else if (index == 1) {
+    //   textEditingController = textEditingControllerImage2;
+    // } else if (index == 2) {
+    //   textEditingController = textEditingControllerImage3;
+    // } else if (index == 3) {
+    //   textEditingController = textEditingControllerImage4;
+    // } else if (index == 4) {
+    //   textEditingController = textEditingControllerImage5;
+    // }
     bool isCachedImage = false;
-    if (index < firstImageCount)
+    if (index < imageCommentMap["IMAGE"].length)
       isCachedImage = true;
     else
       isCachedImage = false;
@@ -311,12 +328,14 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
                                 content: Text("사진 및 설명이 삭제됩니다."),
                                 actions: <Widget>[
                                   ElevatedButton(
+                                    style: style,
                                     child: Text('삭제'),
                                     onPressed: () {
                                       Navigator.pop(context, true);
                                     },
                                   ),
                                   ElevatedButton(
+                                    style: style,
                                     child: Text('유지'),
                                     onPressed: () {
                                       Navigator.pop(context, false);
@@ -367,7 +386,7 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
               child: TextField(
                   keyboardType: TextInputType.multiline,
                   minLines: 2,
-                  maxLines: null,
+                  maxLines: 4,
                   decoration: InputDecoration(
                     contentPadding:
                         EdgeInsets.symmetric(vertical: 20.0, horizontal: 5.0),
@@ -385,34 +404,34 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
 
   getImage() async {
     List<AssetEntity> resultList = [];
-    if (imageCommentMap["IMAGE"] != null) {
-      if (imageCommentMap["IMAGE"].isNotEmpty)
-        for (int i = firstImageCount;
-            i < imageCommentMap["IMAGE"].length;
-            i++) {
-          resultList.add(imageCommentMap["IMAGE"][i]);
-        }
-    }
-    final List<AssetEntity> _entity = await AssetPicker.pickAssets(
-          context,
-          maxAssets: 5 - imageCommentMap["IMAGE"].length,
-          pageSize: 330,
-          pathThumbSize: 80,
-          gridCount: 3,
-          requestType: RequestType.image,
-          selectedAssets: resultList,
-          specialPickerType: SpecialPickerType.wechatMoment,
-          textDelegate: KoreaTextDelegate(),
-        ) ??
-        [];
 
-    setState(() {
-      imageCommentMap.update("IMAGE", (value) => value..addAll(_entity));
-    });
+    if (imageCommentMap["ALTERIMAGE"].isNotEmpty)
+      for (int i = 0; i < imageCommentMap["ALTERIMAGE"].length; i++) {
+        resultList.add(imageCommentMap["ALTERIMAGE"][i]);
+      }
+
+    final List<AssetEntity> _entity = await AssetPicker.pickAssets(
+      context,
+      maxAssets: 5 - imageCommentMap["IMAGE"].length,
+      pageSize: 330,
+      pathThumbSize: 80,
+      gridCount: 3,
+      requestType: RequestType.image,
+      selectedAssets: resultList,
+      specialPickerType: SpecialPickerType.wechatMoment,
+      textDelegate: KoreaTextDelegate(),
+    );
+
+    if (_entity != null)
+      setState(() {
+        imageCommentMap.update("ALTERIMAGE", (value) => (_entity));
+      });
   }
 
   @override
   emptyImageWidget(Map<String, dynamic> imgCommMap) {
+    var style = ElevatedButton.styleFrom(
+        elevation: 0, primary: OnestepColors().secondColor);
     return Container(
       padding: EdgeInsets.all(5.0),
       child: SizedBox(
@@ -430,18 +449,21 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
                       content: Text("작성중인 사진 및 설명이 있습니다. 초기화 하시겠습니까?"),
                       actions: <Widget>[
                         ElevatedButton(
+                          style: style,
                           child: Text('초기화'),
                           onPressed: () {
                             Navigator.pop(context, true);
                           },
                         ),
                         ElevatedButton(
+                          style: style,
                           child: Text('유지'),
                           onPressed: () {
                             Navigator.pop(context, false);
                           },
                         ),
                         ElevatedButton(
+                          style: style,
                           child: Text('취소'),
                           onPressed: () {
                             Navigator.pop(context);
@@ -454,8 +476,8 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
                 if (isInit != null) {
                   if (isInit) {
                     setState(() {
-                      firstImageCount = 0;
                       imageCommentMap["IMAGE"].clear();
+                      imageCommentMap["ALTERIMAGE"].clear();
                       imageCommentMap["COMMENT"] = initCommentList;
 
                       getterImgCommentFromMapToTextEditingControl(
@@ -479,14 +501,41 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
   }
 
   @override
+  setterImgCommentFromMapToTextEditingControl(Map<String, dynamic> imgCommMap) {
+    List<String> _tempTextEditing = [];
+    int mapSetLength = imgCommMap["IMAGE"].length;
+    int mapSetAlterLength = imgCommMap["ALTERIMAGE"].length;
+    for (int i = 0; i < mapSetLength; i++) {
+      _tempTextEditing.add(getTextEditingImageTextField(i).text.trim());
+    }
+    for (int i = mapSetLength; i < mapSetAlterLength; i++) {
+      _tempTextEditing.add(getTextEditingImageTextField(i).text.trim());
+    }
+    imageCommentMap["COMMENT"].clear();
+    imageCommentMap["COMMENT"].addAll(_tempTextEditing
+      ..addAll(List<String>.generate(
+          maxImageCount - mapSetLength - mapSetAlterLength, (index) => "")));
+  }
+
+  @override
   imageDismiss(Map<String, dynamic> imgCommMap, int selectedIndex) {
     setterImgCommentFromMapToTextEditingControl(imageCommentMap);
-    var _undoImage = imgCommMap["IMAGE"][selectedIndex];
+    var _undoImage;
+    bool isDismissSaveImage;
+    if (selectedIndex < imageCommentMap["IMAGE"].length) {
+      _undoImage = imgCommMap["IMAGE"][selectedIndex];
+      isDismissSaveImage = true;
+    } else {
+      _undoImage = imgCommMap["ALTERIMAGE"][selectedIndex];
+      isDismissSaveImage = false;
+    }
     String _undoComment = imgCommMap["COMMENT"][selectedIndex];
-    bool isDeletedFirstImage = selectedIndex < firstImageCount;
+
     setState(() {
-      if (isDeletedFirstImage) --firstImageCount;
-      imageCommentMap["IMAGE"].removeAt(selectedIndex);
+      if (isDismissSaveImage)
+        imageCommentMap["IMAGE"].removeAt(selectedIndex);
+      else
+        imageCommentMap["ALTERIMAGE"].removeAt(selectedIndex);
       //setting comment List
       imageCommentMap["COMMENT"] = imgCommMap["COMMENT"]
         ..removeAt(selectedIndex);
@@ -501,9 +550,12 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
             label: "되돌리기",
             onPressed: () {
               setState(() {
-                if (isDeletedFirstImage) ++firstImageCount;
                 setterImgCommentFromMapToTextEditingControl(imageCommentMap);
-                imageCommentMap["IMAGE"].insert(selectedIndex, _undoImage);
+                if (isDismissSaveImage)
+                  imageCommentMap["IMAGE"].insert(selectedIndex, _undoImage);
+                else
+                  imageCommentMap["ALTERIMAGE"]
+                      .insert(selectedIndex, _undoImage);
                 imageCommentMap["COMMENT"].insert(selectedIndex, _undoComment);
                 imageCommentMap["COMMENT"].removeLast();
                 getterImgCommentFromMapToTextEditingControl(imageCommentMap);

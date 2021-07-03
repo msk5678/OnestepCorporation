@@ -18,7 +18,7 @@ class CommentProvider with ChangeNotifier {
 
     _commentDataList = await db
         .reference()
-        .child('board')
+        .child('commentInBoard')
         .child(boardId.toString())
         .child(postId.toString())
         .orderByKey()
@@ -29,6 +29,8 @@ class CommentProvider with ChangeNotifier {
     }).whenComplete(() {
       _isFetching = false;
     });
+    _commentDataList.sort((a, b) => int.tryParse(a.commentId ?? 0)
+        .compareTo(int.tryParse(b.commentId ?? 0)));
 
     _isFetching = false;
     notifyListeners();
