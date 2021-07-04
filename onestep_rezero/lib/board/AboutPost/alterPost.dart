@@ -63,20 +63,6 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
       if (textEditingController != null) {
         textEditingController..text = commentText;
       }
-
-      // if (i == 0) {
-      //   textEditingControllerImage1..text = commentText;
-      // } else if (i == 1) {
-      //   textEditingControllerImage2..text = commentText;
-      // } else if (i == 2) {
-      //   textEditingControllerImage3..text = commentText;
-      // } else if (i == 3) {
-      //   textEditingControllerImage4..text = commentText;
-      // } else if (i == 4) {
-      //   textEditingControllerImage5..text = commentText;
-      // } else {
-      //   continue;
-      // }
     }
   }
 
@@ -206,7 +192,7 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
 
           Future.delayed(Duration(seconds: 1)).then((value) {
             Navigator.pop(context, true);
-            context.read(postProvider).getLatestPostData(alterPostData);
+            // context.read(postProvider).getLatestPostData(alterPostData);
           });
 
           return;
@@ -220,13 +206,14 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
   Future updateData(PostData postData) async {
     setterImgCommentFromMapToTextEditingControl(imageCommentMap);
     PostData updatedData = PostData(
-      title: textEditingControllerBottomSheet.text,
-      imageCommentMap: imageCommentMap,
-      textContent: textEditingControllerContent.text,
-      contentCategory: category.toString(),
-    );
+        title: textEditingControllerBottomSheet.text,
+        imageCommentMap: imageCommentMap,
+        textContent: textEditingControllerContent.text,
+        contentCategory: category.toString(),
+        boardId: postData.boardId,
+        documentId: postData.documentId);
 
-    return await postData.updatePostData(context, updatedData);
+    return await updatedData.updatePostData(context);
   }
 
   @override
@@ -248,7 +235,8 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
         _imageWidget.add(Container(
             padding: EdgeInsets.all(5.0),
             child: imageContainer(
-                i, imgCommMap["ALTERIMAGE"][i], imgCommMap["COMMENT"][i])));
+                i, imgCommMap["ALTERIMAGE"][i], imgCommMap["COMMENT"][i],
+                isAlterImage: true)));
     }
 
     for (int i = 0;
@@ -286,28 +274,12 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
   }
 
   @override
-  imageContainer(int index, image, String comment) {
+  imageContainer(int index, image, String comment, {bool isAlterImage}) {
+    isAlterImage = isAlterImage ?? false;
     var style = ElevatedButton.styleFrom(
         elevation: 0, primary: OnestepColors().secondColor);
     TextEditingController textEditingController =
         getTextEditingImageTextField(index);
-
-    // if (index == 0) {
-    //   textEditingController = textEditingControllerImage1;
-    // } else if (index == 1) {
-    //   textEditingController = textEditingControllerImage2;
-    // } else if (index == 2) {
-    //   textEditingController = textEditingControllerImage3;
-    // } else if (index == 3) {
-    //   textEditingController = textEditingControllerImage4;
-    // } else if (index == 4) {
-    //   textEditingController = textEditingControllerImage5;
-    // }
-    bool isCachedImage = false;
-    if (index < imageCommentMap["IMAGE"].length)
-      isCachedImage = true;
-    else
-      isCachedImage = false;
     return Container(
       padding: EdgeInsets.only(top: 5.0),
       child: Row(
@@ -362,21 +334,19 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
                           ),
                         ),
                       ],
-                  child: isCachedImage
-                      ? Container(
-                          child: image,
-                          height: 200,
-                          width: 200,
-                        )
-                      : Container(
-                          child: Image(
+                  child: Container(
+                    child: !isAlterImage
+                        ? image
+                        : Image(
                             width: 200,
                             height: 200,
                             image: AssetEntityImageProvider(image,
                                 isOriginal: false),
                             fit: BoxFit.cover,
                           ),
-                        )),
+                    height: !isAlterImage ? 200 : null,
+                    width: !isAlterImage ? 200 : null,
+                  )),
             ),
           ),
           Expanded(

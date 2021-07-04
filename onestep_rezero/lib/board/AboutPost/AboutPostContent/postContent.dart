@@ -636,11 +636,15 @@ class _PostContentState extends State<PostContent>
                       .whenComplete(() {});
                 });
               } else if (route == "Alter") {
-                await Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => AlterPost(
-                    postData: currentPost,
-                  ),
-                ));
+                await Navigator.of(context).pushNamed('/AlterPost',
+                    arguments: {"POSTDATA": currentPost}).then((value) {
+                  bool result = value ?? false;
+                  if (result) {
+                    context
+                        .read(postProvider)
+                        .getLatestPostData(currentPostData);
+                  }
+                });
               }
             },
             itemBuilder: (BuildContext bc) => setPopupMenuButton(isWritter))

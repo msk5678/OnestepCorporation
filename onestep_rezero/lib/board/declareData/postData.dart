@@ -136,24 +136,25 @@ class PostData {
         );
   }
 
-  Future updatePostData(BuildContext context, PostData updatingData) async {
+  Future updatePostData(BuildContext context) async {
     String currentTimeStamp = DateTime.now().millisecondsSinceEpoch.toString();
 
     imgUriList = await convertImage(imageCommentMap["ALTERIMAGE"]);
+    imageCommentMap.update("ALTERIMAGE", (value) => []);
     imageCommentMap.update("IMAGE", (value) => imgUriList);
     return await FirebaseFirestore.instance
         .collection('university')
         .doc(currentUserModel.university)
         .collection('board')
-        .doc(this.boardId)
-        .collection(this.boardId)
-        .doc(this.documentId)
+        .doc(boardId)
+        .collection(boardId)
+        .doc(documentId)
         .update({
           "updateTime": currentTimeStamp,
-          "title": updatingData.title ?? "",
-          "contentCategory": updatingData.contentCategory.toString(),
-          "textContent": updatingData.textContent ?? "",
-          "imageCommentList": imageCommentMap ?? {},
+          "title": this.title ?? "",
+          "contentCategory": this.contentCategory.toString(),
+          "textContent": this.textContent ?? "",
+          "imageCommentList": this.imageCommentMap ?? {},
         })
         .whenComplete(() => true)
         .then((value) => true)

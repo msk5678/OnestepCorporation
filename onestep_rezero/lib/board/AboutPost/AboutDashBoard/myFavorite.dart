@@ -121,8 +121,11 @@ class UserFavoriteListRiverPod extends ConsumerWidget {
     final userFavoriteProvider = watch(userBoardDataProvider);
 
     // var user = userFavoriteProvider.userFavoritePostMap;
+    //Get PostId From RealtimeFirebase
     List<UserData> _userFavoritePostIdList =
         userFavoriteProvider.userFavoritePostMap.values.toList();
+    //send to PostIdList To postList using parameter and Set postList
+    context.read(listProvider).fetchPostDataFromPostId(_userFavoritePostIdList);
     bool isFetching = userFavoriteProvider.isFetching;
     print("user favorite : ${userFavoriteProvider.userFavoritePostMap.keys}");
     if (!isFetching && _userFavoritePostIdList.length == 0) {
