@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:onestep_rezero/report/pages/reportDealPage.dart';
+import 'package:onestep_rezero/report/pages/Deal/boardReport/reportBoardPage.dart';
+import 'package:onestep_rezero/report/pages/Deal/cocommentReport/reportCocommentPage.dart';
+import 'package:onestep_rezero/report/pages/Deal/commentReport/reportCommentPage.dart';
+import 'package:onestep_rezero/report/pages/Deal/productReport/reportProductPage.dart';
 import 'package:onestep_rezero/report/pages/reportUserPage.dart';
 
 class ReportPageTest extends StatelessWidget {
@@ -20,14 +23,81 @@ class ReportPageTest extends StatelessWidget {
             Center(
               child: ElevatedButton(
                 onPressed: () async {
-                  // postUid
-                  String uid;
-                  // 신고당한사람 uid
-                  String reportedUid;
+                  // // boardUid
+                  // String boardUid;
+                  // // postUid
+                  // String postUid;
+                  // // 신고당한사람 uid
+                  // String reportedUid;
+
+                  // Navigator.of(context).push(MaterialPageRoute(
+                  //     builder: (context) =>
+                  //         ReportDealPage(boardUid, postUid, reportedUid)));
+
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => ReportDealPage(uid, reportedUid)));
+                      builder: (context) => ReportProductPage()));
                 },
-                child: Text("거래신고"),
+                child: Text("장터 -> 글 신고"),
+              ),
+            ),
+            Center(
+              child: ElevatedButton(
+                onPressed: () async {
+                  // // boardUid
+                  // String boardUid;
+                  // // postUid
+                  // String postUid;
+                  // // 신고당한사람 uid
+                  // String reportedUid;
+
+                  // Navigator.of(context).push(MaterialPageRoute(
+                  //     builder: (context) =>
+                  //         ReportDealPage(boardUid, postUid, reportedUid)));
+
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => ReportBoardPage()));
+                },
+                child: Text("게시판 -> 글 신고"),
+              ),
+            ),
+            Center(
+              child: ElevatedButton(
+                onPressed: () async {
+                  // // boardUid
+                  // String boardUid;
+                  // // postUid
+                  // String postUid;
+                  // // 신고당한사람 uid
+                  // String reportedUid;
+
+                  // Navigator.of(context).push(MaterialPageRoute(
+                  //     builder: (context) =>
+                  //         ReportDealPage(boardUid, postUid, reportedUid)));
+
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => ReportComentPage()));
+                },
+                child: Text("댓글 신고"),
+              ),
+            ),
+            Center(
+              child: ElevatedButton(
+                onPressed: () async {
+                  // // boardUid
+                  // String boardUid;
+                  // // postUid
+                  // String postUid;
+                  // // 신고당한사람 uid
+                  // String reportedUid;
+
+                  // Navigator.of(context).push(MaterialPageRoute(
+                  //     builder: (context) =>
+                  //         ReportDealPage(boardUid, postUid, reportedUid)));
+
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => ReportCocommentPage()));
+                },
+                child: Text("대댓글 신고"),
               ),
             ),
             ElevatedButton(

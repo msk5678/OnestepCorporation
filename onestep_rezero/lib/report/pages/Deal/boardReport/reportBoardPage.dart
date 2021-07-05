@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:onestep_rezero/report/pages/Deal/reportDealController.dart';
 
-class ReportDealPage extends StatelessWidget {
-  final String postUid;
-  final String reportedUid;
-  ReportDealPage(this.postUid, this.reportedUid);
+import '../reportDealController.dart';
 
+class ReportBoardPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          '거래신고 테스트',
+          '게시판 -> 글 신고 테스트',
           style: TextStyle(color: Colors.black),
         ),
         backgroundColor: Colors.white,
@@ -22,7 +19,13 @@ class ReportDealPage extends StatelessWidget {
           children: [
             InkWell(
               onTap: () {
-                reportDealController(context, 1, postUid, reportedUid);
+                String boardUid;
+                String postUid;
+                String reportedUid;
+                // boardUid 게시판만 적용돼서 값을 넘겨주면 boardUid 넘긴 값으로 세팅
+                // 값 안넘겨주면 default 값 세팅되게 해야함
+                reportDealController(
+                    context, 2, 1, postUid, reportedUid, boardUid);
               },
               child: Padding(
                 padding: EdgeInsets.fromLTRB(
@@ -41,9 +44,7 @@ class ReportDealPage extends StatelessWidget {
                     ),
                     IconButton(
                       icon: Icon(Icons.keyboard_arrow_right),
-                      onPressed: () {
-                        reportDealController(context, 1, postUid, reportedUid);
-                      },
+                      onPressed: () {},
                     )
                   ],
                 ),

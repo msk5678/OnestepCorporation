@@ -53,6 +53,9 @@ exports.onDealReportCreate = functions.database.ref('/report/{reportedUid}/{firs
     const countValue = snapshot.val();
     var ReportPoint;
     var postReportPoint;
+    var commentReportPoint;
+    var university;
+    var boardUid;
     
     // // 들어온 신고 case 뭔지 파악해서 case count
     // switch (countValue.case) {
@@ -94,21 +97,39 @@ exports.onDealReportCreate = functions.database.ref('/report/{reportedUid}/{firs
         return ReportPoint;
     })
     
-    // board -> 
-    // 이게 board 가 아니라 댓글이었음.. board는 store 에 있음.. 수정해야함
-    const countRef2 = snapshot.ref.parent.parent.parent.parent.parent.parent.parent.child('board').child('test')
-    await countRef2.transaction(count =>{
-        postReportPoint = count + 1;
-        return postReportPoint;
-    })
+    // // 댓글...
+    // const countRef2 = snapshot.ref.parent.parent.parent.parent.parent.parent.parent.child('commentInBoard').child('boardUid').child('postUid')
+    // await countRef2.transaction(count =>{
+    //     commentReportPoint = count + 1;
+    //     return commentReportPoint;
+    // })
     
-    // board report count 5 -> 제재 넣어야하는데 접근 어케하노 -> ㅎㅎ 성공
+    // if(commentReportPoint === 5){
+    //     console.log('hihihihihi')
+    //     admin.database().ref('board/').update({
+    //         'test1' : 1,
+    //     })
+    // }
+
+    boardUid = (await snapshot.ref.child('boardUid').get()).val();
+    university = (await snapshot.ref.child('university').get()).val();
+
+    await databaseTest.collection('university').doc(university).collection('board').doc(boardUid).collection(boardUid).doc(countValue.postUid).get().then(value => {
+        postReportPoint = value.data()['reportCount'] + 1;
+    })
+
+    await databaseTest.doc('university/' + university +'/board/' + boardUid + '/' + boardUid + '/' +
+    countValue.postUid).update({
+        "reportCount": postReportPoint,
+    })
+
     if(postReportPoint === 5){
-        console.log('hihihihihi')
-        admin.database().ref('board/').update({
-            'test1' : 1,
-        })
+        // reported
+        // reportedTime -> DateTime 으로 DateTime.now().millisecondsSinceEpoch
+        // 1625469193802
+        console.log('postReportPoint === 5');
     }
+    
 
     // // case count
     // postFirstCasePoint = (await snapshot.ref.parent.parent.child('firstCase').get()).val();

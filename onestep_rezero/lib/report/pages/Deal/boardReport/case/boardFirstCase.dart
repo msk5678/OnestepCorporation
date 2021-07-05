@@ -1,10 +1,10 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/loggedInWidget.dart';
 
-import '../../../../main.dart';
-import '../../../../onestepCustomDialog.dart';
-import '../../../../onestepCustomDialogNotCancel.dart';
+import '../../../../../onestepCustomDialog.dart';
+import '../../../../../onestepCustomDialogNotCancel.dart';
 
 final myController = TextEditingController();
 
@@ -17,7 +17,7 @@ void report() {
   //     .reference()
   //     .child('reportUser')
   //     .child(googleSignIn.currentUser.id)
-  //     .child('user')
+  //     .child('deal')
   //     .set({'postUid': true});
 
   FirebaseDatabase.instance
@@ -35,7 +35,7 @@ void report() {
                     .child('reportedUid')
                     // 처음신고 시간
                     .child(DateTime.now().millisecondsSinceEpoch.toString())
-                    .child('user')
+                    .child('deal')
                     .child('postUid')
                     .child('value')
                     .child(DateTime.now().millisecondsSinceEpoch.toString())
@@ -49,16 +49,21 @@ void report() {
                   'reportingUid': currentUserModel.uid,
                   'time': DateTime.now().millisecondsSinceEpoch.toString(),
                   'university': currentUserModel.university,
+                  'boardUid': '1622101214761',
+                  'postUid':
+                      '1625155193269', // post 신고면 postUid 가 올거고 댓글 신고면 댓글 Uid 올거임
                 })
               }
             else
               {
                 // 같은 post 인지 확인
                 values = value.value,
+                // print('values.keys = ${values.keys.toList()}'),
                 reportKeys = values.keys.toList(),
                 reportKeys.sort(),
                 values.forEach((key, value) {
                   // 최초신고 timestamp 마지막 꺼 확인해서 value['reportCount'] 이용 25 면 꽉 찬거고 25 아니면 ++
+                  // print("key = ${key}");
                   if (key == reportKeys.last) {
                     if (value['reportCount'] == 25) {
                       FirebaseDatabase.instance
@@ -68,7 +73,7 @@ void report() {
                           // 처음신고 시간 2
                           .child(
                               DateTime.now().millisecondsSinceEpoch.toString())
-                          .child('user')
+                          .child('deal')
                           .child('postUid')
                           .child('value')
                           .child(
@@ -84,6 +89,8 @@ void report() {
                         'time':
                             DateTime.now().millisecondsSinceEpoch.toString(),
                         'university': currentUserModel.university,
+                        'boardUid': '1622101214761',
+                        'postUid': '1625155193269',
                       });
                     } else {
                       FirebaseDatabase.instance
@@ -91,7 +98,7 @@ void report() {
                           .child('report')
                           .child('reportedUid')
                           .child(key.toString())
-                          .child('user')
+                          .child('deal')
                           .child('postUid')
                           .child('value')
                           .child(
@@ -107,6 +114,8 @@ void report() {
                         'time':
                             DateTime.now().millisecondsSinceEpoch.toString(),
                         'university': currentUserModel.university,
+                        'boardUid': '1622101214761',
+                        'postUid': '1625155193269',
                       });
                     }
                   }
@@ -115,10 +124,11 @@ void report() {
           });
 }
 
-class UserFirstCase extends StatelessWidget {
+class BoardFirstCase extends StatelessWidget {
+  final String boardUid;
   final String postUid;
   final String reportedUid;
-  UserFirstCase(this.postUid, this.reportedUid);
+  BoardFirstCase(this.boardUid, this.postUid, this.reportedUid);
 
   @override
   Widget build(BuildContext context) {
@@ -131,7 +141,7 @@ class UserFirstCase extends StatelessWidget {
       child: Scaffold(
           appBar: AppBar(
             title: Text(
-              'user case one',
+              'deal case one',
               style: TextStyle(color: Colors.black),
             ),
             backgroundColor: Colors.white,
@@ -188,6 +198,8 @@ class UserFirstCase extends StatelessWidget {
                 ),
                 Center(
                   child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          primary: OnestepColors().mainColor),
                       onPressed: () async {
                         // report();
                         Map<dynamic, dynamic> values;
@@ -197,7 +209,7 @@ class UserFirstCase extends StatelessWidget {
                             .reference()
                             .child('reportUser')
                             .child(currentUserModel.uid)
-                            .child('user')
+                            .child('deal')
                             .once()
                             .then((value) => {
                                   if (value.value == null)
@@ -213,8 +225,7 @@ class UserFirstCase extends StatelessWidget {
                                           // 같은 글을 신고한다
                                           if (value == true) {
                                             flag = true;
-                                            return OnestepCustomDialogNotCancel
-                                                .show(
+                                            OnestepCustomDialogNotCancel.show(
                                               context,
                                               title: '이미 신고한 게시물입니다.',
                                               confirmButtonText: '확인',
@@ -233,7 +244,7 @@ class UserFirstCase extends StatelessWidget {
                                 });
                         // 처음 신고한다
                         if (flag == false) {
-                          return OnestepCustomDialog.show(
+                          OnestepCustomDialog.show(
                             context,
                             title: '신고하시겠습니까?',
                             confirmButtonText: '확인',

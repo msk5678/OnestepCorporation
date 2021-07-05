@@ -2,8 +2,9 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/loggedInWidget.dart';
-import '../../../../onestepCustomDialog.dart';
-import '../../../../onestepCustomDialogNotCancel.dart';
+
+import '../../../../../onestepCustomDialog.dart';
+import '../../../../../onestepCustomDialogNotCancel.dart';
 
 final myController = TextEditingController();
 
@@ -21,8 +22,8 @@ void report() {
 
   FirebaseDatabase.instance
       .reference()
-      .child('report')
-      .child('reportedUid')
+      .child('commentInBoard')
+      .child('boardUid')
       .once()
       .then((value) => {
             if (value.value == null)
@@ -30,10 +31,10 @@ void report() {
               {
                 FirebaseDatabase.instance
                     .reference()
-                    .child('report')
-                    .child('reportedUid')
-                    // 처음신고 시간
-                    .child(DateTime.now().millisecondsSinceEpoch.toString())
+                    .child('commentInBoard')
+                    .child('boardUid')
+                    .child('postUid')
+                    .child('commentUid')
                     .child('deal')
                     .child('postUid')
                     .child('value')
@@ -47,6 +48,10 @@ void report() {
                   // 신고 한 사람
                   'reportingUid': currentUserModel.uid,
                   'time': DateTime.now().millisecondsSinceEpoch.toString(),
+                  'university': currentUserModel.university,
+                  'boardUid': '1622101214761',
+                  'postUid':
+                      '1625155193269', // post 신고면 postUid 가 올거고 댓글 신고면 댓글 Uid 올거임
                 })
               }
             else
@@ -83,6 +88,9 @@ void report() {
                         'reportingUid': currentUserModel.uid,
                         'time':
                             DateTime.now().millisecondsSinceEpoch.toString(),
+                        'university': currentUserModel.university,
+                        'boardUid': '1622101214761',
+                        'postUid': '1625155193269',
                       });
                     } else {
                       FirebaseDatabase.instance
@@ -105,6 +113,9 @@ void report() {
                         'reportingUid': currentUserModel.uid,
                         'time':
                             DateTime.now().millisecondsSinceEpoch.toString(),
+                        'university': currentUserModel.university,
+                        'boardUid': '1622101214761',
+                        'postUid': '1625155193269',
                       });
                     }
                   }
@@ -113,10 +124,10 @@ void report() {
           });
 }
 
-class DealFirstCase extends StatelessWidget {
+class DealSecondCase extends StatelessWidget {
   final String postUid;
   final String reportedUid;
-  DealFirstCase(this.postUid, this.reportedUid);
+  DealSecondCase(this.postUid, this.reportedUid);
 
   @override
   Widget build(BuildContext context) {
@@ -129,7 +140,7 @@ class DealFirstCase extends StatelessWidget {
       child: Scaffold(
           appBar: AppBar(
             title: Text(
-              'deal case one',
+              'deal second one',
               style: TextStyle(color: Colors.black),
             ),
             backgroundColor: Colors.white,
@@ -141,31 +152,31 @@ class DealFirstCase extends StatelessWidget {
               children: [
                 Container(
                   child: Text(
-                    "case one report",
+                    "case second report",
                     style: TextStyle(fontSize: 40),
                   ),
                 ),
                 Container(
                   child: Text(
-                    "case one report",
+                    "case second report",
                     style: TextStyle(fontSize: 40),
                   ),
                 ),
                 Container(
                   child: Text(
-                    "case one report",
+                    "case second report",
                     style: TextStyle(fontSize: 40),
                   ),
                 ),
                 Container(
                   child: Text(
-                    "case one report",
+                    "case second report",
                     style: TextStyle(fontSize: 40),
                   ),
                 ),
                 Container(
                   child: Text(
-                    "case one report",
+                    "case second report",
                     style: TextStyle(fontSize: 40),
                   ),
                 ),
@@ -232,19 +243,17 @@ class DealFirstCase extends StatelessWidget {
                                 });
                         // 처음 신고한다
                         if (flag == false) {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return OnestepCustomDialog.show(
-                                context,
-                                title: '신고하시겠습니까?',
-                                confirmButtonText: '확인',
-                                cancleButtonText: '취소',
-                                confirmButtonOnPress: () {
-                                  report();
-                                  Navigator.pop(context);
-                                },
-                              );
+                          OnestepCustomDialog.show(
+                            context,
+                            title: '신고하시겠습니까?',
+                            confirmButtonText: '확인',
+                            cancleButtonText: '취소',
+                            confirmButtonOnPress: () {
+                              report();
+                              Navigator.pop(context);
+                            },
+                            cancleButtonOnPress: () {
+                              Navigator.pop(context);
                             },
                           );
                         }
