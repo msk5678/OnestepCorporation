@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:onestep_rezero/chat/page/admobListPage.dart';
+import 'package:onestep_rezero/chat/navigator/chatNavigationManager.dart';
 import 'package:onestep_rezero/chat/page/productChatListPage.dart';
 import 'package:onestep_rezero/chat/productchat/controller/productChatMainController.dart';
 
@@ -23,7 +23,7 @@ const List<_Page> _allPages = <_Page>[
   ),
   _Page(
     icon: Icons.post_add,
-    text: '게시판채팅',
+    text: '단체채팅',
   ),
   // _Page(icon: Icons.check_circle, text: 'SUCCESS'),
 ];
@@ -277,10 +277,8 @@ class _StackListState extends State<ChatMain>
                       width: 20,
                       color: Colors.white,
                       child: (position == 0 && page.text == '장터채팅')
-                          ? //
-                          ProductChatListPage()
-                          // ProductChatListPage2()
-                          : AdmobListPage(),
+                          ? ProductChatListPage()
+                          : SecondChatList(),
                     );
                   },
                   itemCount: 1,
@@ -289,6 +287,47 @@ class _StackListState extends State<ChatMain>
             }).toList(),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class SecondChatList extends StatefulWidget {
+  @override
+  _SecondChatListState createState() => _SecondChatListState();
+}
+
+class _SecondChatListState extends State<SecondChatList> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Column(
+        children: [
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(0, 200, 0, 0),
+              child: ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(
+                    Colors.black,
+                    // OnestepAppColors().mainColor,
+                  ),
+                  elevation: MaterialStateProperty.all(0),
+                ),
+                onPressed: () {
+                  ChatNavigationManager.navigateToAnonymousChattingRoom(
+                      context);
+                },
+                child: Container(
+                  alignment: Alignment.center,
+                  width: 100,
+                  height: 50,
+                  child: Text("단체채팅\n입장하기"),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

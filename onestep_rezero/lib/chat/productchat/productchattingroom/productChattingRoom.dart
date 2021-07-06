@@ -1070,7 +1070,7 @@ class _LastChatState extends State<ChatScreen> {
                     minLines: 1,
                     maxLines: 4,
                     decoration: InputDecoration.collapsed(
-                      hintText: "",
+                      hintText: "채팅을 입력해주세요.",
                       hintStyle: TextStyle(
                         color: Colors.grey[600],
                       ),

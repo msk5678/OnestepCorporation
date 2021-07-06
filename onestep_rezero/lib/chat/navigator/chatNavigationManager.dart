@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:onestep_rezero/chat/boardchat/inRealTimeChattingRoom.dart';
+import 'package:onestep_rezero/chat/page/anonymousChatPage.dart';
 import 'package:onestep_rezero/chat/productchat/productchattingroom/productChattingRoom.dart';
 import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 
@@ -51,5 +52,14 @@ class ChatNavigationManager {
                   friendId: currentUserModel.uid != myUid ? myUid : friendUid,
                   postId: postId,
                 )));
+  }
+
+  static void navigateToAnonymousChattingRoom(var context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AnonymousChattingRoomPage(),
+      ),
+    );
   }
 }
