@@ -280,6 +280,7 @@ class _AdmobListState extends State<AnonymousChatBody> {
                                                 style: TextStyle(
                                                   color: nickNameColor,
                                                   fontSize: 13,
+                                                  fontWeight: FontWeight.bold,
                                                 ),
                                               ),
                                             ),
