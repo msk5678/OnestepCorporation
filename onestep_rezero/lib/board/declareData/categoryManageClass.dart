@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 
 class CategoryException implements Exception {
   String cause;
@@ -23,7 +22,7 @@ extension BoardCategoryExtension on BoardCategory {
     switch (this) {
       case BoardCategory.POST:
         return BoardCategoryData(
-            icon: Icons.post_add, title: "글", explain: "글 위주의 게시판");
+            icon: Icons.article_outlined, title: "글", explain: "글 위주의 게시판");
       case BoardCategory.PICTURE:
         return BoardCategoryData(
             icon: Icons.photo_size_select_actual_outlined,
@@ -58,13 +57,20 @@ extension BoardCategoryExtension on BoardCategory {
 //포스트 카테고리 관리
 enum ContentCategory { SMALLTALK, QUESTION }
 
+class ContentCategoryData {
+  final icon;
+  final String title;
+  ContentCategoryData({this.icon, this.title});
+}
+
 extension ContentCategoryExtension on ContentCategory {
-  String get category {
+  ContentCategoryData get categoryData {
     switch (this) {
       case ContentCategory.QUESTION:
-        return "질문";
+        return ContentCategoryData(title: "질문", icon: Icons.help_outline);
       case ContentCategory.SMALLTALK:
-        return "일상";
+        return ContentCategoryData(
+            title: "일상", icon: Icons.emoji_emotions_outlined);
       default:
         return throw CategoryException(
             "Enum Category Error, Please Update Enum ContentCategory in parentState.dart");

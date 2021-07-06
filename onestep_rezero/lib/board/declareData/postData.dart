@@ -1,10 +1,12 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:random_string/random_string.dart';
-import 'package:onestep_rezero/board/StateManage/firebase_GetUID.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:onestep_rezero/loggedInWidget.dart';
 
 class PostData {
   var uploadTime;
@@ -15,7 +17,7 @@ class PostData {
   final int reportCount;
   final String textContent;
   final String uid;
-  final int commentCount;
+  int commentCount;
   final String boardName;
   final String boardId;
   final Map<String, dynamic> favoriteUserList;
@@ -31,21 +33,48 @@ class PostData {
   bool deleted;
   int deletedTime;
 
+  bool reported;
+  int reportedTime;
+
   Future convertImage(var _imageArr) async {
-    List _imgUriarr = [];
+    List<String> _imgUriarr = [];
 
     for (var imaged in _imageArr) {
-      Reference storageReference = FirebaseStorage.instance
-          .ref()
-          .child("boardimages/freeboard/${randomAlphaNumeric(15)}");
-      UploadTask storageUploadTask = storageReference
-          .putData((await imaged.getByteData()).buffer.asUint8List());
-      await storageUploadTask.whenComplete(() async {
-        String downloadURL = await storageReference.getDownloadURL();
-        _imgUriarr.add(downloadURL);
-      });
+      try {
+        // Reference storageReference = FirebaseStorage.instance
+        //     .ref()
+        //     .child("boardimages/freeboard/${randomAlphaNumeric(15)}");
+        // UploadTask storageUploadTask = storageReference
+        //     .putData((await imaged.getByteData()).buffer.asUint8List());
+        // await storageUploadTask.whenComplete(() async {
+        //   String downloadURL = await storageReference.getDownloadURL();
+        //   _imgUriarr.add(downloadURL);
+        // });
+        Reference storageReference = FirebaseStorage.instance
+            .ref()
+            .child("productimage/${DateTime.now().microsecondsSinceEpoch}");
+
+        Uint8List uint8list = await assetCompressFile(await imaged.originFile);
+
+        UploadTask storageUploadTask = storageReference.putData(uint8list);
+        await storageUploadTask.whenComplete(() async {
+          String downloadURL = await storageReference.getDownloadURL();
+          _imgUriarr.add(downloadURL);
+        });
+      } catch (e) {
+        print("Save Image Error in Board $e");
+      }
     }
     return _imgUriarr;
+  }
+
+  Future<Uint8List> assetCompressFile(File file) async {
+    var result = await FlutterImageCompress.compressWithFile(
+      file.absolute.path,
+      quality: 30,
+    );
+
+    return result;
   }
 
   PostData(
@@ -68,34 +97,71 @@ class PostData {
       this.imgUriList,
       this.boardId,
       this.deleted,
-      this.deletedTime});
+      this.deletedTime,
+      this.reported,
+      this.reportedTime});
   Future toFireStore(BuildContext context) async {
     String currentTimeStamp = DateTime.now().millisecondsSinceEpoch.toString();
     imgUriList = await convertImage(imageCommentMap["IMAGE"]);
     imageCommentMap.update("IMAGE", (value) => imgUriList);
     return await FirebaseFirestore.instance
-        .collection("board")
-        .doc(this.boardId ?? "boardFree")
-        .collection(this.boardId ?? "boardFree")
+        .collection('university')
+        .doc(currentUserModel.university)
+        .collection('board')
+        .doc(this.boardId)
+        .collection(this.boardId)
         .doc(currentTimeStamp)
         .set({
-          "uid": UserUID.getId(),
+          "uid": currentUserModel.uid,
           "uploadTime": Timestamp.fromDate(DateTime.now()),
           "updateTime": 0,
           "commentCount": commentCount ?? 0,
           "reportCount": reportCount ?? 0,
           "deletedTime": deletedTime ?? 0,
-          "title": title,
+          "title": title ?? "",
           "contentCategory": contentCategory.toString(),
           "textContent": textContent ?? "",
-          "boardName": boardName,
-          "boardId": boardId,
+          "boardName": boardName ?? "",
+          "boardId": boardId ?? "",
           "deleted": deleted ?? false,
           "views": views ?? {},
           "imageCommentList": imageCommentMap ?? {},
           "scrabUserList": scrabUserList ?? {},
           "favoriteUserList": favoriteUserList ?? {},
           "commentUserList": commentUserList ?? {},
+          "favoriteCount": 0,
+          "reported": false,
+          "reportedTime": 0
+        })
+        .then((value) => true)
+        .timeout(
+          Duration(seconds: 3),
+          onTimeout: () {
+            Navigator.pop(context);
+            return null;
+          },
+        );
+  }
+
+  Future updatePostData(BuildContext context) async {
+    String currentTimeStamp = DateTime.now().millisecondsSinceEpoch.toString();
+
+    imgUriList = await convertImage(imageCommentMap["ALTERIMAGE"]);
+    imageCommentMap.update("ALTERIMAGE", (value) => []);
+    imageCommentMap.update("IMAGE", (value) => imgUriList);
+    return await FirebaseFirestore.instance
+        .collection('university')
+        .doc(currentUserModel.university)
+        .collection('board')
+        .doc(boardId)
+        .collection(boardId)
+        .doc(documentId)
+        .update({
+          "updateTime": currentTimeStamp,
+          "title": this.title ?? "",
+          "contentCategory": this.contentCategory.toString(),
+          "textContent": this.textContent ?? "",
+          "imageCommentList": this.imageCommentMap ?? {},
         })
         .whenComplete(() => true)
         .then((value) => true)
@@ -103,6 +169,7 @@ class PostData {
           Duration(seconds: 3),
           onTimeout: () {
             Navigator.pop(context);
+            return null;
           },
         );
   }
@@ -110,187 +177,98 @@ class PostData {
   factory PostData.fromFireStore(DocumentSnapshot snapshot) {
     Map postData = snapshot.data();
     return PostData(
-      title: postData["title"],
-      contentCategory: postData["contentCategory"] ?? '',
-      textContent: postData["textContent"] ?? '',
-      uid: postData["uid"] ?? '',
-      documentId: snapshot.id,
-      commentCount: postData["commentCount"] ?? 0,
-      uploadTime: postData["uploadTime"].toDate(),
-      boardId: postData["boardId"] ?? '',
-      boardName: postData["boardName"] ?? '',
-      deleted: postData["deleted"] ?? false,
-      deletedTime: postData["deletedTime"] ?? 0,
-      reportCount: postData["reportCount"] ?? 0,
-      views: postData["views"] ?? {},
-      commentUserList: postData["commentUserList"] ?? {},
-      favoriteUserList: postData["favoriteUserList"] ?? {},
-      scrabUserList: postData["scrabUserList"] ?? {},
-      imageCommentMap: postData["imageCommentList"] ?? {},
-      favoriteCount: postData["favoriteUserList"] != null
-          ? postData["favoriteUserList"].length
-          : 0,
-      scribeCount: postData["commentUserList"] != null
-          ? postData["commentUserList"].length
-          : 0,
-    );
+        title: postData["title"],
+        contentCategory: postData["contentCategory"] ?? '',
+        textContent: postData["textContent"] ?? '',
+        uid: postData["uid"] ?? '',
+        documentId: snapshot.id,
+        commentCount: postData["commentCount"] ?? 0,
+        uploadTime: postData["uploadTime"].toDate(),
+        boardId: postData["boardId"] ?? '',
+        boardName: postData["boardName"] ?? '',
+        deleted: postData["deleted"] ?? false,
+        deletedTime: postData["deletedTime"] ?? 0,
+        reportCount: postData["reportCount"] ?? 0,
+        views: postData["views"] ?? {},
+        commentUserList: postData["commentUserList"] ?? {},
+        favoriteUserList: postData["favoriteUserList"] ?? {},
+        scrabUserList: postData["scrabUserList"] ?? {},
+        imageCommentMap: postData["imageCommentList"] ?? {},
+        favoriteCount: postData["favoriteCount"] ?? 0,
+        scribeCount: postData["commentUserList"] != null
+            ? postData["commentUserList"].length
+            : 0,
+        reported: postData["reported"],
+        reportedTime: postData["reportedTime"] ?? 0);
   }
-}
-
-class Comment {
-  // commentSaveMethod() async {
-  //   final db = FirebaseDatabase.instance.reference();
-  //   String currentTimeStamp = DateTime.now().millisecondsSinceEpoch.toString();
-  //   db
-  //       .child('board')
-  //       .child(currentBoardId)
-  //       .child(currentPostId)
-  //       .child(currentTimeStamp)
-  //       .set({
-  //     "uid": currentUID,
-  //     "boardId": currentBoardId,
-  //     "boardName": currentBoardName,
-  //     "postId": currentPostId,
-  //     "textContent": _textEditingControllerComment.text.trimRight(),
-  //     "deleted": false,
-  //     "reported": false,
-  //     "deletedTime": 0,
-  //   });
-  //   // databaseRef.push().set({'name': 'hi', 'comment': 'A good season'});
-  // }
-
-  final String uid;
-  final String boardId;
-  final String boardName;
-  final String postId;
-  final String textContent;
-  final String deleted;
-  final String deletedTime;
-  final String reported;
-  final String reportCount;
-  final String uploadTime;
-  final String updateTime;
-  final String userName;
-  String commentId;
-  Comment({
-    this.textContent,
-    this.reported,
-    this.uploadTime,
-    this.uid,
-    this.boardName,
-    this.updateTime,
-    this.reportCount,
-    this.userName,
-    this.postId,
-    this.boardId,
-    this.deleted,
-    this.deletedTime,
-  });
-  Future toRealtimeDatabase(Comment comment) async {
-    final db = FirebaseDatabase.instance.reference();
-    String currentTimeStamp = DateTime.now().millisecondsSinceEpoch.toString();
-    db
-        .child('board')
-        .child(boardId)
-        .child(postId)
-        .child(currentTimeStamp)
-        .set({
-          "uid": comment.uid,
-          "boardId": comment.boardId,
-          "boardName": comment.boardName,
-          "postId": comment.postId,
-          "textContent": comment.textContent ?? '',
-          "deleted": comment.deleted ?? 'false',
-          "deletedTime": comment.deletedTime ?? '',
-          "reported": comment.reported ?? '',
-          "reportCount": comment.reportCount ?? '',
-          "uploadTime": comment.uploadTime ?? currentTimeStamp,
-          "updateTime": comment.updateTime ?? '',
-          "userName": comment.userName
+  Future<bool> updateFavorite(String currentUid, bool isUndo) async {
+    final firebaseRealtimeDb = FirebaseDatabase.instance.reference();
+    return FirebaseFirestore.instance
+        .collection('university')
+        .doc(currentUserModel.university)
+        .collection('board')
+        .doc(this.boardId)
+        .collection(this.boardId)
+        .doc(this.documentId)
+        .update({
+          "favoriteCount":
+              !isUndo ? FieldValue.increment(1) : FieldValue.increment(-1)
         })
-        .then((value) => null)
+        .then((value) async {
+          if (!isUndo) {
+            await firebaseRealtimeDb
+                .child('user')
+                .child(currentUid)
+                .child('aboutBoard')
+                .child('favorite')
+                .child(this.documentId)
+                .set({
+              "postId": documentId,
+              "boardId": boardId,
+            });
+          } else {
+            await firebaseRealtimeDb
+                .child('user')
+                .child(currentUid)
+                .child('aboutBoard')
+                .child('favorite')
+                .child(this.documentId)
+                .remove();
+          }
+        })
+        .onError((error, stackTrace) {})
+        .then((value) => true);
+  }
+
+  dismissPostData() async {
+    return await FirebaseFirestore.instance
+        .collection('university')
+        .doc(currentUserModel.university)
+        .collection('board')
+        .doc(boardId)
+        .collection(boardId)
+        .doc(documentId)
+        .update({
+          "deleted": true,
+          "deletedTime": DateTime.now().millisecondsSinceEpoch
+        })
+        .then((value) => true)
+        .onError((error, stackTrace) => false)
         .whenComplete(() => null);
   }
 
-  Future commentFavoriteCount({String currentUID, Comment comment}) async {
-    final db = FirebaseDatabase.instance.reference();
-    db
-        .child('board')
-        .child(boardId)
-        .child(postId)
-        .child(commentId)
-        .child("favoriteUserList")
-        .set({currentUID: false})
-        .then((value) => null)
-        .whenComplete(() => null);
+  updateViewers(String uid) async {
+    return await FirebaseFirestore.instance
+        .collection('university')
+        .doc(currentUserModel.university)
+        .collection('board')
+        .doc(this.boardId)
+        .collection(this.boardId)
+        .doc(this.documentId)
+        .update(
+      {"views." + uid: true},
+    ).then((value) {
+      return true;
+    });
   }
-
-  // Future _saveUidInBoardField(
-  //     DocumentSnapshot documentSnapshot, String currentUid) async {
-  //   Map _data = documentSnapshot.data();
-  //   List _commentList = documentSnapshot.data()["commentList"];
-
-  //   if (!_commentList.contains(currentUid)) {
-  //     return await FirebaseFirestore.instance
-  //         .collection("Board")
-  //         .doc(boardId)
-  //         .collection(boardId)
-  //         .doc(boardDocumentId)
-  //         .update({"commentList": _data["commentList"].add(currentUid)})
-  //         .catchError((onError) {
-  //           print("catchError ");
-  //         })
-  //         .then((value) => print("Something error null pointer or.. "))
-  //         .whenComplete(() => true);
-  //   }
-  // }
-
-  // getUnderComment(
-  //     String boardId, String currentBoardId, String commentId) async {
-  //   var _result;
-  //   await FirebaseFirestore.instance
-  //       .collection("Board")
-  //       .doc(boardId)
-  //       .collection(boardId)
-  //       .doc(currentBoardId)
-  //       .collection(COMMENT_COLLECTION_NAME)
-  //       .doc(commentId)
-  //       .collection(COMMENT_COLLECTION_NAME)
-  //       .get()
-  //       .catchError((onError) {
-  //     print(onError.toString() + "Under comment");
-  //   }).then((value) {
-  //     _result = value;
-  //   });
-
-  //   return _result;
-  // }
 }
-
-// class UnderComment extends Comment {
-//   UnderComment(
-//       {String createDate,
-//       String uid,
-//       var lastAlterDate,
-//       String text,
-//       int reportCount,
-//       int favoriteCount,
-//       List favoriteUserList,
-//       String name,
-//       String boardId,
-//       String boardDocumentId})
-//       : super(
-//             createDate: createDate,
-//             uid: uid,
-//             favoriteCount: favoriteCount,
-//             favoriteUserList: favoriteUserList,
-//             lastAlterDate: lastAlterDate,
-//             name: name,
-//             reportCount: reportCount,
-//             text: text,
-//             boardDocumentId: boardDocumentId,
-//             boardId: boardId);
-//   getUnderComment(String boardDocumentId) {
-
-//   }
-// }

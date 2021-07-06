@@ -1,17 +1,24 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart' as foundation;
-import 'package:onestep_rezero/board/AboutPost/AboutPostList/postListMain.dart';
+import 'package:onestep_rezero/board/AboutPost/AboutDashBoard/myComment.dart';
+import 'package:onestep_rezero/board/AboutPost/AboutDashBoard/myFavorite.dart';
+import 'package:onestep_rezero/board/AboutPost/AboutDashBoard/myPost.dart';
+import 'package:onestep_rezero/board/AboutPost/AboutDashBoard/topCommentList.dart';
+import 'package:onestep_rezero/board/AboutPost/AboutDashBoard/topFavoriteList.dart';
+import 'package:onestep_rezero/board/AboutPost/AboutPostContent/postContent.dart';
+// import 'package:flutter/foundation.dart' as foundation;
+import 'package:onestep_rezero/board/AboutPost/AboutPostListView/postListMain.dart';
+import 'package:onestep_rezero/board/AboutPost/alterPost.dart';
 import 'package:onestep_rezero/board/AboutPost/createPost.dart';
-import 'package:onestep_rezero/board/AboutPost/postContent.dart';
-import 'package:onestep_rezero/board/boardCreate.dart';
+import 'package:onestep_rezero/board/AboutBoard/boardCreate.dart';
+import 'package:onestep_rezero/product/widgets/detail/imagesFullViewer.dart';
 import 'package:page_transition/page_transition.dart';
 
 import 'package:path/path.dart' as p;
 
 class RouteGenerator {
-  static bool _isIOS =
-      foundation.defaultTargetPlatform == foundation.TargetPlatform.iOS;
+  // static bool _isIOS =
+  //     foundation.defaultTargetPlatform == foundation.TargetPlatform.iOS;
   static Route<dynamic> generateRoute(RouteSettings settings) {
     assert(settings.name.indexOf("/") == 0,
         "[ROUTER] routing MUST Begin with '/'");
@@ -31,7 +38,6 @@ class RouteGenerator {
     var _pageName = _pathParams.isNotEmpty ? _pathParams.first : null;
     Widget _pageWidget;
     //example:
-    print("settings.name : " + settings.name.toString());
     //case에는 /를 제외하고 원하는 이름으로 설정, pushNamed할 때는 /를 포함하여 자신이 설정한 이름으로 불러옴.
     switch (_pageName) {
       case 'PostList':
@@ -40,18 +46,44 @@ class RouteGenerator {
           // boardCategory: arguments["BOARD_NAME"],
         );
         break;
-      // case 'MainPage':
-      //   //var arg = preferences.getString('id') ?? '아이디없음';
-      //   // Navigator.of(context).pushNamed('/MainPage?UID=$arg'); 또는
-      //   // Navigator.of(context).pushNamed('/BoardContent',arguments: {"BOARD_DATA": boardDataList[index]}); 으로 사용
-      //   _pageWidget = MyHomePage();
-      //   break;
-      // case 'ProductWidget':
-      //   _pageWidget = ClothWidget();
-      //   break;
+      //DashBoard PageRoute
+      case 'UserPostingList':
+        _pageWidget = UserPostingList(
+          dashBoardIconData: arguments["DASHBOARDDATA"],
+        );
+        break;
+      case 'UserWrittenCommentList':
+        _pageWidget = UserWrittenCommentList(
+          dashBoardIconData: arguments["DASHBOARDDATA"],
+        );
+        break;
 
+      case 'ImagesFullViewer':
+        _pageWidget = ImagesFullViewer(
+          imagesUrl: arguments["IMAGESURL"],
+          index: arguments["INDEX"],
+        );
+        break;
+
+      case 'UserFavoriteList':
+        _pageWidget = UserFavoriteList(
+          dashBoardIconData: arguments["DASHBOARDDATA"],
+        );
+        break;
+      case 'TopFavoritePostList':
+        _pageWidget = TopFavoritePostList(
+          dashBoardIconData: arguments["DASHBOARDDATA"],
+        );
+        break;
+      case 'TopCommentPostList':
+        _pageWidget = TopCommentPostList(
+          dashBoardIconData: arguments["DASHBOARDDATA"],
+        );
+        break;
       case 'PostContent':
         // Navigator.of(context).pushNamed('/BoardContent?INDEX=$index&BOARD_NAME="current"') -> arguments['INDEX'] = index, arguments['BOARD_NAME'] = "current"
+        // _pageWidget = PostContentRiverPod(
+        //   currentPostData: arguments["CURRENTBOARDDATA"],
         _pageWidget = PostContent(
           postData: arguments["CURRENTBOARDDATA"],
         );
@@ -61,7 +93,16 @@ class RouteGenerator {
             child: CreatePost(
               currentBoardData: arguments["CURRENTBOARDDATA"],
             ),
-            type: PageTransitionType.fade);
+            type: PageTransitionType.fade,
+            settings: RouteSettings(name: settings.name.toString()));
+        break;
+      case 'AlterPost':
+        return PageTransition(
+            child: AlterPost(
+              postData: arguments["POSTDATA"],
+            ),
+            type: PageTransitionType.fade,
+            settings: RouteSettings(name: settings.name.toString()));
         break;
       case 'BoardCreate':
         return PageTransition(
@@ -71,50 +112,17 @@ class RouteGenerator {
             ),
             type: PageTransitionType.fade);
         break;
-
-      // case 'BoardList':
-      //   _pageWidget = Consumer<BoardProvider>(
-      //       builder: (context, productProvider, _) => BoardList(
-      //             boardCategory: arguments["BOARD_CATEGORY"],
-      //             boardProvider: productProvider,
-      //           ));
-      //   break;
-      // case 'BoardCategory':
-      //   _pageWidget = BoardCategoryList();
-      //   break;
-      // case 'JoinPage':
-      //   _pageWidget = JoinScreen(currentUserId: arguments['UID']);
-      //   break;
-      // case 'ImageFullViewer':
-      //   _pageWidget = ImageFullViewerWidget(
-      //     index: arguments["INDEX"],
-      //     galleryItems: arguments["IMAGES"],
-      //   );
-      //   break;
-      // case 'CustomFullViewer':
-      //   _pageWidget = CustomImageViewer(
-      //     index: arguments["INDEX"],
-      //     galleryItems: arguments["IMAGES"],
-      //   );
-      //   break;
-      // case 'DetailProduct':
-      //   _pageWidget = ClothDetailViewWidgetcopy(
-      //     docId: arguments['PRODUCTID'],
-      //   );
-      //   break;
-
-      // case 'BumpProduct':
-      //   _pageWidget = ClothBumpWidget(
-      //     product: arguments['PRODUCT'],
-      //   );
-      //   break;
     }
-    return _isIOS
-        ? CupertinoPageRoute(
-            builder: (context) => _pageWidget,
-            settings: RouteSettings(name: settings.name.toString()))
-        : MaterialPageRoute(
-            builder: (context) => _pageWidget,
-            settings: RouteSettings(name: settings.name.toString()));
+    return PageTransition(
+        child: _pageWidget,
+        type: PageTransitionType.fade,
+        settings: RouteSettings(name: settings.name.toString()));
+    // return _isIOS
+    //     ? CupertinoPageRoute(
+    //         builder: (context) => _pageWidget,
+    //         settings: RouteSettings(name: settings.name.toString()))
+    //     : MaterialPageRoute(
+    //         builder: (context) => _pageWidget,
+    //         settings: RouteSettings(name: settings.name.toString()));
   }
 }
