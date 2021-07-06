@@ -6,8 +6,8 @@ import 'package:onestep_rezero/board/AboutPost/AboutPostListView/listRiverpod.da
 import 'package:onestep_rezero/board/boardMain.dart';
 import 'package:onestep_rezero/board/declareData/postData.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
-import 'package:onestep_rezero/loggedInWidget.dart';
-import 'package:onestep_rezero/timeUtil.dart';
+import 'package:onestep_rezero/signIn/loggedInWidget.dart';
+import 'package:onestep_rezero/utils/timeUtil.dart';
 
 class PostList extends StatelessWidget {
   final List<PostData> postList;

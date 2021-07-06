@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_fadein/flutter_fadein.dart';
+
 import 'package:onestep_rezero/board/AboutPost/AboutPostListView/listRiverpod.dart';
 import 'package:onestep_rezero/board/AboutPost/AboutPostListView/postList.dart';
 import 'package:onestep_rezero/board/AboutPost/AboutPostListView/postListMain.dart';
@@ -12,7 +13,7 @@ import 'package:onestep_rezero/board/declareData/categoryManageClass.dart';
 import 'package:onestep_rezero/board/declareData/boardData.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onestep_rezero/board/declareData/postData.dart';
-import 'package:onestep_rezero/loggedInWidget.dart';
+import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 
 class UserFavoriteList extends StatefulWidget {
   final dashBoardIconData;

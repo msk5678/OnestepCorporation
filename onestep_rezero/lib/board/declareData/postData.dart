@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
-import 'package:onestep_rezero/loggedInWidget.dart';
+import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 
 class PostData {
   var uploadTime;

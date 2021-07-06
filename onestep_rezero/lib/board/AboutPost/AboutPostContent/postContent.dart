@@ -15,8 +15,8 @@ import 'package:onestep_rezero/board/declareData/postData.dart';
 import 'package:onestep_rezero/board/declareData/commentData.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
-import 'package:onestep_rezero/loggedInWidget.dart';
-import 'package:onestep_rezero/timeUtil.dart';
+import 'package:onestep_rezero/signIn/loggedInWidget.dart';
+import 'package:onestep_rezero/utils/timeUtil.dart';
 
 final postProvider =
     ChangeNotifierProvider<PostProvider>((ref) => PostProvider());
@@ -262,9 +262,6 @@ class _PostContentState extends State<PostContent>
                           children: <Widget>[
                             PostContentRiverPod(
                                 currentPostData: currentPostData,
-                                postStatusbar: commentStatusWidget(
-                                  currentPostData,
-                                ),
                                 favoriteButton:
                                     favoriteButton(currentPostData)),
                             bottomStatusBar(currentPostData),
@@ -776,7 +773,8 @@ class _PostContentState extends State<PostContent>
     if (result) {
       TipDialogHelper.dismiss();
       TipDialogHelper.success("저장 완료!");
-      Future.delayed(Duration(seconds: 1)).then((value) => thenFunction(value));
+      Future.delayed(Duration(milliseconds: 500))
+          .then((value) => thenFunction(value));
     } else {
       TipDialogHelper.dismiss();
       TipDialogHelper.fail("저장 실패\n Error : CANNOT UPLOAD COMMENT");

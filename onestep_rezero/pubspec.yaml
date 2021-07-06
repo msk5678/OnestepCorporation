@@ -127,7 +127,6 @@ dependencies:
   async: ^2.5.0
 
   #SlideUpPanel
-  sliding_up_panel: ^2.0.0+1
   #LikeButton
   flutter_fadein: ^2.0.0
   #pageTransition_pageChanged Animation
@@ -140,6 +139,8 @@ dependencies:
   #hive
   hive: ^2.0.4
   hive_flutter: ^1.0.0
+
+  
 
   #Chat Test
   #stream_chat_flutter: ^1.5.1

@@ -4,8 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:onestep_rezero/board/Animation/slideUpAnimationWidget.dart';
 import 'package:onestep_rezero/board/declareData/categoryManageClass.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
-
-import '../../loggedInWidget.dart';
+import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 import '../TipDialog/tip_dialog.dart';
 
 class BoardCreate extends StatefulWidget {

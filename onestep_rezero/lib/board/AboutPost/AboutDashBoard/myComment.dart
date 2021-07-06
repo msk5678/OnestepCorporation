@@ -11,8 +11,8 @@ import 'package:onestep_rezero/board/declareData/boardData.dart';
 import 'package:onestep_rezero/board/declareData/commentData.dart';
 import 'package:onestep_rezero/board/declareData/postData.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
-import 'package:onestep_rezero/loggedInWidget.dart';
-import 'package:onestep_rezero/timeUtil.dart';
+import 'package:onestep_rezero/signIn/loggedInWidget.dart';
+import 'package:onestep_rezero/utils/timeUtil.dart';
 
 class UserWrittenCommentList extends StatefulWidget {
   final dashBoardIconData;

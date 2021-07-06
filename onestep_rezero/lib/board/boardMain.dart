@@ -8,7 +8,7 @@ import 'package:onestep_rezero/chat/widget/appColor.dart';
 
 import "dart:math" as math;
 
-import 'package:onestep_rezero/loggedInWidget.dart';
+import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 
 final userBoardDataProvider =
     ChangeNotifierProvider<UserProvider>((ref) => UserProvider());

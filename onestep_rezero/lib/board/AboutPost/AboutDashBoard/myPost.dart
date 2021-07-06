@@ -11,8 +11,7 @@ import 'package:onestep_rezero/board/declareData/categoryManageClass.dart';
 import 'package:onestep_rezero/board/declareData/boardData.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onestep_rezero/board/declareData/postData.dart';
-
-import '../../../loggedInWidget.dart';
+import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 
 class UserPostingList extends StatefulWidget {
   final dashBoardIconData;

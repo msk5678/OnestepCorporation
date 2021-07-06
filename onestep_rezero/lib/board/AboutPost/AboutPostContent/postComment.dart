@@ -7,9 +7,9 @@ import 'package:onestep_rezero/board/Animation/slideUpAnimationWidget.dart';
 import 'package:onestep_rezero/board/StateManage/Provider/commentProvider.dart';
 import 'package:onestep_rezero/board/declareData/commentData.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
-import 'package:onestep_rezero/loggedInWidget.dart';
-import 'package:onestep_rezero/timeUtil.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:onestep_rezero/signIn/loggedInWidget.dart';
+import 'package:onestep_rezero/utils/timeUtil.dart';
 
 final commentProvider =
     ChangeNotifierProvider<CommentProvider>((ref) => CommentProvider());
@@ -119,75 +119,73 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
   @override
   animationLimiterListView(
       List comment, double deviceWidth, double deviceHeight) {
-    return AnimationLimiter(
-      child: ListView.builder(
-        key: PageStorageKey<String>("commentList"),
-        physics: NeverScrollableScrollPhysics(),
-        shrinkWrap: true,
-        itemCount: comment.length,
-        itemBuilder: (BuildContext context, int index) {
-          CommentData currentIndexCommentData = comment[index];
+    return
+        //  AnimationLimiter(
 
-          bool isDeleted = currentIndexCommentData.deleted;
-          bool haveChildComment = currentIndexCommentData.haveChildComment;
-          currentIndexCommentData
-            ..userName = commentName(
-                currentIndexCommentData.uid, postWriterUID, commentMap);
+        //   child:
+        ListView.builder(
+      key: PageStorageKey<String>("commentList"),
+      physics: NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: comment.length,
+      itemBuilder: (BuildContext context, int index) {
+        CommentData currentIndexCommentData = comment[index];
 
-          return AnimationConfiguration.staggeredList(
-            position: index,
-            duration: const Duration(milliseconds: 375),
-            child: SlideAnimation(
-              verticalOffset: 50.0,
-              child: FadeInAnimation(
-                child: Column(
-                  children: [
-                    Container(
-                      decoration: index != 0
-                          ? BoxDecoration(
-                              border: Border(
-                                top: BorderSide(
-                                  color: OnestepColors().mainColor,
-                                  width: 0.5,
-                                ),
+        bool isDeleted = currentIndexCommentData.deleted;
+        bool haveChildComment = currentIndexCommentData.haveChildComment;
+        currentIndexCommentData
+          ..userName = commentName(
+              currentIndexCommentData.uid, postWriterUID, commentMap);
+
+        return AnimationConfiguration.staggeredList(
+          position: index,
+          duration: const Duration(milliseconds: 0),
+          child: SlideAnimation(
+            verticalOffset: 50.0,
+            child: FadeInAnimation(
+              child: Column(
+                children: [
+                  Container(
+                    decoration: index != 0
+                        ? BoxDecoration(
+                            border: Border(
+                              top: BorderSide(
+                                color: OnestepColors().mainColor,
+                                width: 0.5,
                               ),
-                            )
-                          : null,
-                      padding: EdgeInsets.symmetric(vertical: 15),
-                      child: !isDeleted
-                          ? commentListSwipeMenu(
-                              currentIndexCommentData,
-                              context,
-                              currentUserModel.uid,
-                              slidableKey:
-                                  Key(currentIndexCommentData.commentId),
-                              child: commentBoxDesignMethod(
-                                  context,
-                                  index,
-                                  currentIndexCommentData,
-                                  deviceWidth,
-                                  deviceHeight),
-                            )
-                          : commentBoxDesignMethod(
-                              context,
-                              index,
-                              currentIndexCommentData,
-                              deviceWidth,
-                              deviceHeight),
-                    ),
-                    haveChildComment
-                        ? childCommentWidget(
-                            currentIndexCommentData.childCommentList)
-                        : Container()
-                    // coCommentWidget(currentIndexCommentData.haveChildComment,
-                    //     currentIndexCommentData)
-                  ],
-                ),
+                            ),
+                          )
+                        : null,
+                    padding: EdgeInsets.symmetric(vertical: 15),
+                    child: !isDeleted
+                        ? commentListSwipeMenu(
+                            currentIndexCommentData,
+                            context,
+                            currentUserModel.uid,
+                            slidableKey: Key(currentIndexCommentData.commentId),
+                            child: commentBoxDesignMethod(
+                                context,
+                                index,
+                                currentIndexCommentData,
+                                deviceWidth,
+                                deviceHeight),
+                          )
+                        : commentBoxDesignMethod(context, index,
+                            currentIndexCommentData, deviceWidth, deviceHeight),
+                  ),
+                  haveChildComment
+                      ? childCommentWidget(
+                          currentIndexCommentData.childCommentList)
+                      : Container()
+                  // coCommentWidget(currentIndexCommentData.haveChildComment,
+                  //     currentIndexCommentData)
+                ],
               ),
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
+      // ),
     );
   }
 
