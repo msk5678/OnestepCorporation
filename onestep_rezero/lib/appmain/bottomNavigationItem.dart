@@ -37,7 +37,7 @@ class BottomNavigationItem {
           page: ChatMain(),
           icon: ProductChatMainController().getTotalChatCountInBottomBar(),
           //Icon(Icons.chat_outlined),
-          title: "알림",
+          title: "채팅",
         ),
         BottomNavigationItem(
           page: MyInfoMain(),
