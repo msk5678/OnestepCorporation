@@ -270,72 +270,87 @@ class _BoardMainState extends State<BoardMain> {
           explain: "나의 댓글"),
       BoardInitData(
           icons: Icon(
-            Icons.favorite,
+            Icons.favorite_border,
             size: 30,
             color: OnestepColors().mainColor,
           ),
           explain: "나의 좋아요"),
       BoardInitData(
           icons: Icon(
-            Icons.favorite,
+            Icons.favorite_border,
             size: 30,
             color: Colors.redAccent[100],
           ),
           explain: "인기글"),
       BoardInitData(
-          icons: Container(
-              child: Stack(children: [
-            Container(
-                child: Transform(
-                    alignment: Alignment.center,
-                    transform: Matrix4.rotationY(math.pi),
-                    child: Icon(
-                      Icons.mode_comment,
-                      color: Colors.red[100],
-                    ))),
-            Container(
-                margin: EdgeInsets.all(3),
-                child: Icon(
-                  Icons.mode_comment,
-                  color: Colors.blue[100],
-                )),
-            Container(
-                margin: EdgeInsets.all(6),
-                child: Transform(
-                    alignment: Alignment.center,
-                    transform: Matrix4.rotationY(math.pi),
-                    child: Icon(Icons.mode_comment, color: Colors.red[100]))),
-            Container(
-                margin: EdgeInsets.only(left: 9, right: 9, top: 9),
-                child: Icon(Icons.mode_comment, color: Colors.blue[100])),
-          ])),
+          icons: Icon(
+            Icons.forum,
+            size: 30,
+            color: Colors.redAccent[100],
+          ),
+          // icons: Container(
+          //     child: Stack(children: [
+          //   Container(
+          //       child: Transform(
+          //           alignment: Alignment.center,
+          //           transform: Matrix4.rotationY(math.pi),
+          //           child: Icon(
+          //             Icons.mode_comment_outlined,
+          //             color: Colors.red[100],
+          //           ))),
+          //   Container(
+          //       margin: EdgeInsets.all(3),
+          //       child: Icon(
+          //         Icons.mode_comment_outlined,
+          //         color: Colors.blue[100],
+          //       )),
+          //   Container(
+          //       margin: EdgeInsets.all(6),
+          //       child: Transform(
+          //           alignment: Alignment.center,
+          //           transform: Matrix4.rotationY(math.pi),
+          //           child: Icon(Icons.mode_comment,
+          //               color: Colors.red[100]))),
+          //   Container(
+          //       margin: EdgeInsets.only(left: 9, right: 9, top: 9),
+          //       child:
+          //           Icon(Icons.mode_comment_outlined, color: Colors.blue[100])),
+          // ])),
           explain: "댓글 수"),
       BoardInitData(
-          icons: Container(
-              child: Stack(
-            children: [
-              Container(
-                margin: EdgeInsets.only(top: 5),
-                child: Icon(
-                  Icons.shopping_cart,
-                  size: 30,
-                  color: Colors.red[200],
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.only(left: 6),
-                child: Transform.rotate(
-                  angle: math.pi / 4,
-                  child: Icon(
-                    Icons.card_giftcard,
-                    size: 20,
-                    color: Colors.red[200],
-                  ),
-                ),
-              ),
-            ],
-          )),
-          explain: "공동구매"),
+          icons: Icon(
+            Icons.thumbs_up_down_outlined,
+            size: 30,
+            color: Colors.blueAccent[100],
+            // color: OnestepColors().mainColor,
+          ),
+          explain: "콜로세움"),
+      // BoardInitData(
+      // icons: Container(
+      //     child: Stack(
+      //   children: [
+      //     Container(
+      //       margin: EdgeInsets.only(top: 5),
+      //       child: Icon(
+      //         Icons.shopping_cart,
+      //         size: 30,
+      //         color: Colors.red[200],
+      //       ),
+      //     ),
+      //     Container(
+      //       margin: EdgeInsets.only(left: 6),
+      //       child: Transform.rotate(
+      //         angle: math.pi / 4,
+      //         child: Icon(
+      //           Icons.card_giftcard,
+      //           size: 20,
+      //           color: Colors.red[200],
+      //         ),
+      //       ),
+      //     ),
+      //   ],
+      // )),
+      // explain: "공동구매"),
     ];
   }
 
