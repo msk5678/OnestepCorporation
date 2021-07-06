@@ -11,7 +11,10 @@ final boardListProvider =
 
 class BoardListRiverpod extends ConsumerWidget {
   final animationStopCallback;
-  BoardListRiverpod({this.animationStopCallback});
+
+  BoardListRiverpod({
+    this.animationStopCallback,
+  });
   @override
   Widget build(BuildContext context, watch) {
     final boardlistProvider = watch(boardListProvider);
@@ -32,7 +35,11 @@ class BoardListRiverpod extends ConsumerWidget {
 class BoardListView extends ConsumerWidget {
   final List<BoardData> boardList;
   final Function manageAnimationTimer;
-  BoardListView({this.boardList, this.manageAnimationTimer});
+
+  BoardListView({
+    this.boardList,
+    this.manageAnimationTimer,
+  });
 
   @override
   Widget build(BuildContext context, watch) {

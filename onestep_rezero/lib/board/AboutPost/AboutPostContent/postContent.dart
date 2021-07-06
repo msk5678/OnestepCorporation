@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:onestep_rezero/board/AboutPost/AboutPostContent/commentTextField.dart';
 
 import 'package:onestep_rezero/board/AboutPost/AboutPostContent/postComment.dart';
-import 'package:onestep_rezero/board/AboutPost/alterPost.dart';
 import 'package:onestep_rezero/board/StateManage/Provider/postProvider.dart';
 import 'package:onestep_rezero/board/TipDialog/tip_dialog.dart';
 import 'package:onestep_rezero/board/AboutPost/AboutPostContent/favoriteCommentWidget.dart';
@@ -24,7 +24,9 @@ final postProvider =
 class PostContentRiverPod extends ConsumerWidget {
   final PostData currentPostData;
   final Widget postStatusbar;
-  PostContentRiverPod({this.currentPostData, this.postStatusbar});
+  final Widget favoriteButton;
+  PostContentRiverPod(
+      {this.currentPostData, this.postStatusbar, this.favoriteButton});
   @override
   Widget build(BuildContext context, watch) {
     final postRiverPod = watch(postProvider);
@@ -112,41 +114,48 @@ class PostContentRiverPod extends ConsumerWidget {
   postTopStatusBar(PostData currentPost, String uid, Widget status) {
     return Container(
       margin: EdgeInsets.only(bottom: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Text("익명"),
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Icon(
-                Icons.watch_later_outlined,
-                size: 20,
-                color: OnestepColors().mainColor,
+              Row(
+                children: [
+                  // Icon(
+                  //   Icons.watch_later_outlined,
+                  //   size: 20,
+                  //   color: OnestepColors().mainColor,
+                  // ),
+                  Container(
+                    margin: EdgeInsets.only(right: 5),
+                    child: Text(
+                      "${PostTime(dateTime: currentPost.uploadTime).dateToString()}",
+                      style: TextStyle(color: Colors.grey, fontSize: 10),
+                    ),
+                  ),
+                ],
               ),
-              Container(
-                margin: EdgeInsets.only(right: 5),
-                child: Text(
-                  "${TimeUtil.timeAgo(date: currentPost.uploadTime)}",
-                  style: TextStyle(color: Colors.grey, fontSize: 10),
-                ),
-              ),
+              favoriteButton
+              // Row(
+              //   children: [
+              //     Icon(
+              //       //foot icon
+              //       Icons.remove_red_eye,
+              //       size: 20,
+              //       color: OnestepColors().mainColor,
+              //     ),
+              //     Container(
+              //       margin: EdgeInsets.only(right: 5),
+              //       child: Text("${currentPost.views.keys.length}",
+              //           style: TextStyle(color: Colors.grey, fontSize: 10)),
+              //     ),
+              //     status
+              //   ],
+              // )
             ],
           ),
-          Row(
-            children: [
-              Icon(
-                //foot icon
-                Icons.remove_red_eye,
-                size: 20,
-                color: OnestepColors().mainColor,
-              ),
-              Container(
-                margin: EdgeInsets.only(right: 5),
-                child: Text("${currentPost.views.keys.length}",
-                    style: TextStyle(color: Colors.grey, fontSize: 10)),
-              ),
-              status
-            ],
-          )
         ],
       ),
     );
@@ -220,6 +229,7 @@ class _PostContentState extends State<PostContent>
 
   @override
   Widget build(BuildContext context) {
+    currentPostData = widget.postData;
     return WillPopScope(
       onWillPop: () async {
         // if (panelController.isPanelOpen) {
@@ -251,12 +261,13 @@ class _PostContentState extends State<PostContent>
                         child: Column(
                           children: <Widget>[
                             PostContentRiverPod(
-                              currentPostData: currentPostData,
-                              postStatusbar: commentStatusWidget(
-                                currentPostData,
-                              ),
-                            ),
-                            buttonList(currentPostData),
+                                currentPostData: currentPostData,
+                                postStatusbar: commentStatusWidget(
+                                  currentPostData,
+                                ),
+                                favoriteButton:
+                                    favoriteButton(currentPostData)),
+                            bottomStatusBar(currentPostData),
                             // favoriteCountWidget(currentPostData, currentUid),
 
                             // child: postTopStatusBar(
@@ -373,33 +384,7 @@ class _PostContentState extends State<PostContent>
                   Flexible(
                       child: CustomCommentTextField(
                           iconOnPressCallback: saveCommentCallbackFunction,
-                          hintText: commentName(currentUid, postDataUid, []))
-                      // TextField(
-                      //   onChanged: () {},
-                      //   controller: textEditingControllerComment,
-                      //   decoration: InputDecoration(
-                      //       hintText: "댓글 달기",
-                      //       hintStyle: TextStyle(color: Colors.black54),
-                      //       border: InputBorder.none),
-                      // ),
-                      ),
-                  // SizedBox(
-                  //   width: 15,
-                  // ),
-                  // textEditingControllerComment.text.length > 0
-                  //     ? IconButton(
-                  //         icon: Icon(Icons.arrow_upward), onPressed: () {})
-                  //     : Container()
-                  //     FloatingActionButton(
-                  //       onPressed: () {},
-                  //       child: Icon(
-                  //         Icons.arrow_upward_outlined,
-                  //         color: OnestepColors().mainColor,
-                  //         size: 18,
-                  //       ),
-                  //       backgroundColor: Colors.blue,
-                  //       elevation: 0,
-                  //     ),
+                          hintText: commentName(currentUid, postDataUid, []))),
                 ],
               ),
             ],
@@ -407,46 +392,6 @@ class _PostContentState extends State<PostContent>
         ),
       ),
     );
-    // return Expanded(
-    //   child: Column(
-    //     children: [
-    //       commentFlag ? whereSaveComment(commentData) : Container(),
-    //       Row(
-    //         children: [
-    //           new SizedBox(
-    //             width: 10.0,
-    //           ),
-    //           new Expanded(
-    //             child: new Stack(
-    //                 alignment: const Alignment(1.0, 1.0),
-    //                 children: <Widget>[
-    //                   new TextField(
-    //                     decoration: InputDecoration(hintText: 'Search'),
-    //                     onChanged: (text) {
-    //                       setState(() {
-    //                         print(text);
-    //                       });
-    //                     },
-    //                     controller: textEditingControllerComment,
-    //                   ),
-    //                   textEditingControllerComment.text.length > 0
-    //                       ? new IconButton(
-    //                           icon: new Icon(Icons.clear),
-    //                           onPressed: () {
-    //                             setState(() {
-    //                               textEditingControllerComment.clear();
-    //                             });
-    //                           })
-    //                       : new Container(
-    //                           height: 0.0,
-    //                         )
-    //                 ]),
-    //           ),
-    //         ],
-    //       )
-    //     ],
-    //   ),
-    // );
   }
 
   favoriteClickCallback(bool isClicked) {
@@ -491,6 +436,13 @@ class _PostContentState extends State<PostContent>
     );
   }
 
+  favoriteButton(PostData currentPost) {
+    return FavoriteButton(
+      currentPost: currentPostData,
+      clickCallback: favoriteClickCallback,
+    );
+  }
+
   favoriteCountWidget(PostData currentPost, String uid) {
     int favoriteCount = currentPost.favoriteCount;
     return Column(
@@ -509,24 +461,45 @@ class _PostContentState extends State<PostContent>
     );
   }
 
-  buttonList(PostData currentPost) {
-    return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-      FavoriteButton(
-        currentPost: currentPostData,
-        clickCallback: favoriteClickCallback,
-      ),
-      Container(
-        margin: EdgeInsets.only(top: 10, left: 10),
-        alignment: Alignment.centerLeft,
-        child: IconButton(
-          icon: Icon(
-            Icons.send_rounded,
+  bottomStatusBar(PostData currentPost) {
+    int favoriteCount = currentPost.favoriteCount;
+    return Container(
+      margin: EdgeInsets.only(top: 20),
+      child: Row(
+        children: [
+          Icon(
+            //foot icon
+            Icons.favorite,
+            size: 20,
             color: OnestepColors().mainColor,
           ),
-          onPressed: () {},
-        ),
-      )
-    ]);
+          Container(
+            margin: EdgeInsets.only(right: 5),
+            child: Text("$favoriteCount",
+                style: TextStyle(color: Colors.grey, fontSize: 10)),
+          ),
+          commentStatusWidget(currentPostData)
+        ],
+      ),
+    );
+    // return Container();
+    // return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+    //   FavoriteButton(
+    //     currentPost: currentPostData,
+    //     clickCallback: favoriteClickCallback,
+    //   ),
+    //   Container(
+    //     margin: EdgeInsets.only(top: 10, left: 10),
+    //     alignment: Alignment.centerLeft,
+    //     child: IconButton(
+    //       icon: Icon(
+    //         Icons.send_rounded,
+    //         color: OnestepColors().mainColor,
+    //       ),
+    //       onPressed: () {},
+    //     ),
+    //   )
+    // ]);
   }
 
   updatePostDataCallback(PostData latestData) {
@@ -587,8 +560,6 @@ class _PostContentState extends State<PostContent>
 
   PreferredSizeWidget appBar(PostData currentPost, String uid) {
     bool isWritter = currentPost.uid == uid;
-    String boardId = currentPost.boardId;
-    String postId = currentPost.documentId;
     return AppBar(
       iconTheme: IconThemeData(color: OnestepColors().mainColor),
       title: GestureDetector(
@@ -617,28 +588,26 @@ class _PostContentState extends State<PostContent>
             onSelected: (route) async {
               if (route == "Delete") {
                 TipDialogHelper.loading("삭제중입니다.");
-                await FirebaseFirestore.instance
-                    .collection('university')
-                    .doc(currentUserModel.university)
-                    .collection('board')
-                    .doc(boardId)
-                    .collection(boardId)
-                    .doc(postId)
-                    .update({
-                  "deleted": true,
-                  "deletedTime": DateTime.now().millisecondsSinceEpoch
-                }).then((value) {
+                bool result = await currentPost.dismissPostData() ?? false;
+                if (result) {
                   TipDialogHelper.dismiss();
                   TipDialogHelper.success("삭제 완료!");
                   Future.delayed(Duration(seconds: 1))
                       .then((value) => Navigator.popUntil(
                           context, ModalRoute.withName('/PostList')))
                       .whenComplete(() {});
-                });
+                } else {
+                  TipDialogHelper.fail("Error \n Dismiss Error!");
+                  Future.delayed(Duration(seconds: 1))
+                      .then((value) => null)
+                      .whenComplete(() {});
+                }
               } else if (route == "Alter") {
+                context.read(postProvider).getLatestPostData(currentPostData);
                 await Navigator.of(context).pushNamed('/AlterPost',
-                    arguments: {"POSTDATA": currentPost}).then((value) {
+                    arguments: {"POSTDATA": currentPostData}).then((value) {
                   bool result = value ?? false;
+
                   if (result) {
                     context
                         .read(postProvider)
@@ -709,7 +678,7 @@ class _PostContentState extends State<PostContent>
     } else {
       if (!commentData.isUnderComment) {
         textEditingControllerComment.clear();
-        loadingDialogTipDialog(commentData.addCoComment(comment, currentUid),
+        loadingDialogTipDialog(commentData.addchildComment(comment, currentUid),
             thenFunction: (value) {
           // _panelOpen(false);
           context
@@ -724,8 +693,9 @@ class _PostContentState extends State<PostContent>
       } else {
         textEditingControllerComment.clear();
         loadingDialogTipDialog(
-            CommentData.toRealtimeDataWithPostData(postData).addCoCoComment(
-                comment, commentData, currentUid), thenFunction: (value) {
+            CommentData.toRealtimeDataWithPostData(postData)
+                .addChildchildComment(comment, commentData, currentUid),
+            thenFunction: (value) {
           // _panelOpen(false);
           context
               .read(commentProvider)
@@ -829,5 +799,24 @@ class _PostContentState extends State<PostContent>
         );
       },
     );
+  }
+}
+
+class PostTime {
+  final int timeStamp;
+  final DateTime dateTime;
+  PostTime({this.timeStamp, this.dateTime});
+
+  String dateToString() {
+    DateTime now = new DateTime.now();
+    if (now.year == dateTime.year)
+      return DateFormat('MM-dd HH:mm').format(dateTime);
+    else
+      return DateFormat('yyyy-MM-dd HH:mm').format(dateTime);
+  }
+
+  String timeStapToString() {
+    final f = new DateFormat('yyyy-MM-dd HH:mm');
+    return f.format(new DateTime.fromMillisecondsSinceEpoch(timeStamp * 1000));
   }
 }

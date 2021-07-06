@@ -13,14 +13,16 @@ class PostList extends StatelessWidget {
   final List<PostData> postList;
   final customPostListCallback;
   final bool isfetch;
+  final String currentUid = currentUserModel.uid;
   PostList({this.postList, this.customPostListCallback, this.isfetch});
 
   @override
   Widget build(BuildContext context) {
     double deviceHeight = MediaQuery.of(context).size.height;
     double deviceWidth = MediaQuery.of(context).size.width;
-    final String currentUid = currentUserModel.uid;
+
     bool isfetching = isfetch ?? false;
+
     if (!isfetching) if (postList.length != 0)
       return Column(
         children: [
@@ -32,6 +34,7 @@ class PostList extends StatelessWidget {
                 shrinkWrap: true,
                 itemCount: postList.length,
                 itemBuilder: (BuildContext context, int index) {
+                  bool myself = currentUid == postList[index].uid;
                   return AnimationConfiguration.staggeredList(
                     position: index,
                     duration: const Duration(milliseconds: 375),
@@ -39,7 +42,7 @@ class PostList extends StatelessWidget {
                       verticalOffset: 50.0,
                       child: FadeInAnimation(
                         child: _buildListCard(context, index, postList[index],
-                            deviceHeight, deviceWidth, currentUid),
+                            deviceHeight, deviceWidth, myself),
                       ),
                     ),
                   );
@@ -80,7 +83,7 @@ class PostList extends StatelessWidget {
   }
 
   Widget _buildListCard(BuildContext context, int index, var postData,
-      double deviceHeight, double deviceWidth, String currentUid) {
+      double deviceHeight, double deviceWidth, bool myself) {
     String currentPostId = postData.documentId;
     bool isDeleted = postData.deleted ?? false;
     bool isFavoriteClicked = context
@@ -88,10 +91,10 @@ class PostList extends StatelessWidget {
         .userFavoritePostMap
         .containsKey(currentPostId);
 
-    bool wasWrittenComment = context
-        .read(userBoardDataProvider)
-        .postIdListAboutWrittenComment
-        .containsKey(currentPostId);
+    // bool wasWrittenComment = context
+    //     .read(userBoardDataProvider)
+    //     .postIdListAboutWrittenComment
+    //     .containsKey(currentPostId);
 
     if (!isDeleted)
       return SizedBox(
@@ -116,10 +119,18 @@ class PostList extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      firstColumnLine(postData, deviceHeight, deviceWidth),
-                      secondColumnLine(postData, deviceHeight, deviceWidth),
-                      thirdColumnLine(postData, deviceHeight, deviceWidth,
-                          currentUid, isFavoriteClicked, wasWrittenComment)
+                      firstColumnLine(
+                          postData, deviceHeight, deviceWidth, myself),
+                      secondColumnLine(
+                          postData, deviceHeight, deviceWidth, myself),
+                      thirdColumnLine(
+                          postData,
+                          deviceHeight,
+                          deviceWidth,
+                          currentUid,
+                          isFavoriteClicked,
+                          // wasWrittenComment,
+                          myself)
                     ],
                   ))),
         ),
@@ -128,7 +139,8 @@ class PostList extends StatelessWidget {
       return Container();
   }
 
-  firstColumnLine(postData, double deviceHeight, double deviceWidth) {
+  firstColumnLine(
+      postData, double deviceHeight, double deviceWidth, bool myself) {
     return Container(
         child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -141,17 +153,16 @@ class PostList extends StatelessWidget {
               postData.title ?? "",
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                  color: Colors.black,
+                  // color: !myself ? Colors.black : OnestepColors().mainColor,
                   fontSize: 17,
                   fontWeight: FontWeight.bold),
             )),
-        // titleContainerMethod(title: postData.title ?? ""),
-        // _commentCountMethod(index)
       ],
     ));
   }
 
-  secondColumnLine(postData, double deviceHeight, double deviceWidth) {
+  secondColumnLine(
+      postData, double deviceHeight, double deviceWidth, bool myself) {
     // String _checkCate = postData.contentCategory.split('.')[1];
     // String category;
     // if (_checkCate == ContentCategory.QUESTION.toString().split('.')[1]) {
@@ -202,7 +213,7 @@ class PostList extends StatelessWidget {
   }
 
   thirdColumnLine(PostData postData, double deviceHeight, double deviceWidth,
-      String uid, bool clickedFavorite, bool wasWrittenComment) {
+      String uid, bool clickedFavorite, bool myself) {
     bool havePicture = postData.imageCommentMap["IMAGE"].length != 0;
     return Container(
         padding: EdgeInsets.only(left: deviceWidth / 50),
@@ -210,11 +221,18 @@ class PostList extends StatelessWidget {
           Expanded(
               child: Row(
             children: <Widget>[
+              // !myself
+              // ?
               IconTheme(
                   child: Icon(
-                      clickedFavorite ? Icons.favorite : Icons.favorite_border,
+                      // clickedFavorite ?
+                      Icons.favorite,
+                      //  Icons.favorite_border,
                       size: 14),
                   data: new IconThemeData(color: OnestepColors().mainColor)),
+              // : IconTheme(
+              //     child: Icon(Icons.favorite, size: 14),
+              //     data: new IconThemeData(color: Colors.redAccent)),
               // Icon(Icons.favorite),
               Container(
                 padding: EdgeInsets.only(left: 3, right: 5),
@@ -231,9 +249,8 @@ class PostList extends StatelessWidget {
 
               Container(
                   child: Icon(
-                wasWrittenComment
-                    ? Icons.mode_comment
-                    : Icons.mode_comment_outlined,
+                Icons.mode_comment,
+                // : Icons.mode_comment_outlined,
                 color: OnestepColors().mainColor,
                 size: 14,
               )),

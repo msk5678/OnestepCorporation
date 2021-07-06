@@ -20,6 +20,7 @@ class CommentData {
   final haveChildComment;
   final parentCommentId;
   List<CommentData> childCommentList;
+  final reportedTime;
   bool isUnderComment = false;
   CommentData(
       {this.uid,
@@ -37,7 +38,8 @@ class CommentData {
       this.commentId,
       this.haveChildComment,
       this.parentCommentId,
-      this.childCommentList});
+      this.childCommentList,
+      this.reportedTime});
   factory CommentData.toRealtimeDataWithPostData(PostData postData) {
     String currentTimeStamp = DateTime.now().millisecondsSinceEpoch.toString();
     return CommentData(
@@ -49,11 +51,15 @@ class CommentData {
       uploadTime: currentTimeStamp,
     );
   }
-  factory CommentData.fromRealtimeData(DataSnapshot dataSnapshot) {
+  factory CommentData.fromRealtimeData(DataSnapshot dataSnapshot,
+      {bool ignoreDeleted}) {
+    ignoreDeleted = ignoreDeleted ?? false;
     Map<dynamic, dynamic> value = dataSnapshot.value;
     int reportCount;
     int uploadTime;
     int updateTime;
+    int reportedTime;
+
     if (value["reportCount"] == null ||
         value["reportCount"] == "null" ||
         value["reportCount"] == "")
@@ -74,6 +80,20 @@ class CommentData {
       updateTime = 0;
     else
       updateTime = int.parse(value["updateTime"]);
+
+    if (value["reportedTime"] == null ||
+        value["reportedTime"] == "null" ||
+        value["reportedTime"] == "")
+      reportedTime = 0;
+    else
+      reportedTime = int.parse(value["reportedTime"]);
+
+    if (ignoreDeleted) {
+      bool wasDeleted = value["deleted"].toString() == 'true' ? true : false;
+      if (wasDeleted) {
+        return null;
+      }
+    }
     return CommentData(
         uid: value["uid"],
         boardId: value["boardId"],
@@ -85,6 +105,7 @@ class CommentData {
         reported: value['reported'].toString() == 'true' ? true : false,
         updateTime: updateTime,
         uploadTime: uploadTime,
+        reportedTime: reportedTime,
         textContent: value["textContent"].toString(),
         haveChildComment:
             value["haveChildComment"].toString() == 'true' ? true : false,
@@ -134,10 +155,11 @@ class CommentData {
               "deleted": this.deleted.toString() ?? 'false',
               "deletedTime": this.deletedTime.toString() ?? '',
               "reported": this.reported.toString() ?? 'false',
-              "reportCount": this.reportCount.toString() ?? '0',
+              "reportCount": '0',
               "uploadTime": currentTimeStamp,
               "updateTime": this.updateTime.toString() ?? '',
               "userName": "",
+              "reportedTime": "",
               "haveChildComment": "false",
               "parentCommentId": this.parentCommentId
             })
@@ -161,19 +183,20 @@ class CommentData {
           int reportCount;
           int uploadTime;
           int updateTime;
+          int reportedTime;
           if (value["reportCount"] == null ||
               value["reportCount"] == "null" ||
               value["reportCount"] == "")
             reportCount = 0;
           else
-            reportCount = int.parse(value["reportCount"]);
+            reportCount = int.parse(value["reportCount"].toString());
 
           if (value["uploadTime"] == null ||
               value["uploadTime"] == "null" ||
               value["uploadTime"] == "")
             uploadTime = 0;
           else
-            uploadTime = int.parse(value["uploadTime"]);
+            uploadTime = int.parse(value["uploadTime"].toString());
 
           if (value["updateTime"] == null ||
               value["updateTime"] == "null" ||
@@ -181,6 +204,12 @@ class CommentData {
             updateTime = 0;
           else
             updateTime = int.parse(value["updateTime"]);
+          if (value["reportedTime"] == null ||
+              value["reportedTime"] == "null" ||
+              value["reportedTime"] == "")
+            reportedTime = 0;
+          else
+            reportedTime = int.parse(value["reportedTime"].toString());
 
           bool haveChildComment =
               value["haveChildComment"].toString() == 'true' ? true : false;
@@ -199,6 +228,7 @@ class CommentData {
               reported: value['reported'].toString() == 'true' ? true : false,
               updateTime: updateTime,
               uploadTime: uploadTime,
+              reportedTime: reportedTime,
               textContent: value["textContent"],
               haveChildComment: haveChildComment,
               parentCommentId: value["parentCommentId"] ?? "",
@@ -218,61 +248,61 @@ class CommentData {
     return commentList;
   }
 
-  covertDataSnapshotToCommentData(DataSnapshot snapshot) {
-    List<CommentData> commentList = [];
-    Map<dynamic, dynamic> commentSnapshot =
-        Map<dynamic, dynamic>.from(snapshot.value ?? {});
-    commentSnapshot.forEach((key, value) {
-      String boardID = value["boardId"];
-      String postID = value["postId"];
+  // covertDataSnapshotToCommentData(DataSnapshot snapshot) {
+  //   List<CommentData> commentList = [];
+  //   Map<dynamic, dynamic> commentSnapshot =
+  //       Map<dynamic, dynamic>.from(snapshot.value ?? {});
+  //   commentSnapshot.forEach((key, value) {
+  //     String boardID = value["boardId"];
+  //     String postID = value["postId"];
 
-      int reportCount;
-      int uploadTime;
-      int updateTime;
-      if (value["reportCount"] == null ||
-          value["reportCount"] == "null" ||
-          value["reportCount"] == "")
-        reportCount = 0;
-      else
-        reportCount = int.parse(value["reportCount"]);
+  //     int reportCount;
+  //     int uploadTime;
+  //     int updateTime;
+  //     if (value["reportCount"] == null ||
+  //         value["reportCount"] == "null" ||
+  //         value["reportCount"] == "")
+  //       reportCount = 0;
+  //     else
+  //       reportCount = int.parse(value["reportCount"]);
 
-      if (value["uploadTime"] == null ||
-          value["uploadTime"] == "null" ||
-          value["uploadTime"] == "")
-        uploadTime = 0;
-      else
-        uploadTime = int.parse(value["uploadTime"]);
+  //     if (value["uploadTime"] == null ||
+  //         value["uploadTime"] == "null" ||
+  //         value["uploadTime"] == "")
+  //       uploadTime = 0;
+  //     else
+  //       uploadTime = int.parse(value["uploadTime"]);
 
-      if (value["updateTime"] == null ||
-          value["updateTime"] == "null" ||
-          value["updateTime"] == "")
-        updateTime = 0;
-      else
-        updateTime = int.parse(value["updateTime"]);
-      commentList.add(new CommentData(
-          uid: value["uid"],
-          boardId: boardID,
-          boardName: value["boardName"],
-          postId: postID,
-          deleted: value["deleted"].toString() == 'true' ? true : false,
-          deletedTime: value["deletedTime"],
-          reportCount: reportCount,
-          reported: value['reported'].toString() == 'true' ? true : false,
-          updateTime: updateTime,
-          uploadTime: uploadTime,
-          textContent: value["textContent"],
-          haveChildComment: haveChildComment,
-          parentCommentId: value["parentCommentId"] ?? "",
-          childCommentList: childCommentList,
-          commentId: snapshot.key));
-    });
-    commentList.sort((a, b) {
-      int aUploadTime = a.uploadTime;
-      int bUploadTime = b.uploadTime;
-      return aUploadTime.compareTo(bUploadTime);
-    });
-    return commentList;
-  }
+  //     if (value["updateTime"] == null ||
+  //         value["updateTime"] == "null" ||
+  //         value["updateTime"] == "")
+  //       updateTime = 0;
+  //     else
+  //       updateTime = int.parse(value["updateTime"]);
+  //     commentList.add(new CommentData(
+  //         uid: value["uid"],
+  //         boardId: boardID,
+  //         boardName: value["boardName"],
+  //         postId: postID,
+  //         deleted: value["deleted"].toString() == 'true' ? true : false,
+  //         deletedTime: value["deletedTime"],
+  //         reportCount: reportCount,
+  //         reported: value['reported'].toString() == 'true' ? true : false,
+  //         updateTime: updateTime,
+  //         uploadTime: uploadTime,
+  //         textContent: value["textContent"],
+  //         haveChildComment: haveChildComment,
+  //         parentCommentId: value["parentCommentId"] ?? "",
+  //         childCommentList: childCommentList,
+  //         commentId: snapshot.key));
+  //   });
+  //   commentList.sort((a, b) {
+  //     int aUploadTime = a.uploadTime;
+  //     int bUploadTime = b.uploadTime;
+  //     return aUploadTime.compareTo(bUploadTime);
+  //   });
+  //   return commentList;
+  // }
 
   getChildCommentFromRealTime(
       String boardId, String postId, String parentId) async {
@@ -284,10 +314,10 @@ class CommentData {
         .child(boardId)
         .child(postId)
         .child(parentId)
-        .child("CoComment")
+        .child("childComment")
         .once()
         .then((DataSnapshot childSnapshot) {
-      return CommentData().covertDataSnapshotToCommentData(childSnapshot);
+      return CommentData().fromFirebaseReference(childSnapshot);
     }).whenComplete(() => null);
   }
 
@@ -301,7 +331,7 @@ class CommentData {
             .child(this.boardId)
             .child(this.postId)
             .child(this.parentCommentId)
-            .child("CoComment")
+            .child("childComment")
             .child(this.uploadTime.toString());
       } else {
         realtimeDb = FirebaseDatabase.instance
@@ -324,7 +354,7 @@ class CommentData {
         .whenComplete(() => null);
   }
 
-  addCoComment(String comment, String currentUid) async {
+  addchildComment(String comment, String currentUid) async {
     if (await updateCommentMap(false)) {
       String currentTimeStamp =
           DateTime.now().millisecondsSinceEpoch.toString();
@@ -351,14 +381,15 @@ class CommentData {
                 .child(this.boardId)
                 .child(this.postId)
                 .child(this.commentId)
-                .child("CoComment")
+                .child("childComment")
                 .child(currentTimeStamp)
                 .set({
                   "uid": this.uid,
                   "boardId": this.boardId.toString(),
                   "boardName": this.boardName.toString(),
                   "postId": this.postId.toString(),
-                  "textContent": comment.toString() ?? "Co Comment ERROR" ?? '',
+                  "textContent":
+                      comment.toString() ?? "childComment ERROR" ?? '',
                   "deleted": 'false',
                   "deletedTime": this.deletedTime.toString() ?? '',
                   "reported": 'false',
@@ -366,6 +397,7 @@ class CommentData {
                   "uploadTime": currentTimeStamp,
                   "updateTime": '',
                   "userName": "",
+                  "reportedTime": "",
                   "haveChildComment": "false",
                   "parentCommentId": "${this.commentId}"
                 })
@@ -376,7 +408,7 @@ class CommentData {
     }
   }
 
-  Future addCoCoComment(
+  Future addChildchildComment(
       String textContent, CommentData parentComment, String currentUid) async {
     final realtimeDb = FirebaseDatabase.instance.reference();
     String parentCommentId = parentComment.parentCommentId;
@@ -392,7 +424,7 @@ class CommentData {
             .child(this.boardId)
             .child(this.postId)
             .child(parentCommentId)
-            .child("CoComment")
+            .child("childComment")
             .child(currentTimeStamp)
             .set({
               "uid": this.uid.toString(),
@@ -409,6 +441,7 @@ class CommentData {
               "updateTime": '',
               "userName": "",
               "haveChildComment": "false",
+              "reportedTime": "",
               "parentCommentId": parentCommentId
             })
             .then((value) => true)
@@ -416,7 +449,7 @@ class CommentData {
     }
   }
 
-  coCommentFromFirebaseReference(DataSnapshot snapshot) {
+  childCommentFromFirebaseReference(DataSnapshot snapshot) {
     Map<dynamic, dynamic> commentSnapshot =
         Map<dynamic, dynamic>.from(snapshot.value) ?? {};
     List<CommentData> commentList = [];

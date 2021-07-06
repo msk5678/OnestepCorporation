@@ -33,6 +33,9 @@ class PostData {
   bool deleted;
   int deletedTime;
 
+  bool reported;
+  int reportedTime;
+
   Future convertImage(var _imageArr) async {
     List<String> _imgUriarr = [];
 
@@ -94,7 +97,9 @@ class PostData {
       this.imgUriList,
       this.boardId,
       this.deleted,
-      this.deletedTime});
+      this.deletedTime,
+      this.reported,
+      this.reportedTime});
   Future toFireStore(BuildContext context) async {
     String currentTimeStamp = DateTime.now().millisecondsSinceEpoch.toString();
     imgUriList = await convertImage(imageCommentMap["IMAGE"]);
@@ -124,7 +129,9 @@ class PostData {
           "scrabUserList": scrabUserList ?? {},
           "favoriteUserList": favoriteUserList ?? {},
           "commentUserList": commentUserList ?? {},
-          "favoriteCount": 0
+          "favoriteCount": 0,
+          "reported": false,
+          "reportedTime": 0
         })
         .then((value) => true)
         .timeout(
@@ -170,28 +177,29 @@ class PostData {
   factory PostData.fromFireStore(DocumentSnapshot snapshot) {
     Map postData = snapshot.data();
     return PostData(
-      title: postData["title"],
-      contentCategory: postData["contentCategory"] ?? '',
-      textContent: postData["textContent"] ?? '',
-      uid: postData["uid"] ?? '',
-      documentId: snapshot.id,
-      commentCount: postData["commentCount"] ?? 0,
-      uploadTime: postData["uploadTime"].toDate(),
-      boardId: postData["boardId"] ?? '',
-      boardName: postData["boardName"] ?? '',
-      deleted: postData["deleted"] ?? false,
-      deletedTime: postData["deletedTime"] ?? 0,
-      reportCount: postData["reportCount"] ?? 0,
-      views: postData["views"] ?? {},
-      commentUserList: postData["commentUserList"] ?? {},
-      favoriteUserList: postData["favoriteUserList"] ?? {},
-      scrabUserList: postData["scrabUserList"] ?? {},
-      imageCommentMap: postData["imageCommentList"] ?? {},
-      favoriteCount: postData["favoriteCount"] ?? 0,
-      scribeCount: postData["commentUserList"] != null
-          ? postData["commentUserList"].length
-          : 0,
-    );
+        title: postData["title"],
+        contentCategory: postData["contentCategory"] ?? '',
+        textContent: postData["textContent"] ?? '',
+        uid: postData["uid"] ?? '',
+        documentId: snapshot.id,
+        commentCount: postData["commentCount"] ?? 0,
+        uploadTime: postData["uploadTime"].toDate(),
+        boardId: postData["boardId"] ?? '',
+        boardName: postData["boardName"] ?? '',
+        deleted: postData["deleted"] ?? false,
+        deletedTime: postData["deletedTime"] ?? 0,
+        reportCount: postData["reportCount"] ?? 0,
+        views: postData["views"] ?? {},
+        commentUserList: postData["commentUserList"] ?? {},
+        favoriteUserList: postData["favoriteUserList"] ?? {},
+        scrabUserList: postData["scrabUserList"] ?? {},
+        imageCommentMap: postData["imageCommentList"] ?? {},
+        favoriteCount: postData["favoriteCount"] ?? 0,
+        scribeCount: postData["commentUserList"] != null
+            ? postData["commentUserList"].length
+            : 0,
+        reported: postData["reported"],
+        reportedTime: postData["reportedTime"] ?? 0);
   }
   Future<bool> updateFavorite(String currentUid, bool isUndo) async {
     final firebaseRealtimeDb = FirebaseDatabase.instance.reference();
@@ -230,6 +238,23 @@ class PostData {
         })
         .onError((error, stackTrace) {})
         .then((value) => true);
+  }
+
+  dismissPostData() async {
+    return await FirebaseFirestore.instance
+        .collection('university')
+        .doc(currentUserModel.university)
+        .collection('board')
+        .doc(boardId)
+        .collection(boardId)
+        .doc(documentId)
+        .update({
+          "deleted": true,
+          "deletedTime": DateTime.now().millisecondsSinceEpoch
+        })
+        .then((value) => true)
+        .onError((error, stackTrace) => false)
+        .whenComplete(() => null);
   }
 
   updateViewers(String uid) async {

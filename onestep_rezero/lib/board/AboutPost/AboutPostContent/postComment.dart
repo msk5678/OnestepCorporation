@@ -326,59 +326,6 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
     context.read(commentProvider).refresh(boardId, postId);
   }
 
-  // coCommentWidget(bool haveChildComment, CommentData comment) {
-  //   final dbReference = FirebaseDatabase.instance.reference();
-  //   if (haveChildComment) {
-  //     return FutureBuilder<DataSnapshot>(
-  //         future: dbReference
-  //             .child('board')
-  //             .child(boardId.toString())
-  //             .child(postId.toString())
-  //             .child(comment.commentId)
-  //             .child("CoComment")
-  //             .once(),
-  //         builder: (context, snapshot) {
-  //           switch (snapshot.connectionState) {
-  //             case ConnectionState.none:
-  //             case ConnectionState.waiting:
-  //               return Container();
-  //             default:
-  //               if (snapshot.hasError || !snapshot.hasData) {
-  //                 return Center(
-  //                     child: Column(
-  //                   children: [
-  //                     Text("Error"),
-  //                     IconButton(
-  //                         icon: Icon(Icons.refresh),
-  //                         onPressed: () {
-  //                           context
-  //                               .read(commentProvider)
-  //                               .refresh(boardId, postId);
-  //                         })
-  //                   ],
-  //                 ));
-  //               } else {
-  //                 List<CommentData> _commentDataList = [];
-  //                 _commentDataList =
-  //                     CommentData().fromFirebaseReference(snapshot.data);
-  //                 return CoComment(
-  //                   boardId: boardId,
-  //                   commentMap: commentMap,
-  //                   coCommentCallback: coCommentCallback,
-  //                   coCommentList: _commentDataList,
-  //                   openSlidingPanelCallback: openSlidingPanelCallback,
-  //                   postId: postId,
-  //                   postWriterUID: postWriterUID,
-  //                   slidableController: slidableController,
-  //                 );
-  //               }
-  //           }
-  //         });
-  //   } else {
-  //     return Container();
-  //   }
-  // }
-
   @override
   commentWidget(BuildContext context, int index, CommentData comment,
       String uid, double deviceWidth, double deviceHeight) {
@@ -423,8 +370,7 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
                         padding: EdgeInsets.only(left: 10),
                         alignment: Alignment.centerRight,
                         child: GestureDetector(
-                          onTap: () =>
-                              coCommentCallback(comment..isUnderComment = true),
+                          onTap: () => coCommentCallback(comment),
                           child: Text(
                             "댓글달기",
                             style: TextStyle(color: Colors.grey, fontSize: 10),

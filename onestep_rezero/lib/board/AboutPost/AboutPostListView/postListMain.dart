@@ -4,9 +4,11 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_fadein/flutter_fadein.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onestep_rezero/board/AboutPost/AboutPostListView/listRiverpod.dart';
+import 'package:onestep_rezero/board/boardMain.dart';
 import 'package:onestep_rezero/board/declareData/boardData.dart';
 import 'package:onestep_rezero/board/declareData/categoryManageClass.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
+import 'package:onestep_rezero/loggedInWidget.dart';
 
 abstract class PostListInterface {
   setProductScroll(StreamController productAddStreamController,

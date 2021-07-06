@@ -8,12 +8,12 @@ class UserProvider with ChangeNotifier {
   String _errorMessage = "UserProvider Provider RuntimeError";
   String get errorMessage => _errorMessage;
   List<CommentData> _userCommentList = [];
-  Map<String, CommentData> _postIdListAboutWrittenComment = {};
+  // Map<String, CommentData> _postIdListAboutWrittenComment = {};
   Map<String, UserData> _userFavoritePostList = {};
   Map<String, UserData> get userFavoritePostMap => _userFavoritePostList;
   List<CommentData> get userCommentList => _userCommentList;
-  Map<String, CommentData> get postIdListAboutWrittenComment =>
-      _postIdListAboutWrittenComment;
+  // Map<String, CommentData> get postIdListAboutWrittenComment =>
+  //     _postIdListAboutWrittenComment;
 
   bool get isFetching => _isFetching;
   bool _isFetching = false;
@@ -49,7 +49,7 @@ class UserProvider with ChangeNotifier {
     if (_isFetching) return;
     _isFetching = true;
     _userCommentList = [];
-    _postIdListAboutWrittenComment = {};
+    // _postIdListAboutWrittenComment = {};
     try {
       List<UserData> _userWrittenCommentList = [];
       final firebaseRealtimeDb = FirebaseDatabase.instance.reference();
@@ -78,7 +78,7 @@ class UserProvider with ChangeNotifier {
               .child(data.boardId)
               .child(data.postId)
               .child(data.parentCommentId)
-              .child("CoComment")
+              .child("childComment")
               .child(data.commentId);
         } else {
           commentDb = db
@@ -90,14 +90,16 @@ class UserProvider with ChangeNotifier {
         }
         CommentData _commentData =
             await commentDb.once().then((DataSnapshot dataSnapshot) {
-          return CommentData.fromRealtimeData(dataSnapshot);
+          return CommentData.fromRealtimeData(dataSnapshot,
+              ignoreDeleted: true);
         });
+        if (_commentData != null) {
+          // _postIdListAboutWrittenComment
+          //     .addAll({_commentData.postId: _commentData});
+          _userCommentList.add(_commentData);
+        }
 
-        _postIdListAboutWrittenComment
-            .addAll({_commentData.postId: _commentData});
-        _userCommentList.add(_commentData);
-
-        // notifyListeners();
+        notifyListeners();
       });
       _userCommentList.sort((a, b) => b.uploadTime.compareTo(a.uploadTime));
     } catch (e) {
@@ -114,7 +116,7 @@ class UserProvider with ChangeNotifier {
     _isFetching = true;
     _userFavoritePostList = {};
     _userCommentList = [];
-    _postIdListAboutWrittenComment = {};
+    // _postIdListAboutWrittenComment = {};
 
     try {
       //User Favorite Post List

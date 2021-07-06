@@ -507,9 +507,10 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
       else
         imageCommentMap["ALTERIMAGE"].removeAt(selectedIndex);
       //setting comment List
-      imageCommentMap["COMMENT"] = imgCommMap["COMMENT"]
-        ..removeAt(selectedIndex);
-      imageCommentMap["COMMENT"].add("");
+      imgCommMap["COMMENT"][selectedIndex] = "";
+      // imageCommentMap["COMMENT"] = imgCommMap["COMMENT"]
+      //   ..removeAt(selectedIndex);
+      // imageCommentMap["COMMENT"].add("");
       textEditingControllerImage5..text = '';
       getterImgCommentFromMapToTextEditingControl(imageCommentMap);
     });
@@ -526,8 +527,9 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
                 else
                   imageCommentMap["ALTERIMAGE"]
                       .insert(selectedIndex, _undoImage);
-                imageCommentMap["COMMENT"].insert(selectedIndex, _undoComment);
-                imageCommentMap["COMMENT"].removeLast();
+                imgCommMap["COMMENT"][selectedIndex] = _undoComment;
+                // imageCommentMap["COMMENT"].insert(selectedIndex, _undoComment);
+                // imageCommentMap["COMMENT"].removeLast();
                 getterImgCommentFromMapToTextEditingControl(imageCommentMap);
               });
             })));

@@ -95,7 +95,7 @@ class UserWrittenCommentListWidget extends ConsumerWidget implements Comment {
     final deviceWidth = MediaQuery.of(context).size.width;
     final deviceHeight = MediaQuery.of(context).size.height;
     final userProvider = watch(userBoardDataProvider);
-    List<CommentData> commentList = userProvider.userCommentList;
+    List<CommentData> commentList = userProvider.userCommentList ?? [];
 
     bool isFetch = userProvider.isFetching;
     bool isEmpty = commentList.length == 0 ? true : false;
@@ -135,79 +135,73 @@ class UserWrittenCommentListWidget extends ConsumerWidget implements Comment {
         itemBuilder: (BuildContext context, int index) {
           CommentData currentIndexCommentData = comment[index];
 
-          bool isDeleted = currentIndexCommentData.deleted;
+          bool wasCommentDeleted = currentIndexCommentData.deleted;
 
           currentIndexCommentData
             ..userName = commentName(currentIndexCommentData.uid, null, null);
 
-          return AnimationConfiguration.staggeredList(
-            position: index,
-            duration: const Duration(milliseconds: 375),
-            child: SlideAnimation(
-              verticalOffset: 50.0,
-              child: FadeInAnimation(
-                child: Column(
-                  children: [
-                    GestureDetector(
-                      onTap: () async {
-                        PostData clickedPostData = await FirebaseFirestore
-                            .instance
-                            .collection('university')
-                            .doc(currentUserModel.university)
-                            .collection("board")
-                            .doc(currentIndexCommentData.boardId)
-                            .collection(currentIndexCommentData.boardId)
-                            .doc(currentIndexCommentData.postId)
-                            .get()
-                            .then((DocumentSnapshot documentSnapshot) =>
-                                PostData.fromFireStore(documentSnapshot));
-                        bool isDeletedPost = clickedPostData.deleted;
-                        if (!isDeletedPost) {
-                          Navigator.of(context).pushNamed("/PostContent",
-                              arguments: {
-                                "CURRENTBOARDDATA": clickedPostData
-                              }).then((value) {});
-                        } else {
-                          snackBarCallback(Text("이미 삭제된 게시글입니다."));
-                        }
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border(
-                            top: BorderSide(
-                              color: OnestepColors().mainColor,
-                              width: 0.5,
-                            ),
+          return !wasCommentDeleted
+              ? AnimationConfiguration.staggeredList(
+                  position: index,
+                  duration: const Duration(milliseconds: 375),
+                  child: SlideAnimation(
+                    verticalOffset: 50.0,
+                    child: FadeInAnimation(
+                      child: Column(
+                        children: [
+                          GestureDetector(
+                            onTap: () async {
+                              PostData clickedPostData = await FirebaseFirestore
+                                  .instance
+                                  .collection('university')
+                                  .doc(currentUserModel.university)
+                                  .collection("board")
+                                  .doc(currentIndexCommentData.boardId)
+                                  .collection(currentIndexCommentData.boardId)
+                                  .doc(currentIndexCommentData.postId)
+                                  .get()
+                                  .then((DocumentSnapshot documentSnapshot) =>
+                                      PostData.fromFireStore(documentSnapshot));
+                              bool isDeletedPost = clickedPostData.deleted;
+                              if (!isDeletedPost) {
+                                Navigator.of(context).pushNamed("/PostContent",
+                                    arguments: {
+                                      "CURRENTBOARDDATA": clickedPostData
+                                    }).then((value) {});
+                              } else {
+                                snackBarCallback(Text("이미 삭제된 게시글입니다."));
+                              }
+                            },
+                            child: Container(
+                                decoration: BoxDecoration(
+                                  border: Border(
+                                    top: BorderSide(
+                                      color: OnestepColors().mainColor,
+                                      width: 0.5,
+                                    ),
+                                  ),
+                                ),
+                                padding: EdgeInsets.symmetric(vertical: 10),
+                                child: commentListSwipeMenu(
+                                  currentIndexCommentData,
+                                  context,
+                                  currentUserModel.uid,
+                                  slidableKey:
+                                      Key(currentIndexCommentData.commentId),
+                                  child: commentBoxDesignMethod(
+                                      context,
+                                      index,
+                                      currentIndexCommentData,
+                                      deviceWidth,
+                                      deviceHeight),
+                                )),
                           ),
-                        ),
-                        padding: EdgeInsets.symmetric(vertical: 10),
-                        child: !isDeleted
-                            ? commentListSwipeMenu(
-                                currentIndexCommentData,
-                                context,
-                                currentUserModel.uid,
-                                slidableKey:
-                                    Key(currentIndexCommentData.commentId),
-                                child: commentBoxDesignMethod(
-                                    context,
-                                    index,
-                                    currentIndexCommentData,
-                                    deviceWidth,
-                                    deviceHeight),
-                              )
-                            : commentBoxDesignMethod(
-                                context,
-                                index,
-                                currentIndexCommentData,
-                                deviceWidth,
-                                deviceHeight),
+                        ],
                       ),
                     ),
-                  ],
-                ),
-              ),
-            ),
-          );
+                  ),
+                )
+              : Container();
         },
       ),
     );
