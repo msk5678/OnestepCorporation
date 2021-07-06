@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/search/pages/searchContent.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SearchMain extends StatefulWidget {
   final int searchKey;
@@ -115,7 +116,7 @@ class _SearchMainState extends State<SearchMain> {
             child: Padding(
               padding: EdgeInsets.only(right: 10),
               child: Container(
-                height: 50,
+                height: 50.h,
                 child: TextField(
                   onTap: () {},
                   cursorColor: OnestepColors().mainColor,
@@ -134,10 +135,10 @@ class _SearchMainState extends State<SearchMain> {
                   decoration: InputDecoration(
                     enabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(
-                            color: OnestepColors().mainColor, width: 2.0)),
+                            color: OnestepColors().mainColor, width: 2.0.w)),
                     focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(
-                            color: OnestepColors().mainColor, width: 2.0)),
+                            color: OnestepColors().mainColor, width: 2.0.w)),
                     prefixIcon: Padding(
                       padding: const EdgeInsets.only(bottom: 3),
                       child: Icon(

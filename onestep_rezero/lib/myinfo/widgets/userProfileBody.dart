@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onestep_rezero/myinfo/pages/mySaleProductMain.dart';
 import 'package:onestep_rezero/signIn/loggedInWidget.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class UserProfileBody extends ConsumerWidget {
   Widget getUserName() {
@@ -24,7 +25,7 @@ class UserProfileBody extends ConsumerWidget {
             return Text(
               snapshot.data['nickName'],
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 20.sp,
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),
@@ -45,8 +46,8 @@ class UserProfileBody extends ConsumerWidget {
         switch (snapshot.connectionState) {
           case ConnectionState.waiting:
             return Container(
-              width: 100,
-              height: 100,
+              width: 100.w,
+              height: 100.w,
               child: Center(
                 child: CircularProgressIndicator(),
               ),
@@ -65,7 +66,7 @@ class UserProfileBody extends ConsumerWidget {
                   )
                 : Icon(
                     Icons.account_circle,
-                    size: 100,
+                    size: 100.sp,
                   );
         }
       },
@@ -154,7 +155,7 @@ class UserProfileBody extends ConsumerWidget {
                 child: Row(
                   children: <Widget>[
                     getUserImage(),
-                    SizedBox(width: 10),
+                    SizedBox(width: 10.w),
                     getUserName(),
                   ],
                 ),

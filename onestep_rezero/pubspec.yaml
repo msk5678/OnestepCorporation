@@ -66,6 +66,10 @@ dependencies:
   auto_size_text: ^2.1.0 # 글씨 크기 자동 변환
   ###########
 
+  # widget size
+  flutter_screenutil: ^5.0.0+2
+  ####
+
   #rxdart
   rxdart: ^0.25.0
   ###########

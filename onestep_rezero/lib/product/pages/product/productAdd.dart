@@ -22,6 +22,8 @@ import 'package:onestep_rezero/utils/onestepCustom/dialog/onestepCustomDialog.da
 import 'package:random_string/random_string.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 class ProductAdd extends StatefulWidget {
   const ProductAdd({Key key}) : super(key: key);
 
@@ -72,10 +74,10 @@ class _ProductAddState extends State<ProductAdd> {
         pickAssets();
       },
       child: Container(
-        width: 80,
-        height: 80,
+        width: 80.w,
+        height: 80.w,
         decoration: BoxDecoration(
-          border: Border.all(width: 1.0, color: Colors.grey),
+          border: Border.all(width: 1.0.w, color: Colors.grey),
           borderRadius: BorderRadius.all(
             Radius.circular(5.0),
           ),
@@ -86,7 +88,7 @@ class _ProductAddState extends State<ProductAdd> {
             Icon(
               Icons.photo_camera,
               color: Colors.grey,
-              size: 30,
+              size: 30.sp,
             ),
             Positioned(
               right: 5,
@@ -110,8 +112,8 @@ class _ProductAddState extends State<ProductAdd> {
         child: Stack(
           children: [
             Image(
-              width: 80,
-              height: 80,
+              width: 80.w,
+              height: 80.h,
               image: AssetEntityImageProvider(image, isOriginal: false),
               fit: BoxFit.cover,
             ),
@@ -134,7 +136,7 @@ class _ProductAddState extends State<ProductAdd> {
                     child: Icon(
                       Icons.close,
                       color: Colors.white,
-                      size: 15,
+                      size: 15.sp,
                     ),
                   ),
                 ),
@@ -156,7 +158,7 @@ class _ProductAddState extends State<ProductAdd> {
           ),
         ),
         Container(
-          height: 80,
+          height: 80.h,
           width: MediaQuery.of(context).size.width,
           margin: EdgeInsets.only(top: 10, bottom: 20),
           child: ListView(
@@ -289,14 +291,14 @@ class _ProductAddState extends State<ProductAdd> {
       bottomNavigationBar: InkWell(
         onTap: () => uploadProduct(),
         child: Container(
-          height: 60,
+          height: 60.h,
           color: OnestepColors().mainColor,
           child: Center(
             child: Text(
               "등록완료",
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 18,
+                fontSize: 18.sp,
               ),
             ),
           ),

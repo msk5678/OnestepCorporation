@@ -8,6 +8,7 @@ import 'package:onestep_rezero/product/models/product.dart';
 import 'package:onestep_rezero/product/pages/product/productDetail.dart';
 import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 import 'package:onestep_rezero/utils/timeUtil.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ProductItem extends StatefulWidget {
   final Product product;
@@ -156,7 +157,7 @@ class _ProductItemState extends State<ProductItem> {
                 ),
               ),
             ),
-            SizedBox(height: 4),
+            SizedBox(height: 4.h),
             SizedBox(
               child: Align(
                 child: Text(
@@ -164,7 +165,7 @@ class _ProductItemState extends State<ProductItem> {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: 14.sp,
                     fontWeight: FontWeight.w400,
                     color: Color(0xFF333333),
                   ),
@@ -172,7 +173,7 @@ class _ProductItemState extends State<ProductItem> {
                 alignment: Alignment.centerLeft,
               ),
             ),
-            SizedBox(height: 4),
+            SizedBox(height: 4.h),
             SizedBox(
               child: Align(
                 child: Row(
@@ -182,7 +183,7 @@ class _ProductItemState extends State<ProductItem> {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: 14.sp,
                         fontWeight: FontWeight.bold,
                         color: Color(0xFF333333),
                       ),
@@ -192,7 +193,7 @@ class _ProductItemState extends State<ProductItem> {
                 alignment: Alignment.centerLeft,
               ),
             ),
-            SizedBox(height: 4),
+            SizedBox(height: 4.h),
             Row(
               children: <Widget>[
                 // Flexible(
@@ -225,7 +226,7 @@ class _ProductItemState extends State<ProductItem> {
                 Text(
                   TimeUtil.timeAgo(date: widget.product.bumpTime),
                   style: TextStyle(
-                    fontSize: 12,
+                    fontSize: 12.sp,
                     fontWeight: FontWeight.w400,
                     color: Colors.grey,
                   ),

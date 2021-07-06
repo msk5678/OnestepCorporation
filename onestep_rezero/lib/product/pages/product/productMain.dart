@@ -11,6 +11,7 @@ import 'package:onestep_rezero/product/pages/category/categorySidebar.dart';
 import 'package:onestep_rezero/product/widgets/main/productMainBody.dart';
 import 'package:onestep_rezero/product/widgets/main/productMainHeader.dart';
 import 'package:onestep_rezero/search/pages/searchMain.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ProductMain extends StatefulWidget {
   @override
@@ -432,8 +433,8 @@ class _ProductMainState extends State<ProductMain> {
                 ),
               ],
             ),
-            height: 40.0,
-            width: 40.0,
+            height: 40.0.h,
+            width: 40.0.w,
             child: FittedBox(
               child: FloatingActionButton(
                 elevation: 0,
@@ -470,22 +471,22 @@ class _ProductMainState extends State<ProductMain> {
               children: <Widget>[
                 Container(
                   width: MediaQuery.of(context).size.width,
-                  height: 200,
+                  height: 200.h,
                   child: Image.asset(
                     "icons/banner.png",
                     fit: BoxFit.cover,
                   ),
                 ),
-                SizedBox(height: 10),
+                SizedBox(height: 10.h),
                 ProductMainHeader(),
-                SizedBox(height: 10),
+                SizedBox(height: 10.h),
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Padding(
                       padding: EdgeInsets.only(top: 10, left: 15),
                       child: Text("방금 올라온 상품",
                           style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.w600))),
+                              fontSize: 15.sp, fontWeight: FontWeight.w600))),
                 ),
                 ProductMainBody(),
               ],

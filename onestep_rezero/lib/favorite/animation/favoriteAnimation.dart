@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class FavoriteAnimation {
   static void showFavoriteDialog(BuildContext context) {
@@ -10,7 +11,7 @@ class FavoriteAnimation {
       context: context,
       builder: (_) => Material(
         type: MaterialType.transparency,
-        child: Icon(Icons.favorite, color: Colors.pink, size: 200),
+        child: Icon(Icons.favorite, color: Colors.pink, size: 200.sp),
       ),
     );
   }

@@ -6,6 +6,7 @@ import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 
 import 'package:onestep_rezero/product/models/categorySelectItem.dart';
 import 'package:onestep_rezero/product/pages/product/productAddDetailCategorySelect.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ProductAddCategorySelect extends StatefulWidget {
   ProductAddCategorySelect({Key key}) : super(key: key);
@@ -63,8 +64,8 @@ Widget mainCategory() {
                     padding: EdgeInsets.only(bottom: 5.0),
                     child: Image.asset(
                         sortedMap[sortedMap.keys.elementAt(index)]['image'],
-                        width: 30,
-                        height: 30)),
+                        width: 30.w,
+                        height: 30.h)),
                 title: Text(sortedMap.keys.elementAt(index)),
                 trailing:
                     // map['detail']

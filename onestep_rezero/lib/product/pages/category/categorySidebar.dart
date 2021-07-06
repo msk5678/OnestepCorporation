@@ -7,6 +7,7 @@ import 'package:onestep_rezero/admob/googleAdmob.dart';
 import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 
 import 'package:onestep_rezero/product/pages/category/categoryDetail.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CategorySidebar extends StatefulWidget {
   CategorySidebar({Key key}) : super(key: key);
@@ -63,13 +64,13 @@ class _CategorySidebarState extends State<CategorySidebar> {
                         },
                         leading: Image.asset(
                             sortedMap[sortedMap.keys.elementAt(index)]['image'],
-                            width: 30,
-                            height: 30),
+                            width: 30.w,
+                            height: 30.h),
                         title: Transform.translate(
                           offset: Offset(-16, 0),
                           child: Text(
                             sortedMap.keys.elementAt(index),
-                            style: TextStyle(fontSize: 15),
+                            style: TextStyle(fontSize: 15.sp),
                           ),
                         ),
                       );

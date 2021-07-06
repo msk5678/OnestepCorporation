@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:onestep_rezero/admob/googleAdmobManager.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class GoogleAdmob {
   final String iOsTestUnitid = "ca-app-pub-3940256099942544/2934735716";
@@ -26,7 +27,7 @@ class GoogleAdmob {
 
   getProductMainBottomBanner(double diviceWidth) {
     return Container(
-      height: productMainBottomBanner == null ? 0 : 50,
+      height: productMainBottomBanner == null ? 0 : 50.h,
       width: diviceWidth,
       color: Colors.white,
       child: productMainBottomBanner == null
@@ -44,7 +45,7 @@ class GoogleAdmob {
 
   getChatMainBottomBanner(double diviceWidth) {
     return Container(
-      height: chatMainBottomBanner == null ? 0 : 50,
+      height: chatMainBottomBanner == null ? 0 : 50.h,
       width: diviceWidth,
       color: Colors.white,
       child: chatMainBottomBanner == null

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class OnestepCustomDialog {
   static show(
@@ -17,7 +18,7 @@ class OnestepCustomDialog {
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10.0)), //this right here
           child: Container(
-            height: 200,
+            height: 200.h,
             child: Padding(
               padding: const EdgeInsets.all(12.0),
               child: Column(
@@ -27,21 +28,22 @@ class OnestepCustomDialog {
                   Text(
                     title,
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    style:
+                        TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(height: 10),
+                  SizedBox(height: 10.h),
                   if (description != null)
                     Text(
                       description,
                       textAlign: TextAlign.center,
                     ),
-                  SizedBox(height: 30),
+                  SizedBox(height: 30.h),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       SizedBox(
                         width: MediaQuery.of(context).size.width / 3,
-                        height: 50,
+                        height: 50.h,
                         child: ElevatedButton(
                           onPressed: () {
                             Navigator.pop(context);
@@ -50,15 +52,15 @@ class OnestepCustomDialog {
                           style: ElevatedButton.styleFrom(
                             primary: Colors.black26,
                             onPrimary: Colors.white,
-                            textStyle: TextStyle(fontSize: 17),
+                            textStyle: TextStyle(fontSize: 17.sp),
                             elevation: 0,
                           ),
                         ),
                       ),
-                      SizedBox(width: 10),
+                      SizedBox(width: 10.w),
                       SizedBox(
                         width: MediaQuery.of(context).size.width / 3,
-                        height: 50,
+                        height: 50.h,
                         child: ElevatedButton(
                           onPressed: confirmButtonOnPress,
                           child: Text(
@@ -67,7 +69,7 @@ class OnestepCustomDialog {
                           style: ElevatedButton.styleFrom(
                             primary: OnestepColors().mainColor,
                             onPrimary: Colors.white,
-                            textStyle: TextStyle(fontSize: 17),
+                            textStyle: TextStyle(fontSize: 17.sp),
                             elevation: 0,
                           ),
                         ),

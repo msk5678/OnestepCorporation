@@ -7,6 +7,7 @@ import 'package:onestep_rezero/search/widgets/product/searchProductBody.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onestep_rezero/utils/floatingSnackBar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SearchContent extends StatefulWidget {
   final int searchKey;
@@ -114,7 +115,7 @@ class _SearchContentState extends State<SearchContent> {
               child: Padding(
                 padding: EdgeInsets.only(right: 10),
                 child: Container(
-                  height: 50,
+                  height: 50.h,
                   child: TextField(
                     onTap: () {
                       Navigator.pop(context);
@@ -139,10 +140,10 @@ class _SearchContentState extends State<SearchContent> {
                     decoration: InputDecoration(
                       enabledBorder: OutlineInputBorder(
                           borderSide: BorderSide(
-                              color: OnestepColors().mainColor, width: 2.0)),
+                              color: OnestepColors().mainColor, width: 2.0.w)),
                       focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(
-                              color: OnestepColors().mainColor, width: 2.0)),
+                              color: OnestepColors().mainColor, width: 2.0.w)),
                       prefixIcon: Padding(
                         padding: const EdgeInsets.only(bottom: 3),
                         child: Icon(
@@ -241,8 +242,8 @@ class _SearchContentState extends State<SearchContent> {
         return Visibility(
           visible: snapshot.data,
           child: Container(
-            height: 40.0,
-            width: 40.0,
+            height: 40.0.h,
+            width: 40.0.w,
             child: FittedBox(
               child: FloatingActionButton(
                 heroTag: "searchFloatActionButton",

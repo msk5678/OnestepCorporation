@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 import 'package:onestep_rezero/product/models/product.dart';
 import 'package:onestep_rezero/product/widgets/detail/productDetailBody.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ProductDetail extends StatefulWidget {
   final String docId;
@@ -52,7 +53,7 @@ class _ProductDetailState extends State<ProductDetail> {
         child: Center(
           child: Text(
             text,
-            style: TextStyle(fontSize: 22),
+            style: TextStyle(fontSize: 22.sp),
           ),
         ),
       ),

@@ -7,6 +7,7 @@ import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/favorite/animation/favoriteAnimation.dart';
 import 'package:onestep_rezero/favorite/utils/favoriteFirebaseApi.dart';
+import 'package:onestep_rezero/myinfo/pages/mySaleProductMain.dart';
 import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 import 'package:onestep_rezero/chat/navigator/chatNavigationManager.dart';
 import 'package:onestep_rezero/product/models/product.dart';
@@ -21,6 +22,7 @@ import 'package:onestep_rezero/utils/floatingSnackBar.dart';
 import 'package:onestep_rezero/utils/onestepCustom/dialog/onestepCustomDialog.dart';
 import 'package:onestep_rezero/utils/timeUtil.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ProductDetailBody extends StatefulWidget {
   final Product product;
@@ -232,11 +234,11 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
                             ? Icons.watch_later_outlined
                             : Icons.check_circle_outline_rounded,
                         color: Colors.white,
-                        size: 50),
-                    SizedBox(height: 10),
+                        size: 50.sp),
+                    SizedBox(height: 10.h),
                     Text(
                       snapshot.data == 1 ? "예약중" : "판매완료",
-                      style: TextStyle(color: Colors.white, fontSize: 28),
+                      style: TextStyle(color: Colors.white, fontSize: 28.sp),
                     ),
                   ],
                 ),
@@ -311,7 +313,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 20.sp,
                     fontWeight: FontWeight.w400,
                     color: Color(0xFF333333),
                   ),
@@ -325,22 +327,22 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
                   border: InputBorder.none,
                 ),
                 style: TextStyle(
-                  fontSize: 20,
+                  fontSize: 20.sp,
                   fontWeight: FontWeight.w500,
                   color: Color(0xFF333333),
                 ),
               ),
 
-              SizedBox(height: 10),
+              SizedBox(height: 10.h),
               Row(
                 children: <Widget>[
                   Icon(
                     Icons.local_offer,
                     color: Colors.grey,
-                    size: 17,
+                    size: 17.sp,
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(right: 2.0),
+                    padding: EdgeInsets.only(right: 2.0.w),
                   ),
                   Text(widget.product.detailCategory == ""
                       ? "${widget.product.category}"
@@ -352,38 +354,38 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
                   Icon(
                     Icons.access_time,
                     color: Colors.grey,
-                    size: 15,
+                    size: 15.sp,
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(right: 2.0),
+                    padding: EdgeInsets.only(right: 2.0.w),
                   ),
                   Text("${TimeUtil.timeAgo(date: widget.product.bumpTime)}"),
                   Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
+                    padding: EdgeInsets.only(right: 8.0.w),
                   ),
                   Icon(
                     Icons.remove_red_eye,
                     color: Colors.grey,
-                    size: 15,
+                    size: 15.sp,
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(right: 2.0),
+                    padding: EdgeInsets.only(right: 2.0.w),
                   ),
                   Text(
                       "${widget.product.views == null ? 0 : widget.product.views.length}"),
                   Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
+                    padding: EdgeInsets.only(right: 8.0.w),
                   ),
                   Icon(
                     Icons.favorite,
                     color: Colors.grey,
-                    size: 15,
+                    size: 15.sp,
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(right: 2.0),
+                    padding: EdgeInsets.only(right: 2.0.w),
                   ),
                   Container(
-                    width: 30,
+                    width: 30.w,
                     child: TextField(
                       controller: _favoriteTextController,
                       enableInteractiveSelection: false,
@@ -396,16 +398,16 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
                 ],
               ),
               Divider(),
-              SizedBox(height: 10),
+              SizedBox(height: 10.h),
               Container(
                 constraints: BoxConstraints(
-                  minHeight: 100,
+                  minHeight: 100.h,
                 ),
                 child: Align(
                   alignment: Alignment.topLeft,
                   child: Text(
                     "${widget.product.explain}",
-                    style: TextStyle(height: 1.5),
+                    style: TextStyle(height: 1.5.h),
                   ),
                 ),
               ),
@@ -452,8 +454,8 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
                   CachedNetworkImage(
                     imageUrl: snapshot.data['imageUrl'],
                     imageBuilder: (context, imageProvider) => Container(
-                      width: 50.0,
-                      height: 50.0,
+                      width: 50.0.w,
+                      height: 50.0.h,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         image: DecorationImage(
@@ -463,7 +465,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
                     placeholder: (context, url) => CircularProgressIndicator(),
                     errorWidget: (context, url, error) => Icon(Icons.error),
                   ),
-                  SizedBox(width: 10),
+                  SizedBox(width: 10.w),
                   Text(
                     snapshot.data['nickName'],
                     style: TextStyle(fontWeight: FontWeight.w500),
@@ -522,16 +524,26 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
                           Text(
                             "판매자의 다른 상품",
                             style: TextStyle(
-                              fontSize: 14,
+                              fontSize: 14.sp,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          Text(
-                            "모두보기",
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey,
-                              fontWeight: FontWeight.bold,
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => MySaleProductMain(),
+                                ),
+                              );
+                            },
+                            child: Text(
+                              "모두보기",
+                              style: TextStyle(
+                                fontSize: 12.sp,
+                                color: Colors.grey,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ],
@@ -540,7 +552,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(bottom: 10),
+                  padding: EdgeInsets.only(bottom: 10.h),
                   child: GridView.builder(
                     shrinkWrap: true,
                     itemCount: snapshot.data.size,
@@ -571,7 +583,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
 
   Widget _line() {
     return Container(
-      height: 1,
+      height: 1.h,
       margin: const EdgeInsets.symmetric(horizontal: 15),
       color: Colors.grey.withOpacity(0.3),
     );
@@ -705,9 +717,9 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
 
   Widget _bottomChatWidget() {
     return Padding(
-      padding: EdgeInsets.only(right: 10.0),
+      padding: EdgeInsets.only(right: 10.0.w),
       child: SizedBox(
-        width: 150,
+        width: 150.w,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
             primary: OnestepColors().mainColor,
@@ -744,11 +756,12 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
   Widget _bottomBarWidget() {
     if (widget.product.uid == currentUserModel.uid) {
       return SizedBox(
-        height: 55,
+        height: 55.h,
         child: Container(
           decoration: BoxDecoration(
             border: Border(
-              top: BorderSide(color: Colors.grey.withOpacity(0.3), width: 0.5),
+              top:
+                  BorderSide(color: Colors.grey.withOpacity(0.3), width: 0.5.w),
             ),
           ),
           child: Row(
@@ -888,27 +901,27 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
       );
     } else {
       return SizedBox(
-        height: 70,
+        height: 70.h,
         child: Container(
           decoration: BoxDecoration(
             border: Border(
               top: BorderSide(
                 color: Colors.black87,
-                width: 0.1,
+                width: 0.1.w,
               ),
             ),
           ),
           child: Row(
             children: <Widget>[
               SizedBox(
-                width: 60,
-                height: 60,
+                width: 60.w,
+                height: 60.h,
                 child: Container(
                   decoration: BoxDecoration(
                     border: Border(
                       right: BorderSide(
                         color: Colors.black87,
-                        width: 0.1,
+                        width: 0.1.w,
                       ),
                     ),
                   ),
@@ -916,13 +929,14 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(right: 10.0),
+                padding: EdgeInsets.only(right: 10.0.w),
               ),
               SizedBox(
-                width: 100,
+                width: 100.w,
                 child: Text(
                   "${widget.product.price}원",
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  style:
+                      TextStyle(fontSize: 15.sp, fontWeight: FontWeight.bold),
                 ),
               ),
               Expanded(child: Container()),

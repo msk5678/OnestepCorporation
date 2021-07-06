@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onestep_rezero/product/pages/category/categoryDetail.dart';
 import 'package:onestep_rezero/product/pages/category/categorySidebar.dart';
 import 'package:onestep_rezero/signIn/loggedInWidget.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ProductMainHeader extends StatefulWidget {
   const ProductMainHeader({Key key}) : super(key: key);
@@ -46,7 +47,7 @@ class _ProductMainHeaderState extends State<ProductMainHeader> {
                 key: (k) => k, value: (k) => map[k]);
 
             return Container(
-              height: 80,
+              height: 80.h,
               child: Padding(
                 padding: EdgeInsets.only(top: 5, bottom: 5),
                 child: Row(
@@ -73,9 +74,9 @@ class _ProductMainHeaderState extends State<ProductMainHeader> {
                                   Padding(
                                     padding: EdgeInsets.only(bottom: 5.0),
                                     child: Image.asset(value['image'],
-                                        width: 45, height: 45),
+                                        width: 45.w, height: 45.h),
                                   ),
-                                  Text(key, style: TextStyle(fontSize: 12)),
+                                  Text(key, style: TextStyle(fontSize: 12.sp)),
                                 ],
                               ),
                             ),
@@ -95,53 +96,13 @@ class _ProductMainHeaderState extends State<ProductMainHeader> {
                           Padding(
                             padding: EdgeInsets.only(bottom: 5.0),
                             child: Image.asset('icons/category/viewAll.png',
-                                width: 45, height: 45),
+                                width: 45.w, height: 45.h),
                           ),
-                          Text("전체보기", style: TextStyle(fontSize: 12)),
+                          Text("전체보기", style: TextStyle(fontSize: 12.sp)),
                         ],
                       ),
                     ),
                   ],
-                ),
-              ),
-            );
-
-            return Container(
-              height: 80,
-              child: Padding(
-                padding: EdgeInsets.only(left: 15, top: 10),
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  scrollDirection: Axis.horizontal,
-                  itemCount: 4,
-                  itemBuilder: (context, index) {
-                    Map map = sortedMap[sortedMap.keys.elementAt(index)];
-
-                    return InkWell(
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => CategoryDetail(
-                              total: map['total'],
-                              category: sortedMap.keys.elementAt(index),
-                              detailCategory: map['detail'],
-                            ),
-                          ),
-                        );
-                      },
-                      child: Column(
-                        children: <Widget>[
-                          Padding(
-                            padding: EdgeInsets.only(bottom: 5.0),
-                            child: Image.asset(map['image'],
-                                width: 45, height: 45),
-                          ),
-                          Text(sortedMap.keys.elementAt(index),
-                              style: TextStyle(fontSize: 12)),
-                        ],
-                      ),
-                    );
-                  },
                 ),
               ),
             );

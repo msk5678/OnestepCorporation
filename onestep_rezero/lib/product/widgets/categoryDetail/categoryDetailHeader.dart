@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 import 'package:onestep_rezero/product/widgets/categoryDetail/categoryDetailBody.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CategoryDetailHeader extends StatefulWidget {
   final int total;
@@ -58,9 +59,9 @@ class _CategoryDetailHeaderState extends State<CategoryDetailHeader> {
 
         return Column(
           children: <Widget>[
-            SizedBox(height: 5),
+            SizedBox(height: 5.sp),
             SizedBox(
-              height: 50.0,
+              height: 50.0.sp,
               child: ListView.builder(
                 padding: EdgeInsets.all(5.0),
                 physics: ClampingScrollPhysics(),
@@ -75,10 +76,10 @@ class _CategoryDetailHeaderState extends State<CategoryDetailHeader> {
                     child: GestureDetector(
                       child: Padding(
                         padding: EdgeInsets.only(
-                          left: 10,
-                          right: 10,
-                          top: 5,
-                          bottom: 5,
+                          left: 10.w,
+                          right: 10.w,
+                          top: 5.h,
+                          bottom: 5.h,
                         ),
                         child: Align(
                           alignment: Alignment.center,
@@ -86,7 +87,7 @@ class _CategoryDetailHeaderState extends State<CategoryDetailHeader> {
                             sortedMap.keys.elementAt(index),
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontSize: 12,
+                              fontSize: 12.sp,
                               color: snapshot.data == index
                                   ? Colors.white
                                   : Colors.black,
@@ -107,7 +108,7 @@ class _CategoryDetailHeaderState extends State<CategoryDetailHeader> {
                 },
               ),
             ),
-            SizedBox(height: 5),
+            SizedBox(height: 5.h),
           ],
         );
       },
@@ -148,9 +149,9 @@ class _CategoryDetailHeaderState extends State<CategoryDetailHeader> {
                 return Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    SizedBox(height: 5),
+                    SizedBox(height: 5.h),
                     SizedBox(
-                      height: 50.0,
+                      height: 50.0.h,
                       child: ListView.builder(
                         padding: EdgeInsets.all(5.0),
                         physics: ClampingScrollPhysics(),
@@ -168,10 +169,10 @@ class _CategoryDetailHeaderState extends State<CategoryDetailHeader> {
                             child: GestureDetector(
                               child: Padding(
                                 padding: EdgeInsets.only(
-                                  left: 10,
-                                  right: 10,
-                                  top: 5,
-                                  bottom: 5,
+                                  left: 10.w,
+                                  right: 10.w,
+                                  top: 5.h,
+                                  bottom: 5.h,
                                 ),
                                 child: Align(
                                   alignment: Alignment.center,
@@ -179,7 +180,7 @@ class _CategoryDetailHeaderState extends State<CategoryDetailHeader> {
                                     sortedMap.keys.elementAt(index),
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
-                                      fontSize: 12,
+                                      fontSize: 12.sp,
                                       color: snapshot.data == index
                                           ? Colors.white
                                           : Colors.black,
@@ -200,7 +201,7 @@ class _CategoryDetailHeaderState extends State<CategoryDetailHeader> {
                         },
                       ),
                     ),
-                    SizedBox(height: 5),
+                    SizedBox(height: 5.h),
                   ],
                 );
               },

@@ -11,6 +11,7 @@ import 'package:onestep_rezero/product/widgets/main/productMainBody.dart';
 import 'package:onestep_rezero/utils/floatingSnackBar.dart';
 import 'package:onestep_rezero/utils/onestepCustom/dialog/onestepCustomDialog.dart';
 import 'package:pattern_formatter/numeric_formatter.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ProductBump extends StatefulWidget {
   final Product product;
@@ -90,8 +91,8 @@ class _ProductBumpState extends State<ProductBump> {
                     borderRadius: BorderRadius.all(Radius.circular(5.0)),
                     child: CachedNetworkImage(
                       imageUrl: widget.product.imagesUrl[0],
-                      width: 80,
-                      height: 80,
+                      width: 80.w,
+                      height: 80.h,
                       errorWidget: (context, url, error) =>
                           Icon(Icons.error), // 로딩 오류 시 이미지
                       fit: BoxFit.cover,
@@ -106,20 +107,20 @@ class _ProductBumpState extends State<ProductBump> {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        fontSize: 20,
+                        fontSize: 20.sp,
                       ),
                     ),
-                    SizedBox(height: 10),
+                    SizedBox(height: 10.h),
                     Text(
                       widget.product.price,
-                      style: TextStyle(fontSize: 18),
+                      style: TextStyle(fontSize: 18.sp),
                     ),
                   ],
                 ),
               ],
             ),
             SizedBox(
-              height: 20,
+              height: 20.h,
             ),
             TextField(
               controller: _priceEditingController,
@@ -143,7 +144,7 @@ class _ProductBumpState extends State<ProductBump> {
                 prefixIcon: SizedBox(
                   child: Center(
                     widthFactor: 0.0,
-                    child: Text('₩', style: TextStyle(fontSize: 15)),
+                    child: Text('₩', style: TextStyle(fontSize: 15.sp)),
                   ),
                 ),
                 suffixIcon: SizedBox(
@@ -167,7 +168,8 @@ class _ProductBumpState extends State<ProductBump> {
                               widthFactor: 0.0,
                               child: Text('취소',
                                   style: TextStyle(
-                                      fontSize: 15, color: Colors.redAccent)),
+                                      fontSize: 15.sp,
+                                      color: Colors.redAccent)),
                             ),
                           );
                         }),
@@ -175,7 +177,7 @@ class _ProductBumpState extends State<ProductBump> {
                 ),
               ),
             ),
-            SizedBox(height: 30),
+            SizedBox(height: 30.h),
             Align(
               alignment: Alignment.centerLeft,
               child: StreamBuilder(
@@ -186,13 +188,13 @@ class _ProductBumpState extends State<ProductBump> {
                     _priceSuffixStreamController.sink.add(true);
                     return Text(
                       "가격을 ₩${_priceEditingController.text}으로 변경하고 끌어올립니다",
-                      style: TextStyle(fontSize: 20),
+                      style: TextStyle(fontSize: 20.sp),
                     );
                   } else {
                     _priceSuffixStreamController.sink.add(false);
                     return Text(
                       "가격을 변경하지 않고 끌어올립니다",
-                      style: TextStyle(fontSize: 20),
+                      style: TextStyle(fontSize: 20.sp),
                     );
                   }
                 },
@@ -201,7 +203,7 @@ class _ProductBumpState extends State<ProductBump> {
             Spacer(),
             Container(
               width: MediaQuery.of(context).size.width,
-              height: 50,
+              height: 50.h,
               child: ElevatedButton(
                 onPressed: () {
                   OnestepCustomDialog.show(
@@ -216,7 +218,7 @@ class _ProductBumpState extends State<ProductBump> {
                 style: ElevatedButton.styleFrom(
                   primary: OnestepColors().mainColor,
                   onPrimary: Colors.white,
-                  textStyle: TextStyle(fontSize: 17),
+                  textStyle: TextStyle(fontSize: 17.sp),
                   elevation: 0,
                 ),
               ),
