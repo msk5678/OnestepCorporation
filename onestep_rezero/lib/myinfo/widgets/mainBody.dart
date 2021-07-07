@@ -10,6 +10,7 @@ import 'package:onestep_rezero/myinfo/pages/myinfoProfilePage.dart';
 import 'package:onestep_rezero/myinfo/pages/myinfoTransaction.dart';
 import 'package:onestep_rezero/myinfo/widgets/myProfileImage.dart';
 import 'package:onestep_rezero/utils/onestepCustom/dialog/onestepCustomDialogNotCancel.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 // push, marketing 알림 dialog
 // void _testShowDialog(BuildContext context) {
@@ -100,7 +101,7 @@ class MyinfoMainBody extends ConsumerWidget {
                               child: Text(
                                 // 닉네임
                                 snapshot.data.data()['nickName'].toString(),
-                                style: TextStyle(fontSize: 20),
+                                style: TextStyle(fontSize: 20.sp),
                               ),
                             ),
                             // Container(
@@ -197,7 +198,7 @@ class MyinfoMainBody extends ConsumerWidget {
                       child: Text(
                         "인증",
                         style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 15),
+                            fontWeight: FontWeight.bold, fontSize: 15.sp),
                       ),
                     ),
                   ),
@@ -262,7 +263,7 @@ class MyinfoMainBody extends ConsumerWidget {
                           Container(
                             child: Text(
                               "학교 인증",
-                              style: TextStyle(fontSize: 15),
+                              style: TextStyle(fontSize: 15.sp),
                             ),
                           ),
                           IconButton(
@@ -301,7 +302,7 @@ class MyinfoMainBody extends ConsumerWidget {
                       child: Text(
                         "정보",
                         style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 15),
+                            fontWeight: FontWeight.bold, fontSize: 15.sp),
                       ),
                     ),
                   ),
@@ -322,7 +323,7 @@ class MyinfoMainBody extends ConsumerWidget {
                           Container(
                             child: Text(
                               "공지사항",
-                              style: TextStyle(fontSize: 15),
+                              style: TextStyle(fontSize: 15.sp),
                             ),
                           ),
                           IconButton(
@@ -345,7 +346,7 @@ class MyinfoMainBody extends ConsumerWidget {
                         Container(
                           child: Text(
                             "문의사항",
-                            style: TextStyle(fontSize: 15),
+                            style: TextStyle(fontSize: 15.sp),
                           ),
                         ),
                         IconButton(
@@ -364,7 +365,7 @@ class MyinfoMainBody extends ConsumerWidget {
                         Container(
                           child: Text(
                             "고객센터",
-                            style: TextStyle(fontSize: 15),
+                            style: TextStyle(fontSize: 15.sp),
                           ),
                         ),
                         IconButton(
@@ -383,7 +384,7 @@ class MyinfoMainBody extends ConsumerWidget {
                         Container(
                           child: Text(
                             "개인정보 처리방침",
-                            style: TextStyle(fontSize: 15),
+                            style: TextStyle(fontSize: 15.sp),
                           ),
                         ),
                         IconButton(
@@ -402,7 +403,7 @@ class MyinfoMainBody extends ConsumerWidget {
                         Container(
                           child: Text(
                             "서비스 이용약관",
-                            style: TextStyle(fontSize: 15),
+                            style: TextStyle(fontSize: 15.sp),
                           ),
                         ),
                         IconButton(
@@ -421,7 +422,7 @@ class MyinfoMainBody extends ConsumerWidget {
                         Container(
                           child: Text(
                             "버전정보",
-                            style: TextStyle(fontSize: 15),
+                            style: TextStyle(fontSize: 15.sp),
                           ),
                         ),
                         IconButton(

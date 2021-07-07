@@ -298,6 +298,25 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
     );
   }
 
+  Widget uploadTime() {
+    if (widget.product.bumpTime == widget.product.updateTime &&
+        widget.product.updateTime == widget.product.uploadTime) {
+      // 업로드만 했을 경우
+      return Text("${TimeUtil.timeAgo(date: widget.product.bumpTime)}");
+    } else if (widget.product.bumpTime.microsecondsSinceEpoch >
+        widget.product.updateTime.microsecondsSinceEpoch) {
+      //  끌올했을 경우
+      return Row(children: <Widget>[
+        Text("${TimeUtil.timeAgo(date: widget.product.bumpTime)} (끌올)"),
+      ]);
+    } else {
+      // 수정했을 경우
+      return Row(children: <Widget>[
+        Text("${TimeUtil.timeAgo(date: widget.product.updateTime)} (수정됨)"),
+      ]);
+    }
+  }
+
   Widget _contentDetail() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -359,7 +378,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
                   Padding(
                     padding: EdgeInsets.only(right: 2.0.w),
                   ),
-                  Text("${TimeUtil.timeAgo(date: widget.product.bumpTime)}"),
+                  uploadTime(),
                   Padding(
                     padding: EdgeInsets.only(right: 8.0.w),
                   ),

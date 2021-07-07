@@ -12,7 +12,14 @@ class CategoryDetailBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
+    bool isFetching = watch(categoryProvider).isFetching;
+    if (isFetching) return CircularProgressIndicator();
+
     final productList = watch(categoryProvider).products;
-    return ProductGridView(itemList: productList);
+    if (productList.length == 0) {
+      return Text("등록된 상품이 없습니다");
+    } else {
+      return ProductGridView(itemList: productList);
+    }
   }
 }

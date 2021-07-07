@@ -13,8 +13,17 @@ class FavoriteMainBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
+    bool isFetching = watch(favoriteMainProvider).isFetching;
+    if (isFetching) {
+      return Center(child: CircularProgressIndicator());
+    }
+
     final productlist = watch(favoriteMainProvider).products;
 
-    return ProductGridView(itemList: productlist);
+    if (productlist.length == 0) {
+      return Center(child: Text("찜한 상품이 없습니다"));
+    } else {
+      return ProductGridView(itemList: productlist);
+    }
   }
 }

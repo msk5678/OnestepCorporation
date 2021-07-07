@@ -89,6 +89,7 @@ class _FavoriteMainState extends State<FavoriteMain> {
         iconTheme: IconThemeData(
           color: Colors.black,
         ),
+        elevation: 0,
         backgroundColor: Colors.white,
         title: Text(
           '찜한 아이템',
@@ -120,15 +121,14 @@ class _FavoriteMainState extends State<FavoriteMain> {
       body: SingleChildScrollView(
         physics: AlwaysScrollableScrollPhysics(),
         controller: _scrollController,
-        child: Container(
-            color: Colors.white,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                // FavoriteMainHeader(),
-                FavoriteMainBody(),
-              ],
-            )),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            // FavoriteMainHeader(),
+            FavoriteMainBody(),
+          ],
+        ),
       ),
       floatingActionButton: floatingButton(),
     );

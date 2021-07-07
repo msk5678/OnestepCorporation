@@ -471,7 +471,7 @@ class _ProductMainState extends State<ProductMain> {
               children: <Widget>[
                 Container(
                   width: MediaQuery.of(context).size.width,
-                  height: 200.h,
+                  height: 180.h,
                   child: Image.asset(
                     "icons/banner.png",
                     fit: BoxFit.cover,

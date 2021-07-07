@@ -114,9 +114,9 @@ class _SearchMainState extends State<SearchMain> {
         children: [
           Expanded(
             child: Padding(
-              padding: EdgeInsets.only(right: 10),
+              padding: EdgeInsets.only(right: 10.w),
               child: Container(
-                height: 50.h,
+                height: 40.h,
                 child: TextField(
                   onTap: () {},
                   cursorColor: OnestepColors().mainColor,
@@ -140,7 +140,7 @@ class _SearchMainState extends State<SearchMain> {
                         borderSide: BorderSide(
                             color: OnestepColors().mainColor, width: 2.0.w)),
                     prefixIcon: Padding(
-                      padding: const EdgeInsets.only(bottom: 3),
+                      padding: EdgeInsets.only(bottom: 3.h),
                       child: Icon(
                         Icons.search,
                         color: OnestepColors().mainColor,

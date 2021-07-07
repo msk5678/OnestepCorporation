@@ -23,19 +23,20 @@ class _ProductDetailState extends State<ProductDetail> {
 
   void incProductViews() {
     // 조회수 증가
-
-    if (_product.views == null ||
-        _product.views[currentUserModel.uid] != true) {
-      FirebaseFirestore.instance
-          .collection("university")
-          .doc(currentUserModel.university)
-          .collection("product")
-          .doc(widget.docId)
-          .update(
-        {
-          "views." + currentUserModel.uid: true,
-        },
-      );
+    if (_product.uid != currentUserModel.uid) {
+      if (_product.views == null ||
+          _product.views[currentUserModel.uid] != true) {
+        FirebaseFirestore.instance
+            .collection("university")
+            .doc(currentUserModel.university)
+            .collection("product")
+            .doc(widget.docId)
+            .update(
+          {
+            "views." + currentUserModel.uid: true,
+          },
+        );
+      }
     }
   }
 

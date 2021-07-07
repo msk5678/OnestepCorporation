@@ -8,16 +8,16 @@ class CategoryProvider extends ChangeNotifier {
   final int documentLimit = 12;
   String category;
   String detailCategory;
-  bool _hasNext = true;
-  bool _isFetching = false;
+  bool hasNext = true;
+  bool isFetching = false;
   List<Product> product = [];
 
   List<Product> get products => product;
 
   Future fetchProducts({String category, String detailCategory}) async {
-    if (_isFetching) return;
-    _isFetching = true;
-    _hasNext = true;
+    if (isFetching) return;
+    isFetching = true;
+    hasNext = true;
 
     if (category != null) {
       this.category = category;
@@ -35,7 +35,7 @@ class CategoryProvider extends ChangeNotifier {
       );
       _productsSnapshot.addAll(snap.docs);
 
-      if (snap.docs.length < documentLimit) _hasNext = false;
+      if (snap.docs.length < documentLimit) hasNext = false;
     } catch (error) {}
 
     product = _productsSnapshot.map((snap) {
@@ -58,13 +58,13 @@ class CategoryProvider extends ChangeNotifier {
       );
     }).toList();
 
-    _isFetching = false;
+    isFetching = false;
     notifyListeners();
   }
 
   Future fetchNextProducts() async {
-    if (_isFetching || !_hasNext) return;
-    _isFetching = true;
+    if (isFetching || !hasNext) return;
+    isFetching = true;
 
     try {
       final snap = await CategoryFirebaseApi.getAllProducts(
@@ -76,7 +76,7 @@ class CategoryProvider extends ChangeNotifier {
       );
       _productsSnapshot.addAll(snap.docs);
 
-      if (snap.docs.length < documentLimit) _hasNext = false;
+      if (snap.docs.length < documentLimit) hasNext = false;
     } catch (error) {}
 
     product = _productsSnapshot.map((snap) {
@@ -99,7 +99,7 @@ class CategoryProvider extends ChangeNotifier {
       );
     }).toList();
 
-    _isFetching = false;
+    isFetching = false;
     notifyListeners();
   }
 }
