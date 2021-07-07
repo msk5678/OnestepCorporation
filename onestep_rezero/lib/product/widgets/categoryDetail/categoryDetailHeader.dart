@@ -68,29 +68,32 @@ class _CategoryDetailHeaderState extends State<CategoryDetailHeader> {
                 scrollDirection: Axis.horizontal,
                 itemCount: sortedMap.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return Card(
-                    color: snapshot.data == index ? Colors.black : Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15.0),
-                    ),
-                    child: GestureDetector(
-                      child: Padding(
-                        padding: EdgeInsets.only(
-                          left: 10.w,
-                          right: 10.w,
-                          top: 5.h,
-                          bottom: 5.h,
+                  return GestureDetector(
+                      child: Card(
+                        color: snapshot.data == index
+                            ? Colors.black
+                            : Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15.0),
                         ),
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: Text(
-                            sortedMap.keys.elementAt(index),
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 12.sp,
-                              color: snapshot.data == index
-                                  ? Colors.white
-                                  : Colors.black,
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                            left: 10.w,
+                            right: 10.w,
+                            top: 5.h,
+                            bottom: 5.h,
+                          ),
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              sortedMap.keys.elementAt(index),
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 12.sp,
+                                color: snapshot.data == index
+                                    ? Colors.white
+                                    : Colors.black,
+                              ),
                             ),
                           ),
                         ),
@@ -102,111 +105,13 @@ class _CategoryDetailHeaderState extends State<CategoryDetailHeader> {
                             detailCategory: index == 0
                                 ? null
                                 : sortedMap.keys.elementAt(index));
-                      },
-                    ),
-                  );
+                      });
                 },
               ),
             ),
             SizedBox(height: 5.h),
           ],
         );
-      },
-    );
-  }
-
-  Widget aa() {
-    return FutureBuilder(
-      future: FirebaseFirestore.instance
-          .collection("category")
-          .doc(currentUserModel.university)
-          .get(),
-      builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.waiting:
-            return Container();
-          default:
-            Map<String, dynamic> _detailCategory = snapshot.data['detail'];
-
-            int total = snapshot.data['total'];
-
-            return StreamBuilder(
-              stream: _streamController.stream,
-              builder: (context, snapshot) {
-                List<String> sortedKeys = _detailCategory.keys
-                    .toList(growable: true)
-                      ..sort((k1, k2) =>
-                          _detailCategory[k2].compareTo(_detailCategory[k1]));
-
-                sortedKeys.insert(0, "전체");
-                _detailCategory.addAll({"전체": total});
-
-                LinkedHashMap sortedMap = new LinkedHashMap.fromIterable(
-                    sortedKeys,
-                    key: (k) => k,
-                    value: (k) => _detailCategory[k]);
-
-                return Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    SizedBox(height: 5.h),
-                    SizedBox(
-                      height: 50.0.h,
-                      child: ListView.builder(
-                        padding: EdgeInsets.all(5.0),
-                        physics: ClampingScrollPhysics(),
-                        shrinkWrap: true,
-                        scrollDirection: Axis.horizontal,
-                        itemCount: sortedMap.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return GestureDetector(
-                            child: Card(
-                              color: snapshot.data == index
-                                  ? Colors.black
-                                  : Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15.0),
-                              ),
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                  left: 10.w,
-                                  right: 10.w,
-                                  top: 5.h,
-                                  bottom: 5.h,
-                                ),
-                                child: Align(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    sortedMap.keys.elementAt(index),
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 12.sp,
-                                      color: snapshot.data == index
-                                          ? Colors.white
-                                          : Colors.black,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            onTap: () {
-                              _streamController.sink.add(index);
-                              context.read(categoryProvider).fetchProducts(
-                                  category: widget.category,
-                                  detailCategory: index == 0
-                                      ? null
-                                      : sortedMap.keys.elementAt(index));
-                            },
-                          );
-                        },
-                      ),
-                    ),
-                    SizedBox(height: 5.h),
-                  ],
-                );
-              },
-            );
-        }
       },
     );
   }

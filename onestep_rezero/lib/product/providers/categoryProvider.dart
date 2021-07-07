@@ -39,23 +39,7 @@ class CategoryProvider extends ChangeNotifier {
     } catch (error) {}
 
     product = _productsSnapshot.map((snap) {
-      final _product = snap.data();
-
-      return Product(
-        firestoreid: snap.id,
-        uid: _product['uid'],
-        title: _product['title'],
-        category: _product['category'],
-        detailCategory: _product['detailCategory'],
-        favoriteUserList: _product['favoriteUserList'],
-        price: _product['price'],
-        trading: _product['trading'],
-        completed: _product['completed'],
-        hide: _product['hide'],
-        deleted: _product['deleted'],
-        imagesUrl: _product['imagesUrl'],
-        bumpTime: DateTime.fromMicrosecondsSinceEpoch(_product['bumpTime']),
-      );
+      return Product.fromJson(snap.data(), snap.id);
     }).toList();
 
     isFetching = false;
@@ -80,23 +64,7 @@ class CategoryProvider extends ChangeNotifier {
     } catch (error) {}
 
     product = _productsSnapshot.map((snap) {
-      final _product = snap.data();
-
-      return Product(
-        firestoreid: snap.id,
-        uid: _product['uid'],
-        title: _product['title'],
-        category: _product['category'],
-        detailCategory: _product['detailCategory'],
-        favoriteUserList: _product['favoriteUserList'],
-        price: _product['price'],
-        trading: _product['trading'],
-        completed: _product['completed'],
-        hide: _product['hide'],
-        deleted: _product['deleted'],
-        imagesUrl: _product['imagesUrl'],
-        bumpTime: DateTime.fromMicrosecondsSinceEpoch(_product['bumpTime']),
-      );
+      return Product.fromJson(snap.data(), snap.id);
     }).toList();
 
     isFetching = false;

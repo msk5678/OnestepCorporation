@@ -238,6 +238,7 @@ class _ProductAddState extends State<ProductAdd> {
             'hide': false,
             'deleted': false,
             'reported': false,
+            'reportCount': 0,
             'views': {},
             'uploadTime': time,
             'updateTime': time,

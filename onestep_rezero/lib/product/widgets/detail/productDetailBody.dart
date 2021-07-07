@@ -307,12 +307,12 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
         widget.product.updateTime.microsecondsSinceEpoch) {
       //  끌올했을 경우
       return Row(children: <Widget>[
-        Text("${TimeUtil.timeAgo(date: widget.product.bumpTime)} (끌올)"),
+        Text("끌올 ${TimeUtil.timeAgo(date: widget.product.bumpTime)}"),
       ]);
     } else {
       // 수정했을 경우
       return Row(children: <Widget>[
-        Text("${TimeUtil.timeAgo(date: widget.product.updateTime)} (수정됨)"),
+        Text("${TimeUtil.timeAgo(date: widget.product.uploadTime)} (수정됨)"),
       ]);
     }
   }

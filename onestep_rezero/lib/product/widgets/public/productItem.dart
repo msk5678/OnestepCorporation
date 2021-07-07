@@ -130,6 +130,20 @@ class _ProductItemState extends State<ProductItem> {
       return Container();
   }
 
+  Widget uploadTime() {
+    return Text(
+      widget.product.bumpTime.microsecondsSinceEpoch ==
+              widget.product.uploadTime.microsecondsSinceEpoch
+          ? TimeUtil.timeAgo(date: widget.product.bumpTime)
+          : "끌올 ${TimeUtil.timeAgo(date: widget.product.bumpTime)}",
+      style: TextStyle(
+        fontSize: 12.sp,
+        fontWeight: FontWeight.w400,
+        color: Colors.grey,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -223,14 +237,7 @@ class _ProductItemState extends State<ProductItem> {
                 //   ),
                 // ),
                 Spacer(),
-                Text(
-                  TimeUtil.timeAgo(date: widget.product.bumpTime),
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.grey,
-                  ),
-                ),
+                uploadTime(),
               ],
             ),
           ],
