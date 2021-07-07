@@ -59,6 +59,9 @@ dependencies:
   intl: ^0.17.0
   #####
 
+  #signIn Button
+  flutter_signin_button: ^2.0.0
+
   #formatter
   pattern_formatter: ^2.0.0         # 숫자, 날짜 format 라이브러리
   random_string: ^2.2.0-nullsafety  # fireStoreage image random name
@@ -114,9 +117,6 @@ dependencies:
   #flutter_mailer
   flutter_mailer: ^2.0.0
 
-  #shared_preferences
-  shared_preferences: ^2.0.5
-
   #kakao_flutter_sdk
   kakao_flutter_sdk: ^0.6.3
   
@@ -140,11 +140,12 @@ dependencies:
   #slidable panel
   flutter_slidable: ^0.6.0
 
-  #hive
-  hive: ^2.0.4
+  # local database
+  hive: ^2.0.4 #hive
   hive_flutter: ^1.0.0
-
   
+  shared_preferences: ^2.0.5 #shared_preferences
+  ##############
 
   #Chat Test
   #stream_chat_flutter: ^1.5.1

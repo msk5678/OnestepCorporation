@@ -90,8 +90,10 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
   void _imageStreamInit() {
     if (widget.product.trading) {
       _imageStreamController.sink.add(1);
-    } else if (widget.product.completed) {
+    } else if (widget.product.hold) {
       _imageStreamController.sink.add(2);
+    } else if (widget.product.completed) {
+      _imageStreamController.sink.add(3);
     } else {
       _imageStreamController.sink.add(0);
     }
@@ -150,7 +152,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
         FirebaseFirestore.instance
             .collection("product")
             .doc(currentUserModel.uid)
-            .update({'hide': true});
+            .update({'hold': true});
         break;
       case '삭제':
         // 확인 취소 다이얼로그 띄우기
@@ -232,12 +234,18 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
                     Icon(
                         widget.product.trading
                             ? Icons.watch_later_outlined
-                            : Icons.check_circle_outline_rounded,
+                            : widget.product.hold
+                                ? Icons.pending_outlined
+                                : Icons.check_circle_outline_rounded,
                         color: Colors.white,
                         size: 50.sp),
                     SizedBox(height: 10.h),
                     Text(
-                      snapshot.data == 1 ? "예약중" : "판매완료",
+                      snapshot.data == 1
+                          ? "예약중"
+                          : snapshot.data == 2
+                              ? "판매보류"
+                              : "판매완료",
                       style: TextStyle(color: Colors.white, fontSize: 28.sp),
                     ),
                   ],
@@ -355,11 +363,8 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
               SizedBox(height: 10.h),
               Row(
                 children: <Widget>[
-                  Icon(
-                    Icons.local_offer,
-                    color: Colors.grey,
-                    size: 17.sp,
-                  ),
+                  Image.asset('assets/icons/category/viewAll.png',
+                      width: 17.w, height: 17.h),
                   Padding(
                     padding: EdgeInsets.only(right: 2.0.w),
                   ),
@@ -518,7 +523,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
           .where('bumpTime',
               isNotEqualTo: widget.product.bumpTime.microsecondsSinceEpoch)
           .where('deleted', isEqualTo: false)
-          .where('hide', isEqualTo: false)
+          .where('hold', isEqualTo: false)
           .orderBy('bumpTime', descending: true)
           .limit(4)
           .get(),
@@ -628,22 +633,29 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
 
   void stateChange(String type) {
     bool trading = 'trading' == type;
+    bool hold = 'hold' == type;
     bool completed = 'completed' == type;
+
     int value = 0;
     if (trading) value = 1;
-    if (completed) value = 2;
+    if (hold) value = 2;
+    if (completed) value = 23;
 
     FirebaseFirestore.instance
         .collection("university")
         .doc(currentUserModel.university)
         .collection("product")
         .doc(widget.product.firestoreid)
-        .update({"trading": trading, "completed": completed}).whenComplete(() {
+        .update({
+      "trading": trading,
+      "hold": hold,
+      "completed": completed
+    }).whenComplete(() {
       _imageStreamController.sink.add(value);
 
       context
           .read(productMainService)
-          .updateState(widget.product.firestoreid, trading, completed);
+          .updateState(widget.product.firestoreid, trading, hold, completed);
 
       Navigator.pop(context);
     }).onError((error, stackTrace) => null);
@@ -675,6 +687,15 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
                 },
               ),
             if (modalState != 2)
+              ListTile(
+                title: Center(
+                  child: Text('판매보류'),
+                ),
+                onTap: () {
+                  stateChange('hold');
+                },
+              ),
+            if (modalState != 3)
               ListTile(
                 title: Center(
                   child: Text('판매완료'),

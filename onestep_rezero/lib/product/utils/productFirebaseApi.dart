@@ -14,7 +14,7 @@ class ProductFirebaseApi {
         .doc(currentUserModel.university)
         .collection('product')
         .where("deleted", isEqualTo: false)
-        .where("hide", isEqualTo: false)
+        .where("hold", isEqualTo: false)
         .orderBy("bumpTime", descending: true)
         .limit(limit);
 

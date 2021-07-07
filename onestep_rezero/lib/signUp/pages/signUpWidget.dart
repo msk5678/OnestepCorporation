@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:onestep_rezero/signIn/google_sign_in.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -27,12 +28,14 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                     color: Colors.black),
               ),
               Padding(padding: EdgeInsets.only(bottom: 100.0.h)),
-              GestureDetector(
-                onTap: () => {
-                  context.read(googleSignInProvider).googleLogin(),
+              SignInButton(
+                Buttons.GoogleDark,
+                text: "Google 계정으로 로그인하기",
+                padding: EdgeInsets.all(5.0),
+                onPressed: () {
+                  context.read(googleSignInProvider).googleLogin();
                 },
-                child: Container(child: Text("구글 로그인")),
-              )
+              ),
             ],
           ),
         ),

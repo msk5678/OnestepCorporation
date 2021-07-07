@@ -43,7 +43,6 @@ class _CategoryDetailHeaderState extends State<CategoryDetailHeader> {
     int total = widget.total;
 
     if (_detailCategory.isEmpty) return Container();
-    print(_detailCategory);
     return StreamBuilder(
       stream: _streamController.stream,
       builder: (context, snapshot) {

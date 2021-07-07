@@ -235,7 +235,7 @@ class _ProductAddState extends State<ProductAdd> {
             'chatUserList': [],
             'trading': false,
             'completed': false,
-            'hide': false,
+            'hold': false,
             'deleted': false,
             'reported': false,
             'reportCount': 0,

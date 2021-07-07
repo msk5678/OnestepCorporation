@@ -76,8 +76,7 @@ class _ProductDetailState extends State<ProductDetail> {
           case ConnectionState.waiting:
             return Container();
           default:
-            if (snapshot.data.data()['deleted'] ||
-                snapshot.data.data()['hide']) {
+            if (snapshot.data.data()['deleted']) {
               return exceptionWidget("삭제된 상품이에요.");
             } else {
               _product =

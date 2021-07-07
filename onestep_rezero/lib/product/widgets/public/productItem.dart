@@ -112,16 +112,23 @@ class _ProductItemState extends State<ProductItem> {
   }
 
   Widget productState() {
-    if (widget.product.trading || widget.product.completed) {
+    if (widget.product.trading ||
+        widget.product.completed ||
+        widget.product.hold) {
       return Positioned(
-        left: 0,
-        right: 0,
-        bottom: 0,
-        height: 30,
+        left: 0.w,
+        right: 0.w,
+        bottom: 0.h,
+        height: 30.h,
         child: Container(
           alignment: Alignment.center,
           color: Colors.black.withOpacity(0.3),
-          child: Text(widget.product.trading ? "예약중" : "판매완료",
+          child: Text(
+              widget.product.trading
+                  ? "예약중"
+                  : widget.product.hold
+                      ? "판매보류"
+                      : "판매완료",
               style: TextStyle(color: Colors.white),
               textAlign: TextAlign.center),
         ),

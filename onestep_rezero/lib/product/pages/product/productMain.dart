@@ -476,13 +476,11 @@ class _ProductMainState extends State<ProductMain> {
                     fit: BoxFit.cover,
                   ),
                 ),
-                SizedBox(height: 10.h),
                 ProductMainHeader(),
-                SizedBox(height: 10.h),
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Padding(
-                      padding: EdgeInsets.only(top: 10, left: 15),
+                      padding: EdgeInsets.only(left: 15.w),
                       child: Text("방금 올라온 상품",
                           style: TextStyle(
                               fontSize: 15.sp, fontWeight: FontWeight.w600))),

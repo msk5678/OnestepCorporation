@@ -59,7 +59,7 @@ class ProductMainProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future updateState(String id, bool trading, bool completed) async {
+  Future updateState(String id, bool trading, bool hold, bool completed) async {
     if (_isFetching) return;
     _isFetching = true;
 
@@ -68,6 +68,7 @@ class ProductMainProvider extends ChangeNotifier {
 
     Product _product = Product.fromJson(_documentSnapshot.data(), id);
     _product.setTrading = trading;
+    _product.setHold = hold;
     _product.setCompleted = completed;
 
     product[product.indexWhere((element) => element.firestoreid == id)] =

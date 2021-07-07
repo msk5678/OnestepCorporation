@@ -47,64 +47,62 @@ class _ProductMainHeaderState extends State<ProductMainHeader> {
 
             return Container(
               height: 80.h,
-              child: Padding(
-                padding: EdgeInsets.only(top: 5, bottom: 5),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    ...sortedMap
-                        .map(
-                          (key, value) => MapEntry(
-                            key,
-                            InkWell(
-                              onTap: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) => CategoryDetail(
-                                      total: value['total'],
-                                      category: key,
-                                      detailCategory: value['detail'],
-                                    ),
+              margin: EdgeInsets.only(top: 15.h, bottom: 5.h),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ...sortedMap
+                      .map(
+                        (key, value) => MapEntry(
+                          key,
+                          InkWell(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => CategoryDetail(
+                                    total: value['total'],
+                                    category: key,
+                                    detailCategory: value['detail'],
                                   ),
-                                );
-                              },
-                              child: Column(
-                                children: <Widget>[
-                                  Padding(
-                                    padding: EdgeInsets.only(bottom: 5.0),
-                                    child: Image.asset(value['image'],
-                                        width: 45.w, height: 45.h),
-                                  ),
-                                  Text(key, style: TextStyle(fontSize: 12.sp)),
-                                ],
-                              ),
+                                ),
+                              );
+                            },
+                            child: Column(
+                              children: <Widget>[
+                                Padding(
+                                  padding: EdgeInsets.only(bottom: 5.0),
+                                  child: Image.asset(value['image'],
+                                      width: 35.w, height: 35.h),
+                                ),
+                                Text(key, style: TextStyle(fontSize: 12.sp)),
+                              ],
                             ),
                           ),
-                        )
-                        .values
-                        .toList(),
-                    InkWell(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => CategorySidebar()));
-                      },
-                      child: Column(
-                        children: <Widget>[
-                          Padding(
-                            padding: EdgeInsets.only(bottom: 5.0),
-                            child: Image.asset(
-                                'assets/icons/category/viewAll.png',
-                                width: 45.w,
-                                height: 45.h),
-                          ),
-                          Text("전체보기", style: TextStyle(fontSize: 12.sp)),
-                        ],
-                      ),
+                        ),
+                      )
+                      .values
+                      .toList(),
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => CategorySidebar()));
+                    },
+                    child: Column(
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 5.0),
+                          child: Image.asset(
+                              'assets/icons/category/viewAll.png',
+                              width: 35.w,
+                              height: 35.h),
+                        ),
+                        Text("전체보기", style: TextStyle(fontSize: 12.sp)),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             );
         }

@@ -348,7 +348,7 @@ class _ProductEditState extends State<ProductEdit> {
           );
         },
         child: Container(
-          height: 60.h,
+          height: 50.h,
           color: OnestepColors().mainColor,
           child: Center(
             child: Text(

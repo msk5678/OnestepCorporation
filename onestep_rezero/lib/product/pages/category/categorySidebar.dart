@@ -67,7 +67,7 @@ class _CategorySidebarState extends State<CategorySidebar> {
                             width: 30.w,
                             height: 30.h),
                         title: Transform.translate(
-                          offset: Offset(-16, 0),
+                          offset: Offset(-10.w, 0),
                           child: Text(
                             sortedMap.keys.elementAt(index),
                             style: TextStyle(fontSize: 15.sp),

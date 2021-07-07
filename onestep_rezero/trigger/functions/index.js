@@ -68,13 +68,13 @@ exports.updateProduct = functions.firestore.document('university/{universityId}/
     var university = splitPath[1];
 
     if (beforeUpdate[deleted] != afterUpdate[deleted] ||
-        beforeUpdate[hide] != afterUpdate[hide]) { // 상품 숨기기, 삭제 시
+        beforeUpdate[hold] != afterUpdate[hold]) { // 상품 숨기기, 삭제 시
         var obj = {};
         var detailobj = {};
         afterCategory = afterUpdate['category'];
         afterDetailCategory = afterUpdate['detailCategory'];
 
-        if (afterUpdate[hide] == false) { // 상품 숨김해제 시 카테고리 카운트 증가
+        if (afterUpdate[hold] == false) { // 상품 숨김해제 시 카테고리 카운트 증가
             if (afterDetailCategory != null) {
                 detailobj[afterDetailCategory] = admin.firestore.FieldValue.increment(1);
 

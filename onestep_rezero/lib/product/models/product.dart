@@ -14,7 +14,7 @@ class Product {
   // State
   bool trading;
   bool completed;
-  final bool hide;
+  bool hold;
   final bool deleted;
   final bool reported;
 
@@ -39,7 +39,7 @@ class Product {
     this.explain,
     this.trading,
     this.completed,
-    this.hide,
+    this.hold,
     this.deleted,
     this.reported,
     this.favoriteUserList,
@@ -64,7 +64,7 @@ class Product {
       chatUserList: json['chatUserList'],
       trading: json['trading'],
       completed: json['completed'],
-      hide: json['hide'],
+      hold: json['hold'],
       deleted: json['deleted'],
       reported: json['reported'],
       views: json['views'],
@@ -76,4 +76,5 @@ class Product {
 
   set setTrading(bool trading) => this.trading = trading;
   set setCompleted(bool completed) => this.completed = completed;
+  set setHold(bool hold) => this.hold = hold;
 }
