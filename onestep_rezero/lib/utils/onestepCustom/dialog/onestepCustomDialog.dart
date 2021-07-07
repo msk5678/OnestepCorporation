@@ -18,7 +18,7 @@ class OnestepCustomDialog {
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10.0)), //this right here
           child: Container(
-            height: 200.h,
+            height: 180.h,
             child: Padding(
               padding: const EdgeInsets.all(12.0),
               child: Column(
@@ -43,7 +43,7 @@ class OnestepCustomDialog {
                     children: [
                       SizedBox(
                         width: MediaQuery.of(context).size.width / 3,
-                        height: 50.h,
+                        height: 45.h,
                         child: ElevatedButton(
                           onPressed: () {
                             Navigator.pop(context);
@@ -60,7 +60,7 @@ class OnestepCustomDialog {
                       SizedBox(width: 10.w),
                       SizedBox(
                         width: MediaQuery.of(context).size.width / 3,
-                        height: 50.h,
+                        height: 45.h,
                         child: ElevatedButton(
                           onPressed: confirmButtonOnPress,
                           child: Text(

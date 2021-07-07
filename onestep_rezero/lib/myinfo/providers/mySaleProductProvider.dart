@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:onestep_rezero/favorite/utils/favoriteFirebaseApi.dart';
 import 'package:onestep_rezero/myinfo/utils/mySaleProductFirebaseApi.dart';
 import 'package:onestep_rezero/product/models/product.dart';
 

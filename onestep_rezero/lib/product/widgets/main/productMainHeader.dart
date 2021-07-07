@@ -2,7 +2,6 @@ import 'dart:collection';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:onestep_rezero/product/pages/category/categoryDetail.dart';
 import 'package:onestep_rezero/product/pages/category/categorySidebar.dart';
@@ -95,8 +94,10 @@ class _ProductMainHeaderState extends State<ProductMainHeader> {
                         children: <Widget>[
                           Padding(
                             padding: EdgeInsets.only(bottom: 5.0),
-                            child: Image.asset('icons/category/viewAll.png',
-                                width: 45.w, height: 45.h),
+                            child: Image.asset(
+                                'assets/icons/category/viewAll.png',
+                                width: 45.w,
+                                height: 45.h),
                           ),
                           Text("전체보기", style: TextStyle(fontSize: 12.sp)),
                         ],

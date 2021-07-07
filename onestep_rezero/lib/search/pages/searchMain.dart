@@ -63,7 +63,7 @@ class _SearchMainState extends State<SearchMain> {
         });
   }
 
-  Widget aa() {
+  Widget body() {
     return Column(
       children: [
         Padding(
@@ -173,7 +173,7 @@ class _SearchMainState extends State<SearchMain> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: appBar(),
-      body: aa(),
+      body: body(),
     );
   }
 }

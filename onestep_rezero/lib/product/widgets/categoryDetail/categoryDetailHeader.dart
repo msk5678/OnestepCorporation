@@ -159,14 +159,14 @@ class _CategoryDetailHeaderState extends State<CategoryDetailHeader> {
                         scrollDirection: Axis.horizontal,
                         itemCount: sortedMap.length,
                         itemBuilder: (BuildContext context, int index) {
-                          return Card(
-                            color: snapshot.data == index
-                                ? Colors.black
-                                : Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15.0),
-                            ),
-                            child: GestureDetector(
+                          return GestureDetector(
+                            child: Card(
+                              color: snapshot.data == index
+                                  ? Colors.black
+                                  : Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15.0),
+                              ),
                               child: Padding(
                                 padding: EdgeInsets.only(
                                   left: 10.w,
@@ -188,15 +188,15 @@ class _CategoryDetailHeaderState extends State<CategoryDetailHeader> {
                                   ),
                                 ),
                               ),
-                              onTap: () {
-                                _streamController.sink.add(index);
-                                context.read(categoryProvider).fetchProducts(
-                                    category: widget.category,
-                                    detailCategory: index == 0
-                                        ? null
-                                        : sortedMap.keys.elementAt(index));
-                              },
                             ),
+                            onTap: () {
+                              _streamController.sink.add(index);
+                              context.read(categoryProvider).fetchProducts(
+                                  category: widget.category,
+                                  detailCategory: index == 0
+                                      ? null
+                                      : sortedMap.keys.elementAt(index));
+                            },
                           );
                         },
                       ),
