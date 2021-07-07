@@ -34,6 +34,11 @@ void _testShowDialog(BuildContext context) {
       // FirebaseFirestore.instance
       //     .collection('user')
       //     .doc(googleSignIn.currentUser.id)
+      //     .set({"pushCheck": 2});
+
+      // FirebaseFirestore.instance
+      //     .collection('user')
+      //     .doc(googleSignIn.currentUser.id)
       //     .collection('notification')
       //     .doc('setting')
       //     .set({"marketing": 1, "push": 1});
@@ -43,9 +48,7 @@ void _testShowDialog(BuildContext context) {
       // FirebaseFirestore.instance
       //     .collection('user')
       //     .doc(googleSignIn.currentUser.id)
-      //     .collection('notification')
-      //     .doc('setting')
-      //     .set({"marketing": 0, "push": 1});
+      //     .set({"pushCheck": 1});
       Navigator.of(context).pop();
     },
   );

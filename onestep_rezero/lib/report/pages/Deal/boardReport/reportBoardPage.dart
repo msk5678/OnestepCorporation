@@ -24,8 +24,8 @@ class ReportBoardPage extends StatelessWidget {
                 String reportedUid;
                 // boardUid 게시판만 적용돼서 값을 넘겨주면 boardUid 넘긴 값으로 세팅
                 // 값 안넘겨주면 default 값 세팅되게 해야함
-                reportDealController(
-                    context, 2, 1, postUid, reportedUid, boardUid);
+                reportDealController(context, 2, 1, postUid, reportedUid,
+                    boardUid: boardUid);
               },
               child: Padding(
                 padding: EdgeInsets.fromLTRB(

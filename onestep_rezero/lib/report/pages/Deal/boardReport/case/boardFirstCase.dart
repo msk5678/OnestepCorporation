@@ -15,10 +15,14 @@ void report() {
   // 중복신고 방지
   // FirebaseDatabase.instance
   //     .reference()
-  //     .child('reportUser')
+  //     .child('reportOverlapCheck')
   //     .child(googleSignIn.currentUser.id)
-  //     .child('deal')
+  //     .child('board')
   //     .set({'postUid': true});
+
+  // reportedUid = 신고당한사람
+  // postUid = 게시글 uid
+  // boardUid = board uid
 
   FirebaseDatabase.instance
       .reference()
@@ -35,7 +39,7 @@ void report() {
                     .child('reportedUid')
                     // 처음신고 시간
                     .child(DateTime.now().millisecondsSinceEpoch.toString())
-                    .child('deal')
+                    .child('board')
                     .child('postUid')
                     .child('value')
                     .child(DateTime.now().millisecondsSinceEpoch.toString())
@@ -50,20 +54,17 @@ void report() {
                   'time': DateTime.now().millisecondsSinceEpoch.toString(),
                   'university': currentUserModel.university,
                   'boardUid': '1622101214761',
-                  'postUid':
-                      '1625155193269', // post 신고면 postUid 가 올거고 댓글 신고면 댓글 Uid 올거임
+                  'postUid': '1625469193802',
                 })
               }
             else
               {
                 // 같은 post 인지 확인
                 values = value.value,
-                // print('values.keys = ${values.keys.toList()}'),
                 reportKeys = values.keys.toList(),
                 reportKeys.sort(),
                 values.forEach((key, value) {
                   // 최초신고 timestamp 마지막 꺼 확인해서 value['reportCount'] 이용 25 면 꽉 찬거고 25 아니면 ++
-                  // print("key = ${key}");
                   if (key == reportKeys.last) {
                     if (value['reportCount'] == 25) {
                       FirebaseDatabase.instance
@@ -73,7 +74,7 @@ void report() {
                           // 처음신고 시간 2
                           .child(
                               DateTime.now().millisecondsSinceEpoch.toString())
-                          .child('deal')
+                          .child('board')
                           .child('postUid')
                           .child('value')
                           .child(
@@ -90,7 +91,7 @@ void report() {
                             DateTime.now().millisecondsSinceEpoch.toString(),
                         'university': currentUserModel.university,
                         'boardUid': '1622101214761',
-                        'postUid': '1625155193269',
+                        'postUid': '1625469193802',
                       });
                     } else {
                       FirebaseDatabase.instance
@@ -98,7 +99,7 @@ void report() {
                           .child('report')
                           .child('reportedUid')
                           .child(key.toString())
-                          .child('deal')
+                          .child('board')
                           .child('postUid')
                           .child('value')
                           .child(
@@ -115,7 +116,7 @@ void report() {
                             DateTime.now().millisecondsSinceEpoch.toString(),
                         'university': currentUserModel.university,
                         'boardUid': '1622101214761',
-                        'postUid': '1625155193269',
+                        'postUid': '1625469193802',
                       });
                     }
                   }
@@ -141,7 +142,7 @@ class BoardFirstCase extends StatelessWidget {
       child: Scaffold(
           appBar: AppBar(
             title: Text(
-              'deal case one',
+              'board case one',
               style: TextStyle(color: Colors.black),
             ),
             backgroundColor: Colors.white,
@@ -207,9 +208,9 @@ class BoardFirstCase extends StatelessWidget {
 
                         await FirebaseDatabase.instance
                             .reference()
-                            .child('reportUser')
+                            .child('reportOverlapCheck')
                             .child(currentUserModel.uid)
-                            .child('deal')
+                            .child('board')
                             .once()
                             .then((value) => {
                                   if (value.value == null)

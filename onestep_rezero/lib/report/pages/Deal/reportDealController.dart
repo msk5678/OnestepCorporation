@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:onestep_rezero/report/pages/Deal/productReport/case/productFirstCase.dart';
 
 import 'boardReport/case/boardFirstCase.dart';
+import 'cocommentReport/case/cocommentFirstCase.dart';
+import 'commentReport/case/commentFirstCase.dart';
 
 void reportDealController(BuildContext context, int reportCaseFlag,
     int caseValue, String postUid, String reportedUid,
@@ -10,8 +13,8 @@ void reportDealController(BuildContext context, int reportCaseFlag,
   if (reportCaseFlag == 1) {
     switch (caseValue) {
       case 1:
-        // Navigator.of(context).push(MaterialPageRoute(
-        //     builder: (context) => DealFirstCase(boardUid, postUid, reportedUid)));
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => ProductFirstCase(postUid, reportedUid)));
         break;
       case 2:
         break;
@@ -45,8 +48,9 @@ void reportDealController(BuildContext context, int reportCaseFlag,
   else if (reportCaseFlag == 3) {
     switch (caseValue) {
       case 1:
-        // Navigator.of(context).push(MaterialPageRoute(
-        //     builder: (context) => DealFirstCase(boardUid, postUid, reportedUid)));
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) =>
+                CommentFirstCase(boardUid, postUid, reportedUid)));
         break;
       case 2:
         break;
@@ -62,8 +66,9 @@ void reportDealController(BuildContext context, int reportCaseFlag,
   else {
     switch (caseValue) {
       case 1:
-        // Navigator.of(context).push(MaterialPageRoute(
-        //     builder: (context) => DealFirstCase(boardUid, postUid, reportedUid)));
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) =>
+                CoCommentFirstCase(boardUid, postUid, reportedUid)));
         break;
       case 2:
         break;
