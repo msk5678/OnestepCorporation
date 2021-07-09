@@ -8,6 +8,7 @@ import 'package:onestep_rezero/chat/navigator/chatNavigationManager.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+
 import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 
 final userBoardDataProvider =

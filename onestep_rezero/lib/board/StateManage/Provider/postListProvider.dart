@@ -18,19 +18,15 @@ class PostListProvider with ChangeNotifier {
   String get errorMessage => _errorMessage;
   bool get hasNext => _hasNext;
   bool get isFetch => _isFetching;
+  bool get nextFetching => _isNextListFetching;
 
   List<PostData> get posts => _productsSnapshot.map((snap) {
         return PostData.fromFireStore(snap);
       }).toList();
 
-  fetchNextProducts(String boardId, {bool firstFetching}) async {
-    firstFetching = firstFetching ?? false;
-    bool checkFetching = firstFetching ? _isFetching : _isNextListFetching;
-    if (checkFetching) return;
-    if (!firstFetching)
-      _isFetching = true;
-    else
-      _isNextListFetching = true;
+  fetchNextProducts(String boardId) async {
+    if (_isFetching) return;
+    _isNextListFetching = true;
 
     try {
       final snap = await PostFirebaseApi.getAllPost(
@@ -47,12 +43,10 @@ class PostListProvider with ChangeNotifier {
       print("error is " + error.toString());
       _errorMessage = error.toString();
       notifyListeners();
+      _isNextListFetching = false;
     }
 
-    if (!firstFetching)
-      _isFetching = false;
-    else
-      _isNextListFetching = false;
+    _isNextListFetching = false;
   }
 
   Future fetchPosts(String boardId) async {
