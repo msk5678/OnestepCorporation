@@ -2,12 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:onestep_rezero/board/AboutPost/AboutPostContent/postContent.dart';
 import 'package:onestep_rezero/board/AboutPost/AboutPostListView/listRiverpod.dart';
 import 'package:onestep_rezero/board/boardMain.dart';
 import 'package:onestep_rezero/board/declareData/postData.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/signIn/loggedInWidget.dart';
-import 'package:onestep_rezero/utils/timeUtil.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class PostList extends StatelessWidget {
   final List<PostData> postList;
@@ -37,9 +38,9 @@ class PostList extends StatelessWidget {
                   bool myself = currentUid == postList[index].uid;
                   return AnimationConfiguration.staggeredList(
                     position: index,
-                    duration: const Duration(milliseconds: 375),
+                    duration: const Duration(milliseconds: 0),
                     child: SlideAnimation(
-                      verticalOffset: 50.0,
+                      verticalOffset: 50.0.h,
                       child: FadeInAnimation(
                         child: _buildListCard(context, index, postList[index],
                             deviceHeight, deviceWidth, myself),
@@ -154,7 +155,7 @@ class PostList extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
                   // color: !myself ? Colors.black : OnestepColors().mainColor,
-                  fontSize: 17,
+                  fontSize: 17.sp,
                   fontWeight: FontWeight.bold),
             )),
       ],
@@ -206,7 +207,7 @@ class PostList extends StatelessWidget {
               child: Text(postData.textContent ?? "",
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: Colors.black, fontSize: 13)),
+                  style: TextStyle(color: Colors.black, fontSize: 13.sp)),
             )),
       ],
     );
@@ -228,20 +229,20 @@ class PostList extends StatelessWidget {
                       // clickedFavorite ?
                       Icons.favorite,
                       //  Icons.favorite_border,
-                      size: 14),
+                      size: 12.sp),
                   data: new IconThemeData(color: OnestepColors().mainColor)),
               // : IconTheme(
               //     child: Icon(Icons.favorite, size: 14),
               //     data: new IconThemeData(color: Colors.redAccent)),
               // Icon(Icons.favorite),
               Container(
-                padding: EdgeInsets.only(left: 3, right: 5),
+                padding: EdgeInsets.only(left: 3.w, right: 5.w),
                 child: Text(
                   postData.favoriteCount.toString(),
                   style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold),
+                    color: Colors.black,
+                    fontSize: 10.sp,
+                  ),
                 ),
               ),
 
@@ -252,16 +253,16 @@ class PostList extends StatelessWidget {
                 Icons.mode_comment,
                 // : Icons.mode_comment_outlined,
                 color: OnestepColors().mainColor,
-                size: 14,
+                size: 12.sp,
               )),
               Container(
                 padding: EdgeInsets.only(right: 5),
                 child: Text(
                   postData.commentCount.toString(),
                   style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold),
+                    color: Colors.black,
+                    fontSize: 10.sp,
+                  ),
                 ),
               ),
 
@@ -274,7 +275,7 @@ class PostList extends StatelessWidget {
               havePicture
                   ? Icon(
                       Icons.photo_rounded,
-                      size: 14,
+                      size: 12.sp,
                       color: OnestepColors().mainColor,
                     )
                   : Container(),
@@ -284,7 +285,10 @@ class PostList extends StatelessWidget {
               Container(
                 padding: EdgeInsets.only(left: 3),
                 margin: EdgeInsets.only(right: 3),
-                child: Text('${TimeUtil.timeAgo(date: postData.uploadTime)}'),
+                child: Text(
+                  '${PostTime(dateTime: postData.uploadTime).dateToString()}',
+                  style: TextStyle(fontSize: 10.sp),
+                ),
               ),
             ],
             // Icon(Icons.favorite), child: Text('Date')

@@ -152,14 +152,14 @@ class CommentData {
               "postId": this.postId.toString(),
               "textContent":
                   textContent.toString() ?? this.textContent.toString() ?? '',
-              "deleted": this.deleted.toString() ?? 'false',
-              "deletedTime": this.deletedTime.toString() ?? '',
-              "reported": this.reported.toString() ?? 'false',
-              "reportCount": '0',
+              "deleted":
+                  this.deleted == null ? 'false' : this.deleted.toString(),
+              "deletedTime":
+                  this.deletedTime == null ? '' : this.deletedTime.toString(),
               "uploadTime": currentTimeStamp,
-              "updateTime": this.updateTime.toString() ?? '',
+              "updateTime":
+                  this.updateTime == null ? '' : this.updateTime.toString(),
               "userName": "",
-              "reportedTime": "",
               "haveChildComment": "false",
               "parentCommentId": this.parentCommentId
             })
@@ -391,13 +391,10 @@ class CommentData {
                   "textContent":
                       comment.toString() ?? "childComment ERROR" ?? '',
                   "deleted": 'false',
-                  "deletedTime": this.deletedTime.toString() ?? '',
-                  "reported": 'false',
-                  "reportCount": '0',
+                  "deletedTime": '',
                   "uploadTime": currentTimeStamp,
                   "updateTime": '',
                   "userName": "",
-                  "reportedTime": "",
                   "haveChildComment": "false",
                   "parentCommentId": "${this.commentId}"
                 })
@@ -434,14 +431,11 @@ class CommentData {
               "textContent":
                   textContent.toString() ?? this.textContent.toString() ?? '',
               "deleted": 'false',
-              "deletedTime": this.deletedTime.toString() ?? '',
-              "reported": 'false',
-              "reportCount": '0',
+              "deletedTime": '',
               "uploadTime": currentTimeStamp,
               "updateTime": '',
               "userName": "",
               "haveChildComment": "false",
-              "reportedTime": "",
               "parentCommentId": parentCommentId
             })
             .then((value) => true)

@@ -10,15 +10,35 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
-class AlterPost extends StatefulWidget {
-  final postData;
-  AlterPost({Key key, this.postData}) : super(key: key);
+class AlterPost extends ConsumerWidget {
+  final PostData currentPost;
+  AlterPost({this.currentPost});
+  @override
+  Widget build(BuildContext context, watch) {
+    double deviceHeight = MediaQuery.of(context).size.height;
+    final latestPostProvider = watch(postProvider);
+    bool isfetching = latestPostProvider.isFetching;
+    PostData latestPostData = latestPostProvider.latestPostData;
+    if (isfetching) {
+      return Container(
+        height: deviceHeight / 2,
+        child: CupertinoActivityIndicator(),
+      );
+    } else {
+      return AlterPostBuild(postData: latestPostData);
+    }
+  }
+}
+
+class AlterPostBuild extends StatefulWidget {
+  final PostData postData;
+  AlterPostBuild({Key key, this.postData}) : super(key: key);
 
   @override
   _AlterPostState createState() => _AlterPostState();
 }
 
-class _AlterPostState extends CreatePageParent<AlterPost> {
+class _AlterPostState extends CreatePageParent<AlterPostBuild> {
   PostData alterPostData;
   final bool isAlterPage = true;
 
@@ -51,7 +71,6 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
     }
 
     imageCommentMap.remove("ALTERIMAGE");
-
     super.dispose();
   }
 
@@ -229,13 +248,15 @@ class _AlterPostState extends CreatePageParent<AlterPost> {
     }
 
     for (int i = imgCommMap["IMAGE"].length;
-        i < imgCommMap["ALTERIMAGE"].length;
+        i < imgCommMap["ALTERIMAGE"].length + imgCommMap["IMAGE"].length;
         i++) {
-      if (imgCommMap["ALTERIMAGE"][i] != null)
+      int commentIndex = imgCommMap["IMAGE"].length + i;
+      int imageIndex = i - imgCommMap["IMAGE"].length;
+      if (imgCommMap["ALTERIMAGE"][imageIndex] != null)
         _imageWidget.add(Container(
             padding: EdgeInsets.all(5.0),
-            child: imageContainer(
-                i, imgCommMap["ALTERIMAGE"][i], imgCommMap["COMMENT"][i],
+            child: imageContainer(i, imgCommMap["ALTERIMAGE"][imageIndex],
+                imgCommMap["COMMENT"][commentIndex],
                 isAlterImage: true)));
     }
 

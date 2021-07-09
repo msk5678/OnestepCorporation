@@ -4,9 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onestep_rezero/board/StateManage/Provider/boardCategoryList.dart';
 import 'package:onestep_rezero/board/StateManage/Provider/userProvider.dart';
 import 'package:onestep_rezero/board/declareData/boardData.dart';
+import 'package:onestep_rezero/chat/navigator/chatNavigationManager.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
-
-import "dart:math" as math;
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 
@@ -257,35 +257,35 @@ class _BoardMainState extends State<BoardMain> {
       BoardInitData(
           icons: Icon(
             Icons.article_outlined,
-            size: 30,
+            size: 30.sp,
             color: OnestepColors().mainColor,
           ),
           explain: "나의 글"),
       BoardInitData(
           icons: Icon(
             Icons.insert_comment_outlined,
-            size: 30,
+            size: 30.sp,
             color: OnestepColors().mainColor,
           ),
           explain: "나의 댓글"),
       BoardInitData(
           icons: Icon(
             Icons.favorite_border,
-            size: 30,
+            size: 30.sp,
             color: OnestepColors().mainColor,
           ),
           explain: "나의 좋아요"),
       BoardInitData(
           icons: Icon(
             Icons.favorite_border,
-            size: 30,
+            size: 30.sp,
             color: Colors.redAccent[100],
           ),
           explain: "인기글"),
       BoardInitData(
           icons: Icon(
             Icons.forum,
-            size: 30,
+            size: 30.sp,
             color: Colors.redAccent[100],
           ),
           // icons: Container(
@@ -320,7 +320,7 @@ class _BoardMainState extends State<BoardMain> {
       BoardInitData(
           icons: Icon(
             Icons.thumbs_up_down_outlined,
-            size: 30,
+            size: 30.sp,
             color: Colors.blueAccent[100],
             // color: OnestepColors().mainColor,
           ),
@@ -378,7 +378,7 @@ class _BoardMainState extends State<BoardMain> {
             ),
             Container(
               padding: EdgeInsets.only(
-                left: 20,
+                left: 20.w,
               ),
               alignment: Alignment.centerLeft,
             ),
@@ -386,7 +386,7 @@ class _BoardMainState extends State<BoardMain> {
               padding: EdgeInsets.only(
                   left: deviceWidth / 10,
                   right: deviceWidth / 10,
-                  bottom: 10,
+                  bottom: 10.h,
                   top: deviceHeight / 150),
               child: GridView.count(
                 physics: NeverScrollableScrollPhysics(),
@@ -412,6 +412,9 @@ class _BoardMainState extends State<BoardMain> {
                         pageName = "/TopFavoritePostList";
                       } else if (index == 4) {
                         pageName = "/TopCommentPostList";
+                      } else if (index == 5) {
+                        ChatNavigationManager.navigateToAnonymousChattingRoom(
+                            context);
                       }
                       if (pageName != "")
                         Navigator.pushNamed(context, pageName, arguments: arg);
@@ -427,7 +430,7 @@ class _BoardMainState extends State<BoardMain> {
                               child: initIconData[index].icons,
                             ),
                             Container(
-                              padding: EdgeInsets.only(top: 5),
+                              padding: EdgeInsets.only(top: 5.h),
                               child: Text(
                                 "${initIconData[index].explain}",
                               ),
@@ -439,7 +442,7 @@ class _BoardMainState extends State<BoardMain> {
               ),
             ),
             Container(
-              padding: EdgeInsets.only(left: 20),
+              padding: EdgeInsets.only(left: 20.w),
               alignment: Alignment.centerLeft,
             ),
             GestureDetector(

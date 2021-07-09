@@ -101,8 +101,7 @@ abstract class PostListParentWidget<T extends StatefulWidget> extends State<T>
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          iconTheme: IconThemeData(color: OnestepColors().mainColor),
-          automaticallyImplyLeading: false,
+          iconTheme: IconThemeData(color: Colors.black),
           backgroundColor: Colors.white,
           title: FadeIn(
             child: Row(

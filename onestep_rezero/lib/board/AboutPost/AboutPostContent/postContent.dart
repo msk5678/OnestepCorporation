@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:onestep_rezero/board/AboutPost/AboutPostContent/commentTextField.dart';
-
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:onestep_rezero/board/AboutPost/AboutPostContent/postComment.dart';
 import 'package:onestep_rezero/board/StateManage/Provider/postProvider.dart';
 import 'package:onestep_rezero/board/TipDialog/tip_dialog.dart';
@@ -50,7 +52,7 @@ class PostContentRiverPod extends ConsumerWidget {
           alignment: Alignment.centerLeft,
           child: Text(
             currentPost.textContent ?? "",
-            style: TextStyle(fontSize: 16),
+            style: TextStyle(fontSize: 16.sp),
           ),
         ),
         SizedBox(
@@ -59,8 +61,8 @@ class PostContentRiverPod extends ConsumerWidget {
       ]..addAll(imageCommentContainer(
               context,
               Map<String, List<dynamic>>.from(currentPost.imageCommentMap),
-              deviceWidth * 0.9,
-              deviceHeight)));
+              300.w,
+              300.h)));
     else
       return Container(
         height: deviceHeight / 2,
@@ -71,12 +73,36 @@ class PostContentRiverPod extends ConsumerWidget {
       );
   }
 
+  Future<Map<String, dynamic>> _calculateImageDimension(String url) {
+    Completer<Map<String, dynamic>> completer = Completer();
+    Image image = new Image(
+        image: CachedNetworkImageProvider(
+            "https://i.stack.imgur.com/lkd0a.png")); // I modified this line
+    image.image.resolve(ImageConfiguration()).addListener(
+      ImageStreamListener(
+        (ImageInfo image, bool synchronousCall) {
+          var myImage = image.image;
+          Size size = Size(myImage.width.toDouble(), myImage.height.toDouble());
+          completer.complete({"Size": size, "Image": image});
+        },
+      ),
+    );
+    return completer.future;
+  }
+
   List<Widget> imageCommentContainer(BuildContext context,
       Map<String, List<dynamic>> imageCommentMap, double width, double height) {
     List imageList = imageCommentMap["IMAGE"] ?? [];
     List commentList = imageCommentMap["COMMENT"] ?? [];
     return List<Widget>.generate(imageList.length, (index) {
       if (imageList[index].runtimeType == String) {
+        // String imageUrl = imageList[index].toString();
+        // _calculateImageDimension(url)
+        // Image image = Image(image:CachedNetworkImageProvider(
+
+        //   imageList[index].toString(),
+
+        // ));
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -85,23 +111,26 @@ class PostContentRiverPod extends ConsumerWidget {
                 Navigator.of(context).pushNamed("/ImagesFullViewer",
                     arguments: {"IMAGESURL": imageList, "INDEX": index});
               },
-              child: ClipRRect(
-                borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                child: CachedNetworkImage(
-                  imageUrl: imageList[index].toString(),
-                  width: width,
-                  height: height,
-                  errorWidget: (context, url, error) =>
-                      Icon(Icons.error), // 로딩 오류 시 이미지
+              child: Container(
+                width: width,
+                height: height,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                  child: CachedNetworkImage(
+                    imageUrl: imageList[index].toString(),
+                    errorWidget: (context, url, error) =>
+                        Icon(Icons.error), // 로딩 오류 시 이미지
 
-                  fit: BoxFit.cover,
+                    fit: BoxFit.fill,
+                  ),
                 ),
               ),
             ),
             Container(
-              margin: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+              margin: EdgeInsets.symmetric(vertical: 15.w, horizontal: 10.h),
               alignment: Alignment.centerLeft,
-              child: Text(commentList[index], style: TextStyle(fontSize: 16)),
+              child:
+                  Text(commentList[index], style: TextStyle(fontSize: 16.sp)),
             )
           ],
         );
@@ -113,7 +142,7 @@ class PostContentRiverPod extends ConsumerWidget {
 
   postTopStatusBar(PostData currentPost, String uid, Widget status) {
     return Container(
-      margin: EdgeInsets.only(bottom: 20),
+      margin: EdgeInsets.only(bottom: 20.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -129,10 +158,10 @@ class PostContentRiverPod extends ConsumerWidget {
                   //   color: OnestepColors().mainColor,
                   // ),
                   Container(
-                    margin: EdgeInsets.only(right: 5),
+                    margin: EdgeInsets.only(right: 5.w),
                     child: Text(
                       "${PostTime(dateTime: currentPost.uploadTime).dateToString()}",
-                      style: TextStyle(color: Colors.grey, fontSize: 10),
+                      style: TextStyle(color: Colors.grey, fontSize: 10.sp),
                     ),
                   ),
                 ],
@@ -252,8 +281,8 @@ class _PostContentState extends State<PostContent>
               body: Stack(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 15, vertical: 20),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 15.w, vertical: 20.h),
                     child: SingleChildScrollView(
                       controller: postScrollController,
                       child: Container(
@@ -274,12 +303,12 @@ class _PostContentState extends State<PostContent>
                             Container(
                               width: deviceWidth / 2,
                               margin: EdgeInsets.only(
-                                  bottom: deviceHeight / 50, top: 10),
+                                  bottom: deviceHeight / 50, top: 10.h),
                               decoration: BoxDecoration(
                                   border: Border(
                                       bottom: BorderSide(
                                           color: OnestepColors().thirdColor,
-                                          width: 2.0))),
+                                          width: 2.0.w))),
                             ),
                           ]
                             ..add(CommentWidget(
@@ -317,7 +346,7 @@ class _PostContentState extends State<PostContent>
 
   postTopStatusBar(PostData currentPost, String uid, Widget status) {
     return Container(
-      margin: EdgeInsets.only(bottom: 10, top: 10),
+      margin: EdgeInsets.symmetric(vertical: 10.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -341,14 +370,14 @@ class _PostContentState extends State<PostContent>
             children: [
               Icon(
                 Icons.watch_later_outlined,
-                size: 20,
+                size: 20.sp,
                 color: OnestepColors().mainColor,
               ),
               Container(
-                margin: EdgeInsets.only(right: 5),
+                margin: EdgeInsets.only(right: 5.w),
                 child: Text(
                   "${TimeUtil.timeAgo(date: currentPost.uploadTime)}",
-                  style: TextStyle(color: Colors.grey, fontSize: 10),
+                  style: TextStyle(color: Colors.grey, fontSize: 10.sp),
                 ),
               ),
             ],
@@ -365,9 +394,9 @@ class _PostContentState extends State<PostContent>
       alignment: Alignment.bottomLeft,
       child: Container(
         constraints: BoxConstraints(
-            minHeight: 70, minWidth: double.infinity, maxHeight: 400),
-        margin: EdgeInsets.only(bottom: 50),
-        padding: EdgeInsets.only(left: 10, bottom: 10, top: 10),
+            minHeight: 70.h, minWidth: double.infinity, maxHeight: 400.h),
+        margin: EdgeInsets.only(bottom: 50.h),
+        padding: EdgeInsets.only(left: 10.w, bottom: 10.h, top: 10.h),
         color: Colors.white,
         child: IntrinsicHeight(
           child: Column(
@@ -376,7 +405,7 @@ class _PostContentState extends State<PostContent>
               Row(
                 children: <Widget>[
                   SizedBox(
-                    width: 15,
+                    width: 15.w,
                   ),
                   Flexible(
                       child: CustomCommentTextField(
@@ -418,13 +447,13 @@ class _PostContentState extends State<PostContent>
               Icon(
                 //foot icon
                 Icons.comment,
-                size: 18,
+                size: 18.sp,
                 color: Colors.grey,
               ),
               Container(
-                margin: EdgeInsets.only(right: 5),
+                margin: EdgeInsets.only(right: 5.w),
                 child: Text("$commentCount",
-                    style: TextStyle(color: Colors.grey, fontSize: 10)),
+                    style: TextStyle(color: Colors.grey, fontSize: 10.sp)),
               ),
             ],
           )
@@ -447,10 +476,10 @@ class _PostContentState extends State<PostContent>
       children: [
         Container(
           alignment: Alignment.topLeft,
-          margin: EdgeInsets.only(right: 5),
+          margin: EdgeInsets.only(right: 5.w),
           child: Text(
             "좋아요 : $favoriteCount",
-            style: TextStyle(color: Colors.grey, fontSize: 13),
+            style: TextStyle(color: Colors.grey, fontSize: 13.sp),
           ),
         ),
         postTopStatusBar(currentPost, uid, commentStatusWidget(currentPost))
@@ -461,19 +490,19 @@ class _PostContentState extends State<PostContent>
   bottomStatusBar(PostData currentPost) {
     int favoriteCount = currentPost.favoriteCount;
     return Container(
-      margin: EdgeInsets.only(top: 20),
+      margin: EdgeInsets.only(top: 20.h),
       child: Row(
         children: [
           Icon(
             //foot icon
             Icons.favorite,
-            size: 20,
+            size: 20.sp,
             color: OnestepColors().mainColor,
           ),
           Container(
-            margin: EdgeInsets.only(right: 5),
+            margin: EdgeInsets.only(right: 5.w),
             child: Text("$favoriteCount",
-                style: TextStyle(color: Colors.grey, fontSize: 10)),
+                style: TextStyle(color: Colors.grey, fontSize: 10.sp)),
           ),
           commentStatusWidget(currentPostData)
         ],
@@ -558,7 +587,7 @@ class _PostContentState extends State<PostContent>
   PreferredSizeWidget appBar(PostData currentPost, String uid) {
     bool isWritter = currentPost.uid == uid;
     return AppBar(
-      iconTheme: IconThemeData(color: OnestepColors().mainColor),
+      iconTheme: IconThemeData(color: Colors.black),
       title: GestureDetector(
         onTap: () {
           postScrollController.position
@@ -601,15 +630,14 @@ class _PostContentState extends State<PostContent>
                 }
               } else if (route == "Alter") {
                 context.read(postProvider).getLatestPostData(currentPostData);
-                await Navigator.of(context).pushNamed('/AlterPost',
-                    arguments: {"POSTDATA": currentPostData}).then((value) {
+                await Navigator.of(context).pushNamed('/AlterPost', arguments: {
+                  "POSTDATA": context.read(postProvider).latestPostData
+                }).then((value) {
                   bool result = value ?? false;
 
-                  if (result) {
-                    context
-                        .read(postProvider)
-                        .getLatestPostData(currentPostData);
-                  }
+                  // if (result) {
+                  context.read(postProvider).getLatestPostData(currentPostData);
+                  // }
                 });
               }
             },
@@ -715,7 +743,7 @@ class _PostContentState extends State<PostContent>
                 icon: Icon(
                   Icons.cancel_presentation,
                   color: OnestepColors().secondColor,
-                  size: 20,
+                  size: 20.sp,
                 ),
                 onPressed: () {
                   setState(() {
@@ -791,7 +819,7 @@ class _PostContentState extends State<PostContent>
           title: Text("${comment.userName}"),
           children: [
             Container(
-                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
                 child: Text("${comment.textContent}"))
           ],
         );

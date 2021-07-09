@@ -99,7 +99,7 @@ class RouteGenerator {
       case 'AlterPost':
         return PageTransition(
             child: AlterPost(
-              postData: arguments["POSTDATA"],
+              currentPost: arguments["POSTDATA"],
             ),
             type: PageTransitionType.fade,
             settings: RouteSettings(name: settings.name.toString()));

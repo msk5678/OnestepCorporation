@@ -59,7 +59,7 @@ class _TopFavoritePostListState
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          automaticallyImplyLeading: false,
+          iconTheme: IconThemeData(color: Colors.black),
           backgroundColor: Colors.white,
           title: FadeIn(
             child: Row(

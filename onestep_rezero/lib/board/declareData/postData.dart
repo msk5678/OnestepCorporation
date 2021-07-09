@@ -28,7 +28,7 @@ class PostData {
   int scribeCount;
   Map<String, dynamic> imageCommentMap;
   Function completeImageUploadCallback;
-  List imgUriList;
+  List<String> imgUriList;
 
   bool deleted;
   int deletedTime;
@@ -36,7 +36,7 @@ class PostData {
   bool reported;
   int reportedTime;
 
-  Future convertImage(var _imageArr) async {
+  Future<List<String>> convertImage(var _imageArr) async {
     List<String> _imgUriarr = [];
 
     for (var imaged in _imageArr) {
@@ -148,7 +148,8 @@ class PostData {
 
     imgUriList = await convertImage(imageCommentMap["ALTERIMAGE"]);
     imageCommentMap.update("ALTERIMAGE", (value) => []);
-    imageCommentMap.update("IMAGE", (value) => imgUriList);
+    imageCommentMap["IMAGE"].addAll(imgUriList);
+    // imageCommentMap.update("IMAGE", (value) => value..addAll(imgUriList));
     return await FirebaseFirestore.instance
         .collection('university')
         .doc(currentUserModel.university)
