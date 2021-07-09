@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:onestep_rezero/board/AboutPost/AboutPostContent/postContent.dart';
-import 'package:onestep_rezero/board/AboutPost/AboutPostListView/listRiverpod.dart';
 import 'package:onestep_rezero/board/boardMain.dart';
 import 'package:onestep_rezero/board/declareData/postData.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
@@ -78,9 +77,9 @@ class PostList extends StatelessWidget {
   }
 
   postClickEvent(BuildContext context, PostData postData) async {
-    await Navigator.of(context).pushNamed('/PostContent', arguments: {
-      "CURRENTBOARDDATA": postData
-    }).then((value) => context.read(listProvider).fetchPosts(postData.boardId));
+    await Navigator.of(context)
+        .pushNamed('/PostContent', arguments: {"CURRENTBOARDDATA": postData});
+    // .then((value) => context.read(listProvider).fetchPosts(postData.boardId));
   }
 
   Widget _buildListCard(BuildContext context, int index, var postData,

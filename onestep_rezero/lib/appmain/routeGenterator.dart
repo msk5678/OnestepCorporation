@@ -6,7 +6,7 @@ import 'package:onestep_rezero/board/AboutPost/AboutDashBoard/myPost.dart';
 import 'package:onestep_rezero/board/AboutPost/AboutDashBoard/topCommentList.dart';
 import 'package:onestep_rezero/board/AboutPost/AboutDashBoard/topFavoriteList.dart';
 import 'package:onestep_rezero/board/AboutPost/AboutPostContent/postContent.dart';
-// import 'package:flutter/foundation.dart' as foundation;
+import 'package:flutter/foundation.dart' as foundation;
 import 'package:onestep_rezero/board/AboutPost/AboutPostListView/postListMain.dart';
 import 'package:onestep_rezero/board/AboutPost/alterPost.dart';
 import 'package:onestep_rezero/board/AboutPost/createPost.dart';
@@ -17,8 +17,8 @@ import 'package:page_transition/page_transition.dart';
 import 'package:path/path.dart' as p;
 
 class RouteGenerator {
-  // static bool _isIOS =
-  //     foundation.defaultTargetPlatform == foundation.TargetPlatform.iOS;
+  static bool _isIOS =
+      foundation.defaultTargetPlatform == foundation.TargetPlatform.iOS;
   static Route<dynamic> generateRoute(RouteSettings settings) {
     assert(settings.name.indexOf("/") == 0,
         "[ROUTER] routing MUST Begin with '/'");
@@ -89,20 +89,15 @@ class RouteGenerator {
         );
         break;
       case 'CreatePost':
-        return PageTransition(
-            child: CreatePost(
-              currentBoardData: arguments["CURRENTBOARDDATA"],
-            ),
-            type: PageTransitionType.fade,
-            settings: RouteSettings(name: settings.name.toString()));
+        _pageWidget = CreatePost(
+          currentBoardData: arguments["CURRENTBOARDDATA"],
+        );
+
         break;
       case 'AlterPost':
-        return PageTransition(
-            child: AlterPost(
-              currentPost: arguments["POSTDATA"],
-            ),
-            type: PageTransitionType.fade,
-            settings: RouteSettings(name: settings.name.toString()));
+        _pageWidget = AlterPost(
+          currentPost: arguments["POSTDATA"],
+        );
         break;
       case 'BoardCreate':
         return PageTransition(
@@ -113,16 +108,16 @@ class RouteGenerator {
             type: PageTransitionType.fade);
         break;
     }
-    return PageTransition(
-        child: _pageWidget,
-        type: PageTransitionType.fade,
-        settings: RouteSettings(name: settings.name.toString()));
-    // return _isIOS
-    //     ? CupertinoPageRoute(
-    //         builder: (context) => _pageWidget,
-    //         settings: RouteSettings(name: settings.name.toString()))
-    //     : MaterialPageRoute(
-    //         builder: (context) => _pageWidget,
-    //         settings: RouteSettings(name: settings.name.toString()));
+    // return PageTransition(
+    //     child: _pageWidget,
+    //     type: PageTransitionType.fade,
+    // settings: RouteSettings(name: settings.name.toString()));
+    return _isIOS
+        ? CupertinoPageRoute(
+            builder: (context) => _pageWidget,
+            settings: RouteSettings(name: settings.name.toString()))
+        : MaterialPageRoute(
+            builder: (context) => _pageWidget,
+            settings: RouteSettings(name: settings.name.toString()));
   }
 }

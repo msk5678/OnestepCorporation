@@ -7,7 +7,6 @@ import 'package:onestep_rezero/board/AboutPost/AboutPostListView/listRiverpod.da
 
 import 'package:onestep_rezero/board/declareData/boardData.dart';
 import 'package:onestep_rezero/board/declareData/categoryManageClass.dart';
-import 'package:onestep_rezero/chat/widget/appColor.dart';
 
 abstract class PostListInterface {
   setProductScroll(StreamController productAddStreamController,
