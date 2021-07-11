@@ -7,7 +7,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
 import 'package:kakao_flutter_sdk/link.dart';
-import 'package:no_context_navigation/no_context_navigation.dart';
 import 'package:onestep_rezero/loggedInWidget.dart';
 import 'package:onestep_rezero/signUpWidget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -54,48 +53,48 @@ class _MainPageState extends State<MainPage> {
     // kakao
     String kakaoAppKey = "88b99cb950dc222f10f369161182d008";
     KakaoContext.clientId = kakaoAppKey;
-    initDynamicLinks();
+    // initDynamicLinks();
   }
 
-  void initDynamicLinks() async {
-    // 앱이 active이거나 background 상태일때 들어온 링크를 알 수 있는 링크 콜백에 대한 리스너 onLink()
-    FirebaseDynamicLinks.instance.onLink(
-        onSuccess: (PendingDynamicLinkData dynamicLink) async {
-      final NavigationService navService = NavigationService();
-      final Uri deepLink = dynamicLink?.link;
+  // void initDynamicLinks() async {
+  //   // 앱이 active이거나 background 상태일때 들어온 링크를 알 수 있는 링크 콜백에 대한 리스너 onLink()
+  //   FirebaseDynamicLinks.instance.onLink(
+  //       onSuccess: (PendingDynamicLinkData dynamicLink) async {
+  //     final NavigationService navService = NavigationService();
+  //     final Uri deepLink = dynamicLink?.link;
 
-      print(deepLink.path);
+  //     print(deepLink.path);
 
-      if (deepLink != null) {
-        var code = deepLink.queryParameters['code'];
-        navService.pushNamed('/DetailProduct', args: {"PRODUCTID": code}).then(
-            (value) {
-          print("clothitem");
-        });
-        // _handleDynamicLink(deepLink);
-      }
-    }, onError: (OnLinkErrorException e) async {
-      print('onLinkError');
-      print(e.message);
-    });
+  //     if (deepLink != null) {
+  //       var code = deepLink.queryParameters['code'];
+  //       navService.pushNamed('/DetailProduct', args: {"PRODUCTID": code}).then(
+  //           (value) {
+  //         print("clothitem");
+  //       });
+  //       // _handleDynamicLink(deepLink);
+  //     }
+  //   }, onError: (OnLinkErrorException e) async {
+  //     print('onLinkError');
+  //     print(e.message);
+  //   });
 
-    // 앱을 새로 런치한 링크를 알 수 있는 getInitialLink()
-    final PendingDynamicLinkData data =
-        await FirebaseDynamicLinks.instance.getInitialLink();
-    final Uri deepLink = data?.link;
+  //   // 앱을 새로 런치한 링크를 알 수 있는 getInitialLink()
+  //   final PendingDynamicLinkData data =
+  //       await FirebaseDynamicLinks.instance.getInitialLink();
+  //   final Uri deepLink = data?.link;
 
-    print(deepLink);
-    if (deepLink != null) {
-      var code = deepLink.queryParameters['code'];
-      navService
-          .pushNamed('/DetailProduct', args: {"PRODUCTID": code}).then((value) {
-        print("clothitem");
-      });
+  //   print(deepLink);
+  //   if (deepLink != null) {
+  //     var code = deepLink.queryParameters['code'];
+  //     navService
+  //         .pushNamed('/DetailProduct', args: {"PRODUCTID": code}).then((value) {
+  //       print("clothitem");
+  //     });
 
-      // navService.pushNamed('/helloOnestep', args: deepLink);
-      // _handleDynamicLink(deepLink);
-    }
-  }
+  //     // navService.pushNamed('/helloOnestep', args: deepLink);
+  //     // _handleDynamicLink(deepLink);
+  //   }
+  // }
 
   @override
   void dispose() {

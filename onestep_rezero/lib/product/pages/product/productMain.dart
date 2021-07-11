@@ -16,6 +16,7 @@ import 'package:onestep_rezero/report/reportPageTest.dart';
 import 'package:onestep_rezero/search/pages/searchMain.dart';
 
 import '../../../onestepCustomDialog.dart';
+import '../../../spinkitTest.dart';
 
 class ProductMain extends StatefulWidget {
   @override
@@ -199,8 +200,11 @@ class _ProductMainState extends State<ProductMain> {
                   // )),
 
                   // 신고 page test
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => ReportPageTest())),
+                  // Navigator.of(context).push(MaterialPageRoute(
+                  //     builder: (context) => ReportPageTest())),
+
+                  Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => SpinkitTest())),
 
                   // 약관 page
                   // Navigator.of(context).push(
