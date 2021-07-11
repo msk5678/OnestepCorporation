@@ -3,6 +3,13 @@ import 'package:flutter/material.dart';
 import '../reportDealController.dart';
 
 class ReportComentPage extends StatelessWidget {
+  final String boardUid;
+  final String postUid;
+  final String reportedUid;
+  final String commentUid;
+  ReportComentPage(
+      this.boardUid, this.postUid, this.reportedUid, this.commentUid);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,9 +26,6 @@ class ReportComentPage extends StatelessWidget {
           children: [
             InkWell(
               onTap: () {
-                String boardUid;
-                String postUid;
-                String reportedUid;
                 reportDealController(
                   context,
                   3,
@@ -29,12 +33,13 @@ class ReportComentPage extends StatelessWidget {
                   postUid,
                   reportedUid,
                   boardUid: boardUid,
+                  commentUid: commentUid,
                 );
               },
               child: Padding(
                 padding: EdgeInsets.fromLTRB(
                     MediaQuery.of(context).size.width / 20,
-                    MediaQuery.of(context).size.width / 40,
+                    MediaQuery.of(context).size.width / 15,
                     0,
                     0),
                 child: Row(
@@ -46,160 +51,11 @@ class ReportComentPage extends StatelessWidget {
                         style: TextStyle(fontSize: 15),
                       ),
                     ),
-                    IconButton(
-                      icon: Icon(Icons.keyboard_arrow_right),
-                      onPressed: () {},
-                    )
-                  ],
-                ),
-              ),
-            ),
-            InkWell(
-              onTap: () {},
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(
-                    MediaQuery.of(context).size.width / 20,
-                    MediaQuery.of(context).size.width / 40,
-                    0,
-                    0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      child: Text(
-                        "신고유형 2",
-                        style: TextStyle(fontSize: 15),
-                      ),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(
+                          0, 0, MediaQuery.of(context).size.width / 20, 0),
+                      child: Icon(Icons.keyboard_arrow_right),
                     ),
-                    IconButton(
-                      icon: Icon(Icons.keyboard_arrow_right),
-                      onPressed: () {},
-                    )
-                  ],
-                ),
-              ),
-            ),
-            InkWell(
-              onTap: () {},
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(
-                    MediaQuery.of(context).size.width / 20,
-                    MediaQuery.of(context).size.width / 40,
-                    0,
-                    0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      child: Text(
-                        "신고유형 3",
-                        style: TextStyle(fontSize: 15),
-                      ),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.keyboard_arrow_right),
-                      onPressed: () {},
-                    )
-                  ],
-                ),
-              ),
-            ),
-            InkWell(
-              onTap: () {},
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(
-                    MediaQuery.of(context).size.width / 20,
-                    MediaQuery.of(context).size.width / 40,
-                    0,
-                    0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      child: Text(
-                        "신고유형 4",
-                        style: TextStyle(fontSize: 15),
-                      ),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.keyboard_arrow_right),
-                      onPressed: () {},
-                    )
-                  ],
-                ),
-              ),
-            ),
-            InkWell(
-              onTap: () {},
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(
-                    MediaQuery.of(context).size.width / 20,
-                    MediaQuery.of(context).size.width / 40,
-                    0,
-                    0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      child: Text(
-                        "신고유형 5",
-                        style: TextStyle(fontSize: 15),
-                      ),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.keyboard_arrow_right),
-                      onPressed: () {},
-                    )
-                  ],
-                ),
-              ),
-            ),
-            InkWell(
-              onTap: () {},
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(
-                    MediaQuery.of(context).size.width / 20,
-                    MediaQuery.of(context).size.width / 40,
-                    0,
-                    0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      child: Text(
-                        "신고유형 6",
-                        style: TextStyle(fontSize: 15),
-                      ),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.keyboard_arrow_right),
-                      onPressed: () {},
-                    )
-                  ],
-                ),
-              ),
-            ),
-            InkWell(
-              onTap: () {},
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(
-                    MediaQuery.of(context).size.width / 20,
-                    MediaQuery.of(context).size.width / 40,
-                    0,
-                    0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      child: Text(
-                        "신고유형 7",
-                        style: TextStyle(fontSize: 15),
-                      ),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.keyboard_arrow_right),
-                      onPressed: () {},
-                    )
                   ],
                 ),
               ),

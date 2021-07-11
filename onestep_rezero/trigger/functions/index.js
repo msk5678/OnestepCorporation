@@ -193,20 +193,22 @@ exports.onProductReportCreate = functions.database.ref('/report/{reportedUid}/{f
         return ReportPoint;
     })
 
-    // university = (await snapshot.ref.child('university').get()).val();
-    // postUid = (await snapshot.ref.child('postUid').get()).val();
+    university = (await snapshot.ref.child('university').get()).val();
+    postUid = (await snapshot.ref.child('postUid').get()).val();
 
-    // await databaseTest.collection('university').doc(university).collection('product').doc(postUid).get().then(value => {
-    //     productReportPoint = value.data()['reportCount'] + 1;
-    // })
+    await databaseTest.collection('university').doc(university).collection('product').doc(postUid).get().then(value => {
+        productReportPoint = value.data()['reportCount'] + 1;
+    })
 
-    // await databaseTest.doc('university/' + university +'/product/' + postUid).update({
-    //     "reportCount": productReportPoint,
-    // })
+    await databaseTest.doc('university/' + university +'/product/' + postUid).update({
+        "reportCount": productReportPoint,
+    })
 
-    // if(postReportPoint === 5){
-    //     console.log('postReportPoint === 5');
-    // }
+    if(productReportPoint === 5){
+        await databaseTest.doc('university/' + university +'/product/' + postUid).update({
+            "reported": true,
+        })
+    }
 
     // // post 신고가 들어왔는데 그게 그 post의 25번째 신고다 -> user report ++
     if (ReportPoint === 25) {

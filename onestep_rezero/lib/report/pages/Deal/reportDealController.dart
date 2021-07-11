@@ -8,7 +8,9 @@ import 'commentReport/case/commentFirstCase.dart';
 
 void reportDealController(BuildContext context, int reportCaseFlag,
     int caseValue, String postUid, String reportedUid,
-    {String boardUid = '0'}) {
+    {String boardUid = '0',
+    String commentUid = '0',
+    String cocommentUid = '0'}) {
   // 장터 -> 글 신고
   if (reportCaseFlag == 1) {
     switch (caseValue) {
@@ -50,7 +52,7 @@ void reportDealController(BuildContext context, int reportCaseFlag,
       case 1:
         Navigator.of(context).push(MaterialPageRoute(
             builder: (context) =>
-                CommentFirstCase(boardUid, postUid, reportedUid)));
+                CommentFirstCase(boardUid, postUid, reportedUid, commentUid)));
         break;
       case 2:
         break;
@@ -67,8 +69,8 @@ void reportDealController(BuildContext context, int reportCaseFlag,
     switch (caseValue) {
       case 1:
         Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) =>
-                CoCommentFirstCase(boardUid, postUid, reportedUid)));
+            builder: (context) => CoCommentFirstCase(
+                boardUid, postUid, reportedUid, commentUid, cocommentUid)));
         break;
       case 2:
         break;

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
@@ -8,22 +9,18 @@ import '../../../../../onestepCustomDialogNotCancel.dart';
 
 final myController = TextEditingController();
 
-void report() {
+void report(
+    String boardUid, String postUid, String reportedUid, String commentUid) {
   Map<dynamic, dynamic> values;
   List reportKeys;
 
   // 중복신고 방지
-  // FirebaseDatabase.instance
-  //     .reference()
-  //     .child('reportOverlapCheck')
-  //     .child(googleSignIn.currentUser.id)
-  //     .child('comment')
-  //     .set({'postUid': true});
-
-  // reportedUid = 신고당한사람
-  // postUid = 게시글 uid
-  // boardUid = board uid
-  // commentUid = comment uid
+  FirebaseDatabase.instance
+      .reference()
+      .child('reportOverlapCheck')
+      .child(currentUserModel.uid)
+      .child('comment')
+      .set({commentUid: true});
 
   FirebaseDatabase.instance
       .reference()
@@ -41,7 +38,7 @@ void report() {
                     // 처음신고 시간
                     .child(DateTime.now().millisecondsSinceEpoch.toString())
                     .child('comment')
-                    .child('commentUid')
+                    .child(commentUid)
                     .child('value')
                     .child(DateTime.now().millisecondsSinceEpoch.toString())
                     .set({
@@ -54,9 +51,9 @@ void report() {
                   'reportingUid': currentUserModel.uid,
                   'time': DateTime.now().millisecondsSinceEpoch.toString(),
                   'university': currentUserModel.university,
-                  'boardUid': '1622101214761',
-                  'postUid': '1625469193802',
-                  'commentUid': '1625667506675',
+                  'boardUid': boardUid,
+                  'postUid': postUid,
+                  'commentUid': commentUid,
                 })
               }
             else
@@ -77,7 +74,7 @@ void report() {
                           .child(
                               DateTime.now().millisecondsSinceEpoch.toString())
                           .child('comment')
-                          .child('commentUid')
+                          .child(commentUid)
                           .child('value')
                           .child(
                               DateTime.now().millisecondsSinceEpoch.toString())
@@ -92,9 +89,9 @@ void report() {
                         'time':
                             DateTime.now().millisecondsSinceEpoch.toString(),
                         'university': currentUserModel.university,
-                        'boardUid': '1622101214761',
-                        'postUid': '1625469193802',
-                        'commentUid': '1625667506675',
+                        'boardUid': boardUid,
+                        'postUid': postUid,
+                        'commentUid': commentUid,
                       });
                     } else {
                       FirebaseDatabase.instance
@@ -103,7 +100,7 @@ void report() {
                           .child('reportedUid')
                           .child(key.toString())
                           .child('comment')
-                          .child('commentUid')
+                          .child(commentUid)
                           .child('value')
                           .child(
                               DateTime.now().millisecondsSinceEpoch.toString())
@@ -118,9 +115,9 @@ void report() {
                         'time':
                             DateTime.now().millisecondsSinceEpoch.toString(),
                         'university': currentUserModel.university,
-                        'boardUid': '1622101214761',
-                        'postUid': '1625469193802',
-                        'commentUid': '1625667506675',
+                        'boardUid': boardUid,
+                        'postUid': postUid,
+                        'commentUid': commentUid,
                       });
                     }
                   }
@@ -133,7 +130,9 @@ class CommentFirstCase extends StatelessWidget {
   final String boardUid;
   final String postUid;
   final String reportedUid;
-  CommentFirstCase(this.boardUid, this.postUid, this.reportedUid);
+  final String commentUid;
+  CommentFirstCase(
+      this.boardUid, this.postUid, this.reportedUid, this.commentUid);
 
   @override
   Widget build(BuildContext context) {
@@ -226,7 +225,7 @@ class CommentFirstCase extends StatelessWidget {
                                       values = value.value,
                                       values.forEach((key, value) {
                                         // 한번이라도 신고한적이 있다
-                                        if (key == 'postUid') {
+                                        if (key == commentUid) {
                                           // 같은 글을 신고한다
                                           if (value == true) {
                                             flag = true;
@@ -249,13 +248,22 @@ class CommentFirstCase extends StatelessWidget {
                                 });
                         // 처음 신고한다
                         if (flag == false) {
-                          OnestepCustomDialog.show(
+                          final DocumentSnapshot reportState =
+                              await FirebaseFirestore.instance
+                                  .collection('user')
+                                  .doc(currentUserModel.uid)
+                                  .get();
+
+                          return OnestepCustomDialog.show(
                             context,
                             title: '신고하시겠습니까?',
                             confirmButtonText: '확인',
                             cancleButtonText: '취소',
                             confirmButtonOnPress: () {
-                              report();
+                              reportState.data()['reportState'] == 0
+                                  ? report(boardUid, postUid, reportedUid,
+                                      commentUid)
+                                  : null;
                               Navigator.pop(context);
                             },
                             cancleButtonOnPress: () {

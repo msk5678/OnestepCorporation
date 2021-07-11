@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
@@ -8,17 +9,18 @@ import '../../../../../onestepCustomDialogNotCancel.dart';
 
 final myController = TextEditingController();
 
-void report() {
+void report(String boardUid, String postUid, String reportedUid,
+    String commentUid, String cocommentUid) {
   Map<dynamic, dynamic> values;
   List reportKeys;
 
   // 중복신고 방지
-  // FirebaseDatabase.instance
-  //     .reference()
-  //     .child('reportOverlapCheck')
-  //     .child(googleSignIn.currentUser.id)
-  //     .child('cocomment')
-  //     .set({'postUid': true});
+  FirebaseDatabase.instance
+      .reference()
+      .child('reportOverlapCheck')
+      .child(currentUserModel.uid)
+      .child('cocomment')
+      .set({cocommentUid: true});
 
   // reportedUid = 신고당한사람
   // postUid = 게시글 uid
@@ -29,7 +31,7 @@ void report() {
   FirebaseDatabase.instance
       .reference()
       .child('report')
-      .child('reportedUid')
+      .child(reportedUid)
       .once()
       .then((value) => {
             if (value.value == null)
@@ -38,11 +40,11 @@ void report() {
                 FirebaseDatabase.instance
                     .reference()
                     .child('report')
-                    .child('reportedUid')
+                    .child(reportedUid)
                     // 처음신고 시간
                     .child(DateTime.now().millisecondsSinceEpoch.toString())
                     .child('cocomment')
-                    .child('cocommentUid')
+                    .child(cocommentUid)
                     .child('value')
                     .child(DateTime.now().millisecondsSinceEpoch.toString())
                     .set({
@@ -50,15 +52,15 @@ void report() {
                   'content': myController.text.toString(),
                   'title': "case first",
                   // 신고 당한 사람
-                  'reportedUid': currentUserModel.uid,
+                  'reportedUid': reportedUid,
                   // 신고 한 사람
                   'reportingUid': currentUserModel.uid,
                   'time': DateTime.now().millisecondsSinceEpoch.toString(),
                   'university': currentUserModel.university,
-                  'boardUid': '1622101214761',
-                  'postUid': '1625469193802',
-                  'commentUid': '1625667506675',
-                  'cocommentUid': '1625667512379',
+                  'boardUid': boardUid,
+                  'postUid': postUid,
+                  'commentUid': commentUid,
+                  'cocommentUid': cocommentUid,
                 })
               }
             else
@@ -74,12 +76,12 @@ void report() {
                       FirebaseDatabase.instance
                           .reference()
                           .child('report')
-                          .child('reportedUid')
+                          .child(reportedUid)
                           // 처음신고 시간 2
                           .child(
                               DateTime.now().millisecondsSinceEpoch.toString())
                           .child('cocomment')
-                          .child('cocommentUid')
+                          .child(cocommentUid)
                           .child('value')
                           .child(
                               DateTime.now().millisecondsSinceEpoch.toString())
@@ -88,25 +90,25 @@ void report() {
                         'content': myController.text.toString(),
                         'title': "case first",
                         // 신고 당한 사람
-                        'reportedUid': currentUserModel.uid,
+                        'reportedUid': reportedUid,
                         // 신고 한 사람
                         'reportingUid': currentUserModel.uid,
                         'time':
                             DateTime.now().millisecondsSinceEpoch.toString(),
                         'university': currentUserModel.university,
-                        'boardUid': '1622101214761',
-                        'postUid': '1625469193802',
-                        'commentUid': '1625667506675',
-                        'cocommentUid': '1625667512379',
+                        'boardUid': boardUid,
+                        'postUid': postUid,
+                        'commentUid': commentUid,
+                        'cocommentUid': cocommentUid,
                       });
                     } else {
                       FirebaseDatabase.instance
                           .reference()
                           .child('report')
-                          .child('reportedUid')
+                          .child(reportedUid)
                           .child(key.toString())
                           .child('cocomment')
-                          .child('cocommentUid')
+                          .child(cocommentUid)
                           .child('value')
                           .child(
                               DateTime.now().millisecondsSinceEpoch.toString())
@@ -115,16 +117,16 @@ void report() {
                         'content': myController.text.toString(),
                         'title': "case first",
                         // 신고 당한 사람
-                        'reportedUid': currentUserModel.uid,
+                        'reportedUid': reportedUid,
                         // 신고 한 사람
                         'reportingUid': currentUserModel.uid,
                         'time':
                             DateTime.now().millisecondsSinceEpoch.toString(),
                         'university': currentUserModel.university,
-                        'boardUid': '1622101214761',
-                        'postUid': '1625469193802',
-                        'commentUid': '1625667506675',
-                        'cocommentUid': '1625667512379',
+                        'boardUid': boardUid,
+                        'postUid': postUid,
+                        'commentUid': commentUid,
+                        'cocommentUid': cocommentUid,
                       });
                     }
                   }
@@ -137,7 +139,10 @@ class CoCommentFirstCase extends StatelessWidget {
   final String boardUid;
   final String postUid;
   final String reportedUid;
-  CoCommentFirstCase(this.boardUid, this.postUid, this.reportedUid);
+  final String commentUid;
+  final String cocommentUid;
+  CoCommentFirstCase(this.boardUid, this.postUid, this.reportedUid,
+      this.commentUid, this.cocommentUid);
 
   @override
   Widget build(BuildContext context) {
@@ -230,7 +235,7 @@ class CoCommentFirstCase extends StatelessWidget {
                                       values = value.value,
                                       values.forEach((key, value) {
                                         // 한번이라도 신고한적이 있다
-                                        if (key == 'postUid') {
+                                        if (key == cocommentUid) {
                                           // 같은 글을 신고한다
                                           if (value == true) {
                                             flag = true;
@@ -253,13 +258,22 @@ class CoCommentFirstCase extends StatelessWidget {
                                 });
                         // 처음 신고한다
                         if (flag == false) {
-                          OnestepCustomDialog.show(
+                          final DocumentSnapshot reportState =
+                              await FirebaseFirestore.instance
+                                  .collection('user')
+                                  .doc(currentUserModel.uid)
+                                  .get();
+
+                          return OnestepCustomDialog.show(
                             context,
                             title: '신고하시겠습니까?',
                             confirmButtonText: '확인',
                             cancleButtonText: '취소',
                             confirmButtonOnPress: () {
-                              report();
+                              reportState.data()['reportState'] == 0
+                                  ? report(boardUid, postUid, reportedUid,
+                                      commentUid, cocommentUid)
+                                  : null;
                               Navigator.pop(context);
                             },
                             cancleButtonOnPress: () {

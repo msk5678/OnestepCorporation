@@ -23,19 +23,14 @@ class ReportPageTest extends StatelessWidget {
             Center(
               child: ElevatedButton(
                 onPressed: () async {
-                  // // boardUid
-                  // String boardUid;
-                  // // postUid
-                  // String postUid;
-                  // // 신고당한사람 uid
-                  // String reportedUid;
-
-                  // Navigator.of(context).push(MaterialPageRoute(
-                  //     builder: (context) =>
-                  //         ReportDealPage(boardUid, postUid, reportedUid)));
+                  // postUid
+                  String postUid;
+                  // 신고당한사람 uid
+                  String reportedUid;
 
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => ReportProductPage()));
+                      builder: (context) =>
+                          ReportProductPage(postUid, reportedUid)));
                 },
                 child: Text("장터 -> 글 신고"),
               ),
@@ -43,19 +38,16 @@ class ReportPageTest extends StatelessWidget {
             Center(
               child: ElevatedButton(
                 onPressed: () async {
-                  // // boardUid
-                  // String boardUid;
-                  // // postUid
-                  // String postUid;
-                  // // 신고당한사람 uid
-                  // String reportedUid;
-
-                  // Navigator.of(context).push(MaterialPageRoute(
-                  //     builder: (context) =>
-                  //         ReportDealPage(boardUid, postUid, reportedUid)));
+                  // boardUid
+                  String boardUid;
+                  // postUid
+                  String postUid;
+                  // 신고당한사람 uid
+                  String reportedUid;
 
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => ReportBoardPage()));
+                      builder: (context) =>
+                          ReportBoardPage(boardUid, postUid, reportedUid)));
                 },
                 child: Text("게시판 -> 글 신고"),
               ),
@@ -63,19 +55,18 @@ class ReportPageTest extends StatelessWidget {
             Center(
               child: ElevatedButton(
                 onPressed: () async {
-                  // // boardUid
-                  // String boardUid;
-                  // // postUid
-                  // String postUid;
-                  // // 신고당한사람 uid
-                  // String reportedUid;
-
-                  // Navigator.of(context).push(MaterialPageRoute(
-                  //     builder: (context) =>
-                  //         ReportDealPage(boardUid, postUid, reportedUid)));
+                  // boardUid
+                  String boardUid;
+                  // postUid
+                  String postUid;
+                  // 신고당한사람 uid
+                  String reportedUid;
+                  // comment uid
+                  String commentUid;
 
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => ReportComentPage()));
+                      builder: (context) => ReportComentPage(
+                          boardUid, postUid, reportedUid, commentUid)));
                 },
                 child: Text("댓글 신고"),
               ),
@@ -83,19 +74,20 @@ class ReportPageTest extends StatelessWidget {
             Center(
               child: ElevatedButton(
                 onPressed: () async {
-                  // // boardUid
-                  // String boardUid;
-                  // // postUid
-                  // String postUid;
-                  // // 신고당한사람 uid
-                  // String reportedUid;
-
-                  // Navigator.of(context).push(MaterialPageRoute(
-                  //     builder: (context) =>
-                  //         ReportDealPage(boardUid, postUid, reportedUid)));
+                  // boardUid
+                  String boardUid;
+                  // postUid
+                  String postUid;
+                  // 신고당한사람 uid
+                  String reportedUid;
+                  // comment uid
+                  String commentUid;
+                  // cocomment uid
+                  String cocommentUid;
 
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => ReportCocommentPage()));
+                      builder: (context) => ReportCocommentPage(boardUid,
+                          postUid, reportedUid, commentUid, cocommentUid)));
                 },
                 child: Text("대댓글 신고"),
               ),

@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 
+import '../../reportUserPage.dart';
 import '../reportDealController.dart';
 
 class ReportProductPage extends StatelessWidget {
+  final String postUid;
+  final String reportedUid;
+
+  ReportProductPage(this.postUid, this.reportedUid);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,9 +25,6 @@ class ReportProductPage extends StatelessWidget {
           children: [
             InkWell(
               onTap: () {
-                // String boardUid;
-                String postUid;
-                String reportedUid;
                 reportDealController(
                   context,
                   1,
@@ -29,6 +32,40 @@ class ReportProductPage extends StatelessWidget {
                   postUid,
                   reportedUid,
                 );
+              },
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(
+                    MediaQuery.of(context).size.width / 20,
+                    MediaQuery.of(context).size.width / 15,
+                    0,
+                    0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      child: Text(
+                        "신고유형 1",
+                        style: TextStyle(fontSize: 15),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(
+                          0, 0, MediaQuery.of(context).size.width / 20, 0),
+                      child: Icon(Icons.keyboard_arrow_right),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Divider(),
+            Divider(),
+            InkWell(
+              onTap: () {
+                String postUid;
+                String reportedUid;
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => ReportUserPage(postUid, reportedUid),
+                ));
               },
               child: Padding(
                 padding: EdgeInsets.fromLTRB(
@@ -41,163 +78,21 @@ class ReportProductPage extends StatelessWidget {
                   children: [
                     Container(
                       child: Text(
-                        "신고유형 1",
-                        style: TextStyle(fontSize: 15),
+                        "사용자 신고 하러가기",
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.bold),
                       ),
                     ),
                     IconButton(
                       icon: Icon(Icons.keyboard_arrow_right),
-                      onPressed: () {},
-                    )
-                  ],
-                ),
-              ),
-            ),
-            InkWell(
-              onTap: () {},
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(
-                    MediaQuery.of(context).size.width / 20,
-                    MediaQuery.of(context).size.width / 40,
-                    0,
-                    0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      child: Text(
-                        "신고유형 2",
-                        style: TextStyle(fontSize: 15),
-                      ),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.keyboard_arrow_right),
-                      onPressed: () {},
-                    )
-                  ],
-                ),
-              ),
-            ),
-            InkWell(
-              onTap: () {},
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(
-                    MediaQuery.of(context).size.width / 20,
-                    MediaQuery.of(context).size.width / 40,
-                    0,
-                    0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      child: Text(
-                        "신고유형 3",
-                        style: TextStyle(fontSize: 15),
-                      ),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.keyboard_arrow_right),
-                      onPressed: () {},
-                    )
-                  ],
-                ),
-              ),
-            ),
-            InkWell(
-              onTap: () {},
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(
-                    MediaQuery.of(context).size.width / 20,
-                    MediaQuery.of(context).size.width / 40,
-                    0,
-                    0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      child: Text(
-                        "신고유형 4",
-                        style: TextStyle(fontSize: 15),
-                      ),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.keyboard_arrow_right),
-                      onPressed: () {},
-                    )
-                  ],
-                ),
-              ),
-            ),
-            InkWell(
-              onTap: () {},
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(
-                    MediaQuery.of(context).size.width / 20,
-                    MediaQuery.of(context).size.width / 40,
-                    0,
-                    0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      child: Text(
-                        "신고유형 5",
-                        style: TextStyle(fontSize: 15),
-                      ),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.keyboard_arrow_right),
-                      onPressed: () {},
-                    )
-                  ],
-                ),
-              ),
-            ),
-            InkWell(
-              onTap: () {},
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(
-                    MediaQuery.of(context).size.width / 20,
-                    MediaQuery.of(context).size.width / 40,
-                    0,
-                    0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      child: Text(
-                        "신고유형 6",
-                        style: TextStyle(fontSize: 15),
-                      ),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.keyboard_arrow_right),
-                      onPressed: () {},
-                    )
-                  ],
-                ),
-              ),
-            ),
-            InkWell(
-              onTap: () {},
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(
-                    MediaQuery.of(context).size.width / 20,
-                    MediaQuery.of(context).size.width / 40,
-                    0,
-                    0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      child: Text(
-                        "신고유형 7",
-                        style: TextStyle(fontSize: 15),
-                      ),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.keyboard_arrow_right),
-                      onPressed: () {},
+                      onPressed: () {
+                        String postUid;
+                        String reportedUid;
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) =>
+                              ReportUserPage(postUid, reportedUid),
+                        ));
+                      },
                     )
                   ],
                 ),
