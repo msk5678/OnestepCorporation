@@ -252,16 +252,16 @@ class _ProductMainState extends State<ProductMain> {
             // )),
 
             // 신고 page test
-            Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => ReportPageTest())),
+            // Navigator.of(context).push(
+            //     MaterialPageRoute(builder: (context) => ReportPageTest())),
 
             // 약관 page
             // Navigator.of(context)
             //     .push(MaterialPageRoute(builder: (context) => TermsPage(user))),
 
             // spinkit test
-            // Navigator.of(context)
-            //     .push(MaterialPageRoute(builder: (context) => SpinkitTest())),
+            Navigator.of(context)
+                .push(MaterialPageRoute(builder: (context) => SpinkitTest())),
 
             // // 푸시알림 test
             // _testShowDialog(context),
