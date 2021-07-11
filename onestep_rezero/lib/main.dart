@@ -1,10 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart' as FBA;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
+import 'package:kakao_flutter_sdk/link.dart';
+import 'package:no_context_navigation/no_context_navigation.dart';
 import 'package:onestep_rezero/loggedInWidget.dart';
 import 'package:onestep_rezero/signUpWidget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -48,6 +51,50 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
+    // kakao
+    String kakaoAppKey = "88b99cb950dc222f10f369161182d008";
+    KakaoContext.clientId = kakaoAppKey;
+    initDynamicLinks();
+  }
+
+  void initDynamicLinks() async {
+    // 앱이 active이거나 background 상태일때 들어온 링크를 알 수 있는 링크 콜백에 대한 리스너 onLink()
+    FirebaseDynamicLinks.instance.onLink(
+        onSuccess: (PendingDynamicLinkData dynamicLink) async {
+      final NavigationService navService = NavigationService();
+      final Uri deepLink = dynamicLink?.link;
+
+      print(deepLink.path);
+
+      if (deepLink != null) {
+        var code = deepLink.queryParameters['code'];
+        navService.pushNamed('/DetailProduct', args: {"PRODUCTID": code}).then(
+            (value) {
+          print("clothitem");
+        });
+        // _handleDynamicLink(deepLink);
+      }
+    }, onError: (OnLinkErrorException e) async {
+      print('onLinkError');
+      print(e.message);
+    });
+
+    // 앱을 새로 런치한 링크를 알 수 있는 getInitialLink()
+    final PendingDynamicLinkData data =
+        await FirebaseDynamicLinks.instance.getInitialLink();
+    final Uri deepLink = data?.link;
+
+    print(deepLink);
+    if (deepLink != null) {
+      var code = deepLink.queryParameters['code'];
+      navService
+          .pushNamed('/DetailProduct', args: {"PRODUCTID": code}).then((value) {
+        print("clothitem");
+      });
+
+      // navService.pushNamed('/helloOnestep', args: deepLink);
+      // _handleDynamicLink(deepLink);
+    }
   }
 
   @override

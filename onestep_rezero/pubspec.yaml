@@ -82,6 +82,14 @@ dependencies:
   permission_handler: ^6.1.0   # 권한 요청
   ##############
   
+  #no_context_navigation
+  no_context_navigation: ^2.1.1
+  ############
+
+  #share
+  share: ^2.0.4
+  ########
+  
   #floatingButton
   unicorndial: "^1.1.5"        # multi floatingActionButton 
   ############
