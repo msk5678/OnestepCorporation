@@ -9,8 +9,6 @@ import 'package:hive/hive.dart';
 import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 import 'package:onestep_rezero/signUp/pages/signUpWidget.dart';
 import 'package:kakao_flutter_sdk/link.dart';
-import 'package:onestep_rezero/loggedInWidget.dart';
-import 'package:onestep_rezero/signUpWidget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onestep_rezero/utils/timeUtil.dart';
 import 'appmain/routeGenterator.dart';

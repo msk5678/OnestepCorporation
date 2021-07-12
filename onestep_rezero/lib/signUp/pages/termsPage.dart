@@ -4,8 +4,6 @@ import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/signUp/pages/termsPersonalDataPage.dart';
 import 'package:onestep_rezero/signUp/pages/termsServicePage.dart';
 
-import 'package:onestep_rezero/login/pages/termsPersonalDataPage.dart';
-import 'package:onestep_rezero/login/pages/termsServicePage.dart';
 import 'loginJoinPage.dart';
 
 class TermsPage extends StatefulWidget {

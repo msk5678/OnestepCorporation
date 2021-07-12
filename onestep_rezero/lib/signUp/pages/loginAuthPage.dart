@@ -7,11 +7,10 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/signIn/loggedInWidget.dart';
+import 'package:onestep_rezero/signUp/dml/authDml.dart';
 import 'package:onestep_rezero/signUp/model/user.dart';
 import 'package:onestep_rezero/signUp/providers/providers.dart';
 import 'package:onestep_rezero/utils/onestepCustom/dialog/onestepCustomDialogNotCancel.dart';
-import 'package:onestep_rezero/login/dml/authDml.dart';
-import 'package:onestep_rezero/login/providers/providers.dart';
 
 import '../../main.dart';
 import '../../sendMail.dart';

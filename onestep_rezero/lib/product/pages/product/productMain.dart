@@ -10,15 +10,15 @@ import 'package:onestep_rezero/favorite/pages/favoriteMain.dart';
 import 'package:onestep_rezero/product/widgets/main/productMainBody.dart';
 import 'package:onestep_rezero/product/widgets/main/productMainHeader.dart';
 import 'package:onestep_rezero/home/pages/homeNotificationPage.dart';
-import 'package:onestep_rezero/loggedInWidget.dart';
 import 'package:onestep_rezero/product/pages/category/categorySidebar.dart';
 
 import 'package:onestep_rezero/product/widgets/main/productMainBody.dart';
 import 'package:onestep_rezero/report/reportPageTest.dart';
 import 'package:onestep_rezero/search/pages/searchMain.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:onestep_rezero/signIn/loggedInWidget.dart';
+import 'package:onestep_rezero/utils/onestepCustom/dialog/onestepCustomDialog.dart';
 
-import '../../../onestepCustomDialog.dart';
 import '../../../spinkitTest.dart';
 
 class ProductMain extends StatefulWidget {
@@ -443,11 +443,11 @@ class _ProductMainState extends State<ProductMain> {
                   // )),
 
                   // 신고 page test
-                  // Navigator.of(context).push(MaterialPageRoute(
-                  //     builder: (context) => ReportPageTest())),
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => ReportPageTest())),
 
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => SpinkitTest())),
+                  // Navigator.of(context).push(
+                  //     MaterialPageRoute(builder: (context) => SpinkitTest())),
 
                   // 약관 page
                   // Navigator.of(context).push(
