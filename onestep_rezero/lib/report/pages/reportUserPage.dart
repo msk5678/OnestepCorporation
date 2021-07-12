@@ -68,7 +68,7 @@ class ReportUserPage extends StatelessWidget {
                                     title[index],
                                     content[index],
                                     _reportCase,
-                                    postUid,
+                                    chatId,
                                     reportedUid)));
                           },
                           child: Padding(
