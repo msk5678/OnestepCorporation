@@ -44,7 +44,7 @@ class _AdmobListState extends State<AnonymousChatBody> {
         children: [
           Padding(
             padding: EdgeInsets.only(
-              bottom: 50,
+              bottom: 0,
             ),
             child: Container(
               child: Column(
@@ -54,6 +54,8 @@ class _AdmobListState extends State<AnonymousChatBody> {
                     fit: FlexFit.tight,
                     child: _buildChatListListTileStream(),
                   ),
+                  createInput(),
+                  GoogleAdmob().getChatMainBottomBanner(deviceWidth),
                   // Flexible(
                   //   flex: 1,
                   //   fit: FlexFit.tight,
@@ -85,15 +87,15 @@ class _AdmobListState extends State<AnonymousChatBody> {
               ),
             ),
           ),
-          Positioned(
-            child: Column(
-              children: [
-                createInput(),
-                GoogleAdmob().getChatMainBottomBanner(deviceWidth),
-              ],
-            ),
-            bottom: 0,
-          ),
+          // Positioned(
+          //   child: Column(
+          //     children: [
+          //       createInput(),
+          //       GoogleAdmob().getChatMainBottomBanner(deviceWidth),
+          //     ],
+          //   ),
+          //   bottom: 0,
+          // ),
         ],
       ),
     );
@@ -115,28 +117,58 @@ class _AdmobListState extends State<AnonymousChatBody> {
           maxHeight: deviceHeight / 2.h,
         ),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Container(
+              // color: Colors.black,
               // color: Colors.grey[300],
               height: deviceHeight / 16.h,
               width: deviceWidth / 5.w,
               child: Center(
-                child: TextField(
-                  maxLength: 6,
-                  // maxLengthEnforced: true,
-                  cursorColor: OnestepColors().mainColor,
-                  controller: textNickNameController,
-                  style: TextStyle(
-                    fontSize: 13,
-                  ),
-                  decoration: InputDecoration.collapsed(
-                    hintText: " 닉네임",
-                    hintStyle: TextStyle(
-                      color: Colors.grey[600],
+                child: Container(
+                  // color: Colors.amber,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(
+                      0,
+                      0,
+                      0,
+                      4,
                     ),
+                    child: TextField(
+                      maxLength: 5,
 
-                    // border: OutlineInputBorder(),
+                      // maxLengthEnforced: true,
+                      cursorColor: OnestepColors().mainColor,
+                      controller: textNickNameController,
+                      style: TextStyle(
+                        fontSize: 13,
+                      ),
+                      decoration: InputDecoration(
+                        counterText: '',
+                        labelStyle: new TextStyle(
+                          color: null,
+                        ),
+                        hintText: "    닉네임",
+                        hintStyle: TextStyle(
+                          color: Colors.grey[600],
+                        ),
+                        // border: new UnderlineInputBorder(
+                        //   borderSide: new BorderSide(color: Colors.green),
+                        // ),
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: _inputWidgetColor,
+                          ),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: _inputWidgetColor,
+                          ),
+                        ),
+                        // border: OutlineInputBorder(),
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -146,23 +178,32 @@ class _AdmobListState extends State<AnonymousChatBody> {
             // fit: FlexFit.tight,
             // child:
             Container(
+              // color: Colors.red,
               child: ConstrainedBox(
                 constraints: BoxConstraints(
                   // minWidth: 200,
                   // maxWidth: 250,
-                  maxWidth: deviceWidth / 1.37.w,
+                  maxWidth: deviceWidth / 1.3.w,
 
                   minHeight: deviceHeight / 27.h,
                   maxHeight: deviceHeight / 4.h,
                 ),
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(
+                    5,
+                    3,
                     0,
-                    10,
-                    10,
-                    18,
+                    0,
                   ),
                   child: TextField(
+                    textInputAction: TextInputAction.send,
+                    // onSubmitted: (value) {
+                    //   print("search");
+                    //   Fluttertoast.showToast(msg: "버튼클릭");
+                    // },
+                    onEditingComplete: () {
+                      _checkTextField();
+                    },
                     cursorColor: OnestepColors().mainColor,
                     enabled: true,
                     // maxLength: 80,
@@ -172,11 +213,13 @@ class _AdmobListState extends State<AnonymousChatBody> {
                     ),
                     controller: textContentController,
                     minLines: 1,
-                    maxLines: 2,
+                    maxLines: 1,
+                    // maxLines: 2,
+                    // maxLength: 80,
                     decoration: InputDecoration.collapsed(
                       hintText: "채팅을 입력하세요.",
                       hintStyle: TextStyle(
-                        fontSize: 13,
+                        // fontSize: 13,
                         color: Colors.grey[600],
                       ),
                       // border: OutlineInputBorder(),
@@ -187,15 +230,32 @@ class _AdmobListState extends State<AnonymousChatBody> {
               ),
               // ),
             ),
-            Spacer(),
-            Container(
-              child: IconButton(
-                  icon: Icon(Icons.send),
-                  color: OnestepColors().mainColor,
-                  disabledColor: Colors.red,
-                  onPressed: () {
-                    _checkTextField();
-                  }),
+            // Container(
+            //   color: Colors.blue,
+            //   width: 10,
+            //   height: 10,
+            //   child: Spacer(),
+            // ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                0,
+                0,
+                0,
+                0,
+              ),
+              child: Container(
+                // color: Colors.amber,
+                // width: 15.w,
+                // height: 15.h,
+                child: IconButton(
+                    splashColor: Colors.deepOrange,
+                    icon: Icon(Icons.send),
+                    color: OnestepColors().mainColor,
+                    disabledColor: Colors.red,
+                    onPressed: () {
+                      _checkTextField();
+                    }),
+              ),
             ),
           ],
         ),

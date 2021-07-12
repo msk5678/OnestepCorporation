@@ -261,29 +261,33 @@ class SettingsBody extends ConsumerWidget {
           // ),
           InkWell(
             onTap: () {
-              OnestepCustomDialog.show(context,
-                  title: "로그아웃 하시겠습니까?",
-                  confirmButtonText: "확인",
-                  cancleButtonText: "취소", confirmButtonOnPress: () {
-                context
-                    .read(googleSignInProvider)
-                    .logout()
-                    .catchError((error, stackTrace) {
-                  FloatingSnackBar.show(
-                    context,
-                    "로그아웃 실패",
-                  );
-                }).whenComplete(() {
-                  FloatingSnackBar.show(
-                    context,
-                    "로그아웃 되었습니다.",
-                  );
-                  Navigator.push(
+              OnestepCustomDialog.show(
+                context,
+                title: "로그아웃 하시겠습니까?",
+                confirmButtonText: "확인",
+                cancleButtonText: "취소",
+                confirmButtonOnPress: () {
+                  context
+                      .read(googleSignInProvider)
+                      .logout()
+                      .catchError((error, stackTrace) {
+                    FloatingSnackBar.show(
                       context,
-                      MaterialPageRoute(
-                          builder: (BuildContext context) => MainPage()));
-                });
-              });
+                      "로그아웃 실패",
+                    );
+                  }).whenComplete(() {
+                    FloatingSnackBar.show(
+                      context,
+                      "로그아웃 되었습니다.",
+                    );
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (BuildContext context) => MainPage()));
+                  });
+                },
+                cancleButtonOnPress: () => Navigator.pop(context),
+              );
             },
             child: Padding(
               padding: EdgeInsets.fromLTRB(

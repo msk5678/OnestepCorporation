@@ -506,9 +506,15 @@ class _LastChatState extends State<ChatScreen> {
   _createMessageTypeWithText(String uid, String content) {
     double deviceWidth = MediaQuery.of(context).size.width;
     Color messageColor;
-    uid == currentUserModel.uid
-        ? messageColor = OnestepColors().fifColor
-        : messageColor = Colors.grey[200];
+    double messageWidth;
+    if (uid == currentUserModel.uid) {
+      messageColor = OnestepColors().fifColor;
+      messageWidth = deviceWidth / 1.38.w;
+    } //
+    else {
+      messageColor = Colors.grey[200];
+      messageWidth = deviceWidth / 1.6.w;
+    }
 
     return Container(
       // color: Colors.red,
@@ -847,7 +853,7 @@ class _LastChatState extends State<ChatScreen> {
                 5,
                 0,
                 0,
-                4,
+                0,
               ),
               child: Container(
                 // color: Colors.red,
@@ -900,7 +906,7 @@ class _LastChatState extends State<ChatScreen> {
                     0,
                     10,
                     10,
-                    18,
+                    13,
                   ),
                   child: TextField(
                     // cursorHeight: 24.0,
@@ -937,14 +943,14 @@ class _LastChatState extends State<ChatScreen> {
             Padding(
               padding: const EdgeInsets.fromLTRB(
                 0,
-                10,
-                16,
-                20,
+                0,
+                0,
+                0,
               ),
               child: Container(
                 // color: Colors.amber,
-                width: 25.w,
-                height: 25.h,
+                // width: 25.w,
+                // height: 25.h,
                 //Send Icon Button Color
                 // color: Colors.blue,
                 // _inputWidgetColor,

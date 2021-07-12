@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'User/case/userCase.dart';
 
 class ReportUserPage extends StatelessWidget {
-  final String postUid;
+  final String chatId;
   final String reportedUid;
-  ReportUserPage(this.postUid, this.reportedUid);
+  ReportUserPage(this.chatId, this.reportedUid);
 
   @override
   Widget build(BuildContext context) {
