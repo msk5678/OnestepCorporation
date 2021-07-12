@@ -4,6 +4,8 @@ import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/signUp/pages/termsPersonalDataPage.dart';
 import 'package:onestep_rezero/signUp/pages/termsServicePage.dart';
 
+import 'package:onestep_rezero/login/pages/termsPersonalDataPage.dart';
+import 'package:onestep_rezero/login/pages/termsServicePage.dart';
 import 'loginJoinPage.dart';
 
 class TermsPage extends StatefulWidget {
@@ -19,7 +21,7 @@ bool personalFlag = false;
 bool allCheckFlag = false;
 
 class _TermsPageState extends State<TermsPage> {
-  List<UserInfo> user;
+  final List<UserInfo> user;
   _TermsPageState(this.user);
 
   @override
@@ -145,7 +147,7 @@ class _TermsPageState extends State<TermsPage> {
                                     : Colors.white),
                             child: Padding(
                               // 동그라미 크기
-                              padding: const EdgeInsets.all(5.0),
+                              padding: const EdgeInsets.all(6.0),
                             ),
                           )),
                       Padding(
@@ -228,7 +230,7 @@ class _TermsPageState extends State<TermsPage> {
                                     ? OnestepColors().mainColor
                                     : Colors.white),
                             child: Padding(
-                              padding: const EdgeInsets.all(5.0),
+                              padding: const EdgeInsets.all(6.0),
                             ),
                           )),
                       Padding(
@@ -318,7 +320,7 @@ class _TermsPageState extends State<TermsPage> {
                                     ? OnestepColors().mainColor
                                     : Colors.white),
                             child: Padding(
-                              padding: const EdgeInsets.all(5.0),
+                              padding: const EdgeInsets.all(6.0),
                             ),
                           )),
                       Padding(

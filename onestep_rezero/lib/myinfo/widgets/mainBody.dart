@@ -11,63 +11,7 @@ import 'package:onestep_rezero/myinfo/widgets/myProfileImage.dart';
 import 'package:onestep_rezero/utils/onestepCustom/dialog/onestepCustomDialogNotCancel.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-// push, marketing 알림 dialog
-// void _testShowDialog(BuildContext context) {
-//   showDialog(
-//       context: context,
-//       builder: (BuildContext context) {
-//         return AlertDialog(
-//           title: Text("OneStep 회원가입을 진심으로 환영합니다!"),
-//           content: Column(
-//             mainAxisSize: MainAxisSize.min,
-//             children: [
-//               Text("마케팅 및 이벤트성 알림을 받으시겠습니까?"),
-//               Padding(
-//                 padding: EdgeInsets.fromLTRB(
-//                     0, MediaQuery.of(context).size.height / 30, 0, 0),
-//                 child: Row(
-//                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//                   children: [
-//                     SizedBox(
-//                       width: 100,
-//                       child: ElevatedButton(
-//                         child: Text("취소"),
-//                         onPressed: () {
-//                           // FirebaseFirestore.instance
-//                           //     .collection('user')
-//                           //     .doc(googleSignIn.currentUser.id)
-//                           //     .collection('notification')
-//                           //     .doc('setting')
-//                           //     .set({"marketing": 0, "push": 1});
-//                           Navigator.of(context).pop();
-//                         },
-//                       ),
-//                     ),
-//                     SizedBox(
-//                       width: 100,
-//                       child: ElevatedButton(
-//                         child: Text("확인"),
-//                         onPressed: () {
-//                           // FirebaseFirestore.instance
-//                           //     .collection('user')
-//                           //     .doc(googleSignIn.currentUser.id)
-//                           //     .collection('notification')
-//                           //     .doc('setting')
-//                           //     .set({"marketing": 1, "push": 1});
-//                           Navigator.of(context).pop();
-//                         },
-//                       ),
-//                     ),
-//                   ],
-//                 ),
-//               ),
-//             ],
-//           ),
-//         );
-//       });
-// }
-
-final f = DateFormat('yyyy-MM-dd hh:mm');
+final f = DateFormat('yyyy-MM-dd hh:mm a');
 
 class MyinfoMainBody extends ConsumerWidget {
   @override
@@ -81,7 +25,68 @@ class MyinfoMainBody extends ConsumerWidget {
           (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.waiting:
-            return Container();
+            // showDialog(
+            //   context: context,
+            //   builder: (_) => Material(
+            //     type: MaterialType.transparency,
+            //     child: Center(
+            //       child: Container(
+            //         child: SpinKitWave(
+            //           color: OnestepColors().mainColor,
+            //           type: SpinKitWaveType.start,
+            //         ),
+            //       ),
+            //     ),
+            //   ),
+            // );
+            return Center(child: CircularProgressIndicator());
+          // showDialog(
+          //   context: context,
+          //   builder: (_) => Material(
+          //     type: MaterialType.transparency,
+          //     child: Center(
+          //       child: Container(
+          //         child: SpinKitWave(
+          //           color: OnestepColors().mainColor,
+          //           type: SpinKitWaveType.start,
+          //         ),
+          //       ),
+          //     ),
+          //   ),
+          // );
+
+          // Material(
+          //   type: MaterialType.transparency,
+          //   child: Center(
+          //     child: Container(
+          //       child: SpinKitWave(
+          //         color: OnestepColors().mainColor,
+          //         type: SpinKitWaveType.start,
+          //       ),
+          //     ),
+          //   ),
+          // );
+
+          // AlertDialog(
+          //     contentPadding: EdgeInsets.zero,
+          //     backgroundColor: Colors.transparent,
+          //     content: Material(
+          //       type: MaterialType.transparency,
+          //       child: Center(
+          //         child: Container(
+          //           child: SpinKitWave(
+          //             color: OnestepColors().mainColor,
+          //             type: SpinKitWaveType.start,
+          //           ),
+          //         ),
+          //       ),
+          //     ));
+
+          // Container(
+          //     child: SpinKitWave(
+          //   color: OnestepColors().mainColor,
+          //   type: SpinKitWaveType.start,
+          // ));
           default:
             return SingleChildScrollView(
               child: Column(
@@ -203,7 +208,7 @@ class MyinfoMainBody extends ConsumerWidget {
                   ),
                   InkWell(
                     onTap: () {
-                      OnestepCustomDialogNotCancel.show(
+                      return OnestepCustomDialogNotCancel.show(
                         context,
                         title: '대학교인증 완료',
                         description:
@@ -213,49 +218,49 @@ class MyinfoMainBody extends ConsumerWidget {
                           Navigator.pop(context);
                         },
                       );
-
-                      //                     AsyncSnapshot<DocumentSnapshot> snapshot) {
-                      // final f = DateFormat('yyyy-MM-dd hh:mm');
-                      // showDialog(
-                      //   context: context,
-                      //   builder: (BuildContext context) {
-                      //     // return object of type Dialog
-                      //     return authValue == 1
-                      //         ? AlertDialog(
-                      //             title: Text("증명서인증 대기중"),
-                      //             content: Text("대기중"),
-                      //             actions: <Widget>[
-                      //               ElevatedButton(
-                      //                 child: Text("확인"),
-                      //                 onPressed: () {
-                      //                   Navigator.of(context).pop();
-                      //                 },
-                      //               ),
-                      //             ],
-                      //           )
-                      //         : AlertDialog(
-                      //             title: Text("학교인증"),
-                      //             content: Text(
-                      //                 "${f.format(DateTime.fromMillisecondsSinceEpoch(snapshot.data.data()['authTime']))} 에 완료하셨습니다"),
-                      //             actions: <Widget>[
-                      //               ElevatedButton(
-                      //                 child: Text("확인"),
-                      //                 onPressed: () {
-                      //                   Navigator.of(context).pop();
-                      //                 },
-                      //               ),
-                      //             ],
-                      //           );
-                      // snapshot.data.data()['auth'] == 1
-                      //     ? _showDialog(context, 1, snapshot)
-                      //     : _showDialog(context, 2, snapshot);
                     },
+
+                    //                     AsyncSnapshot<DocumentSnapshot> snapshot) {
+                    // final f = DateFormat('yyyy-MM-dd hh:mm');
+                    // showDialog(
+                    //   context: context,
+                    //   builder: (BuildContext context) {
+                    //     // return object of type Dialog
+                    //     return authValue == 1
+                    //         ? AlertDialog(
+                    //             title: Text("증명서인증 대기중"),
+                    //             content: Text("대기중"),
+                    //             actions: <Widget>[
+                    //               ElevatedButton(
+                    //                 child: Text("확인"),
+                    //                 onPressed: () {
+                    //                   Navigator.of(context).pop();
+                    //                 },
+                    //               ),
+                    //             ],
+                    //           )
+                    //         : AlertDialog(
+                    //             title: Text("학교인증"),
+                    //             content: Text(
+                    //                 "${f.format(DateTime.fromMillisecondsSinceEpoch(snapshot.data.data()['authTime']))} 에 완료하셨습니다"),
+                    //             actions: <Widget>[
+                    //               ElevatedButton(
+                    //                 child: Text("확인"),
+                    //                 onPressed: () {
+                    //                   Navigator.of(context).pop();
+                    //                 },
+                    //               ),
+                    //             ],
+                    //           );
+                    // snapshot.data.data()['auth'] == 1
+                    //     ? _showDialog(context, 1, snapshot)
+                    //     : _showDialog(context, 2, snapshot);
                     child: Padding(
                       padding: EdgeInsets.fromLTRB(
                           MediaQuery.of(context).size.width / 20,
-                          MediaQuery.of(context).size.width / 40,
+                          MediaQuery.of(context).size.width / 15,
                           0,
-                          0),
+                          MediaQuery.of(context).size.height / 60),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -265,25 +270,11 @@ class MyinfoMainBody extends ConsumerWidget {
                               style: TextStyle(fontSize: 15.sp),
                             ),
                           ),
-                          IconButton(
-                            icon: Icon(Icons.keyboard_arrow_right),
-                            onPressed: () {
-                              OnestepCustomDialogNotCancel.show(
-                                context,
-                                title: '대학교인증 완료',
-                                description:
-                                    '${f.format(DateTime.fromMillisecondsSinceEpoch(snapshot.data.data()['authTime']))} 에 완료하셨습니다',
-                                confirmButtonText: '확인',
-                                confirmButtonOnPress: () {
-                                  Navigator.pop(context);
-                                },
-                              );
-
-                              // snapshot.data.data()['auth'] == 1
-                              //     ? _showDialog(context, 1, snapshot)
-                              //     : _showDialog(context, 2, snapshot);
-                            },
-                          )
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(0, 0,
+                                MediaQuery.of(context).size.width / 20, 0),
+                            child: Icon(Icons.keyboard_arrow_right),
+                          ),
                         ],
                       ),
                     ),
@@ -313,9 +304,9 @@ class MyinfoMainBody extends ConsumerWidget {
                     child: Padding(
                       padding: EdgeInsets.fromLTRB(
                           MediaQuery.of(context).size.width / 20,
-                          MediaQuery.of(context).size.width / 40,
+                          MediaQuery.of(context).size.width / 15,
                           0,
-                          0),
+                          MediaQuery.of(context).size.height / 60),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -325,20 +316,21 @@ class MyinfoMainBody extends ConsumerWidget {
                               style: TextStyle(fontSize: 15.sp),
                             ),
                           ),
-                          IconButton(
-                            icon: Icon(Icons.keyboard_arrow_right),
-                            onPressed: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => NoticePage()));
-                            },
-                          )
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(0, 0,
+                                MediaQuery.of(context).size.width / 20, 0),
+                            child: Icon(Icons.keyboard_arrow_right),
+                          ),
                         ],
                       ),
                     ),
                   ),
                   Padding(
                     padding: EdgeInsets.fromLTRB(
-                        MediaQuery.of(context).size.width / 20, 0, 0, 0),
+                        MediaQuery.of(context).size.width / 20,
+                        MediaQuery.of(context).size.width / 30,
+                        0,
+                        MediaQuery.of(context).size.height / 60),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -348,16 +340,20 @@ class MyinfoMainBody extends ConsumerWidget {
                             style: TextStyle(fontSize: 15.sp),
                           ),
                         ),
-                        IconButton(
-                          icon: Icon(Icons.keyboard_arrow_right),
-                          onPressed: () {},
-                        )
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(
+                              0, 0, MediaQuery.of(context).size.width / 20, 0),
+                          child: Icon(Icons.keyboard_arrow_right),
+                        ),
                       ],
                     ),
                   ),
                   Padding(
                     padding: EdgeInsets.fromLTRB(
-                        MediaQuery.of(context).size.width / 20, 0, 0, 0),
+                        MediaQuery.of(context).size.width / 20,
+                        MediaQuery.of(context).size.width / 30,
+                        0,
+                        MediaQuery.of(context).size.height / 60),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -367,16 +363,20 @@ class MyinfoMainBody extends ConsumerWidget {
                             style: TextStyle(fontSize: 15.sp),
                           ),
                         ),
-                        IconButton(
-                          icon: Icon(Icons.keyboard_arrow_right),
-                          onPressed: () {},
-                        )
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(
+                              0, 0, MediaQuery.of(context).size.width / 20, 0),
+                          child: Icon(Icons.keyboard_arrow_right),
+                        ),
                       ],
                     ),
                   ),
                   Padding(
                     padding: EdgeInsets.fromLTRB(
-                        MediaQuery.of(context).size.width / 20, 0, 0, 0),
+                        MediaQuery.of(context).size.width / 20,
+                        MediaQuery.of(context).size.width / 30,
+                        0,
+                        MediaQuery.of(context).size.height / 60),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -386,16 +386,20 @@ class MyinfoMainBody extends ConsumerWidget {
                             style: TextStyle(fontSize: 15.sp),
                           ),
                         ),
-                        IconButton(
-                          icon: Icon(Icons.keyboard_arrow_right),
-                          onPressed: () {},
-                        )
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(
+                              0, 0, MediaQuery.of(context).size.width / 20, 0),
+                          child: Icon(Icons.keyboard_arrow_right),
+                        ),
                       ],
                     ),
                   ),
                   Padding(
                     padding: EdgeInsets.fromLTRB(
-                        MediaQuery.of(context).size.width / 20, 0, 0, 0),
+                        MediaQuery.of(context).size.width / 20,
+                        MediaQuery.of(context).size.width / 30,
+                        0,
+                        MediaQuery.of(context).size.height / 60),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -405,16 +409,20 @@ class MyinfoMainBody extends ConsumerWidget {
                             style: TextStyle(fontSize: 15.sp),
                           ),
                         ),
-                        IconButton(
-                          icon: Icon(Icons.keyboard_arrow_right),
-                          onPressed: () {},
-                        )
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(
+                              0, 0, MediaQuery.of(context).size.width / 20, 0),
+                          child: Icon(Icons.keyboard_arrow_right),
+                        ),
                       ],
                     ),
                   ),
                   Padding(
                     padding: EdgeInsets.fromLTRB(
-                        MediaQuery.of(context).size.width / 20, 0, 0, 0),
+                        MediaQuery.of(context).size.width / 20,
+                        MediaQuery.of(context).size.width / 30,
+                        0,
+                        MediaQuery.of(context).size.height / 60),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -424,10 +432,11 @@ class MyinfoMainBody extends ConsumerWidget {
                             style: TextStyle(fontSize: 15.sp),
                           ),
                         ),
-                        IconButton(
-                          icon: Icon(Icons.keyboard_arrow_right),
-                          onPressed: () {},
-                        )
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(
+                              0, 0, MediaQuery.of(context).size.width / 20, 0),
+                          child: Icon(Icons.keyboard_arrow_right),
+                        ),
                       ],
                     ),
                   ),

@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 
-import 'User/reportUserController.dart';
+import '../reportDealController.dart';
 
-class ReportUserPage extends StatelessWidget {
+class ReportBoardPage extends StatelessWidget {
+  final String boardUid;
   final String postUid;
   final String reportedUid;
-  ReportUserPage(this.postUid, this.reportedUid);
+  ReportBoardPage(this.boardUid, this.postUid, this.reportedUid);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          '사용자신고 테스트',
+          '게시판 -> 글 신고 테스트',
           style: TextStyle(color: Colors.black),
         ),
         backgroundColor: Colors.white,
@@ -23,7 +24,10 @@ class ReportUserPage extends StatelessWidget {
           children: [
             InkWell(
               onTap: () {
-                reportUserController(context, 1, postUid, reportedUid);
+                // boardUid 게시판만 적용돼서 값을 넘겨주면 boardUid 넘긴 값으로 세팅
+                // 값 안넘겨주면 default 값 세팅되게 해야함
+                reportDealController(context, 2, 1, postUid, reportedUid,
+                    boardUid: boardUid);
               },
               child: Padding(
                 padding: EdgeInsets.fromLTRB(

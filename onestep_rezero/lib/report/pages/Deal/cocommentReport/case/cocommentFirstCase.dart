@@ -1,25 +1,32 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:onestep_rezero/signIn/loggedInWidget.dart';
+import 'package:onestep_rezero/chat/widget/appColor.dart';
+import 'package:onestep_rezero/loggedInWidget.dart';
 
-import '../../../../main.dart';
-import '../../../../onestepCustomDialog.dart';
-import '../../../../onestepCustomDialogNotCancel.dart';
+import '../../../../../onestepCustomDialog.dart';
+import '../../../../../onestepCustomDialogNotCancel.dart';
 
 final myController = TextEditingController();
 
-void report(String postUid, String reportedUid) {
+void report(String boardUid, String postUid, String reportedUid,
+    String commentUid, String cocommentUid) {
   Map<dynamic, dynamic> values;
   List reportKeys;
 
   // 중복신고 방지
   FirebaseDatabase.instance
       .reference()
-      .child('reportUser')
+      .child('reportOverlapCheck')
       .child(currentUserModel.uid)
-      .child('user')
-      .set({postUid: true});
+      .child('cocomment')
+      .set({cocommentUid: true});
+
+  // reportedUid = 신고당한사람
+  // postUid = 게시글 uid
+  // boardUid = board uid
+  // commentUid = comment uid
+  // cocommentUid = cocomment uid
 
   FirebaseDatabase.instance
       .reference()
@@ -36,8 +43,8 @@ void report(String postUid, String reportedUid) {
                     .child(reportedUid)
                     // 처음신고 시간
                     .child(DateTime.now().millisecondsSinceEpoch.toString())
-                    .child('user')
-                    .child(postUid)
+                    .child('cocomment')
+                    .child(cocommentUid)
                     .child('value')
                     .child(DateTime.now().millisecondsSinceEpoch.toString())
                     .set({
@@ -50,6 +57,10 @@ void report(String postUid, String reportedUid) {
                   'reportingUid': currentUserModel.uid,
                   'time': DateTime.now().millisecondsSinceEpoch.toString(),
                   'university': currentUserModel.university,
+                  'boardUid': boardUid,
+                  'postUid': postUid,
+                  'commentUid': commentUid,
+                  'cocommentUid': cocommentUid,
                 })
               }
             else
@@ -69,8 +80,8 @@ void report(String postUid, String reportedUid) {
                           // 처음신고 시간 2
                           .child(
                               DateTime.now().millisecondsSinceEpoch.toString())
-                          .child('user')
-                          .child(postUid)
+                          .child('cocomment')
+                          .child(cocommentUid)
                           .child('value')
                           .child(
                               DateTime.now().millisecondsSinceEpoch.toString())
@@ -85,6 +96,10 @@ void report(String postUid, String reportedUid) {
                         'time':
                             DateTime.now().millisecondsSinceEpoch.toString(),
                         'university': currentUserModel.university,
+                        'boardUid': boardUid,
+                        'postUid': postUid,
+                        'commentUid': commentUid,
+                        'cocommentUid': cocommentUid,
                       });
                     } else {
                       FirebaseDatabase.instance
@@ -92,8 +107,8 @@ void report(String postUid, String reportedUid) {
                           .child('report')
                           .child(reportedUid)
                           .child(key.toString())
-                          .child('user')
-                          .child(postUid)
+                          .child('cocomment')
+                          .child(cocommentUid)
                           .child('value')
                           .child(
                               DateTime.now().millisecondsSinceEpoch.toString())
@@ -108,6 +123,10 @@ void report(String postUid, String reportedUid) {
                         'time':
                             DateTime.now().millisecondsSinceEpoch.toString(),
                         'university': currentUserModel.university,
+                        'boardUid': boardUid,
+                        'postUid': postUid,
+                        'commentUid': commentUid,
+                        'cocommentUid': cocommentUid,
                       });
                     }
                   }
@@ -116,10 +135,14 @@ void report(String postUid, String reportedUid) {
           });
 }
 
-class UserFirstCase extends StatelessWidget {
+class CoCommentFirstCase extends StatelessWidget {
+  final String boardUid;
   final String postUid;
   final String reportedUid;
-  UserFirstCase(this.postUid, this.reportedUid);
+  final String commentUid;
+  final String cocommentUid;
+  CoCommentFirstCase(this.boardUid, this.postUid, this.reportedUid,
+      this.commentUid, this.cocommentUid);
 
   @override
   Widget build(BuildContext context) {
@@ -132,7 +155,7 @@ class UserFirstCase extends StatelessWidget {
       child: Scaffold(
           appBar: AppBar(
             title: Text(
-              'user case one',
+              'cocomment case one',
               style: TextStyle(color: Colors.black),
             ),
             backgroundColor: Colors.white,
@@ -189,6 +212,8 @@ class UserFirstCase extends StatelessWidget {
                 ),
                 Center(
                   child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          primary: OnestepColors().mainColor),
                       onPressed: () async {
                         // report();
                         Map<dynamic, dynamic> values;
@@ -196,9 +221,9 @@ class UserFirstCase extends StatelessWidget {
 
                         await FirebaseDatabase.instance
                             .reference()
-                            .child('reportUser')
+                            .child('reportOverlapCheck')
                             .child(currentUserModel.uid)
-                            .child('user')
+                            .child('cocomment')
                             .once()
                             .then((value) => {
                                   if (value.value == null)
@@ -210,12 +235,11 @@ class UserFirstCase extends StatelessWidget {
                                       values = value.value,
                                       values.forEach((key, value) {
                                         // 한번이라도 신고한적이 있다
-                                        if (key == postUid) {
+                                        if (key == cocommentUid) {
                                           // 같은 글을 신고한다
                                           if (value == true) {
                                             flag = true;
-                                            return OnestepCustomDialogNotCancel
-                                                .show(
+                                            OnestepCustomDialogNotCancel.show(
                                               context,
                                               title: '이미 신고한 게시물입니다.',
                                               confirmButtonText: '확인',
@@ -247,7 +271,8 @@ class UserFirstCase extends StatelessWidget {
                             cancleButtonText: '취소',
                             confirmButtonOnPress: () {
                               reportState.data()['reportState'] == 0
-                                  ? report(postUid, reportedUid)
+                                  ? report(boardUid, postUid, reportedUid,
+                                      commentUid, cocommentUid)
                                   : null;
                               Navigator.pop(context);
                             },

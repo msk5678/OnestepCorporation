@@ -1,18 +1,23 @@
 import 'package:flutter/material.dart';
 
-import 'User/reportUserController.dart';
+import '../reportDealController.dart';
 
-class ReportUserPage extends StatelessWidget {
+class ReportCocommentPage extends StatelessWidget {
+  final String boardUid;
   final String postUid;
   final String reportedUid;
-  ReportUserPage(this.postUid, this.reportedUid);
+  final String commentUid;
+  final String cocommentUid;
+
+  ReportCocommentPage(this.boardUid, this.postUid, this.reportedUid,
+      this.commentUid, this.cocommentUid);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          '사용자신고 테스트',
+          '대댓글 신고 테스트',
           style: TextStyle(color: Colors.black),
         ),
         backgroundColor: Colors.white,
@@ -23,7 +28,16 @@ class ReportUserPage extends StatelessWidget {
           children: [
             InkWell(
               onTap: () {
-                reportUserController(context, 1, postUid, reportedUid);
+                reportDealController(
+                  context,
+                  4,
+                  1,
+                  postUid,
+                  reportedUid,
+                  boardUid: boardUid,
+                  commentUid: commentUid,
+                  cocommentUid: cocommentUid,
+                );
               },
               child: Padding(
                 padding: EdgeInsets.fromLTRB(
