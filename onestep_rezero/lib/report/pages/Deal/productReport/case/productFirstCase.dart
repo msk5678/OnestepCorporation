@@ -6,8 +6,6 @@ import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 import 'package:onestep_rezero/utils/onestepCustom/dialog/onestepCustomDialog.dart';
 import 'package:onestep_rezero/utils/onestepCustom/dialog/onestepCustomDialogNotCancel.dart';
 
-import '../../../../main.dart';
-
 final myController = TextEditingController();
 
 void report(String postUid, String reportedUid) {
@@ -17,10 +15,13 @@ void report(String postUid, String reportedUid) {
   // 중복신고 방지
   FirebaseDatabase.instance
       .reference()
-      .child('reportUser')
+      .child('reportOverlapCheck')
       .child(currentUserModel.uid)
-      .child('user')
+      .child('product')
       .set({postUid: true});
+
+  // reportedUid = 신고당한사람
+  // postUid = 게시글 uid
 
   FirebaseDatabase.instance
       .reference()
@@ -37,7 +38,7 @@ void report(String postUid, String reportedUid) {
                     .child(reportedUid)
                     // 처음신고 시간
                     .child(DateTime.now().millisecondsSinceEpoch.toString())
-                    .child('user')
+                    .child('product')
                     .child(postUid)
                     .child('value')
                     .child(DateTime.now().millisecondsSinceEpoch.toString())
@@ -51,6 +52,7 @@ void report(String postUid, String reportedUid) {
                   'reportingUid': currentUserModel.uid,
                   'time': DateTime.now().millisecondsSinceEpoch.toString(),
                   'university': currentUserModel.university,
+                  'postUid': postUid,
                 })
               }
             else
@@ -70,7 +72,7 @@ void report(String postUid, String reportedUid) {
                           // 처음신고 시간 2
                           .child(
                               DateTime.now().millisecondsSinceEpoch.toString())
-                          .child('user')
+                          .child('product')
                           .child(postUid)
                           .child('value')
                           .child(
@@ -86,6 +88,7 @@ void report(String postUid, String reportedUid) {
                         'time':
                             DateTime.now().millisecondsSinceEpoch.toString(),
                         'university': currentUserModel.university,
+                        'postUid': postUid,
                       });
                     } else {
                       FirebaseDatabase.instance
@@ -93,7 +96,7 @@ void report(String postUid, String reportedUid) {
                           .child('report')
                           .child(reportedUid)
                           .child(key.toString())
-                          .child('user')
+                          .child('product')
                           .child(postUid)
                           .child('value')
                           .child(
@@ -109,6 +112,7 @@ void report(String postUid, String reportedUid) {
                         'time':
                             DateTime.now().millisecondsSinceEpoch.toString(),
                         'university': currentUserModel.university,
+                        'postUid': postUid,
                       });
                     }
                   }
@@ -117,10 +121,11 @@ void report(String postUid, String reportedUid) {
           });
 }
 
-class UserFirstCase extends StatelessWidget {
+class ProductFirstCase extends StatelessWidget {
+  // final String boardUid;
   final String postUid;
   final String reportedUid;
-  UserFirstCase(this.postUid, this.reportedUid);
+  ProductFirstCase(this.postUid, this.reportedUid);
 
   @override
   Widget build(BuildContext context) {
@@ -158,9 +163,9 @@ class UserFirstCase extends StatelessWidget {
 
                     await FirebaseDatabase.instance
                         .reference()
-                        .child('reportUser')
+                        .child('reportOverlapCheck')
                         .child(currentUserModel.uid)
-                        .child('user')
+                        .child('product')
                         .once()
                         .then((value) => {
                               if (value.value == null)
@@ -176,8 +181,7 @@ class UserFirstCase extends StatelessWidget {
                                       // 같은 글을 신고한다
                                       if (value == true) {
                                         flag = true;
-                                        return OnestepCustomDialogNotCancel
-                                            .show(
+                                        OnestepCustomDialogNotCancel.show(
                                           context,
                                           title: '이미 신고한 게시물입니다.',
                                           confirmButtonText: '확인',
@@ -233,7 +237,7 @@ class UserFirstCase extends StatelessWidget {
           ),
           appBar: AppBar(
             title: Text(
-              'user case one',
+              'product case one',
               style: TextStyle(color: Colors.black),
             ),
             backgroundColor: Colors.white,
@@ -290,16 +294,17 @@ class UserFirstCase extends StatelessWidget {
                 ),
                 // Center(
                 //   child: ElevatedButton(
+                //       style: ElevatedButton.styleFrom(
+                //           primary: OnestepColors().mainColor),
                 //       onPressed: () async {
-                //         // report();
                 //         Map<dynamic, dynamic> values;
                 //         bool flag = false;
 
                 //         await FirebaseDatabase.instance
                 //             .reference()
-                //             .child('reportUser')
+                //             .child('reportOverlapCheck')
                 //             .child(currentUserModel.uid)
-                //             .child('user')
+                //             .child('product')
                 //             .once()
                 //             .then((value) => {
                 //                   if (value.value == null)
@@ -315,8 +320,7 @@ class UserFirstCase extends StatelessWidget {
                 //                           // 같은 글을 신고한다
                 //                           if (value == true) {
                 //                             flag = true;
-                //                             return OnestepCustomDialogNotCancel
-                //                                 .show(
+                //                             OnestepCustomDialogNotCancel.show(
                 //                               context,
                 //                               title: '이미 신고한 게시물입니다.',
                 //                               confirmButtonText: '확인',

@@ -15,6 +15,7 @@ class User {
   final String universityEmail;
 
   final int joinTime;
+  final int pushCheck;
 
   const User({
     this.auth,
@@ -28,6 +29,7 @@ class User {
     this.universityEmail,
     this.joinTime,
     // this.reportTime,
+    this.pushCheck,
   });
 
   factory User.fromDocument(DocumentSnapshot document) {
@@ -43,6 +45,7 @@ class User {
       university: document['university'],
       universityEmail: document['universityEmail'],
       joinTime: document['joinTime'],
+      pushCheck: document['pushCheck'],
     );
   }
 }
