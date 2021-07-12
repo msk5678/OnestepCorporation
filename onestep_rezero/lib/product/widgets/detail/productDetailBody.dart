@@ -8,6 +8,7 @@ import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/favorite/animation/favoriteAnimation.dart';
 import 'package:onestep_rezero/favorite/utils/favoriteFirebaseApi.dart';
 import 'package:onestep_rezero/myinfo/pages/mySaleProductMain.dart';
+import 'package:onestep_rezero/report/pages/Deal/productReport/reportProductPage.dart';
 import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 import 'package:onestep_rezero/chat/navigator/chatNavigationManager.dart';
 import 'package:onestep_rezero/product/models/product.dart';
@@ -142,6 +143,9 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
       case '새로고침':
         break;
       case '신고하기':
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => ReportProductPage(
+                widget.product.firestoreid, widget.product.uid)));
         break;
       case '수정하기':
         break;

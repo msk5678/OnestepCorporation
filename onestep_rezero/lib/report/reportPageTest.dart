@@ -45,6 +45,7 @@ class ReportPageTest extends StatelessWidget {
                   // 신고당한사람 uid
                   String reportedUid;
 
+                  // 찬섭 게시판 신고
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) =>
                           ReportBoardPage(boardUid, postUid, reportedUid)));
@@ -64,8 +65,9 @@ class ReportPageTest extends StatelessWidget {
                   // comment uid
                   String commentUid;
 
+                  // 찬섭 댓글 신고
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => ReportComentPage(
+                      builder: (context) => ReportCommentPage(
                           boardUid, postUid, reportedUid, commentUid)));
                 },
                 child: Text("댓글 신고"),
@@ -85,6 +87,7 @@ class ReportPageTest extends StatelessWidget {
                   // cocomment uid
                   String cocommentUid;
 
+                  // 찬섭 대댓글 신고
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => ReportCocommentPage(boardUid,
                           postUid, reportedUid, commentUid, cocommentUid)));

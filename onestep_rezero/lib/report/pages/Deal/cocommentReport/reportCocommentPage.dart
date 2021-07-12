@@ -1,6 +1,7 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
-import '../reportDealController.dart';
+import 'case/cocommentCase.dart';
 
 class ReportCocommentPage extends StatelessWidget {
   final String boardUid;
@@ -8,7 +9,6 @@ class ReportCocommentPage extends StatelessWidget {
   final String reportedUid;
   final String commentUid;
   final String cocommentUid;
-
   ReportCocommentPage(this.boardUid, this.postUid, this.reportedUid,
       this.commentUid, this.cocommentUid);
 
@@ -24,46 +24,107 @@ class ReportCocommentPage extends StatelessWidget {
         iconTheme: IconThemeData(color: Colors.black),
       ),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            InkWell(
-              onTap: () {
-                reportDealController(
-                  context,
-                  4,
-                  1,
-                  postUid,
-                  reportedUid,
-                  boardUid: boardUid,
-                  commentUid: commentUid,
-                  cocommentUid: cocommentUid,
+        child: FutureBuilder(
+          future: FirebaseDatabase.instance
+              .reference()
+              .child('reportType')
+              .child('cocomment')
+              .once(),
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.waiting:
+                return CircularProgressIndicator();
+              default:
+                // Future.delayed(const Duration(seconds: 1));
+                DataSnapshot dataValues = snapshot.data;
+                Map<dynamic, dynamic> values = dataValues.value;
+                List title = [];
+                List content = [];
+                List reportCase = [];
+                values.forEach((key, value) {
+                  title.add(value['title'].toString());
+                  content.add(value['content'].toString());
+                  reportCase.add(value['case'].toString());
+                });
+                return ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: title.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Column(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(
+                              0,
+                              MediaQuery.of(context).size.height / 80,
+                              0,
+                              MediaQuery.of(context).size.height / 80),
+                          child: Divider(
+                            thickness: 1,
+                            endIndent: 15,
+                            indent: 15,
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            int _reportCase = int.parse(reportCase[index]);
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => CoCommentCase(
+                                    title[index],
+                                    content[index],
+                                    _reportCase,
+                                    boardUid,
+                                    postUid,
+                                    reportedUid,
+                                    commentUid,
+                                    cocommentUid)));
+                          },
+                          child: Padding(
+                            padding: EdgeInsets.fromLTRB(
+                                MediaQuery.of(context).size.width / 20,
+                                0,
+                                0,
+                                0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  child: Text(
+                                    "${title[index]}",
+                                    style: TextStyle(fontSize: 15),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.fromLTRB(
+                                      0,
+                                      0,
+                                      MediaQuery.of(context).size.width / 20,
+                                      0),
+                                  child: Icon(Icons.keyboard_arrow_right),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        index == title.length - 1
+                            ? Padding(
+                                padding: EdgeInsets.fromLTRB(
+                                    0,
+                                    MediaQuery.of(context).size.height / 80,
+                                    0,
+                                    MediaQuery.of(context).size.height / 80),
+                                child: Divider(
+                                  thickness: 1,
+                                  endIndent: 15,
+                                  indent: 15,
+                                ),
+                              )
+                            : Container(),
+                      ],
+                    );
+                  },
                 );
-              },
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(
-                    MediaQuery.of(context).size.width / 20,
-                    MediaQuery.of(context).size.width / 15,
-                    0,
-                    0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      child: Text(
-                        "신고유형 1",
-                        style: TextStyle(fontSize: 15),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(
-                          0, 0, MediaQuery.of(context).size.width / 20, 0),
-                      child: Icon(Icons.keyboard_arrow_right),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
+            }
+          },
         ),
       ),
     );

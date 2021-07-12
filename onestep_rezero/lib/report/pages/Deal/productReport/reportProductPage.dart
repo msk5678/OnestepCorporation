@@ -1,12 +1,11 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
-import '../../reportUserPage.dart';
-import '../reportDealController.dart';
+import 'case/productCase.dart';
 
 class ReportProductPage extends StatelessWidget {
   final String postUid;
   final String reportedUid;
-
   ReportProductPage(this.postUid, this.reportedUid);
 
   @override
@@ -21,84 +20,104 @@ class ReportProductPage extends StatelessWidget {
         iconTheme: IconThemeData(color: Colors.black),
       ),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            InkWell(
-              onTap: () {
-                reportDealController(
-                  context,
-                  1,
-                  1,
-                  postUid,
-                  reportedUid,
+        child: FutureBuilder(
+          future: FirebaseDatabase.instance
+              .reference()
+              .child('reportType')
+              .child('product')
+              .once(),
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.waiting:
+                return CircularProgressIndicator();
+              default:
+                // Future.delayed(const Duration(seconds: 1));
+                DataSnapshot dataValues = snapshot.data;
+                Map<dynamic, dynamic> values = dataValues.value;
+                List title = [];
+                List content = [];
+                List reportCase = [];
+                values.forEach((key, value) {
+                  title.add(value['title'].toString());
+                  content.add(value['content'].toString());
+                  reportCase.add(value['case'].toString());
+                });
+                return ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: title.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Column(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(
+                              0,
+                              MediaQuery.of(context).size.height / 80,
+                              0,
+                              MediaQuery.of(context).size.height / 80),
+                          child: Divider(
+                            thickness: 1,
+                            endIndent: 15,
+                            indent: 15,
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            int _reportCase = int.parse(reportCase[index]);
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => ProductCase(
+                                    title[index],
+                                    content[index],
+                                    _reportCase,
+                                    postUid,
+                                    reportedUid)));
+                          },
+                          child: Padding(
+                            padding: EdgeInsets.fromLTRB(
+                                MediaQuery.of(context).size.width / 20,
+                                0,
+                                0,
+                                0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  child: Text(
+                                    "${title[index]}",
+                                    style: TextStyle(fontSize: 15),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.fromLTRB(
+                                      0,
+                                      0,
+                                      MediaQuery.of(context).size.width / 20,
+                                      0),
+                                  child: Icon(Icons.keyboard_arrow_right),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        index == title.length - 1
+                            ? Padding(
+                                padding: EdgeInsets.fromLTRB(
+                                    0,
+                                    MediaQuery.of(context).size.height / 80,
+                                    0,
+                                    MediaQuery.of(context).size.height / 80),
+                                child: Divider(
+                                  thickness: 1,
+                                  endIndent: 15,
+                                  indent: 15,
+                                ),
+                              )
+                            : Container(),
+                      ],
+                    );
+                  },
                 );
-              },
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(
-                    MediaQuery.of(context).size.width / 20,
-                    MediaQuery.of(context).size.width / 15,
-                    0,
-                    0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      child: Text(
-                        "신고유형 1",
-                        style: TextStyle(fontSize: 15),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(
-                          0, 0, MediaQuery.of(context).size.width / 20, 0),
-                      child: Icon(Icons.keyboard_arrow_right),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Divider(),
-            Divider(),
-            InkWell(
-              onTap: () {
-                String postUid;
-                String reportedUid;
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => ReportUserPage(postUid, reportedUid),
-                ));
-              },
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(
-                    MediaQuery.of(context).size.width / 20,
-                    MediaQuery.of(context).size.width / 40,
-                    0,
-                    0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      child: Text(
-                        "사용자 신고 하러가기",
-                        style: TextStyle(
-                            fontSize: 15, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.keyboard_arrow_right),
-                      onPressed: () {
-                        String postUid;
-                        String reportedUid;
-                        Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) =>
-                              ReportUserPage(postUid, reportedUid),
-                        ));
-                      },
-                    )
-                  ],
-                ),
-              ),
-            ),
-          ],
+            }
+          },
         ),
       ),
     );

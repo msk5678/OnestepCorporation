@@ -1,6 +1,7 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
-import '../reportDealController.dart';
+import 'case/boardCase.dart';
 
 class ReportBoardPage extends StatelessWidget {
   final String boardUid;
@@ -13,47 +14,112 @@ class ReportBoardPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          '게시판 -> 글 신고 테스트',
+          '게시글 테스트',
           style: TextStyle(color: Colors.black),
         ),
         backgroundColor: Colors.white,
         iconTheme: IconThemeData(color: Colors.black),
       ),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            InkWell(
-              onTap: () {
-                // boardUid 게시판만 적용돼서 값을 넘겨주면 boardUid 넘긴 값으로 세팅
-                // 값 안넘겨주면 default 값 세팅되게 해야함
-                reportDealController(context, 2, 1, postUid, reportedUid,
-                    boardUid: boardUid);
-              },
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(
-                    MediaQuery.of(context).size.width / 20,
-                    MediaQuery.of(context).size.width / 15,
-                    0,
-                    0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      child: Text(
-                        "신고유형 1",
-                        style: TextStyle(fontSize: 15),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(
-                          0, 0, MediaQuery.of(context).size.width / 20, 0),
-                      child: Icon(Icons.keyboard_arrow_right),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
+        child: FutureBuilder(
+          future: FirebaseDatabase.instance
+              .reference()
+              .child('reportType')
+              .child('board')
+              .once(),
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.waiting:
+                return CircularProgressIndicator();
+              default:
+                // Future.delayed(const Duration(seconds: 1));
+                DataSnapshot dataValues = snapshot.data;
+                Map<dynamic, dynamic> values = dataValues.value;
+                List title = [];
+                List content = [];
+                List reportCase = [];
+                values.forEach((key, value) {
+                  title.add(value['title'].toString());
+                  content.add(value['content'].toString());
+                  reportCase.add(value['case'].toString());
+                });
+                return ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: title.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Column(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(
+                              0,
+                              MediaQuery.of(context).size.height / 80,
+                              0,
+                              MediaQuery.of(context).size.height / 80),
+                          child: Divider(
+                            thickness: 1,
+                            endIndent: 15,
+                            indent: 15,
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            int _reportCase = int.parse(reportCase[index]);
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => BoardCase(
+                                    title[index],
+                                    content[index],
+                                    _reportCase,
+                                    boardUid,
+                                    postUid,
+                                    reportedUid)));
+                          },
+                          child: Padding(
+                            padding: EdgeInsets.fromLTRB(
+                                MediaQuery.of(context).size.width / 20,
+                                0,
+                                0,
+                                0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  child: Text(
+                                    "${title[index]}",
+                                    style: TextStyle(fontSize: 15),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.fromLTRB(
+                                      0,
+                                      0,
+                                      MediaQuery.of(context).size.width / 20,
+                                      0),
+                                  child: Icon(Icons.keyboard_arrow_right),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        index == title.length - 1
+                            ? Padding(
+                                padding: EdgeInsets.fromLTRB(
+                                    0,
+                                    MediaQuery.of(context).size.height / 80,
+                                    0,
+                                    MediaQuery.of(context).size.height / 80),
+                                child: Divider(
+                                  thickness: 1,
+                                  endIndent: 15,
+                                  indent: 15,
+                                ),
+                              )
+                            : Container(),
+                      ],
+                    );
+                  },
+                );
+            }
+          },
         ),
       ),
     );

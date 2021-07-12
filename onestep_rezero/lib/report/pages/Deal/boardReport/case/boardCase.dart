@@ -8,7 +8,8 @@ import 'package:onestep_rezero/utils/onestepCustom/dialog/onestepCustomDialogNot
 
 final myController = TextEditingController();
 
-void report(String boardUid, String postUid, String reportedUid) {
+void report(
+    String boardUid, String postUid, String reportedUid, int reportCase) {
   Map<dynamic, dynamic> values;
   List reportKeys;
 
@@ -44,7 +45,7 @@ void report(String boardUid, String postUid, String reportedUid) {
                     .child('value')
                     .child(DateTime.now().millisecondsSinceEpoch.toString())
                     .set({
-                  'case': '1',
+                  'case': reportCase.toString(),
                   'content': myController.text.toString(),
                   'title': "case first",
                   // 신고 당한 사람
@@ -80,7 +81,7 @@ void report(String boardUid, String postUid, String reportedUid) {
                           .child(
                               DateTime.now().millisecondsSinceEpoch.toString())
                           .set({
-                        'case': '1',
+                        'case': reportCase.toString(),
                         'content': myController.text.toString(),
                         'title': "case first",
                         // 신고 당한 사람
@@ -105,7 +106,7 @@ void report(String boardUid, String postUid, String reportedUid) {
                           .child(
                               DateTime.now().millisecondsSinceEpoch.toString())
                           .set({
-                        'case': '1',
+                        'case': reportCase.toString(),
                         'content': myController.text.toString(),
                         'title': "case first",
                         // 신고 당한 사람
@@ -125,11 +126,15 @@ void report(String boardUid, String postUid, String reportedUid) {
           });
 }
 
-class BoardFirstCase extends StatelessWidget {
+class BoardCase extends StatelessWidget {
+  final String title;
+  final String content;
+  final int reportCase;
   final String boardUid;
   final String postUid;
   final String reportedUid;
-  BoardFirstCase(this.boardUid, this.postUid, this.reportedUid);
+  BoardCase(this.title, this.content, this.reportCase, this.boardUid,
+      this.postUid, this.reportedUid);
 
   @override
   Widget build(BuildContext context) {
@@ -207,7 +212,7 @@ class BoardFirstCase extends StatelessWidget {
                       final DocumentSnapshot reportState =
                           await FirebaseFirestore.instance
                               .collection('user')
-                              .doc(currentUserModel.uid)
+                              .doc(reportedUid)
                               .get();
 
                       return OnestepCustomDialog.show(
@@ -217,9 +222,9 @@ class BoardFirstCase extends StatelessWidget {
                         cancleButtonText: '취소',
                         confirmButtonOnPress: () {
                           reportState.data()['reportState'] == 0
-                              ? report(boardUid, postUid, reportedUid)
-                              : null;
-                          Navigator.pop(context);
+                              ? report(
+                                  boardUid, postUid, reportedUid, reportCase)
+                              : Navigator.pop(context);
                         },
                         cancleButtonOnPress: () {
                           Navigator.pop(context);
@@ -241,7 +246,7 @@ class BoardFirstCase extends StatelessWidget {
           ),
           appBar: AppBar(
             title: Text(
-              'board case one',
+              title,
               style: TextStyle(color: Colors.black),
             ),
             backgroundColor: Colors.white,
@@ -253,31 +258,7 @@ class BoardFirstCase extends StatelessWidget {
               children: [
                 Container(
                   child: Text(
-                    "case one report",
-                    style: TextStyle(fontSize: 40),
-                  ),
-                ),
-                Container(
-                  child: Text(
-                    "case one report",
-                    style: TextStyle(fontSize: 40),
-                  ),
-                ),
-                Container(
-                  child: Text(
-                    "case one report",
-                    style: TextStyle(fontSize: 40),
-                  ),
-                ),
-                Container(
-                  child: Text(
-                    "case one report",
-                    style: TextStyle(fontSize: 40),
-                  ),
-                ),
-                Container(
-                  child: Text(
-                    "case one report",
+                    content,
                     style: TextStyle(fontSize: 40),
                   ),
                 ),
@@ -296,82 +277,6 @@ class BoardFirstCase extends StatelessWidget {
                     ),
                   ),
                 ),
-                // Center(
-                //   child: ElevatedButton(
-                //       style: ElevatedButton.styleFrom(
-                //           primary: OnestepColors().mainColor),
-                //       onPressed: () async {
-                //         // report();
-                //         Map<dynamic, dynamic> values;
-                //         bool flag = false;
-
-                //         await FirebaseDatabase.instance
-                //             .reference()
-                //             .child('reportOverlapCheck')
-                //             .child(currentUserModel.uid)
-                //             .child('board')
-                //             .once()
-                //             .then((value) => {
-                //                   if (value.value == null)
-                //                     {
-                //                       flag = false,
-                //                     }
-                //                   else
-                //                     {
-                //                       values = value.value,
-                //                       values.forEach((key, value) {
-                //                         // 한번이라도 신고한적이 있다
-                //                         if (key == postUid) {
-                //                           // 같은 글을 신고한다
-                //                           if (value == true) {
-                //                             flag = true;
-                //                             OnestepCustomDialogNotCancel.show(
-                //                               context,
-                //                               title: '이미 신고한 게시물입니다.',
-                //                               confirmButtonText: '확인',
-                //                               confirmButtonOnPress: () {
-                //                                 Navigator.pop(context);
-                //                               },
-                //                             );
-                //                           }
-                //                           // 신고를 한적이 있는데 같은 글이 아니다
-                //                           else {
-                //                             flag = false;
-                //                           }
-                //                         }
-                //                       })
-                //                     }
-                //                 });
-                //         // 처음 신고한다
-                //         if (flag == false) {
-                //           final DocumentSnapshot reportState =
-                //               await FirebaseFirestore.instance
-                //                   .collection('user')
-                //                   .doc(currentUserModel.uid)
-                //                   .get();
-
-                //           return OnestepCustomDialog.show(
-                //             context,
-                //             title: '신고하시겠습니까?',
-                //             confirmButtonText: '확인',
-                //             cancleButtonText: '취소',
-                //             confirmButtonOnPress: () {
-                //               reportState.data()['reportState'] == 0
-                //                   ? report(boardUid, postUid, reportedUid)
-                //                   : null;
-                //               Navigator.pop(context);
-                //             },
-                //             cancleButtonOnPress: () {
-                //               Navigator.pop(context);
-                //             },
-                //           );
-                //         }
-                //       },
-                //       child: Container(
-                //         width: MediaQuery.of(context).size.width / 1.5,
-                //         child: Center(child: Text("onestep 팀에게 제출하기")),
-                //       )),
-                // ),
               ],
             ),
           )),
