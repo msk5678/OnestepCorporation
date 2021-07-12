@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_fadein/flutter_fadein.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:onestep_rezero/board/AboutPost/AboutPostContent/postComment.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,6 +12,7 @@ import 'package:onestep_rezero/board/declareData/commentData.dart';
 import 'package:onestep_rezero/board/declareData/postData.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/signIn/loggedInWidget.dart';
+import 'package:onestep_rezero/utils/floatingSnackBar.dart';
 import 'package:onestep_rezero/utils/timeUtil.dart';
 
 class UserWrittenCommentList extends StatefulWidget {
@@ -53,21 +54,23 @@ class _UserWrittenCommentListState extends State<UserWrittenCommentList> {
             ),
             body: SingleChildScrollView(
                 child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 15, vertical: 20),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 15.w, vertical: 20.h),
                     child: Container(
                         child: UserWrittenCommentListWidget(
                       snackBarCallback: showSnackBar,
                     ))))));
   }
 
-  showSnackBar(Text textMessage,
+  showSnackBar(String textMessage,
       {SnackBarAction snackBarAction, Duration duration}) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: textMessage,
-      duration: duration ?? Duration(milliseconds: 500),
-      action: snackBarAction ?? null,
-    ));
+    FloatingSnackBar.show(context, textMessage,
+        duration: duration ?? Duration(milliseconds: 500));
+    // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    //   content: textMessage,
+    //   duration: duration ?? Duration(milliseconds: 500),
+    //   action: snackBarAction ?? null,
+    // ));
   }
 }
 
@@ -127,9 +130,9 @@ class UserWrittenCommentListWidget extends ConsumerWidget implements Comment {
           return !wasCommentDeleted
               ? AnimationConfiguration.staggeredList(
                   position: index,
-                  duration: const Duration(milliseconds: 375),
+                  duration: const Duration(milliseconds: 0),
                   child: SlideAnimation(
-                    verticalOffset: 50.0,
+                    verticalOffset: 50.0.h,
                     child: FadeInAnimation(
                       child: Column(
                         children: [
@@ -153,7 +156,7 @@ class UserWrittenCommentListWidget extends ConsumerWidget implements Comment {
                                       "CURRENTBOARDDATA": clickedPostData
                                     }).then((value) {});
                               } else {
-                                snackBarCallback(Text("이미 삭제된 게시글입니다."));
+                                snackBarCallback("이미 삭제된 게시글입니다.");
                               }
                             },
                             child: Container(
@@ -161,11 +164,11 @@ class UserWrittenCommentListWidget extends ConsumerWidget implements Comment {
                                   border: Border(
                                     top: BorderSide(
                                       color: OnestepColors().mainColor,
-                                      width: 0.5,
+                                      width: 0.5.w,
                                     ),
                                   ),
                                 ),
-                                padding: EdgeInsets.symmetric(vertical: 10),
+                                padding: EdgeInsets.symmetric(vertical: 10.h),
                                 child: commentListSwipeMenu(
                                   currentIndexCommentData,
                                   context,
@@ -241,8 +244,8 @@ class UserWrittenCommentListWidget extends ConsumerWidget implements Comment {
                         color: OnestepColors().mainColor))),
             Container(
               padding: EdgeInsets.only(
-                left: 8,
-                top: 10,
+                left: 8.w,
+                top: 10.h,
               ),
               alignment: Alignment.centerLeft,
               child: Text(comment.textContent ?? "NO"),
@@ -252,12 +255,20 @@ class UserWrittenCommentListWidget extends ConsumerWidget implements Comment {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Container(),
+                  Container(
+                    width: deviceWidth / 2,
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "${comment.postTitle}",
+                      style: TextStyle(color: Colors.grey, fontSize: 10.sp),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
                   Container(
                     alignment: Alignment.centerRight,
                     child: Text(
                       "${TimeUtil.timeAgo(date: uploadTime)}",
-                      style: TextStyle(color: Colors.grey, fontSize: 10),
+                      style: TextStyle(color: Colors.grey, fontSize: 10.sp),
                     ),
                   ),
                 ],

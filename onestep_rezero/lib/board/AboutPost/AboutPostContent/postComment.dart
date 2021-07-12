@@ -10,6 +10,7 @@ import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 import 'package:onestep_rezero/utils/timeUtil.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 final commentProvider =
     ChangeNotifierProvider<CommentProvider>((ref) => CommentProvider());
@@ -18,7 +19,6 @@ abstract class Comment {
   commentBoxDesignMethod(BuildContext context, int index, CommentData comment,
       double deviceWidth, double deviceHeight);
 
-  commentName(String commentUID, String postWriterUid, commentList);
   animationLimiterListView(
       List comment, double deviceWidth, double deviceHeight);
   commentListEmptyWidget();
@@ -35,18 +35,18 @@ class CommentWidget extends CommentParent {
   final postId;
   final commentMap;
   final postWriterUID;
-  final openSlidingPanelCallback;
   final coCommentCallback;
   final showDialogCallback;
+  final commentUserCallback;
   final SlidableController slidableController = SlidableController();
 
   CommentWidget(
       {this.boardId,
       this.postId,
-      this.openSlidingPanelCallback,
       this.commentMap,
       this.postWriterUID,
       this.coCommentCallback,
+      this.commentUserCallback,
       this.showDialogCallback});
   @override
   Widget build(BuildContext context, watch) {
@@ -73,19 +73,19 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
   final postId;
   final commentMap;
   final postWriterUID;
-  final openSlidingPanelCallback;
   final coCommentCallback;
   final showDialogCallback;
+  final userNameCallback;
   final SlidableController slidableController = SlidableController();
 
   CommentParent(
       {this.boardId,
       this.postId,
-      this.openSlidingPanelCallback,
       this.commentMap,
       this.postWriterUID,
       this.coCommentCallback,
-      this.showDialogCallback});
+      this.showDialogCallback,
+      this.userNameCallback});
 
   @override
   Widget commentBoxDesignMethod(BuildContext context, int index,
@@ -97,23 +97,6 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
       //is deleted
       return commentWidget(context, index, comment, currentUserModel.uid,
           deviceWidth, deviceHeight);
-  }
-
-  @override
-  commentName(commentUID, postWriterUid, commentList) {
-    Map<String, dynamic> commentUserMap = commentList ?? {};
-    List commentUserList = commentUserMap.keys.toList();
-    if (commentUID.toString() == postWriterUid) {
-      return "작성자";
-    } else {
-      for (int i = 0; i < commentUserList.length; i++) {
-        if (commentUserList[i].toString() == commentUID)
-          return "익명 ${i + 1}";
-        else
-          return "익명 ${commentUserList.length + 1}";
-      }
-    }
-    return "";
   }
 
   @override
@@ -134,14 +117,13 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
         bool isDeleted = currentIndexCommentData.deleted;
         bool haveChildComment = currentIndexCommentData.haveChildComment;
         currentIndexCommentData
-          ..userName = commentName(
-              currentIndexCommentData.uid, postWriterUID, commentMap);
+          ..userName = userNameCallback(currentIndexCommentData.uid);
 
         return AnimationConfiguration.staggeredList(
           position: index,
           duration: const Duration(milliseconds: 0),
           child: SlideAnimation(
-            verticalOffset: 50.0,
+            verticalOffset: 50.0.h,
             child: FadeInAnimation(
               child: Column(
                 children: [
@@ -193,7 +175,6 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
     return ChildComment(
       childCommentList: childCommentList,
       coCommentCallback: coCommentCallback,
-      openSlidingPanelCallback: openSlidingPanelCallback,
       slidableController: slidableController,
       postWriterUID: postWriterUID,
       commentMap: commentMap,
@@ -292,7 +273,7 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
     return Container(
         alignment: Alignment.centerLeft,
         padding: EdgeInsets.only(
-          left: 8,
+          left: 8.w,
         ),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           deletedTimeWithDay
@@ -314,7 +295,7 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
             alignment: Alignment.centerRight,
             child: Text(
               "${TimeUtil.timeAgo(date: uploadTime)}",
-              style: TextStyle(color: Colors.grey[700], fontSize: 10),
+              style: TextStyle(color: Colors.grey[700], fontSize: 10.sp),
             ),
           )
         ]));
@@ -351,33 +332,34 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
             ),
             Container(
               padding: EdgeInsets.only(
-                left: 8,
-                top: 10,
+                left: 8.w,
+                top: 10.h,
               ),
               alignment: Alignment.centerLeft,
               child: Text(comment.textContent ?? "NO"),
             ),
             Container(
-              margin: EdgeInsets.only(top: 10),
+              margin: EdgeInsets.only(top: 10.h),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Row(
                     children: [
                       Container(
-                        padding: EdgeInsets.only(left: 10),
+                        padding: EdgeInsets.only(left: 10.h),
                         alignment: Alignment.centerRight,
                         child: GestureDetector(
                           onTap: () => coCommentCallback(comment),
                           child: Text(
                             "댓글달기",
-                            style: TextStyle(color: Colors.grey, fontSize: 10),
+                            style:
+                                TextStyle(color: Colors.grey, fontSize: 10.sp),
                           ),
                         ),
                       ),
                       comment.uid == uid
                           ? Container(
-                              padding: EdgeInsets.only(left: 10),
+                              padding: EdgeInsets.only(left: 10.w),
                               alignment: Alignment.centerRight,
                               child: GestureDetector(
                                 onTap: () async {
@@ -389,7 +371,7 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
                                 child: Text(
                                   "삭제",
                                   style: TextStyle(
-                                      color: Colors.redAccent, fontSize: 10),
+                                      color: Colors.redAccent, fontSize: 10.sp),
                                 ),
                               ),
                             )
@@ -400,7 +382,7 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
                     alignment: Alignment.centerRight,
                     child: Text(
                       "${TimeUtil.timeAgo(date: uploadTime)}",
-                      style: TextStyle(color: Colors.grey, fontSize: 10),
+                      style: TextStyle(color: Colors.grey, fontSize: 10.sp),
                     ),
                   ),
                 ],

@@ -4,7 +4,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_fadein/flutter_fadein.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onestep_rezero/board/AboutPost/AboutPostListView/listRiverpod.dart';
-
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:onestep_rezero/board/declareData/boardData.dart';
 import 'package:onestep_rezero/board/declareData/categoryManageClass.dart';
 
@@ -122,7 +122,7 @@ abstract class PostListParentWidget<T extends StatefulWidget> extends State<T>
               ],
             ),
             curve: Curves.easeIn,
-            duration: Duration(milliseconds: 300),
+            duration: Duration(milliseconds: 0),
           ),
         ),
         // ),
@@ -138,7 +138,7 @@ abstract class PostListParentWidget<T extends StatefulWidget> extends State<T>
         floatingActionButton: Stack(
           children: <Widget>[
             Align(
-                alignment: Alignment(0.1, 1.0),
+                alignment: Alignment(0.1.w, 1.0.h),
                 child: productAddFLoatingActionButton(
                     currentBoardData, productAddstreamController)),
             Align(
@@ -167,7 +167,7 @@ abstract class PostListParentWidget<T extends StatefulWidget> extends State<T>
         initialData: false,
         builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
           return Padding(
-            padding: const EdgeInsets.only(bottom: 50),
+            padding: EdgeInsets.only(bottom: 50.h),
             child: Visibility(
               visible: snapshot.data,
               child: Container(
@@ -216,14 +216,14 @@ abstract class PostListParentWidget<T extends StatefulWidget> extends State<T>
         return Visibility(
           visible: snapshot.data,
           child: Container(
-            height: 40.0,
-            width: 40.0,
+            height: 40.0.h,
+            width: 40.0.w,
             child: FittedBox(
               child: FloatingActionButton(
                 heroTag: null,
                 onPressed: () {
                   scrollController.position
-                      .moveTo(0.5, duration: Duration(milliseconds: 200));
+                      .moveTo(0.5.h, duration: Duration(milliseconds: 200));
                 },
                 child:
                     Icon(Icons.keyboard_arrow_up_rounded, color: Colors.black),

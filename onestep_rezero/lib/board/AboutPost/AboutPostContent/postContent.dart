@@ -215,6 +215,25 @@ class _PostContentState extends State<PostContent>
 
   CommentData aboutCoComment;
 
+  //작성자, 익명 1, 익명 2
+  Map<String, String> writtenCommentMap = {};
+
+  setUserName(
+    String uid,
+  ) {
+    if (currentUid == uid) {
+      return "작성자";
+    } else {
+      if (writtenCommentMap.containsKey(uid)) {
+        return writtenCommentMap[uid];
+      } else {
+        int writtenUserCount = (writtenCommentMap.keys.toList().length + 1) + 1;
+        writtenCommentMap.addAll({uid: "익명 $writtenUserCount"});
+        return "익명 $writtenUserCount";
+      }
+    }
+  }
+
   @override
   void initState() {
     currentPostData = widget.postData;
@@ -607,7 +626,7 @@ class _PostContentState extends State<PostContent>
       actions: <Widget>[
         PopupMenuButton(
             icon: Icon(Icons.settings, color: OnestepColors().mainColor),
-            offset: Offset(0, 45),
+            offset: Offset(0.w, 45.h),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
             ),
@@ -619,8 +638,10 @@ class _PostContentState extends State<PostContent>
                   TipDialogHelper.dismiss();
                   TipDialogHelper.success("삭제 완료!");
                   Future.delayed(Duration(seconds: 1))
-                      .then((value) => Navigator.popUntil(
-                          context, ModalRoute.withName('/PostList')))
+                      .then((value) =>
+                          Navigator.of(context).pop({"ALTERPOSTDATA": true}))
+                      //  Navigator.popUntil(
+                      //     context, ModalRoute.withName('/PostList')))
                       .whenComplete(() {});
                 } else {
                   TipDialogHelper.fail("Error \n Dismiss Error!");
@@ -691,7 +712,8 @@ class _PostContentState extends State<PostContent>
       textEditingControllerComment.clear();
       loadingDialogTipDialog(
           CommentData.toRealtimeDataWithPostData(postData).toRealtimeDatabase(
-              comment.trimRight(), currentUid), thenFunction: (value) {
+              comment.trimRight(), currentUid, postData.title),
+          thenFunction: (value) {
         // _panelOpen(false);
         context
             .read(commentProvider)
@@ -703,7 +725,8 @@ class _PostContentState extends State<PostContent>
     } else {
       if (!commentData.isUnderComment) {
         textEditingControllerComment.clear();
-        loadingDialogTipDialog(commentData.addchildComment(comment, currentUid),
+        loadingDialogTipDialog(
+            commentData.addchildComment(comment, currentUid, postData.title),
             thenFunction: (value) {
           // _panelOpen(false);
           context
@@ -719,7 +742,8 @@ class _PostContentState extends State<PostContent>
         textEditingControllerComment.clear();
         loadingDialogTipDialog(
             CommentData.toRealtimeDataWithPostData(postData)
-                .addChildchildComment(comment, commentData, currentUid),
+                .addChildchildComment(
+                    comment, commentData, currentUid, postData.title),
             thenFunction: (value) {
           // _panelOpen(false);
           context

@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_fadein/flutter_fadein.dart';
 
 import 'package:onestep_rezero/board/AboutPost/AboutPostListView/listRiverpod.dart';
 import 'package:onestep_rezero/board/AboutPost/AboutPostListView/postList.dart';

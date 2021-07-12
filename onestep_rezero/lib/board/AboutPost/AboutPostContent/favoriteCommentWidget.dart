@@ -5,6 +5,7 @@ import 'package:onestep_rezero/board/boardMain.dart';
 import 'package:onestep_rezero/board/declareData/postData.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/signIn/loggedInWidget.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class FavoriteButton extends ConsumerWidget {
   final PostData currentPost;
@@ -28,7 +29,7 @@ class FavoriteButton extends ConsumerWidget {
         }
       },
       child: Container(
-          margin: EdgeInsets.only(top: 10),
+          margin: EdgeInsets.only(top: 10.h),
           alignment: Alignment.centerLeft,
           child: Icon(
             isClicked ? Icons.favorite : Icons.favorite_border,

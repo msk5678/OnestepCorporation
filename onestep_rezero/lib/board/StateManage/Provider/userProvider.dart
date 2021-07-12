@@ -71,6 +71,7 @@ class UserProvider with ChangeNotifier {
       });
       await Future.forEach(_userWrittenCommentList, (UserData data) async {
         var commentDb;
+        String postTitle = data.postTitle ?? "";
         if (data.parentCommentId != "") {
           commentDb = db
               .reference()
@@ -90,7 +91,7 @@ class UserProvider with ChangeNotifier {
         }
         CommentData _commentData =
             await commentDb.once().then((DataSnapshot dataSnapshot) {
-          return CommentData.fromRealtimeData(dataSnapshot,
+          return CommentData.fromRealtimeData(dataSnapshot, postTitle,
               ignoreDeleted: true);
         });
         if (_commentData != null) {
@@ -159,12 +160,21 @@ class UserData {
   final String boardId;
   final String postId;
   final String parentCommentId;
+  final String postTitle;
   String commentId;
 
-  UserData({this.boardId, this.postId, this.parentCommentId, this.commentId});
+  UserData(
+      {this.boardId,
+      this.postId,
+      this.parentCommentId,
+      this.commentId,
+      this.postTitle});
   factory UserData.fromRealtimeUserFavoriteList(var mapData) {
     mapData = Map<dynamic, dynamic>.from(mapData);
-    return UserData(boardId: mapData["boardId"], postId: mapData["postId"]);
+    return UserData(
+        boardId: mapData["boardId"],
+        postId: mapData["postId"],
+        postTitle: mapData["postTitle"]);
   }
   factory UserData.fromRealtimeUserWrittenCommentList(
       String commId, var mapData) {
@@ -172,6 +182,7 @@ class UserData {
         boardId: mapData["boardId"],
         postId: mapData["postId"],
         commentId: commId,
-        parentCommentId: mapData["parentCommentId"]);
+        parentCommentId: mapData["parentCommentId"],
+        postTitle: mapData["postTitle"]);
   }
 }
