@@ -20,6 +20,7 @@ import 'package:onestep_rezero/utils/onestepCustom/dialog/onestepCustomDialog.da
 
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ProductEdit extends StatefulWidget {
   final Product product;
@@ -90,10 +91,10 @@ class _ProductEditState extends State<ProductEdit> {
         pickAssets();
       },
       child: Container(
-        width: 80,
-        height: 80,
+        width: 80.w,
+        height: 80.h,
         decoration: BoxDecoration(
-          border: Border.all(width: 1.0, color: Colors.grey),
+          border: Border.all(width: 1.0.w, color: Colors.grey),
           borderRadius: BorderRadius.all(
             Radius.circular(5.0),
           ),
@@ -104,7 +105,7 @@ class _ProductEditState extends State<ProductEdit> {
             Icon(
               Icons.photo_camera,
               color: Colors.grey,
-              size: 30,
+              size: 30.sp,
             ),
             Positioned(
               right: 5,
@@ -128,8 +129,8 @@ class _ProductEditState extends State<ProductEdit> {
         child: Stack(
           children: [
             Image(
-              width: 80,
-              height: 80,
+              width: 80.w,
+              height: 80.h,
               image: AssetEntityImageProvider(image, isOriginal: false),
               fit: BoxFit.cover,
             ),
@@ -152,7 +153,7 @@ class _ProductEditState extends State<ProductEdit> {
                     child: Icon(
                       Icons.close,
                       color: Colors.white,
-                      size: 15,
+                      size: 15.sp,
                     ),
                   ),
                 ),
@@ -174,24 +175,24 @@ class _ProductEditState extends State<ProductEdit> {
           ),
         ),
         Container(
-          height: 80,
+          height: 80.h,
           width: MediaQuery.of(context).size.width,
-          margin: EdgeInsets.only(top: 10, bottom: 20),
+          margin: EdgeInsets.only(top: 10.h, bottom: 20.h),
           child: ListView(
             scrollDirection: Axis.horizontal,
             children: [
               getImages(),
               ..._initImagesUrl.map(
                 (image) => Padding(
-                  padding: EdgeInsets.only(left: 7),
+                  padding: EdgeInsets.only(left: 7.w),
                   child: ClipRRect(
                     borderRadius: BorderRadius.all(Radius.circular(5.0)),
                     child: Stack(
                       children: [
                         CachedNetworkImage(
                           imageUrl: image,
-                          width: 80,
-                          height: 80,
+                          width: 80.w,
+                          height: 80.h,
                           errorWidget: (context, url, error) =>
                               Icon(Icons.error), // 로딩 오류 시 이미지
 
@@ -216,7 +217,7 @@ class _ProductEditState extends State<ProductEdit> {
                                 child: Icon(
                                   Icons.close,
                                   color: Colors.white,
-                                  size: 15,
+                                  size: 15.sp,
                                 ),
                               ),
                             ),
@@ -347,14 +348,14 @@ class _ProductEditState extends State<ProductEdit> {
           );
         },
         child: Container(
-          height: 60,
+          height: 50.h,
           color: OnestepColors().mainColor,
           child: Center(
             child: Text(
               "수정완료",
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 18,
+                fontSize: 18.sp,
               ),
             ),
           ),

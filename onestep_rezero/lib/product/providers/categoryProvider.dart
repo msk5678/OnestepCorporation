@@ -8,16 +8,16 @@ class CategoryProvider extends ChangeNotifier {
   final int documentLimit = 12;
   String category;
   String detailCategory;
-  bool _hasNext = true;
-  bool _isFetching = false;
+  bool hasNext = true;
+  bool isFetching = false;
   List<Product> product = [];
 
   List<Product> get products => product;
 
   Future fetchProducts({String category, String detailCategory}) async {
-    if (_isFetching) return;
-    _isFetching = true;
-    _hasNext = true;
+    if (isFetching) return;
+    isFetching = true;
+    hasNext = true;
 
     if (category != null) {
       this.category = category;
@@ -35,36 +35,20 @@ class CategoryProvider extends ChangeNotifier {
       );
       _productsSnapshot.addAll(snap.docs);
 
-      if (snap.docs.length < documentLimit) _hasNext = false;
+      if (snap.docs.length < documentLimit) hasNext = false;
     } catch (error) {}
 
     product = _productsSnapshot.map((snap) {
-      final _product = snap.data();
-
-      return Product(
-        firestoreid: snap.id,
-        uid: _product['uid'],
-        title: _product['title'],
-        category: _product['category'],
-        detailCategory: _product['detailCategory'],
-        favoriteUserList: _product['favoriteUserList'],
-        price: _product['price'],
-        trading: _product['trading'],
-        completed: _product['completed'],
-        hide: _product['hide'],
-        deleted: _product['deleted'],
-        imagesUrl: _product['imagesUrl'],
-        bumpTime: DateTime.fromMicrosecondsSinceEpoch(_product['bumpTime']),
-      );
+      return Product.fromJson(snap.data(), snap.id);
     }).toList();
 
-    _isFetching = false;
+    isFetching = false;
     notifyListeners();
   }
 
   Future fetchNextProducts() async {
-    if (_isFetching || !_hasNext) return;
-    _isFetching = true;
+    if (isFetching || !hasNext) return;
+    isFetching = true;
 
     try {
       final snap = await CategoryFirebaseApi.getAllProducts(
@@ -76,30 +60,14 @@ class CategoryProvider extends ChangeNotifier {
       );
       _productsSnapshot.addAll(snap.docs);
 
-      if (snap.docs.length < documentLimit) _hasNext = false;
+      if (snap.docs.length < documentLimit) hasNext = false;
     } catch (error) {}
 
     product = _productsSnapshot.map((snap) {
-      final _product = snap.data();
-
-      return Product(
-        firestoreid: snap.id,
-        uid: _product['uid'],
-        title: _product['title'],
-        category: _product['category'],
-        detailCategory: _product['detailCategory'],
-        favoriteUserList: _product['favoriteUserList'],
-        price: _product['price'],
-        trading: _product['trading'],
-        completed: _product['completed'],
-        hide: _product['hide'],
-        deleted: _product['deleted'],
-        imagesUrl: _product['imagesUrl'],
-        bumpTime: DateTime.fromMicrosecondsSinceEpoch(_product['bumpTime']),
-      );
+      return Product.fromJson(snap.data(), snap.id);
     }).toList();
 
-    _isFetching = false;
+    isFetching = false;
     notifyListeners();
   }
 }

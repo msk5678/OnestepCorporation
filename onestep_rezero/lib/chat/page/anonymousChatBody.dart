@@ -8,6 +8,7 @@ import 'package:onestep_rezero/chat/productchat/model/anonymousChatList.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 import 'package:onestep_rezero/utils/onestepCustom/color/onestepAppColor.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AnonymousChatBody extends StatefulWidget {
   @override
@@ -43,17 +44,31 @@ class _AdmobListState extends State<AnonymousChatBody> {
         children: [
           Padding(
             padding: EdgeInsets.only(
-              bottom: 50,
+              bottom: 0,
             ),
             child: Container(
               child: Column(
                 children: [
                   Flexible(
-                    // flex: 5,
+                    flex: 10,
                     fit: FlexFit.tight,
                     child: _buildChatListListTileStream(),
                   ),
                   createInput(),
+                  GoogleAdmob().getChatMainBottomBanner(deviceWidth),
+                  // Flexible(
+                  //   flex: 1,
+                  //   fit: FlexFit.tight,
+                  //   child:
+                  // Positioned(
+                  //   child:
+                  // Align(
+                  //   alignment: Alignment.center,
+                  //   child: createInput(),
+                  // ),
+                  // bottom: 50.h,
+                  // ),
+                  // ),
                   // Container(
                   //   color: Colors.lightBlue,
                   //   height: 50,
@@ -72,106 +87,175 @@ class _AdmobListState extends State<AnonymousChatBody> {
               ),
             ),
           ),
-          Positioned(
-            child: GoogleAdmob().getChatMainBottomBanner(deviceWidth),
-            bottom: 0,
-          ),
+          // Positioned(
+          //   child: Column(
+          //     children: [
+          //       createInput(),
+          //       GoogleAdmob().getChatMainBottomBanner(deviceWidth),
+          //     ],
+          //   ),
+          //   bottom: 0,
+          // ),
         ],
       ),
     );
   }
 
   createInput() {
+    double deviceHeight = MediaQuery.of(context).size.height;
+    double deviceWidth = MediaQuery.of(context).size.width;
     Color _inputWidgetColor = Colors.grey;
     return Container(
-      width: double.infinity,
+      // height: deviceHeight / 16.h,
+      width: deviceWidth,
       decoration: BoxDecoration(
         color: _inputWidgetColor,
       ),
       child: new ConstrainedBox(
         constraints: BoxConstraints(
-          minHeight: 50,
-          maxHeight: 400.0,
+          minHeight: deviceHeight / 16.h,
+          maxHeight: deviceHeight / 2.h,
         ),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Container(
+              // color: Colors.black,
               // color: Colors.grey[300],
-              height: 50,
-              width: 80,
+              height: deviceHeight / 16.h,
+              width: deviceWidth / 5.w,
               child: Center(
-                child: TextField(
-                  maxLength: 6,
-                  // maxLengthEnforced: true,
-                  cursorColor: OnestepColors().mainColor,
-                  controller: textNickNameController,
-                  style: TextStyle(
-                    fontSize: 13,
-                  ),
-                  decoration: InputDecoration.collapsed(
-                    hintText: " 닉네임",
-                    hintStyle: TextStyle(
-                      color: Colors.grey[600],
-                    ),
-
-                    // border: OutlineInputBorder(),
-                  ),
-                ),
-              ),
-            ),
-            Flexible(
-              // flex: 3,
-              // fit: FlexFit.tight,
-              child: Container(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    // minWidth: 200,
-                    maxWidth: 250,
-                    minHeight: 35,
-                    maxHeight: 200.0,
-                  ),
+                child: Container(
+                  // color: Colors.amber,
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(
-                      10,
-                      10,
-                      10,
-                      14,
+                      0,
+                      0,
+                      0,
+                      4,
                     ),
                     child: TextField(
+                      maxLength: 5,
+
+                      // maxLengthEnforced: true,
                       cursorColor: OnestepColors().mainColor,
-                      enabled: true,
-                      // maxLength: 80,
+                      controller: textNickNameController,
                       style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 16.0,
+                        fontSize: 13,
                       ),
-                      controller: textContentController,
-                      minLines: 1,
-                      maxLines: 2,
-                      decoration: InputDecoration.collapsed(
-                        hintText: "채팅을 입력하세요.",
+                      decoration: InputDecoration(
+                        counterText: '',
+                        labelStyle: new TextStyle(
+                          color: null,
+                        ),
+                        hintText: "    닉네임",
                         hintStyle: TextStyle(
-                          fontSize: 13,
                           color: Colors.grey[600],
+                        ),
+                        // border: new UnderlineInputBorder(
+                        //   borderSide: new BorderSide(color: Colors.green),
+                        // ),
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: _inputWidgetColor,
+                          ),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: _inputWidgetColor,
+                          ),
                         ),
                         // border: OutlineInputBorder(),
                       ),
-                      focusNode: focusNode,
                     ),
                   ),
                 ),
               ),
             ),
-            Spacer(),
+            // Flexible(
+            // flex: 3,
+            // fit: FlexFit.tight,
+            // child:
             Container(
-              child: IconButton(
-                  icon: Icon(Icons.send),
-                  color: OnestepColors().mainColor,
-                  disabledColor: Colors.red,
-                  onPressed: () {
-                    _checkTextField();
-                  }),
+              // color: Colors.red,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  // minWidth: 200,
+                  // maxWidth: 250,
+                  maxWidth: deviceWidth / 1.3.w,
+
+                  minHeight: deviceHeight / 27.h,
+                  maxHeight: deviceHeight / 4.h,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    5,
+                    3,
+                    0,
+                    0,
+                  ),
+                  child: TextField(
+                    textInputAction: TextInputAction.send,
+                    // onSubmitted: (value) {
+                    //   print("search");
+                    //   Fluttertoast.showToast(msg: "버튼클릭");
+                    // },
+                    onEditingComplete: () {
+                      _checkTextField();
+                    },
+                    cursorColor: OnestepColors().mainColor,
+                    enabled: true,
+                    // maxLength: 80,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 16.0,
+                    ),
+                    controller: textContentController,
+                    minLines: 1,
+                    maxLines: 1,
+                    // maxLines: 2,
+                    // maxLength: 80,
+                    decoration: InputDecoration.collapsed(
+                      hintText: "채팅을 입력하세요.",
+                      hintStyle: TextStyle(
+                        // fontSize: 13,
+                        color: Colors.grey[600],
+                      ),
+                      // border: OutlineInputBorder(),
+                    ),
+                    focusNode: focusNode,
+                  ),
+                ),
+              ),
+              // ),
+            ),
+            // Container(
+            //   color: Colors.blue,
+            //   width: 10,
+            //   height: 10,
+            //   child: Spacer(),
+            // ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                0,
+                0,
+                0,
+                0,
+              ),
+              child: Container(
+                // color: Colors.amber,
+                // width: 15.w,
+                // height: 15.h,
+                child: IconButton(
+                    splashColor: Colors.deepOrange,
+                    icon: Icon(Icons.send),
+                    color: OnestepColors().mainColor,
+                    disabledColor: Colors.red,
+                    onPressed: () {
+                      _checkTextField();
+                    }),
+              ),
             ),
           ],
         ),

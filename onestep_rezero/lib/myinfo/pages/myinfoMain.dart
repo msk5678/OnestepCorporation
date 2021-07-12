@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onestep_rezero/myinfo/widgets/mainBody.dart';
 import 'myinfoSettingsPage.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class MyInfoMain extends ConsumerWidget {
   @override
@@ -20,7 +21,7 @@ class MyInfoMain extends ConsumerWidget {
               IconButton(
                 icon: Icon(Icons.settings),
                 color: Colors.black,
-                iconSize: 30,
+                iconSize: 30.sp,
                 onPressed: () async {
                   // // SharedPreferences 내부 db
                   // SharedPreferences _prefsPush;

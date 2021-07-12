@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onestep_rezero/favorite/widgets/favoriteMainBody.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class FavoriteMain extends StatefulWidget {
   FavoriteMain({Key key}) : super(key: key);
@@ -58,8 +59,8 @@ class _FavoriteMainState extends State<FavoriteMain> {
         return Visibility(
           visible: snapshot.data,
           child: Container(
-            height: 40.0,
-            width: 40.0,
+            height: 40.0.h,
+            width: 40.0.w,
             child: FittedBox(
               child: FloatingActionButton(
                 heroTag: "favoriteMainFloatActionButton",
@@ -88,6 +89,7 @@ class _FavoriteMainState extends State<FavoriteMain> {
         iconTheme: IconThemeData(
           color: Colors.black,
         ),
+        elevation: 0,
         backgroundColor: Colors.white,
         title: Text(
           '찜한 아이템',
@@ -119,15 +121,14 @@ class _FavoriteMainState extends State<FavoriteMain> {
       body: SingleChildScrollView(
         physics: AlwaysScrollableScrollPhysics(),
         controller: _scrollController,
-        child: Container(
-            color: Colors.white,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                // FavoriteMainHeader(),
-                FavoriteMainBody(),
-              ],
-            )),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            // FavoriteMainHeader(),
+            FavoriteMainBody(),
+          ],
+        ),
       ),
       floatingActionButton: floatingButton(),
     );

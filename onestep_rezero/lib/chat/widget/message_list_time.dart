@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:onestep_rezero/chat/boardchat/model/productMessage.dart';
 import 'package:onestep_rezero/chat/productchat/model/productChatMessage.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 Widget getMessageTime(String timestamp) {
   return Text(
@@ -32,7 +33,7 @@ Widget getMessageDate(String timestamp) {
               margin: const EdgeInsets.only(left: 10.0, right: 10.0),
               child: Divider(
                 color: Colors.black,
-                height: 36,
+                height: 36.h,
               )),
         ),
         Text(
@@ -48,7 +49,7 @@ Widget getMessageDate(String timestamp) {
               margin: const EdgeInsets.only(left: 10.0, right: 10.0),
               child: Divider(
                 color: Colors.black,
-                height: 36,
+                height: 36.h,
               )),
         ),
       ],
@@ -115,7 +116,7 @@ Widget compareToProductMessageDate(
                 margin: const EdgeInsets.only(left: 10.0, right: 10.0),
                 child: Divider(
                   color: Colors.black,
-                  height: 36,
+                  height: 36.h,
                 )),
           ),
           Text(
@@ -131,7 +132,7 @@ Widget compareToProductMessageDate(
                 margin: const EdgeInsets.only(left: 10.0, right: 10.0),
                 child: Divider(
                   color: Colors.black,
-                  height: 36,
+                  height: 36.h,
                 )),
           ),
           // Divider(

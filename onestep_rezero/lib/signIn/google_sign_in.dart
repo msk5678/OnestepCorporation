@@ -38,7 +38,6 @@ class GoogleSignInProvider extends ChangeNotifier {
         backgroundColor: Colors.black,
         textColor: Colors.white,
       );
-      print("@@@@@@@ google_sign_in googleLogin() 로그인 실패 ${e.toString()}");
     }
   }
 

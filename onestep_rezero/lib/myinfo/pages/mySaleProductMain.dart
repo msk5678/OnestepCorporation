@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:onestep_rezero/myinfo/widgets/mySaleProduct/mySaleProductBody.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class MySaleProductMain extends StatefulWidget {
   MySaleProductMain({Key key}) : super(key: key);
@@ -58,8 +59,8 @@ class _MySaleProductMainState extends State<MySaleProductMain> {
         return Visibility(
           visible: snapshot.data,
           child: Container(
-            height: 40.0,
-            width: 40.0,
+            height: 40.0.h,
+            width: 40.0.w,
             child: FittedBox(
               child: FloatingActionButton(
                 heroTag: "mySaleProductMainFloatActionButton",

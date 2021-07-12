@@ -7,6 +7,8 @@ import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/favorite/animation/favoriteAnimation.dart';
 import 'package:onestep_rezero/favorite/utils/favoriteFirebaseApi.dart';
+import 'package:onestep_rezero/myinfo/pages/mySaleProductMain.dart';
+import 'package:onestep_rezero/report/pages/Deal/productReport/reportProductPage.dart';
 import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 import 'package:onestep_rezero/chat/navigator/chatNavigationManager.dart';
 import 'package:onestep_rezero/product/models/product.dart';
@@ -21,6 +23,7 @@ import 'package:onestep_rezero/utils/floatingSnackBar.dart';
 import 'package:onestep_rezero/utils/onestepCustom/dialog/onestepCustomDialog.dart';
 import 'package:onestep_rezero/utils/timeUtil.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ProductDetailBody extends StatefulWidget {
   final Product product;
@@ -88,8 +91,10 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
   void _imageStreamInit() {
     if (widget.product.trading) {
       _imageStreamController.sink.add(1);
-    } else if (widget.product.completed) {
+    } else if (widget.product.hold) {
       _imageStreamController.sink.add(2);
+    } else if (widget.product.completed) {
+      _imageStreamController.sink.add(3);
     } else {
       _imageStreamController.sink.add(0);
     }
@@ -138,6 +143,9 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
       case '새로고침':
         break;
       case '신고하기':
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => ReportProductPage(
+                widget.product.firestoreid, widget.product.uid)));
         break;
       case '수정하기':
         break;
@@ -148,7 +156,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
         FirebaseFirestore.instance
             .collection("product")
             .doc(currentUserModel.uid)
-            .update({'hide': true});
+            .update({'hold': true});
         break;
       case '삭제':
         // 확인 취소 다이얼로그 띄우기
@@ -230,13 +238,19 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
                     Icon(
                         widget.product.trading
                             ? Icons.watch_later_outlined
-                            : Icons.check_circle_outline_rounded,
+                            : widget.product.hold
+                                ? Icons.pending_outlined
+                                : Icons.check_circle_outline_rounded,
                         color: Colors.white,
-                        size: 50),
-                    SizedBox(height: 10),
+                        size: 50.sp),
+                    SizedBox(height: 10.h),
                     Text(
-                      snapshot.data == 1 ? "예약중" : "판매완료",
-                      style: TextStyle(color: Colors.white, fontSize: 28),
+                      snapshot.data == 1
+                          ? "예약중"
+                          : snapshot.data == 2
+                              ? "판매보류"
+                              : "판매완료",
+                      style: TextStyle(color: Colors.white, fontSize: 28.sp),
                     ),
                   ],
                 ),
@@ -296,6 +310,25 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
     );
   }
 
+  Widget uploadTime() {
+    if (widget.product.bumpTime == widget.product.updateTime &&
+        widget.product.updateTime == widget.product.uploadTime) {
+      // 업로드만 했을 경우
+      return Text("${TimeUtil.timeAgo(date: widget.product.bumpTime)}");
+    } else if (widget.product.bumpTime.microsecondsSinceEpoch >
+        widget.product.updateTime.microsecondsSinceEpoch) {
+      //  끌올했을 경우
+      return Row(children: <Widget>[
+        Text("끌올 ${TimeUtil.timeAgo(date: widget.product.bumpTime)}"),
+      ]);
+    } else {
+      // 수정했을 경우
+      return Row(children: <Widget>[
+        Text("${TimeUtil.timeAgo(date: widget.product.uploadTime)} (수정됨)"),
+      ]);
+    }
+  }
+
   Widget _contentDetail() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -311,7 +344,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 20.sp,
                     fontWeight: FontWeight.w400,
                     color: Color(0xFF333333),
                   ),
@@ -325,22 +358,19 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
                   border: InputBorder.none,
                 ),
                 style: TextStyle(
-                  fontSize: 20,
+                  fontSize: 20.sp,
                   fontWeight: FontWeight.w500,
                   color: Color(0xFF333333),
                 ),
               ),
 
-              SizedBox(height: 10),
+              SizedBox(height: 10.h),
               Row(
                 children: <Widget>[
-                  Icon(
-                    Icons.local_offer,
-                    color: Colors.grey,
-                    size: 17,
-                  ),
+                  Image.asset('assets/icons/category/viewAll.png',
+                      width: 17.w, height: 17.h),
                   Padding(
-                    padding: const EdgeInsets.only(right: 2.0),
+                    padding: EdgeInsets.only(right: 2.0.w),
                   ),
                   Text(widget.product.detailCategory == ""
                       ? "${widget.product.category}"
@@ -352,38 +382,38 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
                   Icon(
                     Icons.access_time,
                     color: Colors.grey,
-                    size: 15,
+                    size: 15.sp,
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(right: 2.0),
+                    padding: EdgeInsets.only(right: 2.0.w),
                   ),
-                  Text("${TimeUtil.timeAgo(date: widget.product.bumpTime)}"),
+                  uploadTime(),
                   Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
+                    padding: EdgeInsets.only(right: 8.0.w),
                   ),
                   Icon(
                     Icons.remove_red_eye,
                     color: Colors.grey,
-                    size: 15,
+                    size: 15.sp,
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(right: 2.0),
+                    padding: EdgeInsets.only(right: 2.0.w),
                   ),
                   Text(
                       "${widget.product.views == null ? 0 : widget.product.views.length}"),
                   Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
+                    padding: EdgeInsets.only(right: 8.0.w),
                   ),
                   Icon(
                     Icons.favorite,
                     color: Colors.grey,
-                    size: 15,
+                    size: 15.sp,
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(right: 2.0),
+                    padding: EdgeInsets.only(right: 2.0.w),
                   ),
                   Container(
-                    width: 30,
+                    width: 30.w,
                     child: TextField(
                       controller: _favoriteTextController,
                       enableInteractiveSelection: false,
@@ -396,16 +426,16 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
                 ],
               ),
               Divider(),
-              SizedBox(height: 10),
+              SizedBox(height: 10.h),
               Container(
                 constraints: BoxConstraints(
-                  minHeight: 100,
+                  minHeight: 100.h,
                 ),
                 child: Align(
                   alignment: Alignment.topLeft,
                   child: Text(
                     "${widget.product.explain}",
-                    style: TextStyle(height: 1.5),
+                    style: TextStyle(height: 1.5.h),
                   ),
                 ),
               ),
@@ -452,8 +482,8 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
                   CachedNetworkImage(
                     imageUrl: snapshot.data['imageUrl'],
                     imageBuilder: (context, imageProvider) => Container(
-                      width: 50.0,
-                      height: 50.0,
+                      width: 50.0.w,
+                      height: 50.0.h,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         image: DecorationImage(
@@ -463,7 +493,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
                     placeholder: (context, url) => CircularProgressIndicator(),
                     errorWidget: (context, url, error) => Icon(Icons.error),
                   ),
-                  SizedBox(width: 10),
+                  SizedBox(width: 10.w),
                   Text(
                     snapshot.data['nickName'],
                     style: TextStyle(fontWeight: FontWeight.w500),
@@ -497,7 +527,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
           .where('bumpTime',
               isNotEqualTo: widget.product.bumpTime.microsecondsSinceEpoch)
           .where('deleted', isEqualTo: false)
-          .where('hide', isEqualTo: false)
+          .where('hold', isEqualTo: false)
           .orderBy('bumpTime', descending: true)
           .limit(4)
           .get(),
@@ -522,16 +552,26 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
                           Text(
                             "판매자의 다른 상품",
                             style: TextStyle(
-                              fontSize: 14,
+                              fontSize: 14.sp,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          Text(
-                            "모두보기",
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey,
-                              fontWeight: FontWeight.bold,
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => MySaleProductMain(),
+                                ),
+                              );
+                            },
+                            child: Text(
+                              "모두보기",
+                              style: TextStyle(
+                                fontSize: 12.sp,
+                                color: Colors.grey,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ],
@@ -540,7 +580,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(bottom: 10),
+                  padding: EdgeInsets.only(bottom: 10.h),
                   child: GridView.builder(
                     shrinkWrap: true,
                     itemCount: snapshot.data.size,
@@ -571,7 +611,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
 
   Widget _line() {
     return Container(
-      height: 1,
+      height: 1.h,
       margin: const EdgeInsets.symmetric(horizontal: 15),
       color: Colors.grey.withOpacity(0.3),
     );
@@ -597,22 +637,29 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
 
   void stateChange(String type) {
     bool trading = 'trading' == type;
+    bool hold = 'hold' == type;
     bool completed = 'completed' == type;
+
     int value = 0;
     if (trading) value = 1;
-    if (completed) value = 2;
+    if (hold) value = 2;
+    if (completed) value = 23;
 
     FirebaseFirestore.instance
         .collection("university")
         .doc(currentUserModel.university)
         .collection("product")
         .doc(widget.product.firestoreid)
-        .update({"trading": trading, "completed": completed}).whenComplete(() {
+        .update({
+      "trading": trading,
+      "hold": hold,
+      "completed": completed
+    }).whenComplete(() {
       _imageStreamController.sink.add(value);
 
       context
           .read(productMainService)
-          .updateState(widget.product.firestoreid, trading, completed);
+          .updateState(widget.product.firestoreid, trading, hold, completed);
 
       Navigator.pop(context);
     }).onError((error, stackTrace) => null);
@@ -644,6 +691,15 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
                 },
               ),
             if (modalState != 2)
+              ListTile(
+                title: Center(
+                  child: Text('판매보류'),
+                ),
+                onTap: () {
+                  stateChange('hold');
+                },
+              ),
+            if (modalState != 3)
               ListTile(
                 title: Center(
                   child: Text('판매완료'),
@@ -705,9 +761,9 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
 
   Widget _bottomChatWidget() {
     return Padding(
-      padding: EdgeInsets.only(right: 10.0),
+      padding: EdgeInsets.only(right: 10.0.w),
       child: SizedBox(
-        width: 150,
+        width: 150.w,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
             primary: OnestepColors().mainColor,
@@ -715,22 +771,17 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
             elevation: 0,
           ),
           onPressed: () {
-            print("장터채팅누름");
-            print(currentUserModel.uid);
-            print(widget.product.uid);
-            print(widget.product.firestoreid);
-            print(widget.product);
+            // print("장터채팅누름");
+            // print(currentUserModel.uid);
+            // print(widget.product.uid);
+            // print(widget.product.firestoreid);
+            // print(widget.product);
             ChatNavigationManager.navigateProductToProductChat(
                 context,
                 currentUserModel.uid,
                 widget.product.uid,
                 widget.product.firestoreid,
                 widget.product);
-            // RealTimeChatNavigationManager.navigateToRealTimeChattingRoom(
-            //     context,
-            //     googleSignIn.currentUser.id.toString(),
-            //     widget.product.uid,
-            //     widget.product.firestoreid); aaaaa
           },
           child: Text(
             '채팅',
@@ -744,11 +795,12 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
   Widget _bottomBarWidget() {
     if (widget.product.uid == currentUserModel.uid) {
       return SizedBox(
-        height: 55,
+        height: 55.h,
         child: Container(
           decoration: BoxDecoration(
             border: Border(
-              top: BorderSide(color: Colors.grey.withOpacity(0.3), width: 0.5),
+              top:
+                  BorderSide(color: Colors.grey.withOpacity(0.3), width: 0.5.w),
             ),
           ),
           child: Row(
@@ -888,27 +940,27 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
       );
     } else {
       return SizedBox(
-        height: 70,
+        height: 70.h,
         child: Container(
           decoration: BoxDecoration(
             border: Border(
               top: BorderSide(
                 color: Colors.black87,
-                width: 0.1,
+                width: 0.1.w,
               ),
             ),
           ),
           child: Row(
             children: <Widget>[
               SizedBox(
-                width: 60,
-                height: 60,
+                width: 60.w,
+                height: 60.h,
                 child: Container(
                   decoration: BoxDecoration(
                     border: Border(
                       right: BorderSide(
                         color: Colors.black87,
-                        width: 0.1,
+                        width: 0.1.w,
                       ),
                     ),
                   ),
@@ -916,13 +968,14 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(right: 10.0),
+                padding: EdgeInsets.only(right: 10.0.w),
               ),
               SizedBox(
-                width: 100,
+                width: 100.w,
                 child: Text(
                   "${widget.product.price}원",
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  style:
+                      TextStyle(fontSize: 15.sp, fontWeight: FontWeight.bold),
                 ),
               ),
               Expanded(child: Container()),

@@ -6,6 +6,7 @@ import 'package:onestep_rezero/signIn/google_sign_in.dart';
 import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 
 import 'package:onestep_rezero/main.dart';
+import 'package:onestep_rezero/myinfo/dml/myinfoSetDml.dart';
 import 'package:onestep_rezero/myinfo/pages/myinfoNickNameChagnePage.dart';
 import 'package:onestep_rezero/utils/floatingSnackBar.dart';
 
@@ -181,34 +182,7 @@ class SettingsBody extends ConsumerWidget {
                       //         snapshot.data.data()['imageUrl'].toString())
                       //     .delete();
 
-                      // 프사 변경할때 image 가져오고 storage 저장 후 photoUrl 업데이트
-                      io.File _image;
-                      final picker = ImagePicker();
-                      final pickedFile =
-                          await picker.getImage(source: ImageSource.gallery);
-                      if (pickedFile != null) {
-                        _image = io.File(pickedFile.path);
-                        firebase_storage.Reference ref = firebase_storage
-                            .FirebaseStorage.instance
-                            .ref()
-                            .child("user images/${randomAlphaNumeric(15)}");
-                        ref.putFile(io.File(_image.path));
-                        firebase_storage.UploadTask storageUploadTask =
-                            ref.putFile(io.File(_image.path));
-
-                        await storageUploadTask.whenComplete(() async => {
-                              downloadURL = await ref.getDownloadURL(),
-                              FirebaseFirestore.instance
-                                  .collection("user")
-                                  .doc(currentUserModel.uid)
-                                  .update({
-                                "imageUrl": downloadURL,
-                              }),
-                            });
-                        print("_image = $_image");
-                      } else {
-                        print('No image selected.');
-                      }
+                      profileChange();
                     },
                   )
                 ],
@@ -287,29 +261,33 @@ class SettingsBody extends ConsumerWidget {
           // ),
           InkWell(
             onTap: () {
-              OnestepCustomDialog.show(context,
-                  title: "로그아웃 하시겠습니까?",
-                  confirmButtonText: "확인",
-                  cancleButtonText: "취소", confirmButtonOnPress: () {
-                context
-                    .read(googleSignInProvider)
-                    .logout()
-                    .catchError((error, stackTrace) {
-                  FloatingSnackBar.show(
-                    context,
-                    "로그아웃 실패",
-                  );
-                }).whenComplete(() {
-                  FloatingSnackBar.show(
-                    context,
-                    "로그아웃 되었습니다.",
-                  );
-                  Navigator.push(
+              OnestepCustomDialog.show(
+                context,
+                title: "로그아웃 하시겠습니까?",
+                confirmButtonText: "확인",
+                cancleButtonText: "취소",
+                confirmButtonOnPress: () {
+                  context
+                      .read(googleSignInProvider)
+                      .logout()
+                      .catchError((error, stackTrace) {
+                    FloatingSnackBar.show(
                       context,
-                      MaterialPageRoute(
-                          builder: (BuildContext context) => MainPage()));
-                });
-              });
+                      "로그아웃 실패",
+                    );
+                  }).whenComplete(() {
+                    FloatingSnackBar.show(
+                      context,
+                      "로그아웃 되었습니다.",
+                    );
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (BuildContext context) => MainPage()));
+                  });
+                },
+                cancleButtonOnPress: () => Navigator.pop(context),
+              );
             },
             child: Padding(
               padding: EdgeInsets.fromLTRB(

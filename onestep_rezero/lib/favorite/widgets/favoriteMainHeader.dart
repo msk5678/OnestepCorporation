@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class FavoriteMainHeader extends StatelessWidget {
   const FavoriteMainHeader({Key key}) : super(key: key);
@@ -13,7 +14,7 @@ class FavoriteMainHeader extends StatelessWidget {
           Text(
             '찜한 아이템',
             style: TextStyle(
-              fontSize: 22,
+              fontSize: 22.sp,
               fontWeight: FontWeight.bold,
               color: Color(0xFF333333),
             ),
@@ -23,13 +24,13 @@ class FavoriteMainHeader extends StatelessWidget {
               Text(
                 '더보기',
                 style: TextStyle(
-                  fontSize: 15,
+                  fontSize: 15.sp,
                   color: Color(0xFF666666),
                 ),
               ),
               Icon(
                 Icons.keyboard_arrow_right,
-                size: 20,
+                size: 20.sp,
                 color: Color(0xFF999999),
               ),
             ],

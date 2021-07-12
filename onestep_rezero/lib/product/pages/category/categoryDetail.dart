@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onestep_rezero/product/widgets/categoryDetail/categoryDetailBody.dart';
 import 'package:onestep_rezero/product/widgets/categoryDetail/categoryDetailHeader.dart';
+import 'package:onestep_rezero/search/pages/searchMain.dart';
 
 class CategoryDetail extends StatefulWidget {
   final int total;
@@ -49,7 +50,9 @@ class _CategoryDetailState extends State<CategoryDetail> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        elevation: 0,
         backgroundColor: Colors.white,
+        centerTitle: true,
         title: Text(
           widget.category,
           style: TextStyle(color: Colors.black),
@@ -57,6 +60,20 @@ class _CategoryDetailState extends State<CategoryDetail> {
         iconTheme: IconThemeData(
           color: Colors.black,
         ),
+        actions: [
+          IconButton(
+            icon: new Icon(
+              Icons.search,
+              color: Colors.black,
+            ),
+            onPressed: () => {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                    builder: (context) => SearchMain(searchKey: 1)),
+              ),
+            },
+          ),
+        ],
       ),
       body: RefreshIndicator(
         onRefresh: _refreshPage,

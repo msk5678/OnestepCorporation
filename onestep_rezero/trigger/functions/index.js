@@ -15,44 +15,199 @@ const databaseTest = admin.firestore();
 function replaceAll(str, searchStr, replaceStr) {
     return str.split(searchStr).join(replaceStr);
 }
- 
-exports.createProduct = functions.firestore.document('university/{universityId}/product/{productId}').onCreate(async (snap, context) =>{
+
+exports.createProduct = functions.firestore.document('university/{universityId}/product/{productId}').onCreate(async (snap, context) => {
     const newValue = snap.data();
     newValue.objectID = snap.id;
+
+    // 카테고리 카운트 증가 시작
+    splitPath = snap.ref.parent.parent.path.split("/")
+    var university = splitPath[1];
+    var category = newValue['category'];
+    var detailCategory = newValue['detailCategory'];
+
+    var obj = {};
+    obj[category] = {
+        'total': admin.firestore.FieldValue.increment(1),
+    }
+
+    admin.firestore().collection("category")
+        .doc(university)
+        .set(obj,
+            { merge: true });
+
+    if (detailCategory != "") {
+        var detailobj = {};
+        detailobj[detailCategory] = admin.firestore.FieldValue.increment(1);
+
+        obj[category] = {
+            detail: detailobj,
+        }
+
+        admin.firestore().collection("category")
+            .doc(university)
+            .set(
+                obj
+                , { merge: true });
+    }
+    // 카테고리 카운트 증가 끝
 
     var ref = replaceAll(snap.ref.parent.path, "/", "_");
     var index = client.initIndex(ref);
     index.saveObject(newValue);
-    }
+}
 );
 
-exports.updateProduct = functions.firestore.document('university/{universityId}/product/{productId}').onUpdate(async (snap, context) =>{
+exports.updateProduct = functions.firestore.document('university/{universityId}/product/{productId}').onUpdate(async (snap, context) => {
+    const beforeUpdate = snap.before.data();
     const afterUpdate = snap.after.data();
+
     afterUpdate.objectID = snap.after.id;
 
-    var ref = replaceAll(snap.ref.parent.path, "/", "_");
+    splitPath = snap.after.ref.parent.parent.path.split("/")
+    var university = splitPath[1];
+
+    if (beforeUpdate[deleted] != afterUpdate[deleted] ||
+        beforeUpdate[hold] != afterUpdate[hold]) { // 상품 숨기기, 삭제 시
+        var obj = {};
+        var detailobj = {};
+        afterCategory = afterUpdate['category'];
+        afterDetailCategory = afterUpdate['detailCategory'];
+
+        if (afterUpdate[hold] == false) { // 상품 숨김해제 시 카테고리 카운트 증가
+            if (afterDetailCategory != null) {
+                detailobj[afterDetailCategory] = admin.firestore.FieldValue.increment(1);
+
+                obj[afterCategory] = {
+                    'total': admin.firestore.FieldValue.increment(1),
+                    detail: detailobj,
+                }
+            }
+            else {
+                obj[afterCategory] = {
+                    'total': admin.firestore.FieldValue.increment(1),
+                }
+            }
+            admin.firestore().collection("category")
+                .doc(university)
+                .set(
+                    obj
+                    , { merge: true });
+        }
+        else { // 상품 삭제, 숨김 시 카테고리 카운트 감소
+            if (afterDetailCategory != "") {
+                detailobj[afterDetailCategory] = admin.firestore.FieldValue.increment(-1);
+
+                obj[afterCategory] = {
+                    'total': admin.firestore.FieldValue.increment(-1),
+                    detail: detailobj,
+                }
+            }
+            else {
+                obj[afterCategory] = {
+                    'total': admin.firestore.FieldValue.increment(-1),
+                }
+            }
+            admin.firestore().collection("category")
+                .doc(university)
+                .set(
+                    obj
+                    , { merge: true });
+        }
+    }
+    else {
+        // 카테고리 수정 시 카운트 inc, dec 시작
+        beforeCategory = beforeUpdate['category'];
+        beforeDetailCategory = beforeUpdate['detailCategory'];
+
+        afterCategory = afterUpdate['category'];
+        afterDetailCategory = afterUpdate['detailCategory'];
+
+        if (beforeCategory != afterCategory || beforeDetailCategory != afterDetailCategory) {
+            var obj = {};
+            if (beforeCategory != afterCategory) {
+                obj[beforeCategory] = {
+                    'total': admin.firestore.FieldValue.increment(-1),
+                }
+                obj[afterCategory] = {
+                    'total': admin.firestore.FieldValue.increment(1),
+                }
+
+                admin.firestore().collection("category")
+                    .doc(university)
+                    .set(obj,
+                        { merge: true });
+            }
+
+            if (beforeDetailCategory != afterDetailCategory) {
+                var obj = {};
+
+                if (beforeCategory != afterCategory) {
+                    var beforeobj = {};
+                    var afterobj = {};
+                    beforeobj[beforeDetailCategory] = admin.firestore.FieldValue.increment(-1);
+                    afterobj[afterDetailCategory] = admin.firestore.FieldValue.increment(1);
+
+                    obj[beforeCategory] = {
+                        detail: beforeobj,
+                    }
+
+                    obj[afterCategory] = {
+                        detail: afterobj,
+                    }
+                    admin.firestore().collection("category")
+                        .doc(university)
+                        .set(
+                            obj
+                            , { merge: true });
+                }
+                else {
+                    var detailobj = {};
+                    detailobj[beforeDetailCategory] = admin.firestore.FieldValue.increment(-1);
+                    detailobj[afterDetailCategory] = admin.firestore.FieldValue.increment(1);
+
+                    obj[afterCategory] = {
+                        detail: detailobj,
+                    }
+
+                    admin.firestore().collection("category")
+                        .doc(university)
+                        .set(
+                            obj
+                            , { merge: true });
+                }
+            }
+        }
+        // 카테고리 수정 시 카운트 inc, dec 끝
+    }
+
+    var ref = replaceAll(snap.after.ref.parent.path, "/", "_");
     var index = client.initIndex(ref);
     index.saveObject(afterUpdate);
-    }
+}
 );
 
-exports.deleteProduct = functions.firestore.document('university/{universityId}/product/{productId}').onDelete(async (snap, context) =>{
+exports.deleteProduct = functions.firestore.document('university/{universityId}/product/{productId}').onDelete(async (snap, context) => {
     const oldID = snap.id;
 
     var ref = replaceAll(snap.ref.parent.path, "/", "_");
     var index = client.initIndex(ref);
     index.deleteObject(oldID);
-    }
+}
 );
 
 // deal -> 거래신고 : 신고 들어올때 각 post 에 5번까지 count -> if count === 5 -> user에 reportPoint++
 // {} 있는거랑 없는거 차이는 없는거는 예를 들어 report 는 이름이 report 인 친구들을 찾는거고
 // {reportedUid}, reportedUid는 아무런 의미가 없고(아무거나 써도 ㄱㅊ), report 다음에 있는 모든 애들을 가르킴 
 // report 안에 있는 모든 유저 대상
-exports.onDealReportCreate = functions.database.ref('/report/{reportedUid}/{firstReportTime}}/deal/{postUid}/value/{timestamp}').onCreate(async (snapshot, context) => {
+exports.onBoardReportCreate = functions.database.ref('/report/{reportedUid}/{firstReportTime}}/board/{postUid}/value/{timestamp}').onCreate(async (snapshot, context) => {
     const countValue = snapshot.val();
     var ReportPoint;
     var postReportPoint;
+
+    var commentReportPoint;
+    var university;
+    var boardUid;
     
     // // 들어온 신고 case 뭔지 파악해서 case count
     // switch (countValue.case) {
@@ -93,13 +248,33 @@ exports.onDealReportCreate = functions.database.ref('/report/{reportedUid}/{firs
         ReportPoint = count + 1;
         return ReportPoint;
     })
+    
 
-    const countRef1 = snapshot.ref.parent.parent.child('postReportCount')
-    await countRef1.transaction(count => {
-        postReportPoint = count + 1;
-        return postReportPoint;
+
+    boardUid = (await snapshot.ref.child('boardUid').get()).val();
+    university = (await snapshot.ref.child('university').get()).val();
+
+    await databaseTest.collection('university').doc(university).collection('board').doc(boardUid).collection(boardUid).doc(countValue.postUid).get().then(value => {
+        postReportPoint = value.data()['reportCount'] + 1;
     })
 
+    await databaseTest.doc('university/' + university +'/board/' + boardUid + '/' + boardUid + '/' +
+    countValue.postUid).update({
+        "reportCount": postReportPoint,
+    })
+
+    if(postReportPoint === 5){
+        // reported
+        // reportedTime -> DateTime 으로 DateTime.now().millisecondsSinceEpoch
+        // 1625469193802
+        console.log('postReportPoint === 5');
+        await databaseTest.doc('university/' + university +'/board/' + boardUid + '/' + boardUid + '/' +
+        countValue.postUid).update({
+            "reported" : true,
+            "reportedTime" : admin.firestore.Timestamp.now().toMillis(),
+        })  
+    }
+    
 
     // // case count
     // postFirstCasePoint = (await snapshot.ref.parent.parent.child('firstCase').get()).val();
@@ -113,7 +288,7 @@ exports.onDealReportCreate = functions.database.ref('/report/{reportedUid}/{firs
         await databaseTest.doc('user/' + countValue.reportedUid).update({
             // reprt 컬렉션 -> point -> reportPoint 안에 필드 두개 같이 두고 싶은데 그럼 무한루프돔 
             "reportState": 1,
-            "reportTime" : admin.firestore.Timestamp.now(),
+            "reportTime": admin.firestore.Timestamp.now(),
         })
         // await databaseTest.collection('user').doc(countValue.reportedUid).collection('report').doc(countValue.reportedUid).get().then(value => {
         //     realTimeCountTest = value.data()['reportPoint'];
@@ -131,11 +306,37 @@ exports.onDealReportCreate = functions.database.ref('/report/{reportedUid}/{firs
         //     "dealCase.four": postFourCasePoint,
         // })
     }
+
+  
 });
 
 exports.onUserReportCreate = functions.database.ref('/report/{reportedUid}/{firstReportTime}}/user/{postUid}/value/{timestamp}').onCreate(async (snapshot, context) => {
     const countValue = snapshot.val();
     var ReportPoint;
+
+
+    const countRef = snapshot.ref.parent.parent.parent.parent.child('reportCount')
+    await countRef.transaction(count => {
+        ReportPoint = count + 1;
+        return ReportPoint;
+    })
+
+    // // post 신고가 들어왔는데 그게 그 post의 5번째 신고다 -> user report ++
+    if (ReportPoint === 25) {
+        await databaseTest.doc('user/' + countValue.reportedUid).update({
+            // reprt 컬렉션 -> point -> reportPoint 안에 필드 두개 같이 두고 싶은데 그럼 무한루프돔 
+            "reportState": 1,
+            "reportTime": admin.firestore.Timestamp.now(),
+        })
+    }
+});
+
+exports.onProductReportCreate = functions.database.ref('/report/{reportedUid}/{firstReportTime}}/product/{postUid}/value/{timestamp}').onCreate(async (snapshot, context) => {
+    const countValue = snapshot.val();
+    var ReportPoint;
+    var productReportPoint;
+    var university;
+    var postUid;
     
 
     const countRef = snapshot.ref.parent.parent.parent.parent.child('reportCount')
@@ -143,6 +344,116 @@ exports.onUserReportCreate = functions.database.ref('/report/{reportedUid}/{firs
         ReportPoint = count + 1;
         return ReportPoint;
     })
+
+    university = (await snapshot.ref.child('university').get()).val();
+    postUid = (await snapshot.ref.child('postUid').get()).val();
+
+    await databaseTest.collection('university').doc(university).collection('product').doc(postUid).get().then(value => {
+        productReportPoint = value.data()['reportCount'] + 1;
+    })
+
+    await databaseTest.doc('university/' + university +'/product/' + postUid).update({
+        "reportCount": productReportPoint,
+    })
+
+    if(productReportPoint === 5){
+        await databaseTest.doc('university/' + university +'/product/' + postUid).update({
+            "reported": true,
+        })
+    }
+
+    // // post 신고가 들어왔는데 그게 그 post의 25번째 신고다 -> user report ++
+    if (ReportPoint === 25) {
+        await databaseTest.doc('user/' + countValue.reportedUid).update({
+            // reprt 컬렉션 -> point -> reportPoint 안에 필드 두개 같이 두고 싶은데 그럼 무한루프돔 
+            "reportState": 1,
+            "reportTime" : admin.firestore.Timestamp.now(),
+        })
+    }
+});
+
+exports.onCommentReportCreate = functions.database.ref('/report/{reportedUid}/{firstReportTime}}/comment/{commentUid}/value/{timestamp}').onCreate(async (snapshot, context) => {
+    const countValue = snapshot.val();
+    var ReportPoint;
+    var reportCount;
+    var boardUid;
+    var postUid;
+    var commentUid;
+
+    const countRef = snapshot.ref.parent.parent.parent.parent.child('reportCount')
+    await countRef.transaction(count => {
+        ReportPoint = count + 1;
+        return ReportPoint;
+    })
+
+    boardUid = (await snapshot.ref.child('boardUid').get()).val();
+    postUid = (await snapshot.ref.child('postUid').get()).val();
+    commentUid = (await snapshot.ref.child('commentUid').get()).val();
+
+
+    // 댓글...
+    const countRef2 = snapshot.ref.parent.parent.parent.parent.parent.parent.parent.child('commentInBoard').child(boardUid).child(postUid).child(commentUid).child('reportCount')
+    await countRef2.transaction(count =>{
+        reportCount = count + 1;
+        return reportCount;
+    })
+    
+    if(reportCount === 5){
+        // console.log('hihihihihi')
+        admin.database().ref('commentInBoard/' + boardUid + '/' + postUid + '/' + commentUid).update({
+            'reported' : true,
+            'reportedTime' : admin.firestore.Timestamp.now().toMillis(),
+        })
+    }
+
+    // // post 신고가 들어왔는데 그게 그 post의 5번째 신고다 -> user report ++
+    if (ReportPoint === 25) {
+        await databaseTest.doc('user/' + countValue.reportedUid).update({
+            // reprt 컬렉션 -> point -> reportPoint 안에 필드 두개 같이 두고 싶은데 그럼 무한루프돔 
+            "reportState": 1,
+            "reportTime" : admin.firestore.Timestamp.now(),
+        })
+    }
+
+ 
+});
+
+exports.onCoCommentReportCreate = functions.database.ref('/report/{reportedUid}/{firstReportTime}}/cocomment/{cocommentUid}/value/{timestamp}').onCreate(async (snapshot, context) => {
+    const countValue = snapshot.val();
+    var ReportPoint;
+    var boardUid;
+    var postUid;
+    var commentUid;
+    var cocommentUid;
+
+
+    const countRef = snapshot.ref.parent.parent.parent.parent.child('reportCount')
+    await countRef.transaction(count => {
+        ReportPoint = count + 1;
+        return ReportPoint;
+    })
+
+    boardUid = (await snapshot.ref.child('boardUid').get()).val();
+    postUid = (await snapshot.ref.child('postUid').get()).val();
+    commentUid = (await snapshot.ref.child('commentUid').get()).val();
+    cocommentUid = (await snapshot.ref.child('cocommentUid').get()).val();
+
+
+    // 대댓글...
+    const countRef2 = snapshot.ref.parent.parent.parent.parent.parent.parent.parent.child('commentInBoard').child(boardUid).child(postUid).child(commentUid).child('childComment')
+    .child(cocommentUid).child('reportCount')
+    await countRef2.transaction(count =>{
+        reportCount = count + 1;
+        return reportCount;
+    })
+    
+    if(reportCount === 5){
+        console.log('hihihihihi')
+        admin.database().ref('commentInBoard/' + boardUid + '/' + postUid + '/' + commentUid + '/childComment/' + cocommentUid).update({
+            'reported' : true,
+            'reportedTime' : admin.firestore.Timestamp.now().toMillis(),
+        })
+    }
 
     // // post 신고가 들어왔는데 그게 그 post의 5번째 신고다 -> user report ++
     if (ReportPoint === 25) {
@@ -164,7 +475,7 @@ exports.onUserReportCreate = functions.database.ref('/report/{reportedUid}/{firs
 //     console.log('before ' + beforeReportPointValue.reportPoint)
 
 //     if (afterReportPointValue.reportPoint === 5) {
-        
+
 //         await databaseTest.doc('user/' + context.params.userId).update({
 //             // reprt 컬렉션 -> point -> reportPoint 안에 필드 두개 같이 두고 싶은데 그럼 무한루프돔 
 //             "reportState": 1,
@@ -182,12 +493,12 @@ exports.checkReportTime = functions.pubsub.schedule('every 1 minutes').onRun(asy
     const query = await databaseTest.collection('user').get();
     query.forEach(async eachGroup => {
         var reportTime = eachGroup.data()['reportTime'];
-  
+
         // user 안에 있는 reportTime 확인해서 제재기간 지났으면 제재 해제
         if (admin.firestore.Timestamp.fromMillis(Date.now() - 604800000) > reportTime) {
             await databaseTest.doc('user/' + eachGroup.data()['uid']).update({
                 "reportState": 0,
-                "reportTime" : 0,
+                "reportTime": 0,
             })
         }
     })

@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ImagesFullViewer extends StatefulWidget {
   final List<dynamic> imagesUrl;
@@ -135,8 +136,8 @@ class _ImagesFullViewerState extends State<ImagesFullViewer> {
         ),
         loadingBuilder: (context, event) => Center(
           child: Container(
-            width: 30.0,
-            height: 30.0,
+            width: 30.0.w,
+            height: 30.0.h,
             child: CircularProgressIndicator(
               value: event == null
                   ? 0

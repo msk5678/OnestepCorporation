@@ -8,6 +8,7 @@ import 'package:onestep_rezero/product/models/product.dart';
 import 'package:onestep_rezero/product/pages/product/productDetail.dart';
 import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 import 'package:onestep_rezero/utils/timeUtil.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ProductItem extends StatefulWidget {
   final Product product;
@@ -111,22 +112,43 @@ class _ProductItemState extends State<ProductItem> {
   }
 
   Widget productState() {
-    if (widget.product.trading || widget.product.completed) {
+    if (widget.product.trading ||
+        widget.product.completed ||
+        widget.product.hold) {
       return Positioned(
-        left: 0,
-        right: 0,
-        bottom: 0,
-        height: 30,
+        left: 0.w,
+        right: 0.w,
+        bottom: 0.h,
+        height: 30.h,
         child: Container(
           alignment: Alignment.center,
           color: Colors.black.withOpacity(0.3),
-          child: Text(widget.product.trading ? "예약중" : "판매완료",
+          child: Text(
+              widget.product.trading
+                  ? "예약중"
+                  : widget.product.hold
+                      ? "판매보류"
+                      : "판매완료",
               style: TextStyle(color: Colors.white),
               textAlign: TextAlign.center),
         ),
       );
     } else
       return Container();
+  }
+
+  Widget uploadTime() {
+    return Text(
+      widget.product.bumpTime.microsecondsSinceEpoch ==
+              widget.product.uploadTime.microsecondsSinceEpoch
+          ? TimeUtil.timeAgo(date: widget.product.bumpTime)
+          : "끌올 ${TimeUtil.timeAgo(date: widget.product.bumpTime)}",
+      style: TextStyle(
+        fontSize: 12.sp,
+        fontWeight: FontWeight.w400,
+        color: Colors.grey,
+      ),
+    );
   }
 
   @override
@@ -156,7 +178,7 @@ class _ProductItemState extends State<ProductItem> {
                 ),
               ),
             ),
-            SizedBox(height: 4),
+            SizedBox(height: 4.h),
             SizedBox(
               child: Align(
                 child: Text(
@@ -164,7 +186,7 @@ class _ProductItemState extends State<ProductItem> {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: 14.sp,
                     fontWeight: FontWeight.w400,
                     color: Color(0xFF333333),
                   ),
@@ -172,7 +194,7 @@ class _ProductItemState extends State<ProductItem> {
                 alignment: Alignment.centerLeft,
               ),
             ),
-            SizedBox(height: 4),
+            SizedBox(height: 4.h),
             SizedBox(
               child: Align(
                 child: Row(
@@ -182,7 +204,7 @@ class _ProductItemState extends State<ProductItem> {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: 14.sp,
                         fontWeight: FontWeight.bold,
                         color: Color(0xFF333333),
                       ),
@@ -192,7 +214,7 @@ class _ProductItemState extends State<ProductItem> {
                 alignment: Alignment.centerLeft,
               ),
             ),
-            SizedBox(height: 4),
+            SizedBox(height: 4.h),
             Row(
               children: <Widget>[
                 // Flexible(
@@ -222,14 +244,7 @@ class _ProductItemState extends State<ProductItem> {
                 //   ),
                 // ),
                 Spacer(),
-                Text(
-                  TimeUtil.timeAgo(date: widget.product.bumpTime),
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.grey,
-                  ),
-                ),
+                uploadTime(),
               ],
             ),
           ],

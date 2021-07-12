@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 import 'package:onestep_rezero/product/models/product.dart';
 import 'package:onestep_rezero/product/widgets/detail/productDetailBody.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ProductDetail extends StatefulWidget {
   final String docId;
@@ -22,19 +23,20 @@ class _ProductDetailState extends State<ProductDetail> {
 
   void incProductViews() {
     // 조회수 증가
-
-    if (_product.views == null ||
-        _product.views[currentUserModel.uid] != true) {
-      FirebaseFirestore.instance
-          .collection("university")
-          .doc(currentUserModel.university)
-          .collection("product")
-          .doc(widget.docId)
-          .update(
-        {
-          "views." + currentUserModel.uid: true,
-        },
-      );
+    if (_product.uid != currentUserModel.uid) {
+      if (_product.views == null ||
+          _product.views[currentUserModel.uid] != true) {
+        FirebaseFirestore.instance
+            .collection("university")
+            .doc(currentUserModel.university)
+            .collection("product")
+            .doc(widget.docId)
+            .update(
+          {
+            "views." + currentUserModel.uid: true,
+          },
+        );
+      }
     }
   }
 
@@ -52,7 +54,7 @@ class _ProductDetailState extends State<ProductDetail> {
         child: Center(
           child: Text(
             text,
-            style: TextStyle(fontSize: 22),
+            style: TextStyle(fontSize: 22.sp),
           ),
         ),
       ),
@@ -74,8 +76,7 @@ class _ProductDetailState extends State<ProductDetail> {
           case ConnectionState.waiting:
             return Container();
           default:
-            if (snapshot.data.data()['deleted'] ||
-                snapshot.data.data()['hide']) {
+            if (snapshot.data.data()['deleted']) {
               return exceptionWidget("삭제된 상품이에요.");
             } else {
               _product =
