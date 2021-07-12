@@ -111,7 +111,7 @@ class UserFavoriteListRiverPod extends ConsumerWidget {
     //send to PostIdList To postList using parameter and Set postList
     context.read(listProvider).fetchPostDataFromPostId(_userFavoritePostIdList);
     bool isFetching = userFavoriteProvider.isFetching;
-    print("user favorite : ${userFavoriteProvider.userFavoritePostMap.keys}");
+
     if (!isFetching && _userFavoritePostIdList.length == 0) {
       return Container(
         height: deviceHeight / 2,

@@ -71,7 +71,7 @@ class UserProvider with ChangeNotifier {
       });
       await Future.forEach(_userWrittenCommentList, (UserData data) async {
         var commentDb;
-        String postTitle = data.postTitle ?? "";
+
         if (data.parentCommentId != "") {
           commentDb = db
               .reference()
@@ -91,7 +91,7 @@ class UserProvider with ChangeNotifier {
         }
         CommentData _commentData =
             await commentDb.once().then((DataSnapshot dataSnapshot) {
-          return CommentData.fromRealtimeData(dataSnapshot, postTitle,
+          return CommentData.fromRealtimeData(dataSnapshot,
               ignoreDeleted: true);
         });
         if (_commentData != null) {
@@ -99,8 +99,6 @@ class UserProvider with ChangeNotifier {
           //     .addAll({_commentData.postId: _commentData});
           _userCommentList.add(_commentData);
         }
-
-        notifyListeners();
       });
       _userCommentList.sort((a, b) => b.uploadTime.compareTo(a.uploadTime));
     } catch (e) {
@@ -160,29 +158,29 @@ class UserData {
   final String boardId;
   final String postId;
   final String parentCommentId;
-  final String postTitle;
+
   String commentId;
 
-  UserData(
-      {this.boardId,
-      this.postId,
-      this.parentCommentId,
-      this.commentId,
-      this.postTitle});
+  UserData({
+    this.boardId,
+    this.postId,
+    this.parentCommentId,
+    this.commentId,
+  });
   factory UserData.fromRealtimeUserFavoriteList(var mapData) {
     mapData = Map<dynamic, dynamic>.from(mapData);
     return UserData(
-        boardId: mapData["boardId"],
-        postId: mapData["postId"],
-        postTitle: mapData["postTitle"]);
+      boardId: mapData["boardId"],
+      postId: mapData["postId"],
+    );
   }
   factory UserData.fromRealtimeUserWrittenCommentList(
       String commId, var mapData) {
     return UserData(
-        boardId: mapData["boardId"],
-        postId: mapData["postId"],
-        commentId: commId,
-        parentCommentId: mapData["parentCommentId"],
-        postTitle: mapData["postTitle"]);
+      boardId: mapData["boardId"],
+      postId: mapData["postId"],
+      commentId: commId,
+      parentCommentId: mapData["parentCommentId"],
+    );
   }
 }

@@ -22,18 +22,19 @@ abstract class Comment {
   animationLimiterListView(
       List comment, double deviceWidth, double deviceHeight);
   commentListEmptyWidget();
-  commentListSwipeMenu(comment, BuildContext context, currentLogInUid,
+  commentListSwipeMenu(
+      CommentData comment, BuildContext context, currentLogInUid,
       {Widget child});
   deletedCommentWidget(
       int index, CommentData comment, double deviceWidth, double deviceHeight);
   commentWidget(BuildContext context, int index, CommentData comment,
       String uid, double deviceWidth, double deviceHeight);
+  commentNickName(String uid);
 }
 
 class CommentWidget extends CommentParent {
   final boardId;
   final postId;
-  final commentMap;
   final postWriterUID;
   final coCommentCallback;
   final showDialogCallback;
@@ -43,7 +44,6 @@ class CommentWidget extends CommentParent {
   CommentWidget(
       {this.boardId,
       this.postId,
-      this.commentMap,
       this.postWriterUID,
       this.coCommentCallback,
       this.commentUserCallback,
@@ -66,26 +66,27 @@ class CommentWidget extends CommentParent {
         return Container(child: commentListEmptyWidget());
     }
   }
+
+  @override
+  commentNickName(String uid) => commentUserCallback(uid);
 }
 
 abstract class CommentParent extends ConsumerWidget implements Comment {
   final boardId;
   final postId;
-  final commentMap;
   final postWriterUID;
   final coCommentCallback;
   final showDialogCallback;
-  final userNameCallback;
+
   final SlidableController slidableController = SlidableController();
 
-  CommentParent(
-      {this.boardId,
-      this.postId,
-      this.commentMap,
-      this.postWriterUID,
-      this.coCommentCallback,
-      this.showDialogCallback,
-      this.userNameCallback});
+  CommentParent({
+    this.boardId,
+    this.postId,
+    this.postWriterUID,
+    this.coCommentCallback,
+    this.showDialogCallback,
+  });
 
   @override
   Widget commentBoxDesignMethod(BuildContext context, int index,
@@ -117,7 +118,7 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
         bool isDeleted = currentIndexCommentData.deleted;
         bool haveChildComment = currentIndexCommentData.haveChildComment;
         currentIndexCommentData
-          ..userName = userNameCallback(currentIndexCommentData.uid);
+          ..userName = commentNickName(currentIndexCommentData.uid);
 
         return AnimationConfiguration.staggeredList(
           position: index,
@@ -173,11 +174,11 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
 
   childCommentWidget(childCommentList) {
     return ChildComment(
+      commentNameCallback: commentNickName,
       childCommentList: childCommentList,
       coCommentCallback: coCommentCallback,
       slidableController: slidableController,
       postWriterUID: postWriterUID,
-      commentMap: commentMap,
       refreshCallback: refreshComment,
       showDialogCallback: showDialogCallback,
     );
@@ -207,7 +208,7 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
   }
 
   @override
-  commentListSwipeMenu(comment, context, currentLogInUid,
+  commentListSwipeMenu(CommentData comment, context, currentLogInUid,
       {Widget child, Key slidableKey}) {
     Widget childWidget = child ?? Container();
 
@@ -239,7 +240,7 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
           color: Colors.black45,
           icon: Icons.add_comment,
           onTap: () {
-            coCommentCallback(comment);
+            coCommentCallback(comment..isUnderComment = false);
           },
         ),
         isWritter
@@ -278,7 +279,7 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           deletedTimeWithDay
               ? GestureDetector(
-                  onLongPress: () => showDialogCallback(comment),
+                  // onLongPress: () => showDialogCallback(comment),
                   child: Container(
                     width: deviceWidth,
                     child: Text(

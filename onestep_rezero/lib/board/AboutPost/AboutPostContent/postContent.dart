@@ -333,11 +333,12 @@ class _PostContentState extends State<PostContent>
                             ..add(CommentWidget(
                               boardId: currentPostData.boardId,
                               postId: currentPostData.documentId,
-                              commentMap: currentPostData.commentUserList,
+
                               postWriterUID: currentPostData.uid,
                               // openSlidingPanelCallback: slidingUpDownMethod,
                               coCommentCallback: coCommentCallback,
-                              showDialogCallback: showingDismissCommentCallback,
+                              commentUserCallback: commentUserCallback,
+                              // showDialogCallback: showingDismissCommentCallback,
                             ))
                             ..add(SizedBox(
                               height: deviceHeight / 5,
@@ -361,6 +362,24 @@ class _PostContentState extends State<PostContent>
         ),
       ),
     );
+  }
+
+  String commentUserCallback(String wroteCommentUid) {
+    String postWritter = currentPostData.uid;
+    String resultName = "";
+    if (wroteCommentUid == postWritter) {
+      resultName = "작성자";
+    } else {
+      if (currentPostData.commentUserList.containsKey(wroteCommentUid)) {
+        resultName = currentPostData.commentUserList[wroteCommentUid];
+      } else {
+        resultName = "error";
+      }
+    }
+    if (wroteCommentUid == currentUid) {
+      resultName = "$resultName (나)";
+    }
+    return resultName;
   }
 
   postTopStatusBar(PostData currentPost, String uid, Widget status) {
@@ -527,24 +546,6 @@ class _PostContentState extends State<PostContent>
         ],
       ),
     );
-    // return Container();
-    // return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-    //   FavoriteButton(
-    //     currentPost: currentPostData,
-    //     clickCallback: favoriteClickCallback,
-    //   ),
-    //   Container(
-    //     margin: EdgeInsets.only(top: 10, left: 10),
-    //     alignment: Alignment.centerLeft,
-    //     child: IconButton(
-    //       icon: Icon(
-    //         Icons.send_rounded,
-    //         color: OnestepColors().mainColor,
-    //       ),
-    //       onPressed: () {},
-    //     ),
-    //   )
-    // ]);
   }
 
   updatePostDataCallback(PostData latestData) {
@@ -638,8 +639,7 @@ class _PostContentState extends State<PostContent>
                   TipDialogHelper.dismiss();
                   TipDialogHelper.success("삭제 완료!");
                   Future.delayed(Duration(seconds: 1))
-                      .then((value) =>
-                          Navigator.of(context).pop({"ALTERPOSTDATA": true}))
+                      .then((value) => Navigator.of(context).pop(true))
                       //  Navigator.popUntil(
                       //     context, ModalRoute.withName('/PostList')))
                       .whenComplete(() {});
@@ -654,7 +654,7 @@ class _PostContentState extends State<PostContent>
                 await Navigator.of(context).pushNamed('/AlterPost', arguments: {
                   "POSTDATA": context.read(postProvider).latestPostData
                 }).then((value) {
-                  bool result = value ?? false;
+                  // bool result = value ?? false;
 
                   // if (result) {
                   context.read(postProvider).getLatestPostData(currentPostData);
@@ -708,12 +708,16 @@ class _PostContentState extends State<PostContent>
 
   saveComment(String comment, PostData postData,
       {CommentData commentData}) async {
+    bool isAlreadyWroteComment =
+        postData.commentUserList.containsKey(currentUid);
     if (comment != "") if (!commentFlag) {
       textEditingControllerComment.clear();
       loadingDialogTipDialog(
           CommentData.toRealtimeDataWithPostData(postData).toRealtimeDatabase(
-              comment.trimRight(), currentUid, postData.title),
-          thenFunction: (value) {
+              comment.trimRight(),
+              currentUid,
+              postData.title,
+              isAlreadyWroteComment), thenFunction: (value) {
         // _panelOpen(false);
         context
             .read(commentProvider)
@@ -723,10 +727,11 @@ class _PostContentState extends State<PostContent>
         Navigator.pop(context, true);
       }, unFocusing: true);
     } else {
-      if (!commentData.isUnderComment) {
+      if (!(commentData.isUnderComment ?? false)) {
         textEditingControllerComment.clear();
         loadingDialogTipDialog(
-            commentData.addchildComment(comment, currentUid, postData.title),
+            commentData.addchildComment(
+                comment, currentUid, postData.title, isAlreadyWroteComment),
             thenFunction: (value) {
           // _panelOpen(false);
           context
@@ -743,8 +748,11 @@ class _PostContentState extends State<PostContent>
         loadingDialogTipDialog(
             CommentData.toRealtimeDataWithPostData(postData)
                 .addChildchildComment(
-                    comment, commentData, currentUid, postData.title),
-            thenFunction: (value) {
+                    comment,
+                    commentData,
+                    currentUid,
+                    postData.title,
+                    isAlreadyWroteComment), thenFunction: (value) {
           // _panelOpen(false);
           context
               .read(commentProvider)
@@ -760,6 +768,7 @@ class _PostContentState extends State<PostContent>
   }
 
   Widget whereSaveComment(CommentData commentData) {
+    String userName = commentUserCallback(commentData.uid);
     return Row(
       children: [
         commentFlag
@@ -776,7 +785,7 @@ class _PostContentState extends State<PostContent>
                   });
                 })
             : Container(),
-        commentFlag ? Text("${commentData.userName}에 댓글달기") : Container(),
+        commentFlag ? Text("$userName에 댓글달기") : Container(),
       ],
     );
   }
@@ -839,8 +848,9 @@ class _PostContentState extends State<PostContent>
       barrierDismissible: true,
       context: context,
       builder: (context) {
+        String userName = commentUserCallback(comment.uid);
         return SimpleDialog(
-          title: Text("${comment.userName}"),
+          title: Text("$userName"),
           children: [
             Container(
                 padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),

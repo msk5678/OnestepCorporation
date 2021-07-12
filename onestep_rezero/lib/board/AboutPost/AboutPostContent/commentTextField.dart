@@ -36,8 +36,7 @@ class SearchTextFieldState extends State<CustomCommentTextField> {
           width: 10.0.w,
         ),
         new Expanded(
-          child:
-              new Stack(alignment: Alignment(1.0.w, 1.0.h), children: <Widget>[
+          child: new Stack(alignment: Alignment(1.0, 1.0), children: <Widget>[
             new TextField(
               minLines: 1,
               maxLines: 4,

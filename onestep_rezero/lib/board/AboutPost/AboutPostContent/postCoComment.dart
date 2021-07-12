@@ -11,7 +11,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ChildComment extends StatelessWidget implements Comment {
   final postWriterUID;
-  final openSlidingPanelCallback;
   final coCommentCallback;
   final childCommentList;
   final commentMap;
@@ -20,10 +19,11 @@ class ChildComment extends StatelessWidget implements Comment {
   final postId;
   final SlidableController slidableController;
   final showDialogCallback;
+  final commentNameCallback;
 
   ChildComment(
       {this.coCommentCallback,
-      this.openSlidingPanelCallback,
+      this.commentNameCallback,
       this.postWriterUID,
       this.commentMap,
       this.childCommentList,
@@ -80,8 +80,7 @@ class ChildComment extends StatelessWidget implements Comment {
         itemBuilder: (BuildContext context, int index) {
           CommentData currentIndexCommentData = comment[index];
           currentIndexCommentData
-            ..userName = commentName(
-                currentIndexCommentData.uid, postWriterUID, commentMap);
+            ..userName = commentNickName(currentIndexCommentData.uid);
           bool isDeleted = comment[index].deleted;
           return AnimationConfiguration.staggeredList(
             position: index,
@@ -176,23 +175,6 @@ class ChildComment extends StatelessWidget implements Comment {
   }
 
   @override
-  commentName(commentUID, postWriterUid, commentList) {
-    Map<String, dynamic> commentUserMap = commentList ?? {};
-    List commentUserList = commentUserMap.keys.toList();
-    if (commentUID.toString() == postWriterUid) {
-      return "작성자";
-    } else {
-      for (int i = 0; i < commentUserList.length; i++) {
-        if (commentUserList[i].toString() == commentUID)
-          return "익명 ${i + 1}";
-        else
-          return "익명 ${commentUserList.length + 1}";
-      }
-    }
-    return "";
-  }
-
-  @override
   deletedCommentWidget(
       int index, CommentData comment, double deviceWidth, double deviceHeight) {
     DateTime deleteTime = DateTime.fromMillisecondsSinceEpoch(
@@ -209,7 +191,7 @@ class ChildComment extends StatelessWidget implements Comment {
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           deletedTimeWithDay
               ? GestureDetector(
-                  onLongPress: () => showDialogCallback(comment),
+                  // onLongPress: () => showDialogCallback(comment),
                   child: Container(
                     width: deviceWidth,
                     child: Text(
@@ -322,4 +304,7 @@ class ChildComment extends StatelessWidget implements Comment {
       ],
     );
   }
+
+  @override
+  commentNickName(String uid) => commentNameCallback(uid);
 }

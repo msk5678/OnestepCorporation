@@ -7,6 +7,7 @@ import 'package:onestep_rezero/board/AboutPost/AboutPostListView/listRiverpod.da
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:onestep_rezero/board/declareData/boardData.dart';
 import 'package:onestep_rezero/board/declareData/categoryManageClass.dart';
+import 'package:onestep_rezero/chat/widget/appColor.dart';
 
 abstract class PostListInterface {
   setProductScroll(StreamController productAddStreamController,
@@ -100,21 +101,16 @@ abstract class PostListParentWidget<T extends StatefulWidget> extends State<T>
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
+          actions: [
+            Container(
+                padding: EdgeInsets.only(right: 5.w),
+                child: Icon(Icons.settings, color: OnestepColors().mainColor)),
+          ],
           iconTheme: IconThemeData(color: Colors.black),
           backgroundColor: Colors.white,
           title: FadeIn(
             child: Row(
               children: [
-                // Container(
-                //   margin: EdgeInsets.only(
-                //       left: deviceWidth / 200, right: deviceWidth / 250),
-                //   child: IconButton(
-                //       onPressed: () => Navigator.pop(context),
-                //       icon: Icon(
-                //         currentBoardCategory.categoryData.icon,
-                //         color: Colors.indigo,
-                //       )),
-                // ),
                 Text(
                   currentBoardData.boardName,
                   style: TextStyle(color: Colors.black),
@@ -138,7 +134,7 @@ abstract class PostListParentWidget<T extends StatefulWidget> extends State<T>
         floatingActionButton: Stack(
           children: <Widget>[
             Align(
-                alignment: Alignment(0.1.w, 1.0.h),
+                alignment: Alignment(0.1, 1.0),
                 child: productAddFLoatingActionButton(
                     currentBoardData, productAddstreamController)),
             Align(

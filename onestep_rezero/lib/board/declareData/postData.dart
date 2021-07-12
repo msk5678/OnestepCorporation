@@ -101,50 +101,6 @@ class PostData {
       this.reported,
       this.reportedTime});
   Future toFireStore(BuildContext context) async {
-    for (int i = 0; i < 500; i++) {
-      String currentTimeStamp =
-          DateTime.now().millisecondsSinceEpoch.toString();
-      imgUriList = await convertImage(imageCommentMap["IMAGE"]);
-      imageCommentMap.update("IMAGE", (value) => imgUriList);
-      // return
-      await FirebaseFirestore.instance
-          .collection('university')
-          .doc(currentUserModel.university)
-          .collection('board')
-          .doc(this.boardId)
-          .collection(this.boardId)
-          .doc(currentTimeStamp)
-          .set({
-            "uid": currentUserModel.uid,
-            "uploadTime": Timestamp.fromDate(DateTime.now()),
-            "updateTime": 0,
-            "commentCount": commentCount ?? 0,
-            "reportCount": reportCount ?? 0,
-            "deletedTime": deletedTime ?? 0,
-            "title": title + "$i" ?? "",
-            "contentCategory": contentCategory.toString(),
-            "textContent": textContent ?? "",
-            "boardName": boardName ?? "",
-            "boardId": boardId ?? "",
-            "deleted": deleted ?? false,
-            "views": views ?? {},
-            "imageCommentList": imageCommentMap ?? {},
-            "scrabUserList": scrabUserList ?? {},
-            "favoriteUserList": favoriteUserList ?? {},
-            "commentUserList": commentUserList ?? {},
-            "favoriteCount": 0,
-            "reported": false,
-            "reportedTime": 0
-          })
-          .then((value) => true)
-          .timeout(
-            Duration(seconds: 3),
-            onTimeout: () {
-              Navigator.pop(context);
-              return null;
-            },
-          );
-    }
     String currentTimeStamp = DateTime.now().millisecondsSinceEpoch.toString();
     imgUriList = await convertImage(imageCommentMap["IMAGE"]);
     imageCommentMap.update("IMAGE", (value) => imgUriList);
@@ -237,12 +193,12 @@ class PostData {
         views: postData["views"] ?? {},
         commentUserList: postData["commentUserList"] ?? {},
         favoriteUserList: postData["favoriteUserList"] ?? {},
-        scrabUserList: postData["scrabUserList"] ?? {},
+        // scrabUserList: postData["scrabUserList"] ?? {},
         imageCommentMap: postData["imageCommentList"] ?? {},
         favoriteCount: postData["favoriteCount"] ?? 0,
-        scribeCount: postData["commentUserList"] != null
-            ? postData["commentUserList"].length
-            : 0,
+        // scribeCount: postData["commentUserList"] != null
+        //     ? postData["commentUserList"].length
+        //     : 0,
         reported: postData["reported"],
         reportedTime: postData["reportedTime"] ?? 0);
   }

@@ -80,8 +80,9 @@ class PostList extends StatelessWidget {
   postClickEvent(BuildContext context, PostData postData) async {
     await Navigator.of(context).pushNamed('/PostContent',
         arguments: {"CURRENTBOARDDATA": postData}).then((value) {
-      Map<String, dynamic> result = value ?? {"ALTERPOSTDATA": false};
-      if (result["ALTERPOSTDATA"]) {
+      bool result = value ?? false;
+      // Map<String, dynamic> result = value ?? {"ALTERPOSTDATA": false};
+      if (result) {
         context.read(listProvider).fetchPosts(postData.boardId);
       }
     });
