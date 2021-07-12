@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -11,6 +10,7 @@ import 'package:onestep_rezero/chat/productchat/model/productChatListCount.dart'
 import 'package:onestep_rezero/chat/widget/chatBadge.dart';
 import 'package:onestep_rezero/chat/widget/chat_list_time.dart';
 import 'package:onestep_rezero/signIn/loggedInWidget.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ProductChatListPage extends StatefulWidget {
   @override
@@ -22,7 +22,7 @@ class _ProductChatListPageState extends State<ProductChatListPage>
   _ProductChatListPageState();
 
   List<ProductChatList> listProductChat = [];
-  List<ProductChatListCount> listProductChatCount2 = [];
+  List<ProductChatListCount> listProductChatCount = [];
 
   @override
   bool get wantKeepAlive => true;
@@ -84,9 +84,9 @@ class _ProductChatListPageState extends State<ProductChatListPage>
               // print("stream values if0 null : ${snapshot.data.snapshot.value}");
               return Center(
                 child: Container(
-                  width: 200,
-                  height: 200,
-                  color: Colors.yellow,
+                  width: 200.h,
+                  height: 200.h,
+                  color: Colors.white,
                   child: Center(
                     child: Text("생성된 채팅이 없습니다..!"),
                   ),
@@ -98,7 +98,7 @@ class _ProductChatListPageState extends State<ProductChatListPage>
 
               //print("stream values else1 message@@ : ${snapshot.data.snapshot.value['message']}");
               listProductChat.clear(); //리스트 챗리스트 클리어
-              listProductChatCount2.clear(); //리스트 챗리스트 카운트 클리어
+              listProductChatCount.clear(); //리스트 챗리스트 카운트 클리어
               DataSnapshot dataValues = snapshot.data.snapshot;
               Map<dynamic, dynamic> values = dataValues.value;
               Map<dynamic, dynamic> mesageValues;
@@ -176,7 +176,7 @@ class _ProductChatListPageState extends State<ProductChatListPage>
                 //print("리얼타임 메세지 처리 - 프로덕트 리스트 1 : $key /// $len /// $values");
 
                 //분해 완료 뒤 chatID, 나한테 수신된 안읽은 메세지의 길이, 채팅방 벨류 정보를 넘겨준다.
-                listProductChatCount2
+                listProductChatCount
                     .add(ProductChatListCount.forMapSnapshot(key, len, values));
 
                 //이를 챗카운트 리스트에 추가한다.
@@ -189,10 +189,10 @@ class _ProductChatListPageState extends State<ProductChatListPage>
               ////정렬3. 시간 순 정렬 가능.
               //print("stream values else : 솔트완료");
               //2. 챗 카운트 정렬
-              listProductChatCount2
+              listProductChatCount
                   .sort((b, a) => a.sendTime.compareTo(b.sendTime));
               int sum = 0;
-              listProductChatCount2.forEach((count) {
+              listProductChatCount.forEach((count) {
                 sum += count.chatCount;
               });
               ProductChatListController().setToFirebaseProductChatCount(sum);
@@ -260,7 +260,8 @@ class _ProductChatListPageState extends State<ProductChatListPage>
                                                   productsUserId,
                                                   14,
                                                 ),
-                                                SizedBox(width: 10, height: 10),
+                                                SizedBox(
+                                                    width: 10.h, height: 10.h),
                                                 Spacer(),
                                                 getChatListTime(
                                                     listProductChat[index]
@@ -286,8 +287,8 @@ class _ProductChatListPageState extends State<ProductChatListPage>
                                                   ),
                                                   child: Container(
                                                     // color: Colors.pink,
-                                                    width: 220,
-                                                    height: 30,
+                                                    width: 220.h,
+                                                    height: 30.h,
                                                     child: Text(
                                                       listProductChat[index]
                                                           .recentText,
@@ -300,7 +301,8 @@ class _ProductChatListPageState extends State<ProductChatListPage>
                                                     ),
                                                   ),
                                                 ),
-                                                SizedBox(width: 10, height: 10),
+                                                SizedBox(
+                                                    width: 10.h, height: 10.h),
                                                 Spacer(),
                                                 Padding(
                                                   padding:
@@ -308,7 +310,7 @@ class _ProductChatListPageState extends State<ProductChatListPage>
                                                     top: 0,
                                                   ),
                                                   child: chatCountBadge(
-                                                      listProductChatCount2[
+                                                      listProductChatCount[
                                                               index]
                                                           .chatCount),
                                                 ),
@@ -356,8 +358,8 @@ class _ProductChatListPageState extends State<ProductChatListPage>
                       ),
                     )
                   : Container(
-                      width: 30,
-                      height: 30,
+                      width: 30.h,
+                      height: 30.h,
                       color: Colors.blue,
                       // child: Center(
                       child: Text("생성된 채팅방이 없습니다. . !"),

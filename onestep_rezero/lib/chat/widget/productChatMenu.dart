@@ -74,6 +74,28 @@ class ProductChatMenu {
         // Fluttertoast.showToast(msg: "미구현");
         print("widget메뉴-설정");
         break;
+
+      case ProductChatMenuItems.itemReport:
+        // Fluttertoast.showToast(msg: "미구현");
+        Fluttertoast.showToast(msg: "채팅 - 신고 클릭.");
+
+        // OnestepCustomDialog.show(
+        //   context,
+        //   title: '신고하기',
+        //   description: '신고 하시겠습니까? \n신고 화면으로 넘어갑니다.',
+        //   cancleButtonText: '취소',
+        //   confirmButtonText: '신고',
+        //   confirmButtonOnPress: () {
+        //     // ChatBlockController().blockToUser(friendId);
+        //     Navigator.pop(context);
+        //     // Navigator.pop(context);
+        //     // Fluttertoast.showToast(msg: "차단되었습니다.");
+        //   },
+        // );
+
+        print("widget메뉴-차단");
+        break;
+
       case ProductChatMenuItems.itemBlock:
         // Fluttertoast.showToast(msg: "미구현");
 

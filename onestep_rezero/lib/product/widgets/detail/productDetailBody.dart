@@ -767,22 +767,17 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
             elevation: 0,
           ),
           onPressed: () {
-            print("장터채팅누름");
-            print(currentUserModel.uid);
-            print(widget.product.uid);
-            print(widget.product.firestoreid);
-            print(widget.product);
+            // print("장터채팅누름");
+            // print(currentUserModel.uid);
+            // print(widget.product.uid);
+            // print(widget.product.firestoreid);
+            // print(widget.product);
             ChatNavigationManager.navigateProductToProductChat(
                 context,
                 currentUserModel.uid,
                 widget.product.uid,
                 widget.product.firestoreid,
                 widget.product);
-            // RealTimeChatNavigationManager.navigateToRealTimeChattingRoom(
-            //     context,
-            //     googleSignIn.currentUser.id.toString(),
-            //     widget.product.uid,
-            //     widget.product.firestoreid); aaaaa
           },
           child: Text(
             '채팅',

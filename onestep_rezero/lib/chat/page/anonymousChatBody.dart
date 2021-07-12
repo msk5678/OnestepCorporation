@@ -8,6 +8,7 @@ import 'package:onestep_rezero/chat/productchat/model/anonymousChatList.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 import 'package:onestep_rezero/utils/onestepCustom/color/onestepAppColor.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AnonymousChatBody extends StatefulWidget {
   @override
@@ -49,11 +50,23 @@ class _AdmobListState extends State<AnonymousChatBody> {
               child: Column(
                 children: [
                   Flexible(
-                    // flex: 5,
+                    flex: 10,
                     fit: FlexFit.tight,
                     child: _buildChatListListTileStream(),
                   ),
-                  createInput(),
+                  // Flexible(
+                  //   flex: 1,
+                  //   fit: FlexFit.tight,
+                  //   child:
+                  // Positioned(
+                  //   child:
+                  // Align(
+                  //   alignment: Alignment.center,
+                  //   child: createInput(),
+                  // ),
+                  // bottom: 50.h,
+                  // ),
+                  // ),
                   // Container(
                   //   color: Colors.lightBlue,
                   //   height: 50,
@@ -73,7 +86,12 @@ class _AdmobListState extends State<AnonymousChatBody> {
             ),
           ),
           Positioned(
-            child: GoogleAdmob().getChatMainBottomBanner(deviceWidth),
+            child: Column(
+              children: [
+                createInput(),
+                GoogleAdmob().getChatMainBottomBanner(deviceWidth),
+              ],
+            ),
             bottom: 0,
           ),
         ],
@@ -82,24 +100,27 @@ class _AdmobListState extends State<AnonymousChatBody> {
   }
 
   createInput() {
+    double deviceHeight = MediaQuery.of(context).size.height;
+    double deviceWidth = MediaQuery.of(context).size.width;
     Color _inputWidgetColor = Colors.grey;
     return Container(
-      width: double.infinity,
+      // height: deviceHeight / 16.h,
+      width: deviceWidth,
       decoration: BoxDecoration(
         color: _inputWidgetColor,
       ),
       child: new ConstrainedBox(
         constraints: BoxConstraints(
-          minHeight: 50,
-          maxHeight: 400.0,
+          minHeight: deviceHeight / 16.h,
+          maxHeight: deviceHeight / 2.h,
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: <Widget>[
             Container(
               // color: Colors.grey[300],
-              height: 50,
-              width: 80,
+              height: deviceHeight / 16.h,
+              width: deviceWidth / 5.w,
               child: Center(
                 child: TextField(
                   maxLength: 6,
@@ -120,48 +141,51 @@ class _AdmobListState extends State<AnonymousChatBody> {
                 ),
               ),
             ),
-            Flexible(
-              // flex: 3,
-              // fit: FlexFit.tight,
-              child: Container(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    // minWidth: 200,
-                    maxWidth: 250,
-                    minHeight: 35,
-                    maxHeight: 200.0,
+            // Flexible(
+            // flex: 3,
+            // fit: FlexFit.tight,
+            // child:
+            Container(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  // minWidth: 200,
+                  // maxWidth: 250,
+                  maxWidth: deviceWidth / 1.37.w,
+
+                  minHeight: deviceHeight / 27.h,
+                  maxHeight: deviceHeight / 4.h,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    0,
+                    10,
+                    10,
+                    18,
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(
-                      10,
-                      10,
-                      10,
-                      14,
+                  child: TextField(
+                    cursorColor: OnestepColors().mainColor,
+                    enabled: true,
+                    // maxLength: 80,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 16.0,
                     ),
-                    child: TextField(
-                      cursorColor: OnestepColors().mainColor,
-                      enabled: true,
-                      // maxLength: 80,
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 16.0,
+                    controller: textContentController,
+                    minLines: 1,
+                    maxLines: 2,
+                    decoration: InputDecoration.collapsed(
+                      hintText: "채팅을 입력하세요.",
+                      hintStyle: TextStyle(
+                        fontSize: 13,
+                        color: Colors.grey[600],
                       ),
-                      controller: textContentController,
-                      minLines: 1,
-                      maxLines: 2,
-                      decoration: InputDecoration.collapsed(
-                        hintText: "채팅을 입력하세요.",
-                        hintStyle: TextStyle(
-                          fontSize: 13,
-                          color: Colors.grey[600],
-                        ),
-                        // border: OutlineInputBorder(),
-                      ),
-                      focusNode: focusNode,
+                      // border: OutlineInputBorder(),
                     ),
+                    focusNode: focusNode,
                   ),
                 ),
               ),
+              // ),
             ),
             Spacer(),
             Container(

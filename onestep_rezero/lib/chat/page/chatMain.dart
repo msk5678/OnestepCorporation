@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:onestep_rezero/chat/navigator/chatNavigationManager.dart';
 import 'package:onestep_rezero/chat/page/productChatListPage.dart';
 import 'package:onestep_rezero/chat/productchat/controller/productChatMainController.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ChatMain extends StatefulWidget {
   const ChatMain({Key key}) : super(key: key);
@@ -49,6 +50,9 @@ class _StackListState extends State<ChatMain>
   @override
   Widget build(BuildContext context) {
     double deviceWidth = MediaQuery.of(context).size.width;
+    double deviceHeight = MediaQuery.of(context).size.height;
+
+    print("@size : w : $deviceWidth // h : $deviceHeight");
     // super.build(context);
     return DefaultTabController(
       length: 2,
@@ -61,7 +65,9 @@ class _StackListState extends State<ChatMain>
                 handle:
                     NestedScrollView.sliverOverlapAbsorberHandleFor(context),
                 sliver: SliverAppBar(
-                  toolbarHeight: 100, //appbar top height
+                  toolbarHeight:
+                      // 100,
+                      deviceHeight / 7.6.h, //appbar top height
                   // primary: false,
                   backgroundColor: Colors.transparent,
                   // OnestepColors().mainColor, // app bar color
@@ -107,48 +113,51 @@ class _StackListState extends State<ChatMain>
                   ),
                   title: Padding(
                     padding: const EdgeInsets.all(6.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          height: 35,
-                        ),
-                        Text(
-                          'Chat',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold,
+                    child: Container(
+                      // color: Colors.blue,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            height: 37.h,
                           ),
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Container(
-                          // color: Colors.grey.shade200,
-                          child: Row(
-                            children: [
-                              Text(
-                                '읽지 않은 메세지 : ',
-                                style: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 10,
+                          Text(
+                            'Chat',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(
+                            height: 5.h,
+                          ),
+                          Container(
+                            // color: Colors.grey.shade200,
+                            child: Row(
+                              children: [
+                                Text(
+                                  '읽지 않은 메세지 : ',
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 10,
+                                  ),
                                 ),
-                              ),
-                              ProductChatMainController()
-                                  .getNewProductChatCountText(),
-                              // Text(
-                              //   '1개',
-                              //   style: TextStyle(
-                              //     color: OnestepColors().mainColor,
-                              //     // Colors.green,
-                              //     fontSize: 10,
-                              //   ),
-                              // ),
-                            ],
+                                ProductChatMainController()
+                                    .getNewProductChatCountText(),
+                                // Text(
+                                //   '1개',
+                                //   style: TextStyle(
+                                //     color: OnestepColors().mainColor,
+                                //     // Colors.green,
+                                //     fontSize: 10,
+                                //   ),
+                                // ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ), // title: Column(
                   //   crossAxisAlignment: CrossAxisAlignment.start,
@@ -173,7 +182,7 @@ class _StackListState extends State<ChatMain>
                   //   color: Colors.black,
                   // ), // hambuger menu hide
                   // collapsedHeight: 70.0,
-                  expandedHeight: 170, // Tab Bar Height
+                  expandedHeight: deviceHeight / 4.3.h, // Tab Bar Height
 
                   pinned:
                       true, //pinned(고정) : 스크롤 시 앱 바 표시 여부 @@탭바 유지하려면 true 필수
@@ -189,14 +198,16 @@ class _StackListState extends State<ChatMain>
                       false,
                   //false : 앱바 스크롤 시에만 그림자
                   bottom: PreferredSize(
-                    preferredSize: Size.fromHeight(48), //앱바+탭바 맥스사이즈
+                    preferredSize:
+                        Size.fromHeight(deviceHeight / 14.3.h), //앱바+탭바 맥스사이즈
                     child: Align(
                       alignment: Alignment. //탭바 정렬 위치
                           // topCenter,
                           centerLeft,
                       child: Container(
                         constraints: BoxConstraints(
-                          minWidth: deviceWidth,
+                          minWidth: deviceWidth.h,
+                          minHeight: deviceHeight / 14.9.h,
                           // maxHeight: 150.0,
                         ),
                         child: Material(
@@ -209,7 +220,7 @@ class _StackListState extends State<ChatMain>
                             // labelStyle: TextStyle(color: Colors.pink),
                             indicator: UnderlineTabIndicator(
                               borderSide: BorderSide(
-                                width: 4,
+                                width: 4.w,
                                 color: Colors.pink,
                                 style: BorderStyle.none,
                               ),
@@ -273,8 +284,8 @@ class _StackListState extends State<ChatMain>
                 child: PageView.builder(
                   itemBuilder: (context, position) {
                     return Container(
-                      height: 20,
-                      width: 20,
+                      height: 20.h,
+                      width: 20.w,
                       color: Colors.white,
                       child: (position == 0 && page.text == '장터채팅')
                           ? ProductChatListPage()
@@ -320,8 +331,8 @@ class _SecondChatListState extends State<SecondChatList> {
                 },
                 child: Container(
                   alignment: Alignment.center,
-                  width: 100,
-                  height: 50,
+                  width: 100.w,
+                  height: 50.h,
                   child: Text("단체채팅\n입장하기"),
                 ),
               ),
