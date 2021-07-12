@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'User/reportUserController.dart';
 
 class ReportUserPage extends StatelessWidget {
-  final String postUid;
+  final String chatId;
   final String reportedUid;
-  ReportUserPage(this.postUid, this.reportedUid);
+  ReportUserPage(this.chatId, this.reportedUid);
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +23,7 @@ class ReportUserPage extends StatelessWidget {
           children: [
             InkWell(
               onTap: () {
-                reportUserController(context, 1, postUid, reportedUid);
+                reportUserController(context, 1, chatId, reportedUid);
               },
               child: Padding(
                 padding: EdgeInsets.fromLTRB(
