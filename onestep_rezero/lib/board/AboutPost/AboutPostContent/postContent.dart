@@ -15,6 +15,7 @@ import 'package:onestep_rezero/board/declareData/postData.dart';
 import 'package:onestep_rezero/board/declareData/commentData.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
+import 'package:onestep_rezero/report/pages/Deal/boardReport/reportBoardPage.dart';
 import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 import 'package:onestep_rezero/utils/timeUtil.dart';
 
@@ -613,12 +614,16 @@ class _PostContentState extends State<PostContent>
                 });
               }
             },
-            itemBuilder: (BuildContext bc) => setPopupMenuButton(isWritter))
+            itemBuilder: (BuildContext bc) =>
+                setPopupMenuButton(isWritter, currentPost, currentUid))
       ],
     );
   }
 
-  setPopupMenuButton(bool isWritter) {
+  setPopupMenuButton(bool isWritter, PostData currentPost, String currentUID) {
+    String currentBoardId = currentPost.boardId;
+    String currentPostId = currentPost.documentId;
+    String currentUid = currentUID;
     return isWritter
         ? [
             PopupMenuItem(child: Text("수정하기"), value: "Alter"),
@@ -632,6 +637,9 @@ class _PostContentState extends State<PostContent>
         : [
             PopupMenuItem(
                 child: GestureDetector(
+                  onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => ReportBoardPage(
+                          currentBoardId, currentPostId, currentUid))),
                   child: Text(
                     "신고하기",
                     style: TextStyle(color: Colors.redAccent),

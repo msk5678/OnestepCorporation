@@ -5,6 +5,7 @@ import 'package:onestep_rezero/board/AboutPost/AboutPostContent/postComment.dart
 import 'package:onestep_rezero/board/declareData/commentData.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
+import 'package:onestep_rezero/report/pages/Deal/cocommentReport/reportCocommentPage.dart';
 import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 import 'package:onestep_rezero/utils/timeUtil.dart';
 
@@ -166,6 +167,8 @@ class ChildComment extends StatelessWidget implements Comment {
                 },
               )
             : IconSlideAction(
+                onTap: () =>
+                    reportedEventMethod(context, currentLogInUid, comment),
                 caption: '신고하기',
                 color: Colors.red,
                 icon: Icons.flag,
@@ -303,7 +306,19 @@ class ChildComment extends StatelessWidget implements Comment {
                                 ),
                               ),
                             )
-                          : Container(),
+                          : Container(
+                              padding: EdgeInsets.only(left: 10),
+                              alignment: Alignment.centerRight,
+                              child: GestureDetector(
+                                onTap: () =>
+                                    reportedEventMethod(context, uid, comment),
+                                child: Text(
+                                  "신고",
+                                  style: TextStyle(
+                                      color: Colors.redAccent, fontSize: 10),
+                                ),
+                              ),
+                            ),
                     ],
                   ),
                 ],
@@ -321,4 +336,14 @@ class ChildComment extends StatelessWidget implements Comment {
       ],
     );
   }
+
+  reportedEventMethod(
+          BuildContext context, String currentUid, CommentData commentData) =>
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => ReportCocommentPage(
+              commentData.boardId,
+              commentData.postId,
+              currentUid,
+              commentData.parentCommentId,
+              commentData.commentId)));
 }
