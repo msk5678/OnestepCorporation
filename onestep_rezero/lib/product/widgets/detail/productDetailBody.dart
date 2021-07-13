@@ -8,6 +8,7 @@ import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/favorite/animation/favoriteAnimation.dart';
 import 'package:onestep_rezero/favorite/utils/favoriteFirebaseApi.dart';
 import 'package:onestep_rezero/myinfo/pages/mySaleProductMain.dart';
+import 'package:onestep_rezero/product/widgets/public/productKakaoShareManager.dart';
 import 'package:onestep_rezero/report/pages/Deal/productReport/reportProductPage.dart';
 import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 import 'package:onestep_rezero/chat/navigator/chatNavigationManager.dart';
@@ -214,18 +215,19 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
             actions: [
               IconButton(
                   onPressed: () {
-                    // print("kakao 1");
-                    // KakaoShareManager()
-                    //     .isKakaotalkInstalled()
-                    //     .then((installed) {
-                    //   if (installed) {
-                    //     print("kakao success");
-                    //     KakaoShareManager().shareMyCode(widget.product);
-                    //   } else {
-                    //     print("kakao error");
-                    //     // show alert
-                    //   }
-                    // });
+                    // // print("kakao 1");
+                    KakaoShareManager()
+                        .isKakaotalkInstalled()
+                        .then((installed) {
+                      if (installed) {
+                        print("kakao success");
+                        KakaoShareManager().shareMyCode(widget.product);
+                      } else {
+                        print("kakao error");
+                        // show alert
+                      }
+                    });
+                    // print("widget.product ${widget.product.imagesUrl}");
                   },
                   icon: _makeIcon(Icons.share)),
               if (currentUserModel.uid != widget.product.uid) popupMenuButton(),
