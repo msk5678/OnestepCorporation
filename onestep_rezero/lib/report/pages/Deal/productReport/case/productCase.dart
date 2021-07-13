@@ -2,9 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
+import 'package:onestep_rezero/report/public/reportDefaultText.dart';
 import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 import 'package:onestep_rezero/utils/onestepCustom/dialog/onestepCustomDialog.dart';
 import 'package:onestep_rezero/utils/onestepCustom/dialog/onestepCustomDialogNotCancel.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 final myController = TextEditingController();
 
@@ -141,139 +143,261 @@ class ProductCase extends StatelessWidget {
         return Future(() => false);
       },
       child: Scaffold(
-          bottomNavigationBar: Row(
-            // mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Expanded(
-                child: InkWell(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: Container(
-                    height: 50,
-                    child: BottomAppBar(
-                      color: Colors.white,
-                      child: Center(child: Text('취소')),
-                      elevation: 0,
-                    ),
-                  ),
-                ),
-              ),
-              Expanded(
-                child: InkWell(
-                  onTap: () async {
-                    Map<dynamic, dynamic> values;
-                    bool flag = false;
+          // bottomNavigationBar: Row(
+          //   // mainAxisSize: MainAxisSize.max,
+          //   mainAxisAlignment: MainAxisAlignment.center,
+          //   children: [
+          //     Expanded(
+          //       child: InkWell(
+          //         onTap: () {
+          //           Navigator.pop(context);
+          //         },
+          //         child: Container(
+          //           height: 50,
+          //           child: BottomAppBar(
+          //             color: Colors.white,
+          //             child: Center(child: Text('취소')),
+          //             elevation: 0,
+          //           ),
+          //         ),
+          //       ),
+          //     ),
+          //     Expanded(
+          //       child: InkWell(
+          //         onTap: () async {
+          //           Map<dynamic, dynamic> values;
+          //           bool flag = false;
 
-                    await FirebaseDatabase.instance
-                        .reference()
-                        .child('reportOverlapCheck')
-                        .child(currentUserModel.uid)
-                        .child('product')
-                        .once()
-                        .then((value) => {
-                              if (value.value == null)
-                                {
-                                  flag = false,
-                                }
-                              else
-                                {
-                                  values = value.value,
-                                  values.forEach((key, value) {
-                                    // 한번이라도 신고한적이 있다
-                                    if (key == postUid) {
-                                      // 같은 글을 신고한다
-                                      if (value == true) {
-                                        flag = true;
-                                        OnestepCustomDialogNotCancel.show(
-                                          context,
-                                          title: '이미 신고한 게시물입니다.',
-                                          confirmButtonText: '확인',
-                                          confirmButtonOnPress: () {
-                                            Navigator.pop(context);
-                                          },
-                                        );
-                                      }
-                                      // 신고를 한적이 있는데 같은 글이 아니다
-                                      else {
-                                        flag = false;
-                                      }
-                                    }
-                                  })
-                                }
-                            });
-                    // 처음 신고한다
-                    if (flag == false) {
-                      final DocumentSnapshot reportState =
-                          await FirebaseFirestore.instance
-                              .collection('user')
-                              .doc(reportedUid)
-                              .get();
+          //           await FirebaseDatabase.instance
+          //               .reference()
+          //               .child('reportOverlapCheck')
+          //               .child(currentUserModel.uid)
+          //               .child('product')
+          //               .once()
+          //               .then((value) => {
+          //                     if (value.value == null)
+          //                       {
+          //                         flag = false,
+          //                       }
+          //                     else
+          //                       {
+          //                         values = value.value,
+          //                         values.forEach((key, value) {
+          //                           // 한번이라도 신고한적이 있다
+          //                           if (key == postUid) {
+          //                             // 같은 글을 신고한다
+          //                             if (value == true) {
+          //                               flag = true;
+          //                               OnestepCustomDialogNotCancel.show(
+          //                                 context,
+          //                                 title: '이미 신고한 게시물입니다.',
+          //                                 confirmButtonText: '확인',
+          //                                 confirmButtonOnPress: () {
+          //                                   Navigator.pop(context);
+          //                                 },
+          //                               );
+          //                             }
+          //                             // 신고를 한적이 있는데 같은 글이 아니다
+          //                             else {
+          //                               flag = false;
+          //                             }
+          //                           }
+          //                         })
+          //                       }
+          //                   });
+          //           // 처음 신고한다
+          //           if (flag == false) {
+          //             final DocumentSnapshot reportState =
+          //                 await FirebaseFirestore.instance
+          //                     .collection('user')
+          //                     .doc(reportedUid)
+          //                     .get();
 
-                      return OnestepCustomDialog.show(
-                        context,
-                        title: '신고하시겠습니까?',
-                        confirmButtonText: '확인',
-                        cancleButtonText: '취소',
-                        confirmButtonOnPress: () {
-                          reportState.data()['reportState'] == 0
-                              ? report(
-                                  postUid, reportedUid, reportCase, context)
-                              : Navigator.pop(context);
-                        },
-                        cancleButtonOnPress: () {
-                          Navigator.pop(context);
-                        },
-                      );
-                    }
-                  },
-                  child: Container(
-                    height: 50,
-                    child: BottomAppBar(
-                      color: OnestepColors().mainColor,
-                      child: Center(child: Text('신고하기')),
-                      elevation: 0,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
+          //             return OnestepCustomDialog.show(
+          //               context,
+          //               title: '신고하시겠습니까?',
+          //               confirmButtonText: '확인',
+          //               cancleButtonText: '취소',
+          //               confirmButtonOnPress: () {
+          //                 reportState.data()['reportState'] == 0
+          //                     ? report(
+          //                         postUid, reportedUid, reportCase, context)
+          //                     : Navigator.pop(context);
+          //               },
+          //               cancleButtonOnPress: () {
+          //                 Navigator.pop(context);
+          //               },
+          //             );
+          //           }
+          //         },
+          //         child: Container(
+          //           height: 50,
+          //           child: BottomAppBar(
+          //             color: OnestepColors().mainColor,
+          //             child: Center(child: Text('신고하기')),
+          //             elevation: 0,
+          //           ),
+          //         ),
+          //       ),
+          //     ),
+          //   ],
+          // ),
           appBar: AppBar(
+            elevation: 1,
             title: Text(
-              title,
-              style: TextStyle(color: Colors.black),
+              '게시글 신고',
+              style: TextStyle(color: Colors.black, fontSize: 15),
             ),
             backgroundColor: Colors.white,
             iconTheme: IconThemeData(color: Colors.black),
           ),
           body: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  child: Text(
-                    content,
-                    style: TextStyle(fontSize: 15),
+            child: Padding(
+              padding: EdgeInsets.all(30.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0, 0, 0, 20.h),
+                    child: Row(
+                      children: [
+                        Text(
+                          "해당 글을 신고하는 이유를 간략하게 알려주세요.",
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                Container(
-                  height: 150,
-                  padding: EdgeInsets.all(15.0),
-                  child: SizedBox(
-                    height: 100.0,
-                    child: TextField(
-                      controller: myController,
-                      maxLines: 5,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        hintText: '내용을 입력해주세요',
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                    child: Container(
+                      child: Text(
+                        content,
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: Colors.grey,
+                          height: 1.3,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0, 32.h, 0, 0),
+                    child: Container(
+                      height: 150,
+                      child: TextField(
+                        controller: myController,
+                        maxLines: 5,
+                        maxLength: 150,
+                        decoration: InputDecoration(
+                          contentPadding: EdgeInsets.fromLTRB(15, 30, 0, 0),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.grey.withOpacity(0.3),
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.grey.withOpacity(0.3),
+                            ),
+                          ),
+                          hintStyle:
+                              TextStyle(color: Colors.grey.withOpacity(0.3)),
+                          hintText: '내용을 입력해주세요',
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0, 17.h, 0, 2.h),
+                    child: getReportDefaulBodytText(),
+                  ),
+                  getReportDefaulTailtText(),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0, 15.h, 0, 0),
+                    child: Center(
+                      child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              elevation: 0, primary: OnestepColors().mainColor),
+                          onPressed: () async {
+                            Map<dynamic, dynamic> values;
+                            bool flag = false;
+
+                            await FirebaseDatabase.instance
+                                .reference()
+                                .child('reportOverlapCheck')
+                                .child(currentUserModel.uid)
+                                .child('product')
+                                .once()
+                                .then((value) => {
+                                      if (value.value == null)
+                                        {
+                                          flag = false,
+                                        }
+                                      else
+                                        {
+                                          values = value.value,
+                                          values.forEach((key, value) {
+                                            // 한번이라도 신고한적이 있다
+                                            if (key == postUid) {
+                                              // 같은 글을 신고한다
+                                              if (value == true) {
+                                                flag = true;
+                                                OnestepCustomDialogNotCancel
+                                                    .show(
+                                                  context,
+                                                  title: '이미 신고한 게시물입니다.',
+                                                  confirmButtonText: '확인',
+                                                  confirmButtonOnPress: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                );
+                                              }
+                                              // 신고를 한적이 있는데 같은 글이 아니다
+                                              else {
+                                                flag = false;
+                                              }
+                                            }
+                                          })
+                                        }
+                                    });
+                            // 처음 신고한다
+                            if (flag == false) {
+                              final DocumentSnapshot reportState =
+                                  await FirebaseFirestore.instance
+                                      .collection('user')
+                                      .doc(reportedUid)
+                                      .get();
+
+                              return OnestepCustomDialog.show(
+                                context,
+                                title: '신고하시겠습니까?',
+                                confirmButtonText: '확인',
+                                cancleButtonText: '취소',
+                                confirmButtonOnPress: () {
+                                  reportState.data()['reportState'] == 0
+                                      ? report(postUid, reportedUid, reportCase,
+                                          context)
+                                      : Navigator.pop(context);
+                                },
+                                cancleButtonOnPress: () {
+                                  Navigator.pop(context);
+                                },
+                              );
+                            }
+                          },
+                          child: Container(
+                            height: 40.h,
+                            width: 300.w,
+                            child: Center(child: Text("onestep 팀에게 제출하기")),
+                          )),
+                    ),
+                  )
+                ],
+              ),
             ),
           )),
     );

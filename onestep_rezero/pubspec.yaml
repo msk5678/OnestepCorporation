@@ -97,6 +97,11 @@ dependencies:
   no_context_navigation: ^2.1.1
   # ############
 
+  #sizer
+  sizer: ^2.0.13
+  ######
+  sized_context: ^1.0.0+1
+
   #share
   share: ^2.0.4
   ########
