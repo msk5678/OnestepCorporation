@@ -24,6 +24,7 @@ import 'package:onestep_rezero/utils/onestepCustom/dialog/onestepCustomDialog.da
 import 'package:onestep_rezero/utils/timeUtil.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:kakao_flutter_sdk/all.dart';
 
 class ProductDetailBody extends StatefulWidget {
   final Product product;
@@ -211,7 +212,22 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
             backgroundColor: Colors.white.withAlpha(alpha),
             elevation: 0,
             actions: [
-              IconButton(onPressed: () {}, icon: _makeIcon(Icons.share)),
+              IconButton(
+                  onPressed: () {
+                    // print("kakao 1");
+                    // KakaoShareManager()
+                    //     .isKakaotalkInstalled()
+                    //     .then((installed) {
+                    //   if (installed) {
+                    //     print("kakao success");
+                    //     KakaoShareManager().shareMyCode(widget.product);
+                    //   } else {
+                    //     print("kakao error");
+                    //     // show alert
+                    //   }
+                    // });
+                  },
+                  icon: _makeIcon(Icons.share)),
               if (currentUserModel.uid != widget.product.uid) popupMenuButton(),
             ],
           );
