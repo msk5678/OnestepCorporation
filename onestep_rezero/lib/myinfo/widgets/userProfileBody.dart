@@ -177,6 +177,7 @@ class UserProfileBody extends ConsumerWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
+                              settings: RouteSettings(name: 'Sale'),
                               builder: (context) => MySaleProductMain(),
                             ),
                           );

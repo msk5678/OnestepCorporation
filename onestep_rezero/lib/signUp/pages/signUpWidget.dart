@@ -15,26 +15,42 @@ class _SignUpWidgetState extends State<SignUpWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Padding(
-          padding: EdgeInsets.only(top: 240.0.h),
+      body: Padding(
+        padding: EdgeInsets.only(top: 60.h),
+        child: Container(
+          width: MediaQuery.of(context).size.width,
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Text(
-                '한발자국',
-                style: TextStyle(
-                    fontSize: 60.0.sp,
-                    fontFamily: "Billabong",
-                    color: Colors.black),
+              Align(
+                alignment: Alignment.center,
+                child: Text(
+                  '한발자국',
+                  style: TextStyle(
+                      fontSize: 60.0.sp,
+                      fontFamily: "Billabong",
+                      color: Colors.black),
+                ),
               ),
-              Padding(padding: EdgeInsets.only(bottom: 100.0.h)),
-              SignInButton(
-                Buttons.GoogleDark,
-                text: "Google 계정으로 로그인하기",
-                padding: EdgeInsets.all(5.0),
-                onPressed: () {
-                  context.read(googleSignInProvider).googleLogin();
-                },
+              Padding(padding: EdgeInsets.only(bottom: 100.h)),
+              Container(
+                child: SignInButtonBuilder(
+                  image: Image(
+                    image: AssetImage(
+                      'assets/logos/google_dark.png',
+                      package: 'flutter_signin_button',
+                    ),
+                    height: 36.0.h,
+                  ),
+                  backgroundColor: Color(0xFF4285F4),
+                  width: 230.w,
+                  text: "Google 계정으로 로그인",
+                  fontSize: 14.0.sp,
+                  padding: EdgeInsets.all(5.0),
+                  onPressed: () {
+                    context.read(googleSignInProvider).googleLogin();
+                  },
+                ),
               ),
             ],
           ),

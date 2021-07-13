@@ -49,4 +49,23 @@ class FavoriteMainProvider extends ChangeNotifier {
     isFetching = false;
     notifyListeners();
   }
+
+  Future updateState(String id, bool trading, bool hold, bool completed) async {
+    if (isFetching) return;
+    isFetching = true;
+
+    DocumentSnapshot _documentSnapshot = _productsSnapshot[
+        _productsSnapshot.indexWhere((element) => element.id == id)];
+
+    Product _product = Product.fromJson(_documentSnapshot.data(), id);
+    _product.setTrading = trading;
+    _product.setHold = hold;
+    _product.setCompleted = completed;
+
+    product[product.indexWhere((element) => element.firestoreid == id)] =
+        _product;
+
+    isFetching = false;
+    notifyListeners();
+  }
 }

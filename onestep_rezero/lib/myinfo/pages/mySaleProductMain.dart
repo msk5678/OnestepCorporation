@@ -83,6 +83,7 @@ class _MySaleProductMainState extends State<MySaleProductMain> {
 
   @override
   Widget build(BuildContext context) {
+    print("@@@@@@@@@@@@@@@@@@ name : ${ModalRoute.of(context).settings.name}");
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(

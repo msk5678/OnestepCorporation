@@ -355,7 +355,9 @@ class _ProductMainState extends State<ProductMain> {
           ),
           onPressed: () => {
             Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => SearchMain(searchKey: 1)),
+              MaterialPageRoute(
+                  settings: RouteSettings(name: 'Search'),
+                  builder: (context) => SearchMain(searchKey: 1)),
             ),
           },
         ),
@@ -367,6 +369,7 @@ class _ProductMainState extends State<ProductMain> {
           onPressed: () => {
             Navigator.of(context).push(
               MaterialPageRoute(
+                settings: RouteSettings(name: 'Favorite'),
                 builder: (context) => FavoriteMain(),
               ),
             ),
