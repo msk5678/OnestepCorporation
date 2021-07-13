@@ -1,12 +1,12 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
-import 'User/case/userCase.dart';
+import 'case/productCase.dart';
 
-class ReportUserPage extends StatelessWidget {
-  final String chatId;
+class ReportProductPage extends StatelessWidget {
+  final String postUid;
   final String reportedUid;
-  ReportUserPage(this.chatId, this.reportedUid);
+  ReportProductPage(this.postUid, this.reportedUid);
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +14,7 @@ class ReportUserPage extends StatelessWidget {
       appBar: AppBar(
         elevation: 1,
         title: Text(
-          '사용자 신고 ',
+          '게시글 신고',
           style: TextStyle(color: Colors.black),
         ),
         backgroundColor: Colors.white,
@@ -25,7 +25,7 @@ class ReportUserPage extends StatelessWidget {
           future: FirebaseDatabase.instance
               .reference()
               .child('reportType')
-              .child('user')
+              .child('product')
               .once(),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             switch (snapshot.connectionState) {
@@ -63,11 +63,11 @@ class ReportUserPage extends StatelessWidget {
                           onTap: () {
                             int _reportCase = int.parse(reportCase[index]);
                             Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => UserCase(
+                                builder: (context) => ProductCase(
                                     title[index],
                                     content[index],
                                     _reportCase,
-                                    chatId,
+                                    postUid,
                                     reportedUid)));
                           },
                           child: Padding(

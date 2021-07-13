@@ -10,6 +10,7 @@ class OnestepCustomDialog {
     @required String confirmButtonText,
     @required String cancleButtonText,
     @required Function confirmButtonOnPress,
+    @required Function cancleButtonOnPress,
   }) {
     return showDialog(
       context: context,
@@ -46,7 +47,7 @@ class OnestepCustomDialog {
                         height: 45.h,
                         child: ElevatedButton(
                           onPressed: () {
-                            Navigator.pop(context);
+                            cancleButtonOnPress;
                           },
                           child: Text(cancleButtonText),
                           style: ElevatedButton.styleFrom(

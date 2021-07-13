@@ -10,6 +10,8 @@ import 'package:onestep_rezero/favorite/utils/favoriteFirebaseApi.dart';
 import 'package:onestep_rezero/favorite/widgets/favoriteMainBody.dart';
 import 'package:onestep_rezero/myinfo/pages/mySaleProductMain.dart';
 import 'package:onestep_rezero/myinfo/widgets/mySaleProduct/mySaleProductBody.dart';
+import 'package:onestep_rezero/product/widgets/public/productKakaoShareManager.dart';
+import 'package:onestep_rezero/report/pages/Deal/productReport/reportProductPage.dart';
 import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 import 'package:onestep_rezero/chat/navigator/chatNavigationManager.dart';
 import 'package:onestep_rezero/product/models/product.dart';
@@ -25,6 +27,7 @@ import 'package:onestep_rezero/utils/onestepCustom/dialog/onestepCustomDialog.da
 import 'package:onestep_rezero/utils/timeUtil.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:kakao_flutter_sdk/all.dart';
 
 class ProductDetailBody extends StatefulWidget {
   final Product product;
@@ -144,6 +147,9 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
       case '새로고침':
         break;
       case '신고하기':
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => ReportProductPage(
+                widget.product.firestoreid, widget.product.uid)));
         break;
       case '수정하기':
         break;
@@ -212,6 +218,19 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
               IconButton(
                   onPressed: () {
                     print("@@@@@@@@@@@@@ ${ModalRoute.of(context).settings}");
+                    // // print("kakao 1");
+                    KakaoShareManager()
+                        .isKakaotalkInstalled()
+                        .then((installed) {
+                      if (installed) {
+                        print("kakao success");
+                        KakaoShareManager().shareMyCode(widget.product);
+                      } else {
+                        print("kakao error");
+                        // show alert
+                      }
+                    });
+                    // print("widget.product ${widget.product.imagesUrl}");
                   },
                   icon: _makeIcon(Icons.share)),
               if (currentUserModel.uid != widget.product.uid) popupMenuButton(),
@@ -240,7 +259,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
                     Icon(
                         snapshot.data == 1
                             ? Icons.watch_later_outlined
-                            :snapshot.data == 2
+                            : snapshot.data == 2
                                 ? Icons.pending_outlined
                                 : Icons.check_circle_outline_rounded,
                         color: Colors.white,
@@ -789,22 +808,17 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
             elevation: 0,
           ),
           onPressed: () {
-            print("장터채팅누름");
-            print(currentUserModel.uid);
-            print(widget.product.uid);
-            print(widget.product.firestoreid);
-            print(widget.product);
+            // print("장터채팅누름");
+            // print(currentUserModel.uid);
+            // print(widget.product.uid);
+            // print(widget.product.firestoreid);
+            // print(widget.product);
             ChatNavigationManager.navigateProductToProductChat(
                 context,
                 currentUserModel.uid,
                 widget.product.uid,
                 widget.product.firestoreid,
                 widget.product);
-            // RealTimeChatNavigationManager.navigateToRealTimeChattingRoom(
-            //     context,
-            //     googleSignIn.currentUser.id.toString(),
-            //     widget.product.uid,
-            //     widget.product.firestoreid); aaaaa
           },
           child: Text(
             '채팅',

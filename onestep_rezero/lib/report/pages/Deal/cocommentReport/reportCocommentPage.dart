@@ -1,12 +1,16 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
-import 'User/case/userCase.dart';
+import 'case/cocommentCase.dart';
 
-class ReportUserPage extends StatelessWidget {
-  final String chatId;
+class ReportCocommentPage extends StatelessWidget {
+  final String boardUid;
+  final String postUid;
   final String reportedUid;
-  ReportUserPage(this.chatId, this.reportedUid);
+  final String commentUid;
+  final String cocommentUid;
+  ReportCocommentPage(this.boardUid, this.postUid, this.reportedUid,
+      this.commentUid, this.cocommentUid);
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +18,7 @@ class ReportUserPage extends StatelessWidget {
       appBar: AppBar(
         elevation: 1,
         title: Text(
-          '사용자 신고 ',
+          '댓글 신고',
           style: TextStyle(color: Colors.black),
         ),
         backgroundColor: Colors.white,
@@ -25,7 +29,7 @@ class ReportUserPage extends StatelessWidget {
           future: FirebaseDatabase.instance
               .reference()
               .child('reportType')
-              .child('user')
+              .child('cocomment')
               .once(),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             switch (snapshot.connectionState) {
@@ -63,12 +67,15 @@ class ReportUserPage extends StatelessWidget {
                           onTap: () {
                             int _reportCase = int.parse(reportCase[index]);
                             Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => UserCase(
+                                builder: (context) => CoCommentCase(
                                     title[index],
                                     content[index],
                                     _reportCase,
-                                    chatId,
-                                    reportedUid)));
+                                    boardUid,
+                                    postUid,
+                                    reportedUid,
+                                    commentUid,
+                                    cocommentUid)));
                           },
                           child: Padding(
                             padding: EdgeInsets.fromLTRB(

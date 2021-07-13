@@ -8,6 +8,7 @@ import 'package:onestep_rezero/board/StateManage/Provider/commentProvider.dart';
 import 'package:onestep_rezero/board/declareData/commentData.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:onestep_rezero/report/pages/Deal/commentReport/reportCommentPage.dart';
 import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 import 'package:onestep_rezero/utils/timeUtil.dart';
 
@@ -272,6 +273,8 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
                 },
               )
             : IconSlideAction(
+                onTap: () =>
+                    reportedEventMethod(context, currentLogInUid, comment),
                 caption: '신고하기',
                 color: Colors.red,
                 icon: Icons.flag,
@@ -323,6 +326,12 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
   refreshComment(BuildContext context, String boardId, String postId) {
     context.read(commentProvider).refresh(boardId, postId);
   }
+
+  reportedEventMethod(
+          BuildContext context, String currentUid, CommentData commentData) =>
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => ReportCommentPage(commentData.boardId,
+              commentData.postId, currentUid, commentData.commentId)));
 
   @override
   commentWidget(BuildContext context, int index, CommentData comment,
@@ -393,7 +402,19 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
                                 ),
                               ),
                             )
-                          : Container(),
+                          : Container(
+                              padding: EdgeInsets.only(left: 10),
+                              alignment: Alignment.centerRight,
+                              child: GestureDetector(
+                                onTap: () =>
+                                    reportedEventMethod(context, uid, comment),
+                                child: Text(
+                                  "신고",
+                                  style: TextStyle(
+                                      color: Colors.redAccent, fontSize: 10),
+                                ),
+                              ),
+                            ),
                     ],
                   ),
                   Container(
