@@ -7,7 +7,10 @@ import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/favorite/animation/favoriteAnimation.dart';
 import 'package:onestep_rezero/favorite/utils/favoriteFirebaseApi.dart';
+import 'package:onestep_rezero/favorite/widgets/favoriteMainBody.dart';
 import 'package:onestep_rezero/myinfo/pages/mySaleProductMain.dart';
+import 'package:onestep_rezero/myinfo/widgets/mySaleProduct/mySaleProductBody.dart';
+import 'package:onestep_rezero/product/widgets/public/productKakaoShareManager.dart';
 import 'package:onestep_rezero/report/pages/Deal/productReport/reportProductPage.dart';
 import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 import 'package:onestep_rezero/chat/navigator/chatNavigationManager.dart';
@@ -24,6 +27,7 @@ import 'package:onestep_rezero/utils/onestepCustom/dialog/onestepCustomDialog.da
 import 'package:onestep_rezero/utils/timeUtil.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:kakao_flutter_sdk/all.dart';
 
 class ProductDetailBody extends StatefulWidget {
   final Product product;
@@ -211,7 +215,24 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
             backgroundColor: Colors.white.withAlpha(alpha),
             elevation: 0,
             actions: [
-              IconButton(onPressed: () {}, icon: _makeIcon(Icons.share)),
+              IconButton(
+                  onPressed: () {
+                    print("@@@@@@@@@@@@@ ${ModalRoute.of(context).settings}");
+                    // // print("kakao 1");
+                    KakaoShareManager()
+                        .isKakaotalkInstalled()
+                        .then((installed) {
+                      if (installed) {
+                        print("kakao success");
+                        KakaoShareManager().shareMyCode(widget.product);
+                      } else {
+                        print("kakao error");
+                        // show alert
+                      }
+                    });
+                    // print("widget.product ${widget.product.imagesUrl}");
+                  },
+                  icon: _makeIcon(Icons.share)),
               if (currentUserModel.uid != widget.product.uid) popupMenuButton(),
             ],
           );
@@ -236,9 +257,9 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Icon(
-                        widget.product.trading
+                        snapshot.data == 1
                             ? Icons.watch_later_outlined
-                            : widget.product.hold
+                            : snapshot.data == 2
                                 ? Icons.pending_outlined
                                 : Icons.check_circle_outline_rounded,
                         color: Colors.white,
@@ -643,7 +664,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
     int value = 0;
     if (trading) value = 1;
     if (hold) value = 2;
-    if (completed) value = 23;
+    if (completed) value = 3;
 
     FirebaseFirestore.instance
         .collection("university")
@@ -657,9 +678,25 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
     }).whenComplete(() {
       _imageStreamController.sink.add(value);
 
-      context
-          .read(productMainService)
-          .updateState(widget.product.firestoreid, trading, hold, completed);
+      print(ModalRoute.of(context).settings.name);
+      switch (ModalRoute.of(context).settings.name) {
+        case "/":
+          context.read(productMainService).updateState(
+              widget.product.firestoreid, trading, hold, completed);
+          break;
+        case "Sale":
+          print("@@@@@@@@@@ switch sale");
+          context.read(mySaleProductProvider).updateState(
+              widget.product.firestoreid, trading, hold, completed);
+          break;
+        case "Favorite":
+          context.read(favoriteMainProvider).updateState(
+              widget.product.firestoreid, trading, hold, completed);
+          break;
+
+        case "Search":
+          break;
+      }
 
       Navigator.pop(context);
     }).onError((error, stackTrace) => null);

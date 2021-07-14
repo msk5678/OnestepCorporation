@@ -13,8 +13,9 @@ class ReportBoardPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        elevation: 1,
         title: Text(
-          '게시글 테스트',
+          '게시글 신고',
           style: TextStyle(color: Colors.black),
         ),
         backgroundColor: Colors.white,
@@ -49,18 +50,16 @@ class ReportBoardPage extends StatelessWidget {
                   itemBuilder: (BuildContext context, int index) {
                     return Column(
                       children: [
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(
-                              0,
-                              MediaQuery.of(context).size.height / 80,
-                              0,
-                              MediaQuery.of(context).size.height / 80),
-                          child: Divider(
-                            thickness: 1,
-                            endIndent: 15,
-                            indent: 15,
-                          ),
-                        ),
+                        index == 0
+                            ? (Padding(
+                                padding: EdgeInsets.fromLTRB(
+                                    0,
+                                    MediaQuery.of(context).size.height / 40,
+                                    0,
+                                    0),
+                              ))
+                            : (Padding(
+                                padding: EdgeInsets.fromLTRB(0, 0, 0, 0))),
                         InkWell(
                           onTap: () {
                             int _reportCase = int.parse(reportCase[index]);
@@ -100,20 +99,18 @@ class ReportBoardPage extends StatelessWidget {
                             ),
                           ),
                         ),
-                        index == title.length - 1
-                            ? Padding(
-                                padding: EdgeInsets.fromLTRB(
-                                    0,
-                                    MediaQuery.of(context).size.height / 80,
-                                    0,
-                                    MediaQuery.of(context).size.height / 80),
-                                child: Divider(
-                                  thickness: 1,
-                                  endIndent: 15,
-                                  indent: 15,
-                                ),
-                              )
-                            : Container(),
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(
+                              0,
+                              MediaQuery.of(context).size.height / 80,
+                              0,
+                              MediaQuery.of(context).size.height / 80),
+                          child: Divider(
+                            thickness: 1,
+                            endIndent: 15,
+                            indent: 15,
+                          ),
+                        ),
                       ],
                     );
                   },

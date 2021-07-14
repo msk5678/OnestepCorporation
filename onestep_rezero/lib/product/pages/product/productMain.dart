@@ -406,7 +406,9 @@ class _ProductMainState extends State<ProductMain> {
           ),
           onPressed: () => {
             Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => SearchMain(searchKey: 1)),
+              MaterialPageRoute(
+                  settings: RouteSettings(name: 'Search'),
+                  builder: (context) => SearchMain(searchKey: 1)),
             ),
           },
         ),
@@ -418,6 +420,7 @@ class _ProductMainState extends State<ProductMain> {
           onPressed: () => {
             Navigator.of(context).push(
               MaterialPageRoute(
+                settings: RouteSettings(name: 'Favorite'),
                 builder: (context) => FavoriteMain(),
               ),
             ),
@@ -438,9 +441,9 @@ class _ProductMainState extends State<ProductMain> {
                   //     MaterialPageRoute(builder: (context) => LoginJoinPage(user))),
 
                   // 알림으로 넘어가는 부분
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => HomeNotificationPage(),
-                  )),
+                  // Navigator.of(context).push(MaterialPageRoute(
+                  //   builder: (context) => HomeNotificationPage(),
+                  // )),
 
                   // 신고 page test
                   // Navigator.of(context).push(MaterialPageRoute(

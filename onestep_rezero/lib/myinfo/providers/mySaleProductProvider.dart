@@ -7,16 +7,14 @@ class MySaleProductProvider extends ChangeNotifier {
   final _productsSnapshot = <DocumentSnapshot>[];
   final int documentLimit = 12;
   bool _hasNext = true;
-  bool _isFetching = false;
+  bool isFetching = false;
   List<Product> product = [];
 
-  List<Product> get products => _productsSnapshot.map((snap) {
-        return Product.fromJson(snap.data(), snap.id);
-      }).toList();
+  List<Product> get products => product;
 
   Future fetchProducts() async {
-    if (_isFetching) return;
-    _isFetching = true;
+    if (isFetching) return;
+    isFetching = true;
     _hasNext = true;
     _productsSnapshot.clear();
     try {
@@ -28,13 +26,17 @@ class MySaleProductProvider extends ChangeNotifier {
 
       if (snap.docs.length < documentLimit) _hasNext = false;
     } catch (error) {}
-    _isFetching = false;
+    product = _productsSnapshot.map((snap) {
+      return Product.fromJson(snap.data(), snap.id);
+    }).toList();
+
+    isFetching = false;
     notifyListeners();
   }
 
   Future fetchNextProducts() async {
-    if (_isFetching || !_hasNext) return;
-    _isFetching = true;
+    if (isFetching || !_hasNext) return;
+    isFetching = true;
 
     try {
       final snap = await MySaleProductFirebaseApi.getProducts(
@@ -46,7 +48,32 @@ class MySaleProductProvider extends ChangeNotifier {
 
       if (snap.docs.length < documentLimit) _hasNext = false;
     } catch (error) {}
-    _isFetching = false;
+
+    product = _productsSnapshot.map((snap) {
+      return Product.fromJson(snap.data(), snap.id);
+    }).toList();
+
+    isFetching = false;
+    notifyListeners();
+  }
+
+  Future updateState(String id, bool trading, bool hold, bool completed) async {
+    if (isFetching) return;
+    isFetching = true;
+
+    DocumentSnapshot _documentSnapshot = _productsSnapshot[
+        _productsSnapshot.indexWhere((element) => element.id == id)];
+
+    print("@@@@@@@@@@@ ${_documentSnapshot.data()}");
+    Product _product = Product.fromJson(_documentSnapshot.data(), id);
+    _product.setTrading = trading;
+    _product.setHold = hold;
+    _product.setCompleted = completed;
+
+    product[product.indexWhere((element) => element.firestoreid == id)] =
+        _product;
+
+    isFetching = false;
     notifyListeners();
   }
 }
