@@ -144,7 +144,7 @@ class MyinfoMainBody extends ConsumerWidget {
                                 },
                                 icon: Icon(Icons.error_outline),
                               ),
-                              Text("프로필보기"),
+                              Text("내 상품"),
                             ],
                           ),
                         ),

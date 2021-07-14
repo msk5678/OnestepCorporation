@@ -9,17 +9,12 @@ import 'package:onestep_rezero/favorite/pages/favoriteMain.dart';
 
 import 'package:onestep_rezero/product/widgets/main/productMainBody.dart';
 import 'package:onestep_rezero/product/widgets/main/productMainHeader.dart';
-import 'package:onestep_rezero/home/pages/homeNotificationPage.dart';
-import 'package:onestep_rezero/product/pages/category/categorySidebar.dart';
 
-import 'package:onestep_rezero/product/widgets/main/productMainBody.dart';
-import 'package:onestep_rezero/report/reportPageTest.dart';
 import 'package:onestep_rezero/search/pages/searchMain.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 import 'package:onestep_rezero/utils/onestepCustom/dialog/onestepCustomDialog.dart';
-
-import '../../../spinkitTest.dart';
+import 'package:rxdart/rxdart.dart';
 
 class ProductMain extends StatefulWidget {
   @override
@@ -60,8 +55,7 @@ void _testShowDialog(BuildContext context) {
 
 class _ProductMainState extends State<ProductMain> {
   final ScrollController _scrollController = ScrollController();
-  final StreamController<bool> _scrollToTopstreamController =
-      StreamController<bool>();
+  final StreamController<bool> _scrollToTopstreamController = BehaviorSubject();
 
   bool _isVisibility = false;
 
@@ -466,47 +460,54 @@ class _ProductMainState extends State<ProductMain> {
   }
 
   Widget scrollToTopFloatingActionButton() {
-    return StreamBuilder<bool>(
-      stream: _scrollToTopstreamController.stream,
-      initialData: false,
-      builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-        return Visibility(
-          visible: snapshot.data,
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(100),
-                  topRight: Radius.circular(100),
-                  bottomLeft: Radius.circular(100),
-                  bottomRight: Radius.circular(100)),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.1),
-                  spreadRadius: 3,
-                  blurRadius: 7,
-                  offset: Offset(0, 3), // changes position of shadow
+    return Stack(
+      children: <Widget>[
+        Align(
+          alignment: Alignment.bottomRight,
+          child: StreamBuilder<bool>(
+            stream: _scrollToTopstreamController.stream,
+            initialData: false,
+            builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+              return Visibility(
+                visible: snapshot.data,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(100),
+                        topRight: Radius.circular(100),
+                        bottomLeft: Radius.circular(100),
+                        bottomRight: Radius.circular(100)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.1),
+                        spreadRadius: 3,
+                        blurRadius: 7,
+                        offset: Offset(0, 3), // changes position of shadow
+                      ),
+                    ],
+                  ),
+                  height: 40.0.h,
+                  width: 40.0.w,
+                  child: FittedBox(
+                    child: FloatingActionButton(
+                      elevation: 0,
+                      heroTag: null,
+                      onPressed: () {
+                        _scrollController.position
+                            .moveTo(0.5, duration: Duration(milliseconds: 200));
+                      },
+                      child: Icon(Icons.keyboard_arrow_up_rounded,
+                          color: Colors.black),
+                      backgroundColor: Colors.white,
+                    ),
+                  ),
                 ),
-              ],
-            ),
-            height: 40.0.h,
-            width: 40.0.w,
-            child: FittedBox(
-              child: FloatingActionButton(
-                elevation: 0,
-                heroTag: null,
-                onPressed: () {
-                  _scrollController.position
-                      .moveTo(0.5, duration: Duration(milliseconds: 200));
-                },
-                child:
-                    Icon(Icons.keyboard_arrow_up_rounded, color: Colors.black),
-                backgroundColor: Colors.white,
-              ),
-            ),
+              );
+            },
           ),
-        );
-      },
+        ),
+      ],
     );
   }
 
@@ -548,14 +549,7 @@ class _ProductMainState extends State<ProductMain> {
           ),
         ),
       ),
-      floatingActionButton: Stack(
-        children: <Widget>[
-          Align(
-            alignment: Alignment.bottomRight,
-            child: scrollToTopFloatingActionButton(),
-          ),
-        ],
-      ),
+      floatingActionButton: scrollToTopFloatingActionButton(),
     );
   }
 }
