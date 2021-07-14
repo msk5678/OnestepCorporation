@@ -10,6 +10,7 @@ import 'package:intl/intl.dart';
 import 'package:onestep_rezero/board/AboutPost/AboutPostContent/commentTextField.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:onestep_rezero/board/AboutPost/AboutPostContent/postComment.dart';
+import 'package:onestep_rezero/board/AboutPost/AboutPostListView/listRiverpod.dart';
 import 'package:onestep_rezero/board/StateManage/Provider/postProvider.dart';
 import 'package:onestep_rezero/board/TipDialog/tip_dialog.dart';
 import 'package:onestep_rezero/board/AboutPost/AboutPostContent/favoriteCommentWidget.dart';
@@ -28,12 +29,17 @@ class PostContentRiverPod extends ConsumerWidget {
   final PostData currentPostData;
   final Widget postStatusbar;
   final Widget favoriteButton;
-  PostContentRiverPod(
-      {this.currentPostData, this.postStatusbar, this.favoriteButton});
+
+  PostContentRiverPod({
+    this.currentPostData,
+    this.postStatusbar,
+    this.favoriteButton,
+  });
   @override
   Widget build(BuildContext context, watch) {
     final postRiverPod = watch(postProvider);
     final currentUid = currentUserModel.uid;
+
     double deviceWidth = MediaQuery.of(context).size.width;
     double deviceHeight = MediaQuery.of(context).size.height;
     PostData riverpodPostData = postRiverPod.latestPostData;
@@ -74,22 +80,22 @@ class PostContentRiverPod extends ConsumerWidget {
       );
   }
 
-  Future<Map<String, dynamic>> _calculateImageDimension(String url) {
-    Completer<Map<String, dynamic>> completer = Completer();
-    Image image = new Image(
-        image: CachedNetworkImageProvider(
-            "https://i.stack.imgur.com/lkd0a.png")); // I modified this line
-    image.image.resolve(ImageConfiguration()).addListener(
-      ImageStreamListener(
-        (ImageInfo image, bool synchronousCall) {
-          var myImage = image.image;
-          Size size = Size(myImage.width.toDouble(), myImage.height.toDouble());
-          completer.complete({"Size": size, "Image": image});
-        },
-      ),
-    );
-    return completer.future;
-  }
+  // Future<Map<String, dynamic>> _calculateImageDimension(String url) {
+  //   Completer<Map<String, dynamic>> completer = Completer();
+  //   Image image = new Image(
+  //       image: CachedNetworkImageProvider(
+  //           "https://i.stack.imgur.com/lkd0a.png")); // I modified this line
+  //   image.image.resolve(ImageConfiguration()).addListener(
+  //     ImageStreamListener(
+  //       (ImageInfo image, bool synchronousCall) {
+  //         var myImage = image.image;
+  //         Size size = Size(myImage.width.toDouble(), myImage.height.toDouble());
+  //         completer.complete({"Size": size, "Image": image});
+  //       },
+  //     ),
+  //   );
+  //   return completer.future;
+  // }
 
   List<Widget> imageCommentContainer(BuildContext context,
       Map<String, List<dynamic>> imageCommentMap, double width, double height) {
@@ -97,13 +103,6 @@ class PostContentRiverPod extends ConsumerWidget {
     List commentList = imageCommentMap["COMMENT"] ?? [];
     return List<Widget>.generate(imageList.length, (index) {
       if (imageList[index].runtimeType == String) {
-        // String imageUrl = imageList[index].toString();
-        // _calculateImageDimension(url)
-        // Image image = Image(image:CachedNetworkImageProvider(
-
-        //   imageList[index].toString(),
-
-        // ));
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -192,6 +191,24 @@ class PostContentRiverPod extends ConsumerWidget {
   }
 }
 
+class AppbarConsumerWidget extends ConsumerWidget {
+  final String initTitle;
+  AppbarConsumerWidget({this.initTitle});
+  @override
+  Widget build(BuildContext context, watch) {
+    final postRiverPod = watch(postProvider);
+    // double deviceWidth = MediaQuery.of(context).size.width;
+    // double deviceHeight = MediaQuery.of(context).size.height;
+    return Container(
+      width: double.infinity,
+      child: Text(
+        postRiverPod.latestPostTitle ?? "",
+        style: TextStyle(color: Colors.black),
+      ),
+    );
+  }
+}
+
 class PostContent extends StatefulWidget {
   final PostData postData;
 
@@ -213,10 +230,8 @@ class _PostContentState extends State<PostContent>
 
   //Distint about upload comment or coComment
   bool commentFlag = false;
-
+  bool isUpdated = false;
   CommentData aboutCoComment;
-
-  //작성자, 익명 1, 익명 2
 
   // setUserName(
   //   String uid,
@@ -313,12 +328,6 @@ class _PostContentState extends State<PostContent>
                                 favoriteButton:
                                     favoriteButton(currentPostData)),
                             bottomStatusBar(currentPostData),
-                            // favoriteCountWidget(currentPostData, currentUid),
-
-                            // child: postTopStatusBar(
-                            //       currentPostData,
-                            //       currentUid,
-                            //       commentStatusWidget(currentPostData)),
                             Container(
                               width: deviceWidth / 2,
                               margin: EdgeInsets.only(
@@ -594,6 +603,7 @@ class _PostContentState extends State<PostContent>
 
   PreferredSizeWidget appBar(PostData currentPost, String uid) {
     bool isWritter = currentPost.uid == uid;
+
     return AppBar(
       iconTheme: IconThemeData(color: Colors.black),
       title: GestureDetector(
@@ -601,13 +611,7 @@ class _PostContentState extends State<PostContent>
           postScrollController.position
               .moveTo(0.5, duration: Duration(milliseconds: 200));
         },
-        child: Container(
-          width: double.infinity,
-          child: Text(
-            currentPost.title ?? "",
-            style: TextStyle(color: Colors.black),
-          ),
-        ),
+        child: Container(width: double.infinity, child: AppbarConsumerWidget()),
       ),
       elevation: 0,
       backgroundColor: Colors.white,
@@ -642,11 +646,16 @@ class _PostContentState extends State<PostContent>
                 await Navigator.of(context).pushNamed('/AlterPost', arguments: {
                   "POSTDATA": context.read(postProvider).latestPostData
                 }).then((value) {
-                  // bool result = value ?? false;
-
-                  // if (result) {
-                  context.read(postProvider).getLatestPostData(currentPostData);
-                  // }
+                  bool result = value ?? false;
+                  if (result) {
+                    isUpdated = true;
+                    context
+                        .read(postProvider)
+                        .getLatestPostData(currentPostData);
+                    context
+                        .read(listProvider)
+                        .fetchPosts(currentPostData.boardId);
+                  }
                 });
               }
             },

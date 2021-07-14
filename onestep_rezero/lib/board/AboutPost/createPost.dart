@@ -218,7 +218,7 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
 
   setPostName(double deviceHeight) {
     return Container(
-      margin: EdgeInsets.only(top: 10),
+      margin: EdgeInsets.only(top: 10.h),
       height: deviceHeight / 10,
       child: TextField(
         controller: textEditingControllerBottomSheet,
@@ -430,8 +430,8 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           SizedBox(
-            height: 80,
-            width: 80,
+            height: 80.h,
+            width: 80.w,
             child: Container(
               child: PopupMenuButton<int>(
                   onSelected: (value) async {

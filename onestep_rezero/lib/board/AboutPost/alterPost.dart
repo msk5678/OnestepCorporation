@@ -9,6 +9,7 @@ import 'package:onestep_rezero/board/declareData/postData.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AlterPost extends ConsumerWidget {
   final PostData currentPost;
@@ -99,7 +100,7 @@ class _AlterPostState extends CreatePageParent<AlterPostBuild> {
           body: WillPopScope(
             onWillPop: () {
               isDataContain()
-                  ? Navigator.pop(context)
+                  ? Navigator.pop(context, false)
                   : navigatorPopAlertDialog();
               return null;
             },
@@ -108,7 +109,8 @@ class _AlterPostState extends CreatePageParent<AlterPostBuild> {
                 FocusScope.of(context).requestFocus(FocusNode());
               },
               child: SafeArea(
-                minimum: const EdgeInsets.all(16.0),
+                minimum:
+                    EdgeInsets.symmetric(vertical: 16.0.h, horizontal: 16.0.w),
                 child: SingleChildScrollView(
                   controller: scrollController,
                   child: Column(
@@ -138,9 +140,9 @@ class _AlterPostState extends CreatePageParent<AlterPostBuild> {
   @override
   firstContainer() {
     TextStyle _textStyle = TextStyle(
-        color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16);
+        color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16.sp);
     return Container(
-      padding: EdgeInsets.only(top: 15),
+      padding: EdgeInsets.only(top: 15.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -148,7 +150,7 @@ class _AlterPostState extends CreatePageParent<AlterPostBuild> {
             child: GestureDetector(
               onTap: () {
                 isDataContain()
-                    ? Navigator.pop(context)
+                    ? Navigator.pop(context, false)
                     : navigatorPopAlertDialog();
               },
               child: Container(
@@ -203,23 +205,27 @@ class _AlterPostState extends CreatePageParent<AlterPostBuild> {
     FocusScope.of(context).unfocus();
     TipDialogHelper.loading("수정 중!\n 잠시만 기다려주세요.");
 
-    await updateData(alterPostData).then((value) {
-      if (value.runtimeType == bool) {
-        if (value) {
-          TipDialogHelper.dismiss();
-          TipDialogHelper.success("수정 완료!");
-
-          Future.delayed(Duration(seconds: 1)).then((value) {
-            Navigator.pop(context, true);
-            // context.read(postProvider).getLatestPostData(alterPostData);
-          });
-
+    await updateData(alterPostData)
+        .then((value) {
+          if (value.runtimeType == bool) {
+            if (value) {
+              TipDialogHelper.dismiss();
+              TipDialogHelper.success("수정 완료!");
+              Future.delayed(Duration(seconds: 1)).then((value) {
+                Navigator.pop(context, true);
+                // context.read(postProvider).getLatestPostData(alterPostData);
+              });
+              return;
+            }
+          }
+          Navigator.pop(context, true);
           return;
-        }
-      }
-      Navigator.pop(context, false);
-      return;
-    }).whenComplete(() {});
+        })
+        .whenComplete(() {})
+        .onError((error, stackTrace) {
+          print("ERROR saveDataInFirestore in alterPost.dart : $error");
+          return;
+        });
   }
 
   Future updateData(PostData postData) async {
@@ -242,7 +248,7 @@ class _AlterPostState extends CreatePageParent<AlterPostBuild> {
 
     for (int i = 0; i < imgCommMap["IMAGE"].length; i++) {
       _imageWidget.add(Container(
-          padding: EdgeInsets.all(5.0),
+          padding: EdgeInsets.symmetric(vertical: 5.0.h, horizontal: 5.0.w),
           child: imageContainer(i, cachedImgWidget(imgCommMap["IMAGE"][i]),
               imgCommMap["COMMENT"][i])));
     }
@@ -254,7 +260,7 @@ class _AlterPostState extends CreatePageParent<AlterPostBuild> {
       int imageIndex = i - imgCommMap["IMAGE"].length;
       if (imgCommMap["ALTERIMAGE"][imageIndex] != null)
         _imageWidget.add(Container(
-            padding: EdgeInsets.all(5.0),
+            padding: EdgeInsets.symmetric(vertical: 5.0.h, horizontal: 5.0.w),
             child: imageContainer(i, imgCommMap["ALTERIMAGE"][imageIndex],
                 imgCommMap["COMMENT"][commentIndex],
                 isAlterImage: true)));
@@ -302,13 +308,13 @@ class _AlterPostState extends CreatePageParent<AlterPostBuild> {
     TextEditingController textEditingController =
         getTextEditingImageTextField(index);
     return Container(
-      padding: EdgeInsets.only(top: 5.0),
+      padding: EdgeInsets.only(top: 5.0.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           SizedBox(
-            height: 80,
-            width: 80,
+            height: 80.h,
+            width: 80.w,
             child: Container(
               child: PopupMenuButton<int>(
                   onSelected: (value) async {
@@ -359,14 +365,14 @@ class _AlterPostState extends CreatePageParent<AlterPostBuild> {
                     child: !isAlterImage
                         ? image
                         : Image(
-                            width: 200,
-                            height: 200,
+                            width: 200.w,
+                            height: 200.h,
                             image: AssetEntityImageProvider(image,
                                 isOriginal: false),
                             fit: BoxFit.cover,
                           ),
-                    height: !isAlterImage ? 200 : null,
-                    width: !isAlterImage ? 200 : null,
+                    height: !isAlterImage ? 200.h : null,
+                    width: !isAlterImage ? 200.w : null,
                   )),
             ),
           ),
@@ -379,8 +385,8 @@ class _AlterPostState extends CreatePageParent<AlterPostBuild> {
                   minLines: 2,
                   maxLines: 4,
                   decoration: InputDecoration(
-                    contentPadding:
-                        EdgeInsets.symmetric(vertical: 20.0, horizontal: 5.0),
+                    contentPadding: EdgeInsets.symmetric(
+                        vertical: 20.0.h, horizontal: 5.0.w),
                     border: OutlineInputBorder(),
                     labelText: "사진${index + 1}의 설명",
                     hintText: "내용을 입력하세요",
@@ -424,10 +430,10 @@ class _AlterPostState extends CreatePageParent<AlterPostBuild> {
     var style = ElevatedButton.styleFrom(
         elevation: 0, primary: OnestepColors().secondColor);
     return Container(
-      padding: EdgeInsets.all(5.0),
+      padding: EdgeInsets.symmetric(vertical: 5.0.h, horizontal: 5.0.w),
       child: SizedBox(
-        height: 50,
-        width: 50,
+        height: 50.h,
+        width: 50.w,
         child: GestureDetector(
             onTap: () async {
               if (imgCommMap["IMAGE"].isNotEmpty) {
