@@ -52,6 +52,7 @@ class _AlterPostState extends CreatePageParent<AlterPostBuild> {
     textEditingControllerContent..text = alterPostData.textContent;
     imageCommentMap =
         Map<String, List<dynamic>>.from(alterPostData.imageCommentMap);
+
     imageCommentMap.addAll({"ALTERIMAGE": <AssetEntity>[]});
 
     imageCommentMap.update(
@@ -197,6 +198,42 @@ class _AlterPostState extends CreatePageParent<AlterPostBuild> {
           ),
         ],
       ),
+    );
+  }
+
+  @override
+  navigatorPopAlertDialog() async {
+    await showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('수정 중'),
+          content: Text("변경된 내용은 수정이 되지 않습니다."),
+          actions: <Widget>[
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  elevation: 0, primary: OnestepColors().secondColor),
+              child: Text('나가기'),
+              onPressed: () {
+                // Navigator.of(context)
+                //     .popUntil(ModalRoute.withName('/MainPage'));
+                int count = 0;
+
+                Navigator.of(context).popUntil((_) => count++ >= 2);
+              },
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  elevation: 0, primary: OnestepColors().secondColor),
+              child: Text('유지'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 

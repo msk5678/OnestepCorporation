@@ -199,10 +199,16 @@ class AppbarConsumerWidget extends ConsumerWidget {
     final postRiverPod = watch(postProvider);
     // double deviceWidth = MediaQuery.of(context).size.width;
     // double deviceHeight = MediaQuery.of(context).size.height;
+    String title = "";
+    if (postRiverPod.latestPostTitle != "") {
+      title = postRiverPod.latestPostTitle;
+    } else {
+      title = initTitle ?? "";
+    }
     return Container(
       width: double.infinity,
       child: Text(
-        postRiverPod.latestPostTitle ?? "",
+        title,
         style: TextStyle(color: Colors.black),
       ),
     );
@@ -611,7 +617,11 @@ class _PostContentState extends State<PostContent>
           postScrollController.position
               .moveTo(0.5, duration: Duration(milliseconds: 200));
         },
-        child: Container(width: double.infinity, child: AppbarConsumerWidget()),
+        child: Container(
+            width: double.infinity,
+            child: AppbarConsumerWidget(
+              initTitle: currentPost.title,
+            )),
       ),
       elevation: 0,
       backgroundColor: Colors.white,
@@ -650,13 +660,12 @@ class _PostContentState extends State<PostContent>
                   if (result) {
                     isUpdated = true;
                     context
-                        .read(postProvider)
-                        .getLatestPostData(currentPostData);
-                    context
                         .read(listProvider)
                         .fetchPosts(currentPostData.boardId);
                   }
-                });
+                }).whenComplete(() => context
+                    .read(postProvider)
+                    .getLatestPostData(currentPostData));
               }
             },
             itemBuilder: (BuildContext bc) =>
