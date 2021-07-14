@@ -22,6 +22,8 @@ class CommentData {
   List<CommentData> childCommentList;
   final reportedTime;
   bool isUnderComment = false;
+  String postTitle;
+
   CommentData(
       {this.uid,
       this.boardId,
@@ -39,7 +41,9 @@ class CommentData {
       this.haveChildComment,
       this.parentCommentId,
       this.childCommentList,
-      this.reportedTime});
+      this.reportedTime,
+      this.postTitle,
+      this.isUnderComment});
   factory CommentData.toRealtimeDataWithPostData(PostData postData) {
     String currentTimeStamp = DateTime.now().millisecondsSinceEpoch.toString();
     return CommentData(
@@ -107,6 +111,7 @@ class CommentData {
         uploadTime: uploadTime,
         reportedTime: reportedTime,
         textContent: value["textContent"].toString(),
+        userName: value["userName"],
         haveChildComment:
             value["haveChildComment"].toString() == 'true' ? true : false,
         parentCommentId: value["parentCommentId"] ?? "",
@@ -125,47 +130,86 @@ class CommentData {
         .set({
           "boardId": boardId,
           "postId": postId,
-          "parentCommentId": parentCommentid ?? ""
+          "parentCommentId": parentCommentid ?? "",
         })
         .then((value) => true)
         .onError((error, stackTrace) => false);
   }
 
-  Future toRealtimeDatabase(String textContent, String currentUid) async {
-    final realtimeDb = FirebaseDatabase.instance.reference();
+  Future<bool> _updateCommentOutLine(
+      String textContent, String currentUid, bool containCurrentUidInCommentMap,
+      {Future<bool> updateCommentBuilder(String boardId, String postId,
+          String parentCommentId, String currentTimeStamp),
+      String parentCommentId}) async {
+    parentCommentId = parentCommentId ?? "";
+    bool updatedSuccess = containCurrentUidInCommentMap;
+    bool isCommentUpdateProcessSuccessful = false;
+    bool isUserDataUpdateProcessSuccessful = false;
+    bool isCommentCountUpdateProcessSuccessful = false;
+    String currentTimeStamp = DateTime.now().millisecondsSinceEpoch.toString();
+    if (!containCurrentUidInCommentMap) {
+      updatedSuccess = await updateCommentUserList() ?? false;
+    }
 
-    if (await updateCommentMap(false)) {
-      String currentTimeStamp =
-          DateTime.now().millisecondsSinceEpoch.toString();
-      bool result =
-          await saveCommentToUserDb(currentTimeStamp, currentUid) ?? false;
-      if (result)
+    if (updatedSuccess) {
+      isCommentUpdateProcessSuccessful = await updateCommentBuilder(
+              boardId, postId, parentCommentId, currentTimeStamp) ??
+          false;
+    }
+
+    if (isCommentUpdateProcessSuccessful) {
+      isUserDataUpdateProcessSuccessful = await saveCommentToUserDb(
+              currentTimeStamp, currentUid,
+              parentCommentid: parentCommentId) ??
+          false;
+    }
+
+    if (isUserDataUpdateProcessSuccessful) {
+      isCommentCountUpdateProcessSuccessful =
+          await updateCommentCount(false) ?? false;
+    }
+    return isCommentCountUpdateProcessSuccessful;
+  }
+
+  Future<bool> toRealtimeDatabase(String textContent, String currentUid,
+      bool containCurrentUidInCommentMap) async {
+    return _updateCommentOutLine(
+      textContent,
+      currentUid,
+      containCurrentUidInCommentMap,
+      parentCommentId: "",
+      updateCommentBuilder:
+          (boarId, postId, parentCommentId, currentTimeStamp) async {
+        final realtimeDb = FirebaseDatabase.instance.reference();
         return realtimeDb
             .child('commentInBoard')
             .child(boardId)
             .child(postId)
             .child(currentTimeStamp)
             .set({
-              "uid": this.uid.toString(),
-              "boardId": this.boardId.toString(),
-              "boardName": this.boardName.toString(),
-              "postId": this.postId.toString(),
-              "textContent":
-                  textContent.toString() ?? this.textContent.toString() ?? '',
-              "deleted": this.deleted.toString() ?? 'false',
-              "deletedTime": this.deletedTime.toString() ?? '',
-              "reported": this.reported.toString() ?? 'false',
-              "reportCount": '0',
-              "uploadTime": currentTimeStamp,
-              "updateTime": this.updateTime.toString() ?? '',
-              "userName": "",
-              "reportedTime": "",
-              "haveChildComment": "false",
-              "parentCommentId": this.parentCommentId
-            })
-            .then((value) => true)
-            .whenComplete(() => null);
-    }
+          "uid": this.uid.toString(),
+          "boardId": this.boardId.toString(),
+          "boardName": this.boardName.toString(),
+          "postId": this.postId.toString(),
+          "textContent":
+              textContent.toString() ?? this.textContent.toString() ?? '',
+          "deleted": this.deleted == null ? 'false' : this.deleted.toString(),
+          "deletedTime":
+              this.deletedTime == null ? '' : this.deletedTime.toString(),
+          "uploadTime": currentTimeStamp,
+          "updateTime":
+              this.updateTime == null ? '' : this.updateTime.toString(),
+          "userName": this.userName ?? "",
+          "haveChildComment": "false",
+          "parentCommentId": this.parentCommentId
+        }).then((value) {
+          return true;
+        }).onError((error, stackTrace) {
+          print("Error toRealtimeDatabase In commentData.dart : $error");
+          return false;
+        }).whenComplete(() => null);
+      },
+    );
   }
 
   fromFirebaseReference(DataSnapshot snapshot) async {
@@ -177,63 +221,66 @@ class CommentData {
     if (snapshot != null) {
       if (snapshot.value != null) {
         await Future.forEach(commentSnapshot.values, (value) async {
-          String boardID = value["boardId"];
-          String postID = value["postId"];
+          if (value["boardId"] != null) {
+            String boardID = value["boardId"];
+            String postID = value["postId"];
 
-          int reportCount;
-          int uploadTime;
-          int updateTime;
-          int reportedTime;
-          if (value["reportCount"] == null ||
-              value["reportCount"] == "null" ||
-              value["reportCount"] == "")
-            reportCount = 0;
-          else
-            reportCount = int.parse(value["reportCount"].toString());
+            int reportCount;
+            int uploadTime;
+            int updateTime;
+            int reportedTime;
+            if (value["reportCount"] == null ||
+                value["reportCount"] == "null" ||
+                value["reportCount"] == "")
+              reportCount = 0;
+            else
+              reportCount = int.parse(value["reportCount"].toString());
 
-          if (value["uploadTime"] == null ||
-              value["uploadTime"] == "null" ||
-              value["uploadTime"] == "")
-            uploadTime = 0;
-          else
-            uploadTime = int.parse(value["uploadTime"].toString());
+            if (value["uploadTime"] == null ||
+                value["uploadTime"] == "null" ||
+                value["uploadTime"] == "")
+              uploadTime = 0;
+            else
+              uploadTime = int.parse(value["uploadTime"].toString());
 
-          if (value["updateTime"] == null ||
-              value["updateTime"] == "null" ||
-              value["updateTime"] == "")
-            updateTime = 0;
-          else
-            updateTime = int.parse(value["updateTime"]);
-          if (value["reportedTime"] == null ||
-              value["reportedTime"] == "null" ||
-              value["reportedTime"] == "")
-            reportedTime = 0;
-          else
-            reportedTime = int.parse(value["reportedTime"].toString());
+            if (value["updateTime"] == null ||
+                value["updateTime"] == "null" ||
+                value["updateTime"] == "")
+              updateTime = 0;
+            else
+              updateTime = int.parse(value["updateTime"]);
+            if (value["reportedTime"] == null ||
+                value["reportedTime"] == "null" ||
+                value["reportedTime"] == "")
+              reportedTime = 0;
+            else
+              reportedTime = int.parse(value["reportedTime"].toString());
 
-          bool haveChildComment =
-              value["haveChildComment"].toString() == 'true' ? true : false;
-          List<CommentData> childCommentList = haveChildComment
-              ? await getChildCommentFromRealTime(
-                  boardID, postID, uploadTime.toString())
-              : [];
-          commentList.add(new CommentData(
-              uid: value["uid"],
-              boardId: boardID,
-              boardName: value["boardName"],
-              postId: postID,
-              deleted: value["deleted"].toString() == 'true' ? true : false,
-              deletedTime: value["deletedTime"],
-              reportCount: reportCount,
-              reported: value['reported'].toString() == 'true' ? true : false,
-              updateTime: updateTime,
-              uploadTime: uploadTime,
-              reportedTime: reportedTime,
-              textContent: value["textContent"],
-              haveChildComment: haveChildComment,
-              parentCommentId: value["parentCommentId"] ?? "",
-              childCommentList: childCommentList,
-              commentId: uploadTime.toString()));
+            bool haveChildComment =
+                value["haveChildComment"].toString() == 'true' ? true : false;
+            List<CommentData> childCommentList = haveChildComment
+                ? await getChildCommentFromRealTime(
+                    boardID, postID, uploadTime.toString())
+                : [];
+            commentList.add(new CommentData(
+                uid: value["uid"],
+                boardId: boardID,
+                boardName: value["boardName"],
+                postId: postID,
+                deleted: value["deleted"].toString() == 'true' ? true : false,
+                deletedTime: value["deletedTime"],
+                reportCount: reportCount,
+                reported: value['reported'].toString() == 'true' ? true : false,
+                updateTime: updateTime,
+                uploadTime: uploadTime,
+                reportedTime: reportedTime,
+                textContent: value["textContent"],
+                haveChildComment: haveChildComment,
+                parentCommentId: value["parentCommentId"] ?? "",
+                childCommentList: childCommentList,
+                userName: value["userName"],
+                commentId: uploadTime.toString()));
+          }
         });
       }
     } else {
@@ -248,62 +295,6 @@ class CommentData {
     return commentList;
   }
 
-  // covertDataSnapshotToCommentData(DataSnapshot snapshot) {
-  //   List<CommentData> commentList = [];
-  //   Map<dynamic, dynamic> commentSnapshot =
-  //       Map<dynamic, dynamic>.from(snapshot.value ?? {});
-  //   commentSnapshot.forEach((key, value) {
-  //     String boardID = value["boardId"];
-  //     String postID = value["postId"];
-
-  //     int reportCount;
-  //     int uploadTime;
-  //     int updateTime;
-  //     if (value["reportCount"] == null ||
-  //         value["reportCount"] == "null" ||
-  //         value["reportCount"] == "")
-  //       reportCount = 0;
-  //     else
-  //       reportCount = int.parse(value["reportCount"]);
-
-  //     if (value["uploadTime"] == null ||
-  //         value["uploadTime"] == "null" ||
-  //         value["uploadTime"] == "")
-  //       uploadTime = 0;
-  //     else
-  //       uploadTime = int.parse(value["uploadTime"]);
-
-  //     if (value["updateTime"] == null ||
-  //         value["updateTime"] == "null" ||
-  //         value["updateTime"] == "")
-  //       updateTime = 0;
-  //     else
-  //       updateTime = int.parse(value["updateTime"]);
-  //     commentList.add(new CommentData(
-  //         uid: value["uid"],
-  //         boardId: boardID,
-  //         boardName: value["boardName"],
-  //         postId: postID,
-  //         deleted: value["deleted"].toString() == 'true' ? true : false,
-  //         deletedTime: value["deletedTime"],
-  //         reportCount: reportCount,
-  //         reported: value['reported'].toString() == 'true' ? true : false,
-  //         updateTime: updateTime,
-  //         uploadTime: uploadTime,
-  //         textContent: value["textContent"],
-  //         haveChildComment: haveChildComment,
-  //         parentCommentId: value["parentCommentId"] ?? "",
-  //         childCommentList: childCommentList,
-  //         commentId: snapshot.key));
-  //   });
-  //   commentList.sort((a, b) {
-  //     int aUploadTime = a.uploadTime;
-  //     int bUploadTime = b.uploadTime;
-  //     return aUploadTime.compareTo(bUploadTime);
-  //   });
-  //   return commentList;
-  // }
-
   getChildCommentFromRealTime(
       String boardId, String postId, String parentId) async {
     final db = FirebaseDatabase.instance;
@@ -317,12 +308,18 @@ class CommentData {
         .child("childComment")
         .once()
         .then((DataSnapshot childSnapshot) {
-      return CommentData().fromFirebaseReference(childSnapshot);
-    }).whenComplete(() => null);
+          return CommentData().fromFirebaseReference(childSnapshot);
+        })
+        .whenComplete(() => null)
+        .onError((error, stackTrace) {
+          print(
+              "ERROR getChildCommentFromRealTime In commentData.dart : $error");
+          return <CommentData>[];
+        });
   }
 
   dismissComment() async {
-    var realtimeDb;
+    DatabaseReference realtimeDb;
     if (this.parentCommentId != null) {
       if (this.parentCommentId != "") {
         realtimeDb = FirebaseDatabase.instance
@@ -351,74 +348,79 @@ class CommentData {
           "deletedTime": currentTimeStamp,
         })
         .then((value) => true)
+        .onError((error, stackTrace) {
+          print("ERROR dismissComment In commentData.dart : $error");
+          return false;
+        })
         .whenComplete(() => null);
   }
 
-  addchildComment(String comment, String currentUid) async {
-    if (await updateCommentMap(false)) {
-      String currentTimeStamp =
-          DateTime.now().millisecondsSinceEpoch.toString();
-      bool result = await saveCommentToUserDb(currentTimeStamp, currentUid,
-              parentCommentid: commentId) ??
-          false;
-      if (result) {
-        bool isDone = await FirebaseDatabase.instance
+  Future<bool> changeConditionHaveChildComment() async {
+    return await FirebaseDatabase.instance
+        .reference()
+        .child('commentInBoard')
+        .child(this.boardId)
+        .child(this.postId)
+        .child(this.commentId)
+        .update({
+          "haveChildComment": 'true',
+        })
+        .then((value) => true)
+        .whenComplete(() => null)
+        .onError((error, stackTrace) {
+          print(
+              "ERROR changeConditionHaveChildComment In commentData.dart : $error");
+          return false;
+        });
+  }
+
+  Future<bool> addchildComment(String comment, String currentUid,
+      bool containCurrentUidInCommentMap) async {
+    return await _updateCommentOutLine(
+        textContent, currentUid, containCurrentUidInCommentMap,
+        parentCommentId: "", updateCommentBuilder:
+            (boardId, postId, parentCommentId, currentTimeStamp) async {
+      bool ishaveChildCommentChangeProcessSuccessful =
+          await changeConditionHaveChildComment();
+      if (ishaveChildCommentChangeProcessSuccessful)
+        return FirebaseDatabase.instance
             .reference()
             .child('commentInBoard')
             .child(this.boardId)
             .child(this.postId)
             .child(this.commentId)
-            .update({
-              "haveChildComment": 'true',
+            .child("childComment")
+            .child(currentTimeStamp)
+            .set({
+              "uid": this.uid,
+              "boardId": this.boardId.toString(),
+              "boardName": this.boardName.toString(),
+              "postId": this.postId.toString(),
+              "textContent": comment.toString() ?? "childComment ERROR" ?? '',
+              "deleted": 'false',
+              "deletedTime": '',
+              "uploadTime": currentTimeStamp,
+              "updateTime": '',
+              "userName": this.userName ?? "",
+              "haveChildComment": "false",
+              "parentCommentId": "${this.commentId}"
             })
             .then((value) => true)
-            .whenComplete(() => true)
-            .onError((error, stackTrace) => false);
-        return isDone
-            ? FirebaseDatabase.instance
-                .reference()
-                .child('commentInBoard')
-                .child(this.boardId)
-                .child(this.postId)
-                .child(this.commentId)
-                .child("childComment")
-                .child(currentTimeStamp)
-                .set({
-                  "uid": this.uid,
-                  "boardId": this.boardId.toString(),
-                  "boardName": this.boardName.toString(),
-                  "postId": this.postId.toString(),
-                  "textContent":
-                      comment.toString() ?? "childComment ERROR" ?? '',
-                  "deleted": 'false',
-                  "deletedTime": this.deletedTime.toString() ?? '',
-                  "reported": 'false',
-                  "reportCount": '0',
-                  "uploadTime": currentTimeStamp,
-                  "updateTime": '',
-                  "userName": "",
-                  "reportedTime": "",
-                  "haveChildComment": "false",
-                  "parentCommentId": "${this.commentId}"
-                })
-                .then((value) => true)
-                .whenComplete(() => null)
-            : false;
-      }
-    }
+            .whenComplete(() => null);
+      return false;
+    });
   }
 
-  Future addChildchildComment(
-      String textContent, CommentData parentComment, String currentUid) async {
+  Future<bool> addChildchildComment(String textContent, String parentCommentId,
+      String currentUid, bool containCurrentUidInCommentMap) async {
     final realtimeDb = FirebaseDatabase.instance.reference();
-    String parentCommentId = parentComment.parentCommentId;
-    if (await updateCommentMap(false)) {
-      String currentTimeStamp =
-          DateTime.now().millisecondsSinceEpoch.toString();
-      bool result = await saveCommentToUserDb(currentTimeStamp, currentUid,
-              parentCommentid: parentCommentId) ??
-          false;
-      if (result)
+    return await _updateCommentOutLine(
+      textContent,
+      currentUid,
+      containCurrentUidInCommentMap,
+      parentCommentId: parentCommentId,
+      updateCommentBuilder:
+          (boardId, postId, parentCommentId, currentTimeStamp) {
         return realtimeDb
             .child('commentInBoard')
             .child(this.boardId)
@@ -434,19 +436,58 @@ class CommentData {
               "textContent":
                   textContent.toString() ?? this.textContent.toString() ?? '',
               "deleted": 'false',
-              "deletedTime": this.deletedTime.toString() ?? '',
-              "reported": 'false',
-              "reportCount": '0',
+              "deletedTime": '',
               "uploadTime": currentTimeStamp,
               "updateTime": '',
-              "userName": "",
+              "userName": this.userName ?? "",
               "haveChildComment": "false",
-              "reportedTime": "",
               "parentCommentId": parentCommentId
             })
-            .then((value) => true)
-            .whenComplete(() => null);
-    }
+            .then((value) async => true)
+            .whenComplete(() => null)
+            .onError((error, stackTrace) {
+              print("ERROR addChildchildComment In commentData.dart : $error");
+              return false;
+            });
+      },
+    );
+
+    // bool updatedSuccess = containCurrentUidInCommentMap;
+    // if (!containCurrentUidInCommentMap) {
+    //   updatedSuccess = await updateCommentUserList() ?? false;
+    // }
+    // if (updatedSuccess) {
+    //   String currentTimeStamp =
+    //       DateTime.now().millisecondsSinceEpoch.toString();
+    //   bool result = await saveCommentToUserDb(currentTimeStamp, currentUid,
+    //           parentCommentid: parentCommentId) ??
+    //       false;
+    //   if (result)
+    //     return realtimeDb
+    //         .child('commentInBoard')
+    //         .child(this.boardId)
+    //         .child(this.postId)
+    //         .child(parentCommentId)
+    //         .child("childComment")
+    //         .child(currentTimeStamp)
+    //         .set({
+    //       "uid": this.uid.toString(),
+    //       "boardId": this.boardId.toString(),
+    //       "boardName": this.boardName.toString(),
+    //       "postId": this.postId.toString(),
+    //       "textContent":
+    //           textContent.toString() ?? this.textContent.toString() ?? '',
+    //       "deleted": 'false',
+    //       "deletedTime": '',
+    //       "uploadTime": currentTimeStamp,
+    //       "updateTime": '',
+    //       "userName": this.userName ?? "",
+    //       "haveChildComment": "false",
+    //       "parentCommentId": parentCommentId
+    //     }).then((value) async {
+    //       return await updateCommentCount(false);
+    //     }).whenComplete(() => null);
+    // }
   }
 
   childCommentFromFirebaseReference(DataSnapshot snapshot) {
@@ -494,6 +535,7 @@ class CommentData {
           uploadTime: uploadTime,
           textContent: value["textContent"],
           haveChildComment: haveChildComment,
+          userName: value["userName"],
           parentCommentId: value["parentCommentId"] ?? "",
           childCommentList: childCommentList,
           commentId: uploadTime.toString()));
@@ -503,25 +545,76 @@ class CommentData {
     return commentList;
   }
 
-  updateCommentMap(bool isDismiss) async {
-    final firestoreDb = FirebaseFirestore.instance;
-    var saveResult = isDismiss ? FieldValue.delete() : true;
+  Future updateCommentUserList() async {
+    String currentTimeStamp = DateTime.now().millisecondsSinceEpoch.toString();
+    DatabaseReference databaseReference = FirebaseDatabase.instance
+        .reference()
+        .child('commentInBoard')
+        .child(this.boardId)
+        .child(this.postId)
+        .child("userList");
+// PostCommentUserList.fromDataSnapshot(
+//         await databaseReference.once().then((DataSnapshot dataSnapshot) {
+//       return dataSnapshot.value;
+//     }));
+    return databaseReference
+        .child(currentTimeStamp)
+        .set({
+          "uid": this.uid.toString(),
+        })
+        .then((value) => true)
+        .onError((error, stackTrace) {
+          print("updateCommentUserList ERROR : $error");
+          return false;
+        })
+        .whenComplete(() => null);
+  }
 
-    return await firestoreDb
+  Future<bool> updateCommentCount(bool isDismiss) async {
+    DocumentReference documentReference = FirebaseFirestore.instance
         .collection('university')
         .doc(currentUserModel.university)
         .collection('board')
         .doc(this.boardId)
         .collection(this.boardId)
-        .doc(this.postId)
-        .update({
-          "commentUserList." + currentUserModel.uid: saveResult,
-          "commentCount": FieldValue.increment(isDismiss ? -1 : 1)
+        .doc(this.postId);
+    return FirebaseFirestore.instance
+        .runTransaction((transaction) async {
+          Map<String, dynamic> updateData = {
+            "commentCount": FieldValue.increment(isDismiss ? -1 : 1)
+          };
+          transaction.update(documentReference, updateData);
         })
         .then((value) => true)
-        .whenComplete(() => true);
+        .whenComplete(() => null)
+        .onError((error, stackTrace) {
+          print("Error updateCommentCount In commentData.dart : $error");
+          return false;
+        });
+    // return await firestoreDb
+    //     .collection('university')
+    //     .doc(currentUserModel.university)
+    //     .collection('board')
+    //     .doc(this.boardId)
+    //     .collection(this.boardId)
+    //     .doc(this.postId)
+    //     .update({"commentCount": FieldValue.increment(isDismiss ? -1 : 1)}
+    //       ..addAll(!containCurrentUidInCommentMap
+    //           ? {
+    //               "commentUserList." + currentUserModel.uid: true,
+    //             }
+    //           : {}))
+    //     .then((value) => true)
+    //     .whenComplete(() => true);
   }
 }
+
+
+// class UidName {
+//   final String uid;
+//   final String name;
+//   UidName({this.name,this.uid});
+// }
 
 // Future toRealtimeDatabase(Comment comment) async {
 //   final db = FirebaseDatabase.instance.reference();

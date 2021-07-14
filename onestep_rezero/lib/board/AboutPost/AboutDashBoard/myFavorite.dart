@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_fadein/flutter_fadein.dart';
 
 import 'package:onestep_rezero/board/AboutPost/AboutPostListView/listRiverpod.dart';
 import 'package:onestep_rezero/board/AboutPost/AboutPostListView/postList.dart';
@@ -60,27 +59,11 @@ class _UserPostingListState extends PostListParentWidget<UserFavoriteList> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          automaticallyImplyLeading: false,
+          iconTheme: IconThemeData(color: Colors.black),
           backgroundColor: Colors.white,
-          title: FadeIn(
-            child: Row(
-              children: [
-                Container(
-                  margin: EdgeInsets.only(
-                      left: deviceWidth / 200, right: deviceWidth / 250),
-                  child: IconButton(
-                    icon: dashBoardIcon.icons,
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ),
-                Text(
-                  dashBoardIcon.explain,
-                  style: TextStyle(color: Colors.black),
-                ),
-              ],
-            ),
-            curve: Curves.easeIn,
-            duration: Duration(milliseconds: 300),
+          title: Text(
+            dashBoardIcon.explain,
+            style: TextStyle(color: Colors.black),
           ),
         ),
         // ),
@@ -128,7 +111,7 @@ class UserFavoriteListRiverPod extends ConsumerWidget {
     //send to PostIdList To postList using parameter and Set postList
     context.read(listProvider).fetchPostDataFromPostId(_userFavoritePostIdList);
     bool isFetching = userFavoriteProvider.isFetching;
-    print("user favorite : ${userFavoriteProvider.userFavoritePostMap.keys}");
+
     if (!isFetching && _userFavoritePostIdList.length == 0) {
       return Container(
         height: deviceHeight / 2,

@@ -7,13 +7,18 @@ class CommentProvider with ChangeNotifier {
   String _errorMessage = "Comment Provider RuntimeError";
   String get errorMessage => _errorMessage;
   List<CommentData> get comments => _commentDataList;
+  Map<String, dynamic> get wroteUserList => _commentUserMapList;
   bool get isFetching => _isFetching;
   List<CommentData> _commentDataList = [];
+  Map<String, dynamic> _commentUserMapList = {};
   bool _isFetching = false;
   fetchData(String boardId, String postId) async {
     if (_isFetching) return;
     _isFetching = true;
     _commentDataList = [];
+
+    await fetchCommentList(boardId, postId, ignoreFetching: true);
+
     final db = FirebaseDatabase.instance;
 
     _commentDataList = await db
@@ -36,58 +41,39 @@ class CommentProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // fetchUserWrittenComment(String uid) async {
-  //   if (_isFetching) return;
-  //   _isFetching = true;
-  //   _commentDataList = [];
-  //   List<UserWrittenCommentData> _userWrittenCommentList = [];
-  //   final db = FirebaseDatabase.instance;
-  //   final firestore = FirebaseFirestore.instance;
-  //   try {
-  //     _userWrittenCommentList = await firestore
-  //         .collection('user')
-  //         .doc('aboutBoard')
-  //         .collection('comment')
-  //         .get()
-  //         .then((QuerySnapshot querySnapshot) {
-  //       return UserWrittenCommentData()
-  //           .fromFireStoreQuerySnapshot(querySnapshot);
-  //     });
-  //     await Future.forEach(_userWrittenCommentList,
-  //         (UserWrittenCommentData data) async {
-  //       var commentDb;
-  //       if (data.haveChildComment) {
-  //         commentDb = db
-  //             .reference()
-  //             .child('board')
-  //             .child(data.boardId)
-  //             .child(data.postId)
-  //             .child(data.parentCommentId)
-  //             .child("CoComment")
-  //             .child(data.commentId);
-  //       } else {
-  //         commentDb = db
-  //             .reference()
-  //             .child('board')
-  //             .child(data.boardId)
-  //             .child(data.postId)
-  //             .child(data.commentId);
-  //       }
-  //       _commentDataList
-  //           .add(await commentDb.once().then((DataSnapshot dataSnapshot) {
-  //         if (dataSnapshot.value.runtimeType == Null)
-  //           return CommentData.fromRealtimeData(dataSnapshot);
-  //       }).whenComplete(() {}));
+  fetchCommentList(String boardId, String postId, {bool ignoreFetching}) async {
+    ignoreFetching = ignoreFetching ?? false;
+    if (!ignoreFetching) {
+      if (_isFetching) return;
+      _isFetching = true;
+    }
 
-  //       notifyListeners();
-  //     });
-  //   } catch (e) {
-  //     _isFetching = false;
-  //   }
+    _commentUserMapList = {};
+    final db = FirebaseDatabase.instance;
 
-  //   _isFetching = false;
-  //   notifyListeners();
-  // }
+    _commentUserMapList = Map<String, dynamic>.from(await db
+            .reference()
+            .child('commentInBoard')
+            .child(boardId.toString())
+            .child(postId.toString())
+            .child("userList")
+            .once()
+            .then((DataSnapshot dataSnapshot) {
+      return PostCommentUserList.fromDataSnapshot(dataSnapshot).commentList ??
+          {};
+    }).whenComplete(() {
+      if (!ignoreFetching) _isFetching = false;
+    })
+        // .onError((error, stackTrace) {
+        //   print("commentUserList Error in Comment Provider : $error");
+        //   if (!ignoreFetching) _isFetching = false;
+        //   return {};
+        // }
+        // )
+        );
+
+    // notifyListeners();
+  }
 
   refresh(String boardId, String postId) {
     // _commentDataList = [];
@@ -96,4 +82,27 @@ class CommentProvider with ChangeNotifier {
   }
 
   clear() {}
+}
+
+class PostCommentUserList {
+  final Map<String, dynamic> commentList;
+  PostCommentUserList({this.commentList});
+
+  factory PostCommentUserList.fromDataSnapshot(DataSnapshot dataSnapshot) {
+    if (dataSnapshot.value != null) {
+      Map<String, String> result = {};
+      Map<String, dynamic> userMapList =
+          Map<String, dynamic>.from(dataSnapshot.value);
+      List<dynamic> userWroteTimeList = userMapList.keys.toList()
+        ..sort((a, b) => a.toString().compareTo(b.toString()));
+
+      for (int i = 0; i < userWroteTimeList.length; i++) {
+        result
+            .addAll({userMapList[userWroteTimeList[i]]["uid"]: "익명 ${i + 1}"});
+      }
+
+      return PostCommentUserList(commentList: result);
+    }
+    return PostCommentUserList(commentList: {});
+  }
 }
