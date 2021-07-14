@@ -193,16 +193,20 @@ class PostContentRiverPod extends ConsumerWidget {
 
 class AppbarConsumerWidget extends ConsumerWidget {
   final String initTitle;
-  AppbarConsumerWidget({this.initTitle});
+  final String currentPostId;
+  AppbarConsumerWidget({this.currentPostId, this.initTitle});
   @override
   Widget build(BuildContext context, watch) {
     final postRiverPod = watch(postProvider);
     // double deviceWidth = MediaQuery.of(context).size.width;
     // double deviceHeight = MediaQuery.of(context).size.height;
     String title = "";
-    if (postRiverPod.latestPostTitle != "") {
-      title = postRiverPod.latestPostTitle;
-    } else {
+    if (postRiverPod.latestPostData.documentId == currentPostId) {
+      if (postRiverPod.latestPostTitle != "") {
+        title = postRiverPod.latestPostTitle;
+      }
+    }
+    if (title == "") {
       title = initTitle ?? "";
     }
     return Container(
@@ -620,6 +624,7 @@ class _PostContentState extends State<PostContent>
         child: Container(
             width: double.infinity,
             child: AppbarConsumerWidget(
+              currentPostId: currentPost.documentId,
               initTitle: currentPost.title,
             )),
       ),
