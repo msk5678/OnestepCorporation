@@ -10,9 +10,9 @@ class PostProvider with ChangeNotifier {
   String _errorMessage = "PostProvider Provider RuntimeError";
   String get errorMessage => _errorMessage;
   PostData _postData = PostData(uid: "");
-  String _postTitle = "";
+
   PostData get latestPostData => _postData;
-  String get latestPostTitle => _postTitle;
+
   set setPostData(PostData postData) => _postData = postData;
   bool get isFetching => _isFetching;
 
@@ -21,7 +21,7 @@ class PostProvider with ChangeNotifier {
     if (_isFetching) return;
     _isFetching = true;
     _postData = PostData(uid: "");
-    _postTitle = "";
+
     try {
       _isFetching = true;
       final db = FirebaseFirestore.instance;
@@ -40,7 +40,6 @@ class PostProvider with ChangeNotifier {
       }).whenComplete(() {
         _isFetching = false;
       });
-      _postTitle = _postData.title;
     } catch (e) {
       _isFetching = false;
     }

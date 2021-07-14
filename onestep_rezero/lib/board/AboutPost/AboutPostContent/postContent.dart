@@ -202,8 +202,9 @@ class AppbarConsumerWidget extends ConsumerWidget {
     // double deviceHeight = MediaQuery.of(context).size.height;
     String title = "";
     if (postRiverPod.latestPostData.documentId == currentPostId) {
-      if (postRiverPod.latestPostTitle != "") {
-        title = postRiverPod.latestPostTitle;
+      String latestTitle = postRiverPod.latestPostData.title ?? "";
+      if (latestTitle != "") {
+        title = latestTitle;
       }
     }
     if (title == "") {
