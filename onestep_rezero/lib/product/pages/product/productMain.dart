@@ -13,6 +13,7 @@ import 'package:onestep_rezero/product/widgets/main/productMainHeader.dart';
 import 'package:onestep_rezero/search/pages/searchMain.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:onestep_rezero/signIn/loggedInWidget.dart';
+import 'package:onestep_rezero/utils/onestepCustom/CustomFloatingActionButton.dart';
 import 'package:onestep_rezero/utils/onestepCustom/dialog/onestepCustomDialog.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -459,97 +460,46 @@ class _ProductMainState extends State<ProductMain> {
     context.read(productMainService).fetchProducts();
   }
 
-  Widget scrollToTopFloatingActionButton() {
-    return Stack(
-      children: <Widget>[
-        Align(
-          alignment: Alignment.bottomRight,
-          child: StreamBuilder<bool>(
-            stream: _scrollToTopstreamController.stream,
-            initialData: false,
-            builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-              return Visibility(
-                visible: snapshot.data,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(100),
-                        topRight: Radius.circular(100),
-                        bottomLeft: Radius.circular(100),
-                        bottomRight: Radius.circular(100)),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.1),
-                        spreadRadius: 3,
-                        blurRadius: 7,
-                        offset: Offset(0, 3), // changes position of shadow
-                      ),
-                    ],
-                  ),
-                  height: 40.0.h,
-                  width: 40.0.w,
-                  child: FittedBox(
-                    child: FloatingActionButton(
-                      elevation: 0,
-                      heroTag: null,
-                      onPressed: () {
-                        _scrollController.position
-                            .moveTo(0.5, duration: Duration(milliseconds: 200));
-                      },
-                      child: Icon(Icons.keyboard_arrow_up_rounded,
-                          color: Colors.black),
-                      backgroundColor: Colors.white,
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: appBar(),
-      body: RefreshIndicator(
-        onRefresh: _refreshPage,
-        child: SingleChildScrollView(
-          physics: AlwaysScrollableScrollPhysics(),
-          controller: _scrollController,
-          child: Container(
-            color: Colors.white,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: 180.h,
-                  child: Image.asset(
-                    "assets/banner.png",
-                    fit: BoxFit.cover,
+        backgroundColor: Colors.white,
+        appBar: appBar(),
+        body: RefreshIndicator(
+          onRefresh: _refreshPage,
+          child: SingleChildScrollView(
+            physics: AlwaysScrollableScrollPhysics(),
+            controller: _scrollController,
+            child: Container(
+              color: Colors.white,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: 180.h,
+                    child: Image.asset(
+                      "assets/banner.png",
+                      fit: BoxFit.cover,
+                    ),
                   ),
-                ),
-                ProductMainHeader(),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                      padding: EdgeInsets.only(left: 15.w),
-                      child: Text("방금 올라온 상품",
-                          style: TextStyle(
-                              fontSize: 15.sp, fontWeight: FontWeight.w600))),
-                ),
-                ProductMainBody(),
-              ],
+                  ProductMainHeader(),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                        padding: EdgeInsets.only(left: 15.w),
+                        child: Text("방금 올라온 상품",
+                            style: TextStyle(
+                                fontSize: 15.sp, fontWeight: FontWeight.w600))),
+                  ),
+                  ProductMainBody(),
+                ],
+              ),
             ),
           ),
         ),
-      ),
-      floatingActionButton: scrollToTopFloatingActionButton(),
-    );
+        floatingActionButton: CustomFloatingActionButton.scrollToTopButton(
+            scrollController: _scrollController,
+            streamController: _scrollToTopstreamController));
   }
 }

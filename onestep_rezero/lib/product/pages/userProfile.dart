@@ -7,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:onestep_rezero/product/models/product.dart';
 import 'package:onestep_rezero/product/widgets/public/productGridView.dart';
 import 'package:onestep_rezero/signIn/loggedInWidget.dart';
+import 'package:onestep_rezero/utils/onestepCustom/CustomFloatingActionButton.dart';
 import 'package:rxdart/rxdart.dart';
 
 class UserProfileMain extends StatefulWidget {
@@ -197,65 +198,14 @@ class _UserProfileMainState extends State<UserProfileMain> {
     );
   }
 
-  Widget scrollToTopFloatingActionButton() {
-    return Stack(
-      children: <Widget>[
-        Align(
-          alignment: Alignment.bottomRight,
-          child: StreamBuilder<bool>(
-            stream: _scrollToTopstreamController.stream,
-            initialData: false,
-            builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-              return Visibility(
-                visible: snapshot.data,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(100),
-                        topRight: Radius.circular(100),
-                        bottomLeft: Radius.circular(100),
-                        bottomRight: Radius.circular(100)),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.1),
-                        spreadRadius: 3,
-                        blurRadius: 7,
-                        offset: Offset(0, 3), // changes position of shadow
-                      ),
-                    ],
-                  ),
-                  height: 40.0.h,
-                  width: 40.0.w,
-                  child: FittedBox(
-                    child: FloatingActionButton(
-                      elevation: 0,
-                      heroTag: null,
-                      onPressed: () {
-                        _scrollController.position
-                            .moveTo(0.5, duration: Duration(milliseconds: 200));
-                      },
-                      child: Icon(Icons.keyboard_arrow_up_rounded,
-                          color: Colors.black),
-                      backgroundColor: Colors.white,
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: _appbarWidget(),
-      body: _bodyWidget(),
-      floatingActionButton: scrollToTopFloatingActionButton(),
-    );
+        backgroundColor: Colors.white,
+        appBar: _appbarWidget(),
+        body: _bodyWidget(),
+        floatingActionButton: CustomFloatingActionButton.scrollToTopButton(
+            scrollController: _scrollController,
+            streamController: _scrollToTopstreamController));
   }
 }

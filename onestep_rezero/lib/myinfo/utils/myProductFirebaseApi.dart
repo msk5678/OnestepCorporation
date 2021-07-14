@@ -19,6 +19,7 @@ class MyProductFirebaseApi {
         .where("completed", isEqualTo: false)
         .where("trading", isEqualTo: false)
         .where("reported", isEqualTo: false)
+        .orderBy("bumpTime", descending: true)
         .limit(limit);
 
     if (startAfter == null) {
@@ -45,6 +46,7 @@ class MyProductFirebaseApi {
         .where("completed", isEqualTo: false)
         .where("trading", isEqualTo: true)
         .where("reported", isEqualTo: false)
+        .orderBy("bumpTime", descending: true)
         .limit(limit);
 
     if (startAfter == null) {

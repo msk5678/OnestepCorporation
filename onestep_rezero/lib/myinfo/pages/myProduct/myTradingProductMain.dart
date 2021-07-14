@@ -1,21 +1,20 @@
 import 'dart:async';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:onestep_rezero/myinfo/widgets/myProduct/mySaleProductBody.dart';
-import 'package:onestep_rezero/signIn/loggedInWidget.dart';
+import 'package:onestep_rezero/myinfo/widgets/myProduct/myTradingProductBody.dart';
 import 'package:onestep_rezero/utils/onestepCustom/CustomFloatingActionButton.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class MySaleProductMain extends StatefulWidget {
-  MySaleProductMain({Key key}) : super(key: key);
+class MyTradingProductMain extends StatefulWidget {
+  MyTradingProductMain({Key key}) : super(key: key);
 
   @override
-  _MySaleProductMainState createState() => _MySaleProductMainState();
+  _MyTradingProductMainState createState() => _MyTradingProductMainState();
 }
 
-class _MySaleProductMainState extends State<MySaleProductMain> {
+class _MyTradingProductMainState extends State<MyTradingProductMain> {
   final ScrollController _scrollController = ScrollController();
   final StreamController<bool> _scrollToTopstreamController = BehaviorSubject();
 
@@ -23,8 +22,8 @@ class _MySaleProductMainState extends State<MySaleProductMain> {
 
   @override
   void initState() {
-    context.read(mySaleProductProvider).product.clear();
-    context.read(mySaleProductProvider).fetchProducts();
+    context.read(myTradingProductProvider).product.clear();
+    context.read(myTradingProductProvider).fetchProducts();
     _scrollController.addListener(scrollListener);
     super.initState();
   }
@@ -38,7 +37,7 @@ class _MySaleProductMainState extends State<MySaleProductMain> {
   void scrollListener() {
     if ((_scrollController.position.maxScrollExtent * 0.7) <
         _scrollController.position.pixels) {
-      context.read(mySaleProductProvider).fetchNextProducts();
+      context.read(myTradingProductProvider).fetchNextProducts();
     }
 
     if (_scrollController.offset >= 600) {
@@ -63,7 +62,7 @@ class _MySaleProductMainState extends State<MySaleProductMain> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            MySaleProductBody(),
+            MyTradingProductBody(),
           ],
         ),
       ),
@@ -73,10 +72,11 @@ class _MySaleProductMainState extends State<MySaleProductMain> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.white,
-        body: _bodyWidget(),
-        floatingActionButton: CustomFloatingActionButton.scrollToTopButton(
-            scrollController: _scrollController,
-            streamController: _scrollToTopstreamController));
+      backgroundColor: Colors.white,
+      body: _bodyWidget(),
+      floatingActionButton: CustomFloatingActionButton.scrollToTopButton(
+          scrollController: _scrollController,
+          streamController: _scrollToTopstreamController),
+    );
   }
 }
