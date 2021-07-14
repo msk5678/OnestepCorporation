@@ -23,7 +23,7 @@ class PostData {
   final Map<String, dynamic> favoriteUserList;
   final Map<String, dynamic> scrabUserList;
   final Map<String, dynamic> views;
-  final Map<String, dynamic> commentUserList;
+  // final Map<String, dynamic> commentUserList;
   int favoriteCount;
   int scribeCount;
   Map<String, dynamic> imageCommentMap;
@@ -79,7 +79,7 @@ class PostData {
 
   PostData(
       {this.scrabUserList,
-      this.commentUserList,
+      // this.commentUserList,
       this.favoriteUserList,
       this.contentCategory,
       this.boardName,
@@ -104,6 +104,46 @@ class PostData {
     String currentTimeStamp = DateTime.now().millisecondsSinceEpoch.toString();
     imgUriList = await convertImage(imageCommentMap["IMAGE"]);
     imageCommentMap.update("IMAGE", (value) => imgUriList);
+    for (int i = 0; i < 30; i++) {
+      String time = DateTime.now().millisecondsSinceEpoch.toString();
+      await FirebaseFirestore.instance
+          .collection('university')
+          .doc(currentUserModel.university)
+          .collection('board')
+          .doc(this.boardId)
+          .collection(this.boardId)
+          .doc(time)
+          .set({
+            "uid": currentUserModel.uid,
+            "uploadTime": Timestamp.fromDate(DateTime.now()),
+            "updateTime": 0,
+            "commentCount": commentCount ?? 0,
+            "reportCount": reportCount ?? 0,
+            "deletedTime": deletedTime ?? 0,
+            "title": title + " : $i" ?? "",
+            "contentCategory": contentCategory.toString(),
+            "textContent": textContent ?? "",
+            "boardName": boardName ?? "",
+            "boardId": boardId ?? "",
+            "deleted": deleted ?? false,
+            "views": views ?? {},
+            "imageCommentList": imageCommentMap ?? {},
+            "scrabUserList": scrabUserList ?? {},
+            "favoriteUserList": favoriteUserList ?? {},
+            // "commentUserList": commentUserList ?? {},
+            "favoriteCount": 0,
+            "reported": false,
+            "reportedTime": 0
+          })
+          .then((value) => true)
+          .timeout(
+            Duration(seconds: 3),
+            onTimeout: () {
+              Navigator.pop(context);
+              return null;
+            },
+          );
+    }
     return await FirebaseFirestore.instance
         .collection('university')
         .doc(currentUserModel.university)
@@ -128,7 +168,7 @@ class PostData {
           "imageCommentList": imageCommentMap ?? {},
           "scrabUserList": scrabUserList ?? {},
           "favoriteUserList": favoriteUserList ?? {},
-          "commentUserList": commentUserList ?? {},
+          // "commentUserList": commentUserList ?? {},
           "favoriteCount": 0,
           "reported": false,
           "reportedTime": 0
@@ -191,7 +231,7 @@ class PostData {
         deletedTime: postData["deletedTime"] ?? 0,
         reportCount: postData["reportCount"] ?? 0,
         views: postData["views"] ?? {},
-        commentUserList: postData["commentUserList"] ?? {},
+        // commentUserList: postData["commentUserList"] ?? {},
         favoriteUserList: postData["favoriteUserList"] ?? {},
         // scrabUserList: postData["scrabUserList"] ?? {},
         imageCommentMap: postData["imageCommentList"] ?? {},

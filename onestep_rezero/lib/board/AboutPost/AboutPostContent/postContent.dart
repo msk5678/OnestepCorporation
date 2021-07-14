@@ -217,23 +217,22 @@ class _PostContentState extends State<PostContent>
   CommentData aboutCoComment;
 
   //작성자, 익명 1, 익명 2
-  Map<String, String> writtenCommentMap = {};
 
-  setUserName(
-    String uid,
-  ) {
-    if (currentUid == uid) {
-      return "작성자";
-    } else {
-      if (writtenCommentMap.containsKey(uid)) {
-        return writtenCommentMap[uid];
-      } else {
-        int writtenUserCount = (writtenCommentMap.keys.toList().length + 1) + 1;
-        writtenCommentMap.addAll({uid: "익명 $writtenUserCount"});
-        return "익명 $writtenUserCount";
-      }
-    }
-  }
+  // setUserName(
+  //   String uid,
+  // ) {
+  //   if (currentUid == uid) {
+  //     return "작성자";
+  //   } else {
+  //     if (writtenCommentMap.containsKey(uid)) {
+  //       return writtenCommentMap[uid];
+  //     } else {
+  //       int writtenUserCount = (writtenCommentMap.keys.toList().length + 1) + 1;
+  //       writtenCommentMap.addAll({uid: "익명 $writtenUserCount"});
+  //       return "익명 $writtenUserCount";
+  //     }
+  //   }
+  // }
 
   @override
   void initState() {
@@ -368,11 +367,15 @@ class _PostContentState extends State<PostContent>
   String commentUserCallback(String wroteCommentUid) {
     String postWritter = currentPostData.uid;
     String resultName = "";
+
+    Map<String, dynamic> wroteUserMapList =
+        context.read(commentProvider).wroteUserList ?? {};
+
     if (wroteCommentUid == postWritter) {
       resultName = "작성자";
     } else {
-      if (currentPostData.commentUserList.containsKey(wroteCommentUid)) {
-        resultName = currentPostData.commentUserList[wroteCommentUid];
+      if (wroteUserMapList.containsKey(wroteCommentUid)) {
+        resultName = wroteUserMapList[wroteCommentUid];
       } else {
         resultName = "error";
       }
@@ -389,22 +392,6 @@ class _PostContentState extends State<PostContent>
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Row(
-          //   children: [
-          //     Icon(
-          //       //foot icon
-          //       Icons.remove_red_eye,
-          //       size: 20,
-          //       color: OnestepColors().mainColor,
-          //     ),
-          //     Container(
-          //       margin: EdgeInsets.only(right: 5),
-          //       child: Text("${currentPost.views.keys.length}",
-          //           style: TextStyle(color: Colors.grey, fontSize: 10)),
-          //     ),
-          //     status
-          //   ],
-          // ),
           Row(
             children: [
               Icon(
@@ -716,16 +703,18 @@ class _PostContentState extends State<PostContent>
 
   saveComment(String comment, PostData postData,
       {CommentData commentData}) async {
-    bool isAlreadyWroteComment =
-        postData.commentUserList.containsKey(currentUid);
+    Map<String, dynamic> wroteUserMapList =
+        context.read(commentProvider).wroteUserList ?? {};
+    //If PostWritter Or Already wrote Comment in post
+    bool isAlreadyWroteComment = (postData.uid == currentUid ||
+        wroteUserMapList.containsKey(currentUid));
+
     if (comment != "") if (!commentFlag) {
       textEditingControllerComment.clear();
       loadingDialogTipDialog(
           CommentData.toRealtimeDataWithPostData(postData).toRealtimeDatabase(
-              comment.trimRight(),
-              currentUid,
-              postData.title,
-              isAlreadyWroteComment), thenFunction: (value) {
+              comment.trimRight(), currentUid, isAlreadyWroteComment),
+          thenFunction: (value) {
         // _panelOpen(false);
         context
             .read(commentProvider)
@@ -739,7 +728,7 @@ class _PostContentState extends State<PostContent>
         textEditingControllerComment.clear();
         loadingDialogTipDialog(
             commentData.addchildComment(
-                comment, currentUid, postData.title, isAlreadyWroteComment),
+                comment, currentUid, isAlreadyWroteComment),
             thenFunction: (value) {
           // _panelOpen(false);
           context
@@ -755,12 +744,8 @@ class _PostContentState extends State<PostContent>
         textEditingControllerComment.clear();
         loadingDialogTipDialog(
             CommentData.toRealtimeDataWithPostData(postData)
-                .addChildchildComment(
-                    comment,
-                    commentData,
-                    currentUid,
-                    postData.title,
-                    isAlreadyWroteComment), thenFunction: (value) {
+                .addChildchildComment(comment, commentData.parentCommentId,
+                    currentUid, isAlreadyWroteComment), thenFunction: (value) {
           // _panelOpen(false);
           context
               .read(commentProvider)

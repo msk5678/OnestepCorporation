@@ -26,6 +26,7 @@ class PostListProvider with ChangeNotifier {
 
   fetchNextProducts(String boardId) async {
     if (_isFetching) return;
+    if (_isNextListFetching) return;
     _isNextListFetching = true;
 
     try {

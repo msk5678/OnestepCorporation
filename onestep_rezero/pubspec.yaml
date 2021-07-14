@@ -159,12 +159,9 @@ dependencies:
   # local database
   hive: ^2.0.4 #hive
   hive_flutter: ^1.0.0
-
-
-
   
   shared_preferences: ^2.0.5 #shared_preferences
-
+  ##############
 
   #Chat Test
   #stream_chat_flutter: ^1.5.1

@@ -238,7 +238,7 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
       secondaryActions: <Widget>[
         IconSlideAction(
           caption: '댓글달기',
-          color: Colors.black45,
+          foregroundColor: OnestepColors().mainColor,
           icon: Icons.add_comment,
           onTap: () {
             coCommentCallback(comment..isUnderComment = false);
@@ -247,7 +247,7 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
         isWritter
             ? IconSlideAction(
                 caption: '삭제',
-                color: Colors.red,
+                foregroundColor: Colors.red,
                 icon: Icons.delete,
                 onTap: () async {
                   bool result = await comment.dismissComment() ?? false;
@@ -258,7 +258,7 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
                 onTap: () =>
                     reportedEventMethod(context, currentLogInUid, comment),
                 caption: '신고하기',
-                color: Colors.red,
+                foregroundColor: Colors.redAccent,
                 icon: Icons.flag,
               ),
       ],
@@ -346,7 +346,7 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
                 top: 10.h,
               ),
               alignment: Alignment.centerLeft,
-              child: Text(comment.textContent ?? "NO"),
+              child: Text(comment.textContent ?? "ERROR COMMENT"),
             ),
             Container(
               margin: EdgeInsets.only(top: 10.h),
@@ -362,8 +362,8 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
                           onTap: () => coCommentCallback(comment),
                           child: Text(
                             "댓글달기",
-                            style:
-                                TextStyle(color: Colors.grey, fontSize: 10.sp),
+                            style: TextStyle(
+                                color: Colors.grey[700], fontSize: 10.sp),
                           ),
                         ),
                       ),
@@ -404,7 +404,8 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
                     alignment: Alignment.centerRight,
                     child: Text(
                       "${TimeUtil.timeAgo(date: uploadTime)}",
-                      style: TextStyle(color: Colors.grey, fontSize: 10.sp),
+                      style:
+                          TextStyle(color: Colors.grey[700], fontSize: 10.sp),
                     ),
                   ),
                 ],

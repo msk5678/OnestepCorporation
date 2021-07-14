@@ -147,7 +147,9 @@ class ChildComment extends StatelessWidget implements Comment {
       secondaryActions: <Widget>[
         IconSlideAction(
           caption: '댓글달기',
-          color: Colors.black45,
+          foregroundColor: OnestepColors().mainColor,
+          closeOnTap: true,
+          // color: Colors.black45,
           icon: Icons.add_comment,
           onTap: () {
             coCommentCallback(comment..isUnderComment = true);
@@ -155,8 +157,10 @@ class ChildComment extends StatelessWidget implements Comment {
         ),
         isWritter
             ? IconSlideAction(
+                closeOnTap: true,
+                foregroundColor: Colors.red,
                 caption: '삭제',
-                color: Colors.red,
+                // color: Colors.red,
                 icon: Icons.delete,
                 onTap: () async {
                   bool result = await comment.dismissComment() ?? false;
@@ -170,7 +174,7 @@ class ChildComment extends StatelessWidget implements Comment {
                 onTap: () =>
                     reportedEventMethod(context, currentLogInUid, comment),
                 caption: '신고하기',
-                color: Colors.red,
+                foregroundColor: Colors.redAccent,
                 icon: Icons.flag,
               ),
       ],
