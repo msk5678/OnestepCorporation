@@ -1,20 +1,21 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:onestep_rezero/myinfo/widgets/myProduct/mySaleProductBody.dart';
+import 'package:onestep_rezero/myinfo/widgets/myProduct/myCompletedProductBody.dart';
+import 'package:onestep_rezero/myinfo/widgets/myProduct/myHoldProductBody.dart';
 
 import 'package:onestep_rezero/utils/onestepCustom/CustomFloatingActionButton.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class MySaleProductMain extends StatefulWidget {
-  MySaleProductMain({Key key}) : super(key: key);
+class MyHoldProductMain extends StatefulWidget {
+  MyHoldProductMain({Key key}) : super(key: key);
 
   @override
-  _MySaleProductMainState createState() => _MySaleProductMainState();
+  _MyHoldProductMainState createState() => _MyHoldProductMainState();
 }
 
-class _MySaleProductMainState extends State<MySaleProductMain> {
+class _MyHoldProductMainState extends State<MyHoldProductMain> {
   final ScrollController _scrollController = ScrollController();
   final StreamController<bool> _scrollToTopstreamController = BehaviorSubject();
 
@@ -22,8 +23,8 @@ class _MySaleProductMainState extends State<MySaleProductMain> {
 
   @override
   void initState() {
-    context.read(mySaleProductProvider).product.clear();
-    context.read(mySaleProductProvider).fetchProducts();
+    context.read(myHoldProductProvider).product.clear();
+    context.read(myHoldProductProvider).fetchProducts();
     _scrollController.addListener(scrollListener);
     super.initState();
   }
@@ -37,7 +38,7 @@ class _MySaleProductMainState extends State<MySaleProductMain> {
   void scrollListener() {
     if ((_scrollController.position.maxScrollExtent * 0.7) <
         _scrollController.position.pixels) {
-      context.read(mySaleProductProvider).fetchNextProducts();
+      context.read(myHoldProductProvider).fetchNextProducts();
     }
 
     if (_scrollController.offset >= 600) {
@@ -62,7 +63,7 @@ class _MySaleProductMainState extends State<MySaleProductMain> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            MySaleProductBody(),
+            MyHoldProductBody(),
           ],
         ),
       ),

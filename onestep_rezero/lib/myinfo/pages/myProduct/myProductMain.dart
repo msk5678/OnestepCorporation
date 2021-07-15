@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
+import 'package:onestep_rezero/myinfo/pages/myProduct/myCompletedProductMain.dart';
+import 'package:onestep_rezero/myinfo/pages/myProduct/myHoldProductMain.dart';
 import 'package:onestep_rezero/myinfo/pages/myProduct/mySaleProductMain.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -77,8 +79,8 @@ class _MyProductMainState extends State<MyProductMain>
           children: [
             MySaleProductMain(),
             MyTradingProductMain(),
-            Text("판매완료"),
-            Text("판매보류"),
+            MyCompletedProductMain(),
+            MyHoldProductMain(),
           ],
         ),
       ),

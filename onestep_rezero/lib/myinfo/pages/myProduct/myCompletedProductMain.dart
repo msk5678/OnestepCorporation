@@ -1,20 +1,20 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:onestep_rezero/myinfo/widgets/myProduct/mySaleProductBody.dart';
+import 'package:onestep_rezero/myinfo/widgets/myProduct/myCompletedProductBody.dart';
 
 import 'package:onestep_rezero/utils/onestepCustom/CustomFloatingActionButton.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class MySaleProductMain extends StatefulWidget {
-  MySaleProductMain({Key key}) : super(key: key);
+class MyCompletedProductMain extends StatefulWidget {
+  MyCompletedProductMain({Key key}) : super(key: key);
 
   @override
-  _MySaleProductMainState createState() => _MySaleProductMainState();
+  _MyCompletedProductMainState createState() => _MyCompletedProductMainState();
 }
 
-class _MySaleProductMainState extends State<MySaleProductMain> {
+class _MyCompletedProductMainState extends State<MyCompletedProductMain> {
   final ScrollController _scrollController = ScrollController();
   final StreamController<bool> _scrollToTopstreamController = BehaviorSubject();
 
@@ -22,8 +22,8 @@ class _MySaleProductMainState extends State<MySaleProductMain> {
 
   @override
   void initState() {
-    context.read(mySaleProductProvider).product.clear();
-    context.read(mySaleProductProvider).fetchProducts();
+    context.read(myCompletedProductProvider).product.clear();
+    context.read(myCompletedProductProvider).fetchProducts();
     _scrollController.addListener(scrollListener);
     super.initState();
   }
@@ -37,7 +37,7 @@ class _MySaleProductMainState extends State<MySaleProductMain> {
   void scrollListener() {
     if ((_scrollController.position.maxScrollExtent * 0.7) <
         _scrollController.position.pixels) {
-      context.read(mySaleProductProvider).fetchNextProducts();
+      context.read(myCompletedProductProvider).fetchNextProducts();
     }
 
     if (_scrollController.offset >= 600) {
@@ -62,7 +62,7 @@ class _MySaleProductMainState extends State<MySaleProductMain> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            MySaleProductBody(),
+            MyCompletedProductBody(),
           ],
         ),
       ),
