@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_fadein/flutter_fadein.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:onestep_rezero/board/AboutPost/AboutPostContent/postComment.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,6 +12,7 @@ import 'package:onestep_rezero/board/declareData/commentData.dart';
 import 'package:onestep_rezero/board/declareData/postData.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/signIn/loggedInWidget.dart';
+import 'package:onestep_rezero/utils/floatingSnackBar.dart';
 import 'package:onestep_rezero/utils/timeUtil.dart';
 
 class UserWrittenCommentList extends StatefulWidget {
@@ -44,46 +45,32 @@ class _UserWrittenCommentListState extends State<UserWrittenCommentList> {
     return SafeArea(
         child: Scaffold(
             appBar: AppBar(
-              automaticallyImplyLeading: false,
+              iconTheme: IconThemeData(color: Colors.black),
               backgroundColor: Colors.white,
-              title: FadeIn(
-                child: Row(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(
-                          left: deviceWidth / 200, right: deviceWidth / 250),
-                      child: IconButton(
-                        icon: dashBoardIcon.icons,
-                        onPressed: () => Navigator.pop(context),
-                      ),
-                    ),
-                    Text(
-                      dashBoardIcon.explain,
-                      style: TextStyle(color: Colors.black),
-                    ),
-                  ],
-                ),
-                curve: Curves.easeIn,
-                duration: Duration(milliseconds: 300),
+              title: Text(
+                dashBoardIcon.explain,
+                style: TextStyle(color: Colors.black),
               ),
             ),
             body: SingleChildScrollView(
                 child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 15, vertical: 20),
+                    padding: EdgeInsets.only(
+                        top: 5.h, bottom: 15.h, left: 15.w, right: 15.w),
                     child: Container(
                         child: UserWrittenCommentListWidget(
                       snackBarCallback: showSnackBar,
                     ))))));
   }
 
-  showSnackBar(Text textMessage,
+  showSnackBar(String textMessage,
       {SnackBarAction snackBarAction, Duration duration}) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: textMessage,
-      duration: duration ?? Duration(milliseconds: 500),
-      action: snackBarAction ?? null,
-    ));
+    FloatingSnackBar.show(context, textMessage,
+        duration: duration ?? Duration(milliseconds: 500));
+    // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    //   content: textMessage,
+    //   duration: duration ?? Duration(milliseconds: 500),
+    //   action: snackBarAction ?? null,
+    // ));
   }
 }
 
@@ -133,75 +120,101 @@ class UserWrittenCommentListWidget extends ConsumerWidget implements Comment {
         shrinkWrap: true,
         itemCount: comment.length,
         itemBuilder: (BuildContext context, int index) {
+          bool isFirstComment = index == 0;
           CommentData currentIndexCommentData = comment[index];
-
-          bool wasCommentDeleted = currentIndexCommentData.deleted;
-
-          currentIndexCommentData
-            ..userName = commentName(currentIndexCommentData.uid, null, null);
-
-          return !wasCommentDeleted
-              ? AnimationConfiguration.staggeredList(
-                  position: index,
-                  duration: const Duration(milliseconds: 375),
-                  child: SlideAnimation(
-                    verticalOffset: 50.0,
-                    child: FadeInAnimation(
-                      child: Column(
-                        children: [
-                          GestureDetector(
-                            onTap: () async {
-                              PostData clickedPostData = await FirebaseFirestore
-                                  .instance
-                                  .collection('university')
-                                  .doc(currentUserModel.university)
-                                  .collection("board")
-                                  .doc(currentIndexCommentData.boardId)
-                                  .collection(currentIndexCommentData.boardId)
-                                  .doc(currentIndexCommentData.postId)
-                                  .get()
-                                  .then((DocumentSnapshot documentSnapshot) =>
-                                      PostData.fromFireStore(documentSnapshot));
-                              bool isDeletedPost = clickedPostData.deleted;
-                              if (!isDeletedPost) {
-                                Navigator.of(context).pushNamed("/PostContent",
-                                    arguments: {
-                                      "CURRENTBOARDDATA": clickedPostData
-                                    }).then((value) {});
-                              } else {
-                                snackBarCallback(Text("이미 삭제된 게시글입니다."));
-                              }
-                            },
-                            child: Container(
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    top: BorderSide(
-                                      color: OnestepColors().mainColor,
-                                      width: 0.5,
-                                    ),
-                                  ),
-                                ),
-                                padding: EdgeInsets.symmetric(vertical: 10),
-                                child: commentListSwipeMenu(
-                                  currentIndexCommentData,
-                                  context,
-                                  currentUserModel.uid,
-                                  slidableKey:
-                                      Key(currentIndexCommentData.commentId),
-                                  child: commentBoxDesignMethod(
-                                      context,
-                                      index,
-                                      currentIndexCommentData,
-                                      deviceWidth,
-                                      deviceHeight),
-                                )),
-                          ),
-                        ],
-                      ),
-                    ),
+          PostData currentPostData;
+          return FutureBuilder<DocumentSnapshot>(
+            future: FirebaseFirestore.instance
+                .collection('university')
+                .doc(currentUserModel.university)
+                .collection("board")
+                .doc(currentIndexCommentData.boardId)
+                .collection(currentIndexCommentData.boardId)
+                .doc(currentIndexCommentData.postId)
+                .get(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData == false) {
+                return Container();
+              }
+              //error가 발생하게 될 경우 반환하게 되는 부분
+              else if (snapshot.hasError) {
+                return Container(
+                  child: Text(
+                    '댓글에 대한 게시글을 가져오지 못했습니다.: ${snapshot.error}',
+                    style: TextStyle(fontSize: 10.sp),
                   ),
-                )
-              : Container();
+                );
+              }
+              // 데이터를 정상적으로 받아오게 되면 다음 부분을 실행하게 되는 것이다.
+              else {
+                currentPostData = PostData.fromFireStore(snapshot.data);
+                bool wasCommentDeleted = currentIndexCommentData.deleted;
+
+                currentIndexCommentData
+                  ..userName = commentNickName(currentIndexCommentData.uid);
+
+                return !wasCommentDeleted
+                    ? AnimationConfiguration.staggeredList(
+                        position: index,
+                        duration: const Duration(milliseconds: 0),
+                        child: SlideAnimation(
+                          verticalOffset: 50.0.h,
+                          child: FadeInAnimation(
+                            child: Column(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    bool isDeletedPost =
+                                        currentPostData.deleted ||
+                                            currentPostData.reported;
+                                    if (!isDeletedPost) {
+                                      Navigator.of(context).pushNamed(
+                                          "/PostContent",
+                                          arguments: {
+                                            "CURRENTBOARDDATA": currentPostData
+                                          }).then((value) {});
+                                    } else {
+                                      snackBarCallback("이미 삭제된 게시글입니다.");
+                                    }
+                                  },
+                                  child: Container(
+                                      decoration: !isFirstComment
+                                          ? BoxDecoration(
+                                              border: Border(
+                                                top: BorderSide(
+                                                  color:
+                                                      OnestepColors().mainColor,
+                                                  width: 0.5.w,
+                                                ),
+                                              ),
+                                            )
+                                          : BoxDecoration(),
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 10.h),
+                                      child: commentListSwipeMenu(
+                                        currentIndexCommentData,
+                                        context,
+                                        currentUserModel.uid,
+                                        slidableKey: Key(
+                                            currentIndexCommentData.commentId),
+                                        child: commentBoxDesignMethod(
+                                            context,
+                                            index,
+                                            currentIndexCommentData,
+                                            deviceWidth,
+                                            deviceHeight,
+                                            postData: currentPostData),
+                                      )),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      )
+                    : Container();
+              }
+            },
+          );
         },
       ),
     );
@@ -209,9 +222,11 @@ class UserWrittenCommentListWidget extends ConsumerWidget implements Comment {
 
   @override
   Widget commentBoxDesignMethod(BuildContext context, int index,
-      CommentData comment, double deviceWidth, double deviceHeight) {
+      CommentData comment, double deviceWidth, double deviceHeight,
+      {PostData postData}) {
     return commentWidget(context, index, comment, currentUserModel.uid,
-        deviceWidth, deviceHeight);
+        deviceWidth, deviceHeight,
+        postData: postData);
   }
 
   @override
@@ -229,13 +244,9 @@ class UserWrittenCommentListWidget extends ConsumerWidget implements Comment {
   }
 
   @override
-  commentName(commentUID, postWriterUid, commentList, {bool isDeleted}) {
-    return "나";
-  }
-
-  @override
   commentWidget(BuildContext context, int index, CommentData comment,
-      String uid, double deviceWidth, double deviceHeight) {
+      String uid, double deviceWidth, double deviceHeight,
+      {PostData postData}) {
     DateTime uploadTime =
         DateTime.fromMillisecondsSinceEpoch(comment.uploadTime);
 
@@ -247,33 +258,39 @@ class UserWrittenCommentListWidget extends ConsumerWidget implements Comment {
             Container(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                    commentName(
-                      null,
-                      null,
-                      null,
+                    commentNickName(
+                      "null",
                     ),
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: OnestepColors().mainColor))),
             Container(
               padding: EdgeInsets.only(
-                left: 8,
-                top: 10,
+                left: 8.w,
+                top: 10.h,
               ),
               alignment: Alignment.centerLeft,
               child: Text(comment.textContent ?? "NO"),
             ),
             Container(
-              // margin: EdgeInsets.only(top: 10),
+              margin: EdgeInsets.only(top: 10.h),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Container(),
+                  Container(
+                    width: deviceWidth / 2,
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "글 : ${postData.title ?? ""}",
+                      style: TextStyle(color: Colors.grey, fontSize: 10.sp),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
                   Container(
                     alignment: Alignment.centerRight,
                     child: Text(
                       "${TimeUtil.timeAgo(date: uploadTime)}",
-                      style: TextStyle(color: Colors.grey, fontSize: 10),
+                      style: TextStyle(color: Colors.grey, fontSize: 10.sp),
                     ),
                   ),
                 ],
@@ -289,5 +306,10 @@ class UserWrittenCommentListWidget extends ConsumerWidget implements Comment {
   deletedCommentWidget(
       int index, CommentData comment, double deviceWidth, double deviceHeight) {
     return Container();
+  }
+
+  @override
+  commentNickName(String uid) {
+    return "나";
   }
 }

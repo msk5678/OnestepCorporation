@@ -1,8 +1,6 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_fadein/flutter_fadein.dart';
 import 'package:onestep_rezero/board/AboutPost/AboutPostListView/listRiverpod.dart';
 import 'package:onestep_rezero/board/AboutPost/AboutPostListView/postList.dart';
 import 'package:onestep_rezero/board/AboutPost/AboutPostListView/postListMain.dart';
@@ -58,27 +56,11 @@ class _UserPostingListState extends PostListParentWidget<UserPostingList> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          automaticallyImplyLeading: false,
+          iconTheme: IconThemeData(color: Colors.black),
           backgroundColor: Colors.white,
-          title: FadeIn(
-            child: Row(
-              children: [
-                Container(
-                  margin: EdgeInsets.only(
-                      left: deviceWidth / 200, right: deviceWidth / 250),
-                  child: IconButton(
-                    icon: dashBoardIcon.icons,
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ),
-                Text(
-                  dashBoardIcon.explain,
-                  style: TextStyle(color: Colors.black),
-                ),
-              ],
-            ),
-            curve: Curves.easeIn,
-            duration: Duration(milliseconds: 300),
+          title: Text(
+            dashBoardIcon.explain,
+            style: TextStyle(color: Colors.black),
           ),
         ),
         // ),

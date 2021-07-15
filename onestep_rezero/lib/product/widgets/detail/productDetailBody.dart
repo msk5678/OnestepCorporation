@@ -8,8 +8,9 @@ import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/favorite/animation/favoriteAnimation.dart';
 import 'package:onestep_rezero/favorite/utils/favoriteFirebaseApi.dart';
 import 'package:onestep_rezero/favorite/widgets/favoriteMainBody.dart';
-import 'package:onestep_rezero/myinfo/pages/mySaleProductMain.dart';
-import 'package:onestep_rezero/myinfo/widgets/mySaleProduct/mySaleProductBody.dart';
+import 'package:onestep_rezero/myinfo/pages/myProduct/myProductMain.dart';
+import 'package:onestep_rezero/myinfo/widgets/myProduct/mySaleProductBody.dart';
+import 'package:onestep_rezero/product/pages/userProfile.dart';
 import 'package:onestep_rezero/product/widgets/public/productKakaoShareManager.dart';
 import 'package:onestep_rezero/report/pages/Deal/productReport/reportProductPage.dart';
 import 'package:onestep_rezero/signIn/loggedInWidget.dart';
@@ -216,8 +217,6 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
             actions: [
               IconButton(
                   onPressed: () {
-                    print("@@@@@@@@@@@@@ ${ModalRoute.of(context).settings}");
-                    // // print("kakao 1");
                     KakaoShareManager()
                         .isKakaotalkInstalled()
                         .then((installed) {
@@ -229,7 +228,6 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
                         // show alert
                       }
                     });
-                    // print("widget.product ${widget.product.imagesUrl}");
                   },
                   icon: _makeIcon(Icons.share)),
               if (currentUserModel.uid != widget.product.uid) popupMenuButton(),
@@ -495,30 +493,38 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
           case ConnectionState.waiting:
             return Text("");
           default:
-            return Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Row(
-                children: <Widget>[
-                  CachedNetworkImage(
-                    imageUrl: snapshot.data['imageUrl'],
-                    imageBuilder: (context, imageProvider) => Container(
-                      width: 50.0.w,
-                      height: 50.0.h,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                            image: imageProvider, fit: BoxFit.cover),
+            return GestureDetector(
+              onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) =>
+                        UserProfileMain(userData: snapshot.data)));
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Row(
+                  children: <Widget>[
+                    CachedNetworkImage(
+                      imageUrl: snapshot.data['imageUrl'],
+                      imageBuilder: (context, imageProvider) => Container(
+                        width: 50.0.w,
+                        height: 50.0.h,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                              image: imageProvider, fit: BoxFit.cover),
+                        ),
                       ),
+                      placeholder: (context, url) =>
+                          CircularProgressIndicator(),
+                      errorWidget: (context, url, error) => Icon(Icons.error),
                     ),
-                    placeholder: (context, url) => CircularProgressIndicator(),
-                    errorWidget: (context, url, error) => Icon(Icons.error),
-                  ),
-                  SizedBox(width: 10.w),
-                  Text(
-                    snapshot.data['nickName'],
-                    style: TextStyle(fontWeight: FontWeight.w500),
-                  ),
-                ],
+                    SizedBox(width: 10.w),
+                    Text(
+                      snapshot.data['nickName'],
+                      style: TextStyle(fontWeight: FontWeight.w500),
+                    ),
+                  ],
+                ),
               ),
             );
         }
@@ -581,7 +587,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => MySaleProductMain(),
+                                  builder: (context) => MyProductMain(),
                                 ),
                               );
                             },
@@ -684,7 +690,6 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
               widget.product.firestoreid, trading, hold, completed);
           break;
         case "Sale":
-          print("@@@@@@@@@@ switch sale");
           context.read(mySaleProductProvider).updateState(
               widget.product.firestoreid, trading, hold, completed);
           break;
@@ -930,23 +935,22 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
                     ),
                     GestureDetector(
                       onTap: () {
-                        OnestepCustomDialog.show(
-                          context,
-                          title: '상품을 삭제하시겠습니까?',
-                          description: '삭제한 상품은 복구할 수 없습니다.',
-                          cancleButtonText: '취소',
-                          confirmButtonText: '삭제',
-                          confirmButtonOnPress: () {
-                            FirebaseFirestore.instance
-                                .collection("university")
-                                .doc(currentUserModel.university)
-                                .collection("product")
-                                .doc(widget.product.firestoreid)
-                                .update({'deleted': true});
+                        OnestepCustomDialog.show(context,
+                            title: '상품을 삭제하시겠습니까?',
+                            description: '삭제한 상품은 복구할 수 없습니다.',
+                            cancleButtonText: '취소',
+                            confirmButtonText: '삭제', confirmButtonOnPress: () {
+                          FirebaseFirestore.instance
+                              .collection("university")
+                              .doc(currentUserModel.university)
+                              .collection("product")
+                              .doc(widget.product.firestoreid)
+                              .update({'deleted': true});
 
-                            Navigator.pop(context);
-                          },
-                        );
+                          Navigator.pop(context);
+                        }, cancleButtonOnPress: () {
+                          Navigator.pop(context);
+                        });
                       },
                       child: Row(
                           children: [Icon(Icons.delete_outline), Text("상품삭제")]),

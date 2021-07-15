@@ -6,6 +6,7 @@ import 'package:onestep_rezero/board/declareData/categoryManageClass.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 import '../TipDialog/tip_dialog.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class BoardCreate extends StatefulWidget {
   final boardCategory;
@@ -41,7 +42,7 @@ class _BoardCreate extends State<BoardCreate> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     TextStyle textStyle = TextStyle(
-        color: Colors.black, fontSize: 22, fontWeight: FontWeight.bold);
+        color: Colors.black, fontSize: 22.sp, fontWeight: FontWeight.bold);
     double deviceHeight = MediaQuery.of(context).size.height;
     double deviceWidth = MediaQuery.of(context).size.width;
 
@@ -240,7 +241,7 @@ class _BoardCreate extends State<BoardCreate> with TickerProviderStateMixin {
               leading: Icon(boardCategory.categoryData.icon),
               title: Text(
                 boardCategory.categoryData.title,
-                style: TextStyle(fontSize: 20),
+                style: TextStyle(fontSize: 20.sp),
               ),
             ))),
       ),

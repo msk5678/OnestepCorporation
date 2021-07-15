@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:onestep_rezero/board/declareData/boardData.dart';
 import 'package:onestep_rezero/board/declareData/categoryManageClass.dart';
-
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:onestep_rezero/board/declareData/postData.dart';
 import 'package:onestep_rezero/board/permissionLib.dart';
 import 'package:onestep_rezero/board/TipDialog/tip_dialog.dart';
@@ -118,7 +118,10 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
                 FocusScope.of(context).requestFocus(FocusNode());
               },
               child: SafeArea(
-                minimum: const EdgeInsets.all(16.0),
+                minimum: EdgeInsets.symmetric(
+                  vertical: 16.h,
+                  horizontal: 16.w,
+                ),
                 child: SingleChildScrollView(
                   controller: scrollController,
                   child: Column(
@@ -164,7 +167,7 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
             children: <Widget>[
               Icon(categoryList[i].categoryData.icon),
               Padding(
-                padding: EdgeInsets.only(left: 10),
+                padding: EdgeInsets.only(left: 10.w),
                 child: Text(
                   categoryList[i].categoryData.title,
                   style: TextStyle(color: OnestepColors().mainColor),
@@ -215,7 +218,7 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
 
   setPostName(double deviceHeight) {
     return Container(
-      margin: EdgeInsets.only(top: 10),
+      margin: EdgeInsets.only(top: 10.h),
       height: deviceHeight / 10,
       child: TextField(
         controller: textEditingControllerBottomSheet,
@@ -230,9 +233,9 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
 
   firstContainer() {
     TextStyle _textStyle = TextStyle(
-        color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16);
+        color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16.sp);
     return Container(
-      padding: EdgeInsets.only(top: 15),
+      padding: EdgeInsets.only(top: 15.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -341,7 +344,7 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
 
   secondContainer() {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 8.0),
+      padding: EdgeInsets.symmetric(vertical: 8.0.h),
       child: TextField(
         controller: textEditingControllerContent,
         minLines: 20,
@@ -422,13 +425,13 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
 
   imageContainer(int index, image, String comment) {
     return Container(
-      padding: EdgeInsets.only(top: 5.0),
+      padding: EdgeInsets.only(top: 5.0.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           SizedBox(
-            height: 80,
-            width: 80,
+            height: 80.h,
+            width: 80.w,
             child: Container(
               child: PopupMenuButton<int>(
                   onSelected: (value) async {
@@ -473,8 +476,8 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
                       ],
                   child: Container(
                     child: Image(
-                      width: 200,
-                      height: 200,
+                      width: 200.w,
+                      height: 200.h,
                       image: AssetEntityImageProvider(image, isOriginal: false),
                       fit: BoxFit.cover,
                     ),
@@ -490,8 +493,8 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
                   minLines: 2,
                   maxLines: 4,
                   decoration: InputDecoration(
-                    contentPadding:
-                        EdgeInsets.symmetric(vertical: 20.0, horizontal: 5.0),
+                    contentPadding: EdgeInsets.symmetric(
+                        vertical: 20.0.h, horizontal: 5.0.w),
                     border: OutlineInputBorder(),
                     labelText: "사진${index + 1}의 설명",
                     hintText: "내용을 입력하세요",
@@ -540,8 +543,8 @@ abstract class CreatePageParent<T extends StatefulWidget> extends State<T>
     return Container(
       padding: EdgeInsets.all(5.0),
       child: SizedBox(
-        height: 50,
-        width: 50,
+        height: 50.h,
+        width: 50.w,
         child: GestureDetector(
             onTap: () async {
               FocusScope.of(context).requestFocus(FocusNode());

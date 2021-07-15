@@ -336,16 +336,15 @@ class _ProductEditState extends State<ProductEdit> {
       ),
       bottomNavigationBar: InkWell(
         onTap: () {
-          OnestepCustomDialog.show(
-            context,
-            title: '상품을 수정하시겠습니까?',
-            cancleButtonText: '취소',
-            confirmButtonText: '확인',
-            confirmButtonOnPress: () {
-              updateProduct();
-              Navigator.pop(context);
-            },
-          );
+          OnestepCustomDialog.show(context,
+              title: '상품을 수정하시겠습니까?',
+              cancleButtonText: '취소',
+              confirmButtonText: '확인', confirmButtonOnPress: () {
+            updateProduct();
+            Navigator.pop(context);
+          }, cancleButtonOnPress: () {
+            Navigator.pop(context);
+          });
         },
         child: Container(
           height: 50.h,

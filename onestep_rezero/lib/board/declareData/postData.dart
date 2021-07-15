@@ -23,12 +23,12 @@ class PostData {
   final Map<String, dynamic> favoriteUserList;
   final Map<String, dynamic> scrabUserList;
   final Map<String, dynamic> views;
-  final Map<String, dynamic> commentUserList;
+  // final Map<String, dynamic> commentUserList;
   int favoriteCount;
   int scribeCount;
   Map<String, dynamic> imageCommentMap;
   Function completeImageUploadCallback;
-  List imgUriList;
+  List<String> imgUriList;
 
   bool deleted;
   int deletedTime;
@@ -36,7 +36,7 @@ class PostData {
   bool reported;
   int reportedTime;
 
-  Future convertImage(var _imageArr) async {
+  Future<List<String>> convertImage(var _imageArr) async {
     List<String> _imgUriarr = [];
 
     for (var imaged in _imageArr) {
@@ -79,7 +79,7 @@ class PostData {
 
   PostData(
       {this.scrabUserList,
-      this.commentUserList,
+      // this.commentUserList,
       this.favoriteUserList,
       this.contentCategory,
       this.boardName,
@@ -128,7 +128,7 @@ class PostData {
           "imageCommentList": imageCommentMap ?? {},
           "scrabUserList": scrabUserList ?? {},
           "favoriteUserList": favoriteUserList ?? {},
-          "commentUserList": commentUserList ?? {},
+          // "commentUserList": commentUserList ?? {},
           "favoriteCount": 0,
           "reported": false,
           "reportedTime": 0
@@ -148,7 +148,8 @@ class PostData {
 
     imgUriList = await convertImage(imageCommentMap["ALTERIMAGE"]);
     imageCommentMap.update("ALTERIMAGE", (value) => []);
-    imageCommentMap.update("IMAGE", (value) => imgUriList);
+    imageCommentMap["IMAGE"].addAll(imgUriList);
+    // imageCommentMap.update("IMAGE", (value) => value..addAll(imgUriList));
     return await FirebaseFirestore.instance
         .collection('university')
         .doc(currentUserModel.university)
@@ -190,14 +191,14 @@ class PostData {
         deletedTime: postData["deletedTime"] ?? 0,
         reportCount: postData["reportCount"] ?? 0,
         views: postData["views"] ?? {},
-        commentUserList: postData["commentUserList"] ?? {},
+        // commentUserList: postData["commentUserList"] ?? {},
         favoriteUserList: postData["favoriteUserList"] ?? {},
-        scrabUserList: postData["scrabUserList"] ?? {},
+        // scrabUserList: postData["scrabUserList"] ?? {},
         imageCommentMap: postData["imageCommentList"] ?? {},
         favoriteCount: postData["favoriteCount"] ?? 0,
-        scribeCount: postData["commentUserList"] != null
-            ? postData["commentUserList"].length
-            : 0,
+        // scribeCount: postData["commentUserList"] != null
+        //     ? postData["commentUserList"].length
+        //     : 0,
         reported: postData["reported"],
         reportedTime: postData["reportedTime"] ?? 0);
   }

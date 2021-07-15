@@ -5,6 +5,7 @@ import 'package:onestep_rezero/board/StateManage/Provider/boardListProvider.dart
 import 'package:onestep_rezero/board/declareData/boardData.dart';
 import 'package:onestep_rezero/board/declareData/categoryManageClass.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 final boardListProvider =
     ChangeNotifierProvider<BoardListProvider>((ref) => BoardListProvider());
@@ -50,7 +51,7 @@ class BoardListView extends ConsumerWidget {
       categoryListWidget.add(ListTile(
         leading: Icon(
           boardCategory.categoryData.icon,
-          size: 28,
+          size: 28.sp,
           color: OnestepColors().mainColor,
         ),
         //  IconButton(
@@ -75,10 +76,10 @@ class BoardListView extends ConsumerWidget {
         // ),
         subtitle: GestureDetector(
             onTap: () async {
-              manageAnimationTimer(false);
+              // manageAnimationTimer(false);
               await Navigator.pushNamed(context, '/PostList',
-                      arguments: {"CURRENTBOARDDATA": value})
-                  .then((value) => manageAnimationTimer(true));
+                  arguments: {"CURRENTBOARDDATA": value});
+              // .then((value) => manageAnimationTimer(true));
             },
             child: Container(
                 child: Text(
@@ -86,10 +87,10 @@ class BoardListView extends ConsumerWidget {
             ))),
         title: GestureDetector(
             onTap: () async {
-              manageAnimationTimer(false);
+              // manageAnimationTimer(false);
               await Navigator.pushNamed(context, '/PostList',
-                      arguments: {"CURRENTBOARDDATA": value})
-                  .then((value) => manageAnimationTimer(true));
+                  arguments: {"CURRENTBOARDDATA": value});
+              // .then((value) => manageAnimationTimer(true));
             },
             child: Container(
                 child: Text(
@@ -99,24 +100,25 @@ class BoardListView extends ConsumerWidget {
     });
 
     return Padding(
-      padding: EdgeInsets.only(left: 10),
-      child: Column(
-          children: categoryListWidget
-            ..add(Center(
-              child: IconButton(
-                icon: Icon(Icons.add),
-                onPressed: () async {
-                  manageAnimationTimer(false);
-                  await Navigator.of(context)
-                      .pushNamed("/BoardCreate")
-                      .then((value) {
-                    bool result = value ?? false;
-                    if (result) context.read(boardListProvider).fetchBoards();
-                    manageAnimationTimer(true);
-                  });
-                },
-              ),
-            ))),
+      padding: EdgeInsets.only(left: 10.w),
+      child: Column(children: categoryListWidget
+          // ..add(
+          //   Center(
+          //   child: IconButton(
+          //     icon: Icon(Icons.add),
+          //     onPressed: () async {
+          //       // manageAnimationTimer(false);
+          //       await Navigator.of(context)
+          //           .pushNamed("/BoardCreate")
+          //           .then((value) {
+          //         bool result = value ?? false;
+          //         if (result) context.read(boardListProvider).fetchBoards();
+          //         // manageAnimationTimer(true);
+          //       });
+          //     },
+          //   ),
+          // ))
+          ),
     );
   }
 }

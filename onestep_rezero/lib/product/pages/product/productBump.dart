@@ -206,13 +206,14 @@ class _ProductBumpState extends State<ProductBump> {
               height: 50.h,
               child: ElevatedButton(
                 onPressed: () {
-                  OnestepCustomDialog.show(
-                    context,
-                    title: '상품을 끌어올리시겠습니까?',
-                    confirmButtonText: '확인',
-                    cancleButtonText: '취소',
-                    confirmButtonOnPress: _saveDataInFirestore,
-                  );
+                  OnestepCustomDialog.show(context,
+                      title: '상품을 끌어올리시겠습니까?',
+                      confirmButtonText: '확인',
+                      cancleButtonText: '취소',
+                      confirmButtonOnPress: _saveDataInFirestore,
+                      cancleButtonOnPress: () {
+                    Navigator.pop(context);
+                  });
                 },
                 child: Text('끌어올리기'),
                 style: ElevatedButton.styleFrom(

@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:onestep_rezero/favorite/pages/favoriteMain.dart';
+import 'package:onestep_rezero/myinfo/pages/myProduct/myProductMain.dart';
 import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 import 'package:onestep_rezero/myinfo/pages/infomation/noticePage.dart';
-import 'package:onestep_rezero/myinfo/pages/myinfoProfilePage.dart';
 import 'package:onestep_rezero/myinfo/pages/myinfoTransaction.dart';
 import 'package:onestep_rezero/myinfo/widgets/myProfileImage.dart';
 import 'package:onestep_rezero/utils/onestepCustom/dialog/onestepCustomDialogNotCancel.dart';
@@ -132,19 +132,12 @@ class MyinfoMainBody extends ConsumerWidget {
                         GestureDetector(
                           onTap: () {
                             Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => MyinfoProfilePage()));
+                                builder: (context) => MyProductMain()));
                           },
                           child: Column(
                             children: [
-                              IconButton(
-                                onPressed: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) =>
-                                          MyinfoProfilePage()));
-                                },
-                                icon: Icon(Icons.error_outline),
-                              ),
-                              Text("프로필보기"),
+                              Icon(Icons.error_outline),
+                              Text("내 상품"),
                             ],
                           ),
                         ),
