@@ -219,17 +219,17 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
             actions: [
               IconButton(
                   onPressed: () {
-                    KakaoShareManager()
-                        .isKakaotalkInstalled()
-                        .then((installed) {
-                      if (installed) {
-                        print("kakao success");
-                        KakaoShareManager().shareMyCode(widget.product);
-                      } else {
-                        print("kakao error");
-                        // show alert
-                      }
-                    });
+                    // KakaoShareManager()
+                    //     .isKakaotalkInstalled()
+                    //     .then((installed) {
+                    //   if (installed) {
+                    //     print("kakao success");
+                    //     KakaoShareManager().shareMyCode(widget.product);
+                    //   } else {
+                    //     print("kakao error");
+                    //     // show alert
+                    //   }
+                    // });
                   },
                   icon: _makeIcon(Icons.share)),
               if (currentUserModel.uid != widget.product.uid) popupMenuButton(),
