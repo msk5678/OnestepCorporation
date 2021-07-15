@@ -27,7 +27,6 @@ import 'package:onestep_rezero/utils/onestepCustom/dialog/onestepCustomDialog.da
 import 'package:onestep_rezero/utils/timeUtil.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:kakao_flutter_sdk/all.dart';
 
 class ProductDetailBody extends StatefulWidget {
   final Product product;
