@@ -24,14 +24,14 @@ import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class ProductAdd extends StatefulWidget {
-  const ProductAdd({Key key}) : super(key: key);
+class ProductAddMain extends StatefulWidget {
+  const ProductAddMain({Key key}) : super(key: key);
 
   @override
-  _ProductAddState createState() => _ProductAddState();
+  _ProductAddMainState createState() => _ProductAddMainState();
 }
 
-class _ProductAddState extends State<ProductAdd> {
+class _ProductAddMainState extends State<ProductAddMain> {
   List<AssetEntity> entity = [];
 
   final _titleTextEditingController = TextEditingController();

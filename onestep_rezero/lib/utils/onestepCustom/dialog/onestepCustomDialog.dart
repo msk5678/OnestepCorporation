@@ -46,9 +46,7 @@ class OnestepCustomDialog {
                         width: MediaQuery.of(context).size.width / 3,
                         height: 45.h,
                         child: ElevatedButton(
-                          onPressed: () {
-                            cancleButtonOnPress;
-                          },
+                          onPressed: cancleButtonOnPress,
                           child: Text(cancleButtonText),
                           style: ElevatedButton.styleFrom(
                             primary: Colors.black26,

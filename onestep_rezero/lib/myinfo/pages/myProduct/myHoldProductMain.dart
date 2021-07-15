@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:onestep_rezero/myinfo/widgets/myProduct/myCompletedProductBody.dart';
 import 'package:onestep_rezero/myinfo/widgets/myProduct/myHoldProductBody.dart';
 
 import 'package:onestep_rezero/utils/onestepCustom/CustomFloatingActionButton.dart';
