@@ -584,12 +584,12 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
                           ),
                           GestureDetector(
                             onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => MyProductMain(),
-                                ),
-                              );
+                              // Navigator.push(
+                              //   context,
+                              //   MaterialPageRoute(
+                              //     builder: (context) => MyProductMain(),
+                              //   ),
+                              // );
                             },
                             child: Text(
                               "모두보기",

@@ -132,6 +132,7 @@ class MyinfoMainBody extends ConsumerWidget {
                         GestureDetector(
                           onTap: () {
                             Navigator.of(context).push(MaterialPageRoute(
+                                settings: RouteSettings(name: 'MyProduct'),
                                 builder: (context) => MyProductMain()));
                           },
                           child: Column(
