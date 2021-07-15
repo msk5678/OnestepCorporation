@@ -13,8 +13,14 @@ class MyCompletedProductBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
-    final productlist = watch(myCompletedProductProvider).products;
+    bool isFetching = watch(myCompletedProductProvider).isFetching;
+    if (isFetching) return CircularProgressIndicator();
 
-    return ProductGridView(itemList: productlist);
+    final productList = watch(myCompletedProductProvider).products;
+    if (productList.length == 0) {
+      return Text("판매완료한 상품이 없습니다");
+    } else {
+      return ProductGridView(itemList: productList);
+    }
   }
 }
