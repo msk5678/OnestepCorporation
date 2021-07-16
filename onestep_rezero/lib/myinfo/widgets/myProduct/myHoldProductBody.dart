@@ -14,8 +14,14 @@ class MyHoldProductBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
-    final productlist = watch(myHoldProductProvider).products;
+    bool isFetching = watch(myHoldProductProvider).isFetching;
+    if (isFetching) return CircularProgressIndicator();
 
-    return ProductGridView(itemList: productlist);
+    final productList = watch(myHoldProductProvider).products;
+    if (productList.length == 0) {
+      return Text("판매보류한 상품이 없습니다");
+    } else {
+      return ProductGridView(itemList: productList);
+    }
   }
 }

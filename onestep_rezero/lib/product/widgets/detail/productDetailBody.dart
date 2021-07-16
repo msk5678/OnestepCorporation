@@ -8,8 +8,10 @@ import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/favorite/animation/favoriteAnimation.dart';
 import 'package:onestep_rezero/favorite/utils/favoriteFirebaseApi.dart';
 import 'package:onestep_rezero/favorite/widgets/favoriteMainBody.dart';
-import 'package:onestep_rezero/myinfo/pages/myProduct/myProductMain.dart';
+import 'package:onestep_rezero/myinfo/widgets/myProduct/myCompletedProductBody.dart';
+import 'package:onestep_rezero/myinfo/widgets/myProduct/myHoldProductBody.dart';
 import 'package:onestep_rezero/myinfo/widgets/myProduct/mySaleProductBody.dart';
+import 'package:onestep_rezero/myinfo/widgets/myProduct/myTradingProductBody.dart';
 import 'package:onestep_rezero/product/pages/userProfile.dart';
 import 'package:onestep_rezero/product/widgets/public/productKakaoShareManager.dart';
 import 'package:onestep_rezero/report/pages/Deal/productReport/reportProductPage.dart';
@@ -781,9 +783,11 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
     bool completed = 'completed' == type;
 
     int value = 0;
-    if (trading) value = 1;
-    if (hold) value = 2;
-    if (completed) value = 3;
+    if (trading)
+      value = 1;
+    else if (hold)
+      value = 2;
+    else if (completed) value = 3;
 
     FirebaseFirestore.instance
         .collection("university")
@@ -803,16 +807,36 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
           context.read(productMainService).updateState(
               widget.product.firestoreid, trading, hold, completed);
           break;
-        case "Sale":
-          context.read(mySaleProductProvider).updateState(
-              widget.product.firestoreid, trading, hold, completed);
+        case "MyProduct":
+          switch (value) {
+            case 0:
+              context.read(myTradingProductProvider).fetchProducts();
+              context.read(myCompletedProductProvider).fetchProducts();
+              context.read(myHoldProductProvider).fetchProducts();
+              break;
+            case 1:
+              context.read(mySaleProductProvider).fetchProducts();
+              context.read(myCompletedProductProvider).fetchProducts();
+              context.read(myHoldProductProvider).fetchProducts();
+              break;
+            case 2:
+              context.read(mySaleProductProvider).fetchProducts();
+              context.read(myTradingProductProvider).fetchProducts();
+              context.read(myHoldProductProvider).fetchProducts();
+              break;
+            case 3:
+              context.read(mySaleProductProvider).fetchProducts();
+              context.read(myTradingProductProvider).fetchProducts();
+              context.read(myCompletedProductProvider).fetchProducts();
+              break;
+          }
           break;
         case "Favorite":
           context.read(favoriteMainProvider).updateState(
               widget.product.firestoreid, trading, hold, completed);
           break;
 
-        case "Search":
+        default:
           break;
       }
 

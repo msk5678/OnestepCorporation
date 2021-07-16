@@ -32,7 +32,8 @@ class UserProvider with ChangeNotifier {
           .child('favorite')
           .once()
           .then((DataSnapshot dataSnapshot) {
-        dataSnapshot.value.forEach((key, value) {
+        var value = dataSnapshot.value ?? {};
+        value.forEach((key, value) {
           _userFavoritePostList
               .addAll({key: UserData.fromRealtimeUserFavoriteList(value)});
           notifyListeners();
@@ -62,7 +63,7 @@ class UserProvider with ChangeNotifier {
           .once()
           .then((DataSnapshot dataSnapshot) {
         Map<dynamic, dynamic> userCommentedMap =
-            Map<dynamic, dynamic>.from(dataSnapshot.value);
+            Map<dynamic, dynamic>.from(dataSnapshot.value ?? {});
         userCommentedMap.forEach((commentId, commentData) {
           _userWrittenCommentList.add(
               UserData.fromRealtimeUserWrittenCommentList(
@@ -91,10 +92,13 @@ class UserProvider with ChangeNotifier {
         }
         CommentData _commentData =
             await commentDb.once().then((DataSnapshot dataSnapshot) {
-          return CommentData.fromRealtimeData(dataSnapshot,
-              ignoreDeleted: true);
+          if (dataSnapshot.value != null)
+            return CommentData.fromRealtimeData(dataSnapshot,
+                ignoreDeleted: true);
+          else
+            return CommentData();
         });
-        if (_commentData != null) {
+        if (_commentData.boardId != null) {
           // _postIdListAboutWrittenComment
           //     .addAll({_commentData.postId: _commentData});
           _userCommentList.add(_commentData);

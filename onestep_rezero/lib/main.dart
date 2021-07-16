@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart' as FBA;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,7 +10,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hive/hive.dart';
 import 'package:onestep_rezero/product/models/product.dart';
 import 'package:onestep_rezero/product/widgets/detail/productDetailBody.dart';
-import 'package:onestep_rezero/report/reportPageTest.dart';
 import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 import 'package:onestep_rezero/signUp/pages/signUpWidget.dart';
 import 'package:kakao_flutter_sdk/link.dart';
@@ -20,12 +18,11 @@ import 'package:onestep_rezero/utils/onestepCustom/dialog/onestepCustomDialogNot
 import 'package:onestep_rezero/utils/timeUtil.dart';
 import 'appmain/routeGenterator.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // 비동기 함수 사용 처리
   await Firebase.initializeApp(); // firebase init
-  TimeUtil.setLocalMessages(); // timeado 설정 ex) 몇분 전, 몇시간 전
+  TimeUtil.setLocalMessages(); // timeago 설정 ex) 몇분 전, 몇시간 전
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp]); // 가로세로 회전 금지
 

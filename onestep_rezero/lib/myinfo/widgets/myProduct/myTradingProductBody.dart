@@ -13,8 +13,14 @@ class MyTradingProductBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
-    final productlist = watch(myTradingProductProvider).products;
+    bool isFetching = watch(myTradingProductProvider).isFetching;
+    if (isFetching) return CircularProgressIndicator();
 
-    return ProductGridView(itemList: productlist);
+    final productList = watch(myTradingProductProvider).products;
+    if (productList.length == 0) {
+      return Text("예약중인 상품이 없습니다");
+    } else {
+      return ProductGridView(itemList: productList);
+    }
   }
 }
