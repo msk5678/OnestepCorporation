@@ -91,18 +91,18 @@ class _MainPageState extends State<MainPage> {
   }
 
   Future<void> _handleDynamicLink(Uri deepLink) async {
-    var uploadTime = deepLink.queryParameters['uploadTime'];
-    DocumentSnapshot snapshot = await FirebaseFirestore.instance
-        .collection('university')
-        .doc(currentUserModel.university)
-        .collection('product')
-        .doc(uploadTime)
-        .get();
-    print("deepLink.path = ${deepLink.path}");
-    print("currentUserModel.university = ${currentUserModel.university}");
-    Product product = Product.fromJson(snapshot.data(), snapshot.id);
     if (deepLink.path == "/" + currentUserModel.university) {
       print("학교 같음");
+      var uploadTime = deepLink.queryParameters['uploadTime'];
+      DocumentSnapshot snapshot = await FirebaseFirestore.instance
+          .collection('university')
+          .doc(currentUserModel.university)
+          .collection('product')
+          .doc(uploadTime)
+          .get();
+      print("deepLink.path = ${deepLink.path}");
+      print("currentUserModel.university = ${currentUserModel.university}");
+      Product product = Product.fromJson(snapshot.data(), snapshot.id);
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -117,6 +117,7 @@ class _MainPageState extends State<MainPage> {
         Navigator.of(context).pop();
       });
     }
+
     // switch (deepLink.path) {
     //   case "/university":
     //     print("uploadTime = $uploadTime");
