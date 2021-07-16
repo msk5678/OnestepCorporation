@@ -1,11 +1,16 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kakao_flutter_sdk/link.dart';
 import 'package:onestep_rezero/favorite/pages/favoriteMain.dart';
+import 'package:onestep_rezero/product/models/product.dart';
+import 'package:onestep_rezero/product/widgets/detail/productDetailBody.dart';
 
 import 'package:onestep_rezero/product/widgets/main/productMainBody.dart';
 import 'package:onestep_rezero/product/widgets/main/productMainHeader.dart';
@@ -17,6 +22,7 @@ import 'package:onestep_rezero/utils/onestepCustom/CustomFloatingActionButton.da
 import 'package:onestep_rezero/utils/onestepCustom/dialog/onestepCustomDialog.dart';
 import 'package:onestep_rezero/utils/onestepCustom/dialog/onestepCustomDialogNotCancel.dart';
 import 'package:rxdart/rxdart.dart';
+import 'dart:io' show Platform, exit;
 
 class ProductMain extends StatefulWidget {
   @override
@@ -75,9 +81,74 @@ class _ProductMainState extends State<ProductMain> {
     //             }
     //         });
 
+    // kakao
+    String kakaoAppKey = "88b99cb950dc222f10f369161182d008";
+    KakaoContext.clientId = kakaoAppKey;
+    initDynamicLinks();
+
     _scrollController.addListener(scrollListener);
     context.read(productMainService).fetchProducts();
     super.initState();
+  }
+
+  void initDynamicLinks() async {
+    // 앱이 active이거나 background 상태일때 들어온 링크를 알 수 있는 링크 콜백에 대한 리스너 onLink()
+    FirebaseDynamicLinks.instance.onLink(
+        onSuccess: (PendingDynamicLinkData dynamicLink) async {
+      final Uri deepLink = dynamicLink?.link;
+
+      print(deepLink.path);
+
+      if (deepLink != null) {
+        _handleDynamicLink(deepLink);
+      }
+    }, onError: (OnLinkErrorException e) async {
+      print('onLinkError');
+      print(e.message);
+    });
+
+    // 앱을 새로 런치한 링크를 알 수 있는 getInitialLink()
+    final PendingDynamicLinkData data =
+        await FirebaseDynamicLinks.instance.getInitialLink();
+    final Uri deepLink = data?.link;
+
+    print(deepLink);
+    if (deepLink != null) {
+      _handleDynamicLink(deepLink);
+    }
+  }
+
+  Future<void> _handleDynamicLink(Uri deepLink) async {
+    if (deepLink.path == "/" + currentUserModel.university) {
+      var uploadTime = deepLink.queryParameters['uploadTime'];
+      DocumentSnapshot snapshot = await FirebaseFirestore.instance
+          .collection('university')
+          .doc(currentUserModel.university)
+          .collection('product')
+          .doc(uploadTime)
+          .get();
+      print("deepLink.path = ${deepLink.path}");
+      print("currentUserModel.university = ${currentUserModel.university}");
+      Product product = Product.fromJson(snapshot.data(), snapshot.id);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ProductDetailBody(
+            product: product,
+          ),
+        ),
+      );
+    } else {
+      OnestepCustomDialogNotCancel.show(context,
+          title: '해당 학교가 다릅니다.',
+          confirmButtonText: '확인', confirmButtonOnPress: () {
+        if (Platform.isAndroid) {
+          SystemNavigator.pop();
+        } else if (Platform.isIOS) {
+          exit(0);
+        }
+      });
+    }
   }
 
   @override

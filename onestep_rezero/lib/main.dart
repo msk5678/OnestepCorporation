@@ -18,6 +18,7 @@ import 'package:onestep_rezero/utils/onestepCustom/dialog/onestepCustomDialogNot
 import 'package:onestep_rezero/utils/timeUtil.dart';
 import 'appmain/routeGenterator.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'dart:io' show Platform, exit;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // 비동기 함수 사용 처리
@@ -57,79 +58,6 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
-    // kakao
-    String kakaoAppKey = "88b99cb950dc222f10f369161182d008";
-    KakaoContext.clientId = kakaoAppKey;
-    initDynamicLinks();
-  }
-
-  void initDynamicLinks() async {
-    // 앱이 active이거나 background 상태일때 들어온 링크를 알 수 있는 링크 콜백에 대한 리스너 onLink()
-    FirebaseDynamicLinks.instance.onLink(
-        onSuccess: (PendingDynamicLinkData dynamicLink) async {
-      final Uri deepLink = dynamicLink?.link;
-
-      print(deepLink.path);
-
-      if (deepLink != null) {
-        _handleDynamicLink(deepLink);
-      }
-    }, onError: (OnLinkErrorException e) async {
-      print('onLinkError');
-      print(e.message);
-    });
-
-    // 앱을 새로 런치한 링크를 알 수 있는 getInitialLink()
-    final PendingDynamicLinkData data =
-        await FirebaseDynamicLinks.instance.getInitialLink();
-    final Uri deepLink = data?.link;
-
-    print(deepLink);
-    if (deepLink != null) {
-      _handleDynamicLink(deepLink);
-    }
-  }
-
-  Future<void> _handleDynamicLink(Uri deepLink) async {
-    if (deepLink.path == "/" + currentUserModel.university) {
-      print("학교 같음");
-      var uploadTime = deepLink.queryParameters['uploadTime'];
-      DocumentSnapshot snapshot = await FirebaseFirestore.instance
-          .collection('university')
-          .doc(currentUserModel.university)
-          .collection('product')
-          .doc(uploadTime)
-          .get();
-      print("deepLink.path = ${deepLink.path}");
-      print("currentUserModel.university = ${currentUserModel.university}");
-      Product product = Product.fromJson(snapshot.data(), snapshot.id);
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ProductDetailBody(
-            product: product,
-          ),
-        ),
-      );
-    } else {
-      OnestepCustomDialogNotCancel.show(context,
-          title: '학교 다름', confirmButtonText: '확인', confirmButtonOnPress: () {
-        Navigator.of(context).pop();
-      });
-    }
-
-    // switch (deepLink.path) {
-    //   case "/university":
-    //     print("uploadTime = $uploadTime");
-    //     Navigator.push(
-    //       context,
-    //       MaterialPageRoute(
-    //         builder: (context) => ProductDetailBody(
-    //           product: product,
-    //         ),
-    //       ),
-    //     );
-    // }
   }
 
   @override

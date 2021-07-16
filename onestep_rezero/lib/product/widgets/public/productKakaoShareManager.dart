@@ -55,6 +55,7 @@ class KakaoShareManager {
       uriPrefix: 'https://onestep.page.link',
       link: Uri.parse(
           'https://onestep.page.link/${currentUserModel.university}?uploadTime=${product.uploadTime.microsecondsSinceEpoch}'),
+      // 'https://onestep.page.link/university?uploadTime=${product.uploadTime.microsecondsSinceEpoch}'),
       androidParameters: AndroidParameters(
         packageName: 'com.example.onestep_rezero',
         minimumVersion: 1,
@@ -79,7 +80,7 @@ class KakaoShareManager {
     Content content = Content(title, imageLink, link, imageHeight: 300);
 
     FeedTemplate template =
-        FeedTemplate(content, buttons: [Button("자세히 보기", link)]);
+        FeedTemplate(content, buttons: [Button("앱에서 보기", link)]);
 
     return template;
   }
