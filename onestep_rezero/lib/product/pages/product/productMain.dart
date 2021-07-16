@@ -106,8 +106,8 @@ class _ProductMainState extends State<ProductMain> {
     }
   }
 
-  resetKMUCategory() {
-    FirebaseFirestore.instance.collection("category").doc("kmu").set({
+  resetUniversityCategory(String university) {
+    FirebaseFirestore.instance.collection("category").doc(university).set({
       "여성의류": {
         "image": 'assets/icons/category/dress.png',
         "detail": {
@@ -453,7 +453,7 @@ class _ProductMainState extends State<ProductMain> {
                   // 약관 page
                   // Navigator.of(context).push(
                   //     MaterialPageRoute(builder: (context) => TermsPage(user))),
-                  // resetKMUCategory(),
+                  // resetUniversityCategory("kmu"),
                 }),
       ],
     );
