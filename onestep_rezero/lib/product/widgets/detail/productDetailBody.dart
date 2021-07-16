@@ -219,7 +219,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
             actions: [
               IconButton(
                   onPressed: () {
-                    _shareModalBottomSheet(context, widget.product);
+                    // _shareModalBottomSheet(context, widget.product);
                   },
                   icon: _makeIcon(Icons.share)),
               if (currentUserModel.uid != widget.product.uid) popupMenuButton(),
@@ -322,9 +322,9 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
                           RawMaterialButton(
                             onPressed: () {
                               print("URL");
-                              // URL
-                              KakaoShareManager()
-                                  .getDynamicLink(widget.product);
+                              // URL 이거 말고 flutter_share: ^2.0.0 이거 사용하기 -> ios, android 세팅 다르니까 맥북 세팅 끝나면 진행
+                              // KakaoShareManager()
+                              //     .getDynamicLink(widget.product);
                             },
                             constraints:
                                 BoxConstraints(minHeight: 80, minWidth: 80),
@@ -332,8 +332,8 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
                             child: IconButton(
                               icon: Image.asset('images/url_icon.png'),
                               onPressed: () {
-                                KakaoShareManager()
-                                    .getDynamicLink(widget.product);
+                                // KakaoShareManager()
+                                //     .getDynamicLink(widget.product);
                               },
                             ),
                             shape: CircleBorder(),

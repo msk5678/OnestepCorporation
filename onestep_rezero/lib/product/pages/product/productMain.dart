@@ -139,6 +139,7 @@ class _ProductMainState extends State<ProductMain> {
         ),
       );
     } else {
+      // 이거 확인해봐야함
       OnestepCustomDialogNotCancel.show(context,
           title: '해당 학교가 다릅니다.',
           confirmButtonText: '확인', confirmButtonOnPress: () {
