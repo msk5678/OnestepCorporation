@@ -4,6 +4,7 @@
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:kakao_flutter_sdk/all.dart';
 import 'package:onestep_rezero/product/models/product.dart';
+import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 import 'package:share/share.dart';
 
 class KakaoShareManager {
@@ -53,7 +54,7 @@ class KakaoShareManager {
     final DynamicLinkParameters parameters = DynamicLinkParameters(
       uriPrefix: 'https://onestep.page.link',
       link: Uri.parse(
-          'https://onestep.page.link/university?uploadTime=${product.uploadTime.microsecondsSinceEpoch}'),
+          'https://onestep.page.link/${currentUserModel.university}?uploadTime=${product.uploadTime.microsecondsSinceEpoch}'),
       androidParameters: AndroidParameters(
         packageName: 'com.example.onestep_rezero',
         minimumVersion: 1,

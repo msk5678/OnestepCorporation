@@ -217,17 +217,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
             actions: [
               IconButton(
                   onPressed: () {
-                    // KakaoShareManager()
-                    //     .isKakaotalkInstalled()
-                    //     .then((installed) {
-                    //   if (installed) {
-                    //     print("kakao success");
-                    //     KakaoShareManager().shareMyCode(widget.product);
-                    //   } else {
-                    //     print("kakao error");
-                    //     // show alert
-                    //   }
-                    // });
+                    _shareModalBottomSheet(context, widget.product);
                   },
                   icon: _makeIcon(Icons.share)),
               if (currentUserModel.uid != widget.product.uid) popupMenuButton(),
@@ -236,6 +226,130 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
         },
       ),
     );
+  }
+
+  // share
+  void _shareModalBottomSheet(context, Product product) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return Container(
+            height: MediaQuery.of(context).size.height * .30,
+            child: Column(
+              children: [
+                Padding(
+                  padding: EdgeInsets.fromLTRB(
+                      0, MediaQuery.of(context).size.height / 25, 0, 0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // IconButton(
+                      //   icon: Icon(
+                      //     Icons.clear,
+                      //     size: 20,
+                      //   ),
+                      //   onPressed: () {
+                      //     Navigator.pop(context);
+                      //   },
+                      // ),
+                      Container(
+                          child: Text(
+                        "공유하기",
+                        style: TextStyle(fontSize: 15),
+                      )),
+                    ],
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
+                      child: Column(
+                        children: [
+                          RawMaterialButton(
+                            onPressed: () {
+                              KakaoShareManager()
+                                  .isKakaotalkInstalled()
+                                  .then((installed) {
+                                if (installed) {
+                                  print("kakao success");
+                                  KakaoShareManager()
+                                      .shareMyCode(widget.product);
+                                } else {
+                                  print("kakao error");
+                                  // show alert
+                                }
+                              });
+                            },
+                            constraints:
+                                BoxConstraints(minHeight: 80, minWidth: 80),
+                            fillColor: Colors.white,
+                            child: IconButton(
+                              icon: Image.asset('images/kakao_icon_2.png'),
+                              onPressed: () {
+                                KakaoShareManager()
+                                    .isKakaotalkInstalled()
+                                    .then((installed) {
+                                  if (installed) {
+                                    print("kakao success");
+                                    KakaoShareManager()
+                                        .shareMyCode(widget.product);
+                                  } else {
+                                    print("kakao error");
+                                    // show alert
+                                  }
+                                });
+                              },
+                            ),
+                            shape: CircleBorder(),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(0,
+                                MediaQuery.of(context).size.height / 50, 0, 0),
+                            child:
+                                Center(child: Container(child: Text("카카오톡"))),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
+                      child: Column(
+                        children: [
+                          RawMaterialButton(
+                            onPressed: () {
+                              print("URL");
+                              // URL
+                              KakaoShareManager()
+                                  .getDynamicLink(widget.product);
+                            },
+                            constraints:
+                                BoxConstraints(minHeight: 80, minWidth: 80),
+                            fillColor: Colors.white,
+                            child: IconButton(
+                              icon: Image.asset('images/url_icon.png'),
+                              onPressed: () {
+                                KakaoShareManager()
+                                    .getDynamicLink(widget.product);
+                              },
+                            ),
+                            shape: CircleBorder(),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(0,
+                                MediaQuery.of(context).size.height / 50, 0, 0),
+                            child: Center(child: Container(child: Text("URL"))),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
+          );
+        });
   }
 
   Widget _productState() {

@@ -15,6 +15,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 import 'package:onestep_rezero/utils/onestepCustom/CustomFloatingActionButton.dart';
 import 'package:onestep_rezero/utils/onestepCustom/dialog/onestepCustomDialog.dart';
+import 'package:onestep_rezero/utils/onestepCustom/dialog/onestepCustomDialogNotCancel.dart';
 import 'package:rxdart/rxdart.dart';
 
 class ProductMain extends StatefulWidget {
@@ -31,6 +32,7 @@ void _testShowDialog(BuildContext context) {
     confirmButtonText: '확인',
     cancleButtonText: '취소',
     confirmButtonOnPress: () {
+      // pushCheck value bool change
       // FirebaseFirestore.instance
       //     .collection('user')
       //     .doc(googleSignIn.currentUser.id)
@@ -62,16 +64,17 @@ class _ProductMainState extends State<ProductMain> {
 
   @override
   void initState() {
-    FirebaseFirestore.instance
-        .collection('user')
-        .doc(currentUserModel.uid)
-        .get()
-        .then((value) => {
-              if (value.data()['pushCheck'] == 0)
-                {
-                  _testShowDialog(context),
-                }
-            });
+    // FirebaseFirestore.instance
+    //     .collection('user')
+    //     .doc(currentUserModel.uid)
+    //     .get()
+    //     .then((value) => {
+    //           if (value.data()['pushCheck'] == 0)
+    //             {
+    //               _testShowDialog(context),
+    //             }
+    //         });
+
     _scrollController.addListener(scrollListener);
     context.read(productMainService).fetchProducts();
     super.initState();

@@ -16,6 +16,7 @@ import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 import 'package:onestep_rezero/signUp/pages/signUpWidget.dart';
 import 'package:kakao_flutter_sdk/link.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:onestep_rezero/utils/onestepCustom/dialog/onestepCustomDialogNotCancel.dart';
 import 'package:onestep_rezero/utils/timeUtil.dart';
 import 'appmain/routeGenterator.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -96,23 +97,41 @@ class _MainPageState extends State<MainPage> {
     var uploadTime = deepLink.queryParameters['uploadTime'];
     DocumentSnapshot snapshot = await FirebaseFirestore.instance
         .collection('university')
-        .doc('kmu')
+        .doc(currentUserModel.university)
         .collection('product')
         .doc(uploadTime)
         .get();
+    print("deepLink.path = ${deepLink.path}");
+    print("currentUserModel.university = ${currentUserModel.university}");
     Product product = Product.fromJson(snapshot.data(), snapshot.id);
-    switch (deepLink.path) {
-      case "/university":
-        print("uploadTime = $uploadTime");
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ProductDetailBody(
-              product: product,
-            ),
+    if (deepLink.path == "/" + currentUserModel.university) {
+      print("학교 같음");
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ProductDetailBody(
+            product: product,
           ),
-        );
+        ),
+      );
+    } else {
+      OnestepCustomDialogNotCancel.show(context,
+          title: '학교 다름', confirmButtonText: '확인', confirmButtonOnPress: () {
+        Navigator.of(context).pop();
+      });
     }
+    // switch (deepLink.path) {
+    //   case "/university":
+    //     print("uploadTime = $uploadTime");
+    //     Navigator.push(
+    //       context,
+    //       MaterialPageRoute(
+    //         builder: (context) => ProductDetailBody(
+    //           product: product,
+    //         ),
+    //       ),
+    //     );
+    // }
   }
 
   @override
