@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onestep_rezero/favorite/widgets/favoriteMainBody.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import 'package:onestep_rezero/utils/onestepCustom/CustomFloatingActionButton.dart';
+import 'package:rxdart/rxdart.dart';
 
 class FavoriteMain extends StatefulWidget {
   FavoriteMain({Key key}) : super(key: key);
@@ -14,7 +16,7 @@ class FavoriteMain extends StatefulWidget {
 
 class _FavoriteMainState extends State<FavoriteMain> {
   final ScrollController _scrollController = ScrollController();
-  final StreamController<bool> _streamController = StreamController<bool>();
+  final StreamController<bool> _scrollToTopstreamController = BehaviorSubject();
   bool _isVisibility = false;
 
   @override
@@ -28,7 +30,7 @@ class _FavoriteMainState extends State<FavoriteMain> {
   @override
   void dispose() {
     _scrollController.dispose();
-    _streamController.close();
+    _scrollToTopstreamController.close();
     super.dispose();
   }
 
@@ -41,44 +43,14 @@ class _FavoriteMainState extends State<FavoriteMain> {
     if (_scrollController.offset >= 600) {
       if (!_isVisibility) {
         _isVisibility = true;
-        _streamController.sink.add(true);
+        _scrollToTopstreamController.sink.add(true);
       }
     } else if (_scrollController.offset < 600) {
       if (_isVisibility) {
         _isVisibility = false;
-        _streamController.sink.add(false);
+        _scrollToTopstreamController.sink.add(false);
       }
     }
-  }
-
-  Widget floatingButton() {
-    return StreamBuilder<bool>(
-      stream: _streamController.stream,
-      initialData: false,
-      builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-        return Visibility(
-          visible: snapshot.data,
-          child: Container(
-            height: 40.0.h,
-            width: 40.0.w,
-            child: FittedBox(
-              child: FloatingActionButton(
-                heroTag: "favoriteMainFloatActionButton",
-                onPressed: () {
-                  _scrollController.position
-                      .moveTo(0.5, duration: Duration(milliseconds: 200));
-                },
-                child:
-                    Icon(Icons.keyboard_arrow_up_rounded, color: Colors.black),
-                backgroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(100.0))),
-              ),
-            ),
-          ),
-        );
-      },
-    );
   }
 
   @override
@@ -130,7 +102,9 @@ class _FavoriteMainState extends State<FavoriteMain> {
           ],
         ),
       ),
-      floatingActionButton: floatingButton(),
+      floatingActionButton: CustomFloatingActionButton.scrollToTopButton(
+          scrollController: _scrollController,
+          streamController: _scrollToTopstreamController),
     );
   }
 }

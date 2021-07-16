@@ -24,14 +24,14 @@ import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class ProductAdd extends StatefulWidget {
-  const ProductAdd({Key key}) : super(key: key);
+class ProductAddMain extends StatefulWidget {
+  const ProductAddMain({Key key}) : super(key: key);
 
   @override
-  _ProductAddState createState() => _ProductAddState();
+  _ProductAddMainState createState() => _ProductAddMainState();
 }
 
-class _ProductAddState extends State<ProductAdd> {
+class _ProductAddMainState extends State<ProductAddMain> {
   List<AssetEntity> entity = [];
 
   final _titleTextEditingController = TextEditingController();
@@ -194,63 +194,62 @@ class _ProductAddState extends State<ProductAdd> {
     } else if (_explainTextEditingController.text.trim() == "") {
       FloatingSnackBar.show(context, "설명을 입력해주세요.");
     } else {
-      OnestepCustomDialog.show(
-        context,
-        title: "상품 등록을 하시겠습니까?",
-        confirmButtonText: "확인",
-        cancleButtonText: "취소",
-        confirmButtonOnPress: () async {
-          List _imgUriarr = [];
+      OnestepCustomDialog.show(context,
+          title: "상품 등록을 하시겠습니까?",
+          confirmButtonText: "확인",
+          cancleButtonText: "취소", confirmButtonOnPress: () async {
+        List _imgUriarr = [];
 
-          for (var image in entity) {
-            Reference storageReference = FirebaseStorage.instance
-                .ref()
-                .child("productimage/${randomAlphaNumeric(15)}");
+        for (var image in entity) {
+          Reference storageReference = FirebaseStorage.instance
+              .ref()
+              .child("productimage/${randomAlphaNumeric(15)}");
 
-            Uint8List uint8list =
-                await ImageCompress.assetCompressFile(await image.originFile);
+          Uint8List uint8list =
+              await ImageCompress.assetCompressFile(await image.originFile);
 
-            UploadTask storageUploadTask = storageReference.putData(uint8list);
-            await storageUploadTask.whenComplete(() async {
-              String downloadURL = await storageReference.getDownloadURL();
-              _imgUriarr.add(downloadURL);
-            });
-          }
-
-          int time = DateTime.now().microsecondsSinceEpoch;
-          FirebaseFirestore.instance
-              .collection("university")
-              .doc(currentUserModel.university)
-              .collection("product")
-              .doc(time.toString())
-              .set({
-            'uid': currentUserModel.uid,
-            'imagesUrl': _imgUriarr,
-            'title': _titleTextEditingController.text,
-            'category': _categoryTextEditingController.text,
-            'detailCategory': _detailCategoryTextEditingController.text,
-            'price': _priceTextEditingController.text,
-            'explain': _explainTextEditingController.text,
-            'favoriteUserList': {},
-            'chatUserList': [],
-            'trading': false,
-            'completed': false,
-            'hold': false,
-            'deleted': false,
-            'reported': false,
-            'reportCount': 0,
-            'views': {},
-            'uploadTime': time,
-            'updateTime': time,
-            'bumpTime': time,
-          }).whenComplete(() {
-            FloatingSnackBar.show(context, "상품 등록이 완료되었습니다.");
-            context.read(productMainService).fetchProducts();
-            Navigator.pop(context);
-            Navigator.pop(context);
+          UploadTask storageUploadTask = storageReference.putData(uint8list);
+          await storageUploadTask.whenComplete(() async {
+            String downloadURL = await storageReference.getDownloadURL();
+            _imgUriarr.add(downloadURL);
           });
-        },
-      );
+        }
+
+        int time = DateTime.now().microsecondsSinceEpoch;
+        FirebaseFirestore.instance
+            .collection("university")
+            .doc(currentUserModel.university)
+            .collection("product")
+            .doc(time.toString())
+            .set({
+          'uid': currentUserModel.uid,
+          'imagesUrl': _imgUriarr,
+          'title': _titleTextEditingController.text,
+          'category': _categoryTextEditingController.text,
+          'detailCategory': _detailCategoryTextEditingController.text,
+          'price': _priceTextEditingController.text,
+          'explain': _explainTextEditingController.text,
+          'favoriteUserList': {},
+          'chatUserList': [],
+          'trading': false,
+          'completed': false,
+          'hold': false,
+          'deleted': false,
+          'reported': false,
+          'reportCount': 0,
+          'views': {},
+          'uploadTime': time,
+          'updateTime': time,
+          'bumpTime': time,
+        }).whenComplete(() {
+          FloatingSnackBar.show(context, "상품 등록이 완료되었습니다.");
+          context.read(productMainService).fetchProducts();
+          Navigator.pop(context);
+          Navigator.pop(context);
+        });
+      }, cancleButtonOnPress: () {
+        Navigator.pop(context);
+      });
     }
   }
 
@@ -292,7 +291,7 @@ class _ProductAddState extends State<ProductAdd> {
       bottomNavigationBar: InkWell(
         onTap: () => uploadProduct(),
         child: Container(
-          height: 60.h,
+          height: 50.h,
           color: OnestepColors().mainColor,
           child: Center(
             child: Text(

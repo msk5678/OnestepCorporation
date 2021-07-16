@@ -1,9 +1,7 @@
 // kakao test
 // https://eunjin3786.tistory.com/292 참고
 // ios 따로 추가해야함
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
-import 'package:flutter/material.dart';
 import 'package:kakao_flutter_sdk/all.dart';
 import 'package:onestep_rezero/product/models/product.dart';
 import 'package:share/share.dart';
@@ -32,10 +30,8 @@ class KakaoShareManager {
 
   void shareMyCode(Product product) async {
     try {
-      var dynamicLink = await _getDynamicLink(product.imagesUrl[0]);
-      print("dynamicLink = $dynamicLink");
+      var dynamicLink = await _getDynamicLink(product.imagesUrl[0], product);
       var template = _getTemplate(dynamicLink, product);
-      print("template = $template");
       var uri = await LinkClient.instance.defaultWithTalk(template);
       await LinkClient.instance.launchKakaoTalk(uri);
     } catch (error) {
@@ -45,7 +41,7 @@ class KakaoShareManager {
 
   void getDynamicLink(Product product) async {
     try {
-      var dynamicLink = await _getDynamicLink(product.imagesUrl[0]);
+      var dynamicLink = await _getDynamicLink(product.imagesUrl[0], product);
       print("dynamicLink = $dynamicLink");
       Share.share("$dynamicLink");
     } catch (error) {
@@ -53,11 +49,11 @@ class KakaoShareManager {
     }
   }
 
-  Future<Uri> _getDynamicLink(imag) async {
+  Future<Uri> _getDynamicLink(imag, Product product) async {
     final DynamicLinkParameters parameters = DynamicLinkParameters(
       uriPrefix: 'https://onestep.page.link',
-      // link: Uri.parse('https://onestep.page.link/join_onestep?code=$docId'),
-      link: Uri.parse('https://onestep.page.link/join_family?code=test'),
+      link: Uri.parse(
+          'https://onestep.page.link/university?uploadTime=${product.uploadTime.microsecondsSinceEpoch}'),
       androidParameters: AndroidParameters(
         packageName: 'com.example.onestep_rezero',
         minimumVersion: 1,
@@ -74,14 +70,8 @@ class KakaoShareManager {
   }
 
   DefaultTemplate _getTemplate(Uri dynamicLink, Product product) {
-    // title에 내용, image 넘겨받아야함
     String title = product.title;
-    print("여기 확인1");
     Uri imageLink = Uri.parse(product.imagesUrl[0]);
-    print("여기 확인2 ${imageLink}");
-    // Uri imageLink = Uri.parse(
-    //     "http://mud-kage.kakao.co.kr/dn/Q2iNx/btqgeRgV54P/VLdBs9cvyn8BJXB3o7N8UK/kakaolink40_original.png");
-    // Uri imageLink = Uri.parse("http://mud-kage.kakao.co.kr/dn/Q2iNx/btqgeRgV54P/VLdBs9cvyn8BJXB3o7N8UK/kakaolink40_original.png");
 
     Link link = Link(mobileWebUrl: dynamicLink);
 

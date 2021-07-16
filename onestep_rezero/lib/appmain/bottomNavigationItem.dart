@@ -3,7 +3,7 @@ import 'package:onestep_rezero/board/boardMain.dart';
 import 'package:onestep_rezero/chat/productchat/controller/productChatMainController.dart';
 import 'package:onestep_rezero/myinfo/pages/myinfoMain.dart';
 import 'package:onestep_rezero/chat/page/chatMain.dart';
-import 'package:onestep_rezero/product/pages/product/productAdd.dart';
+import 'package:onestep_rezero/product/pages/product/productAddMain.dart';
 import 'package:onestep_rezero/product/pages/product/productMain.dart';
 
 class BottomNavigationItem {
@@ -29,7 +29,7 @@ class BottomNavigationItem {
           title: "게시판",
         ),
         BottomNavigationItem(
-          page: ProductAdd(),
+          page: ProductAddMain(),
           icon: Icon(Icons.add_rounded),
           title: "상품 등록",
         ),

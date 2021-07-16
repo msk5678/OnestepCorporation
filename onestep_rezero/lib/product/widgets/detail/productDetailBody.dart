@@ -8,8 +8,11 @@ import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/favorite/animation/favoriteAnimation.dart';
 import 'package:onestep_rezero/favorite/utils/favoriteFirebaseApi.dart';
 import 'package:onestep_rezero/favorite/widgets/favoriteMainBody.dart';
-import 'package:onestep_rezero/myinfo/pages/mySaleProductMain.dart';
-import 'package:onestep_rezero/myinfo/widgets/mySaleProduct/mySaleProductBody.dart';
+import 'package:onestep_rezero/myinfo/widgets/myProduct/myCompletedProductBody.dart';
+import 'package:onestep_rezero/myinfo/widgets/myProduct/myHoldProductBody.dart';
+import 'package:onestep_rezero/myinfo/widgets/myProduct/mySaleProductBody.dart';
+import 'package:onestep_rezero/myinfo/widgets/myProduct/myTradingProductBody.dart';
+import 'package:onestep_rezero/product/pages/userProfile.dart';
 import 'package:onestep_rezero/product/widgets/public/productKakaoShareManager.dart';
 import 'package:onestep_rezero/report/pages/Deal/productReport/reportProductPage.dart';
 import 'package:onestep_rezero/signIn/loggedInWidget.dart';
@@ -27,7 +30,6 @@ import 'package:onestep_rezero/utils/onestepCustom/dialog/onestepCustomDialog.da
 import 'package:onestep_rezero/utils/timeUtil.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:kakao_flutter_sdk/all.dart';
 
 class ProductDetailBody extends StatefulWidget {
   final Product product;
@@ -217,20 +219,17 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
             actions: [
               IconButton(
                   onPressed: () {
-                    print("@@@@@@@@@@@@@ ${ModalRoute.of(context).settings}");
-                    // // print("kakao 1");
-                    KakaoShareManager()
-                        .isKakaotalkInstalled()
-                        .then((installed) {
-                      if (installed) {
-                        print("kakao success");
-                        KakaoShareManager().shareMyCode(widget.product);
-                      } else {
-                        print("kakao error");
-                        // show alert
-                      }
-                    });
-                    // print("widget.product ${widget.product.imagesUrl}");
+                    // KakaoShareManager()
+                    //     .isKakaotalkInstalled()
+                    //     .then((installed) {
+                    //   if (installed) {
+                    //     print("kakao success");
+                    //     KakaoShareManager().shareMyCode(widget.product);
+                    //   } else {
+                    //     print("kakao error");
+                    //     // show alert
+                    //   }
+                    // });
                   },
                   icon: _makeIcon(Icons.share)),
               if (currentUserModel.uid != widget.product.uid) popupMenuButton(),
@@ -496,30 +495,38 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
           case ConnectionState.waiting:
             return Text("");
           default:
-            return Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Row(
-                children: <Widget>[
-                  CachedNetworkImage(
-                    imageUrl: snapshot.data['imageUrl'],
-                    imageBuilder: (context, imageProvider) => Container(
-                      width: 50.0.w,
-                      height: 50.0.h,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                            image: imageProvider, fit: BoxFit.cover),
+            return GestureDetector(
+              onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) =>
+                        UserProfileMain(userData: snapshot.data)));
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Row(
+                  children: <Widget>[
+                    CachedNetworkImage(
+                      imageUrl: snapshot.data['imageUrl'],
+                      imageBuilder: (context, imageProvider) => Container(
+                        width: 50.0.w,
+                        height: 50.0.h,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                              image: imageProvider, fit: BoxFit.cover),
+                        ),
                       ),
+                      placeholder: (context, url) =>
+                          CircularProgressIndicator(),
+                      errorWidget: (context, url, error) => Icon(Icons.error),
                     ),
-                    placeholder: (context, url) => CircularProgressIndicator(),
-                    errorWidget: (context, url, error) => Icon(Icons.error),
-                  ),
-                  SizedBox(width: 10.w),
-                  Text(
-                    snapshot.data['nickName'],
-                    style: TextStyle(fontWeight: FontWeight.w500),
-                  ),
-                ],
+                    SizedBox(width: 10.w),
+                    Text(
+                      snapshot.data['nickName'],
+                      style: TextStyle(fontWeight: FontWeight.w500),
+                    ),
+                  ],
+                ),
               ),
             );
         }
@@ -579,12 +586,12 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
                           ),
                           GestureDetector(
                             onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => MySaleProductMain(),
-                                ),
-                              );
+                              // Navigator.push(
+                              //   context,
+                              //   MaterialPageRoute(
+                              //     builder: (context) => MyProductMain(),
+                              //   ),
+                              // );
                             },
                             child: Text(
                               "모두보기",
@@ -662,9 +669,11 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
     bool completed = 'completed' == type;
 
     int value = 0;
-    if (trading) value = 1;
-    if (hold) value = 2;
-    if (completed) value = 3;
+    if (trading)
+      value = 1;
+    else if (hold)
+      value = 2;
+    else if (completed) value = 3;
 
     FirebaseFirestore.instance
         .collection("university")
@@ -684,17 +693,36 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
           context.read(productMainService).updateState(
               widget.product.firestoreid, trading, hold, completed);
           break;
-        case "Sale":
-          print("@@@@@@@@@@ switch sale");
-          context.read(mySaleProductProvider).updateState(
-              widget.product.firestoreid, trading, hold, completed);
+        case "MyProduct":
+          switch (value) {
+            case 0:
+              context.read(myTradingProductProvider).fetchProducts();
+              context.read(myCompletedProductProvider).fetchProducts();
+              context.read(myHoldProductProvider).fetchProducts();
+              break;
+            case 1:
+              context.read(mySaleProductProvider).fetchProducts();
+              context.read(myCompletedProductProvider).fetchProducts();
+              context.read(myHoldProductProvider).fetchProducts();
+              break;
+            case 2:
+              context.read(mySaleProductProvider).fetchProducts();
+              context.read(myTradingProductProvider).fetchProducts();
+              context.read(myHoldProductProvider).fetchProducts();
+              break;
+            case 3:
+              context.read(mySaleProductProvider).fetchProducts();
+              context.read(myTradingProductProvider).fetchProducts();
+              context.read(myCompletedProductProvider).fetchProducts();
+              break;
+          }
           break;
         case "Favorite":
           context.read(favoriteMainProvider).updateState(
               widget.product.firestoreid, trading, hold, completed);
           break;
 
-        case "Search":
+        default:
           break;
       }
 
@@ -931,23 +959,22 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
                     ),
                     GestureDetector(
                       onTap: () {
-                        OnestepCustomDialog.show(
-                          context,
-                          title: '상품을 삭제하시겠습니까?',
-                          description: '삭제한 상품은 복구할 수 없습니다.',
-                          cancleButtonText: '취소',
-                          confirmButtonText: '삭제',
-                          confirmButtonOnPress: () {
-                            FirebaseFirestore.instance
-                                .collection("university")
-                                .doc(currentUserModel.university)
-                                .collection("product")
-                                .doc(widget.product.firestoreid)
-                                .update({'deleted': true});
+                        OnestepCustomDialog.show(context,
+                            title: '상품을 삭제하시겠습니까?',
+                            description: '삭제한 상품은 복구할 수 없습니다.',
+                            cancleButtonText: '취소',
+                            confirmButtonText: '삭제', confirmButtonOnPress: () {
+                          FirebaseFirestore.instance
+                              .collection("university")
+                              .doc(currentUserModel.university)
+                              .collection("product")
+                              .doc(widget.product.firestoreid)
+                              .update({'deleted': true});
 
-                            Navigator.pop(context);
-                          },
-                        );
+                          Navigator.pop(context);
+                        }, cancleButtonOnPress: () {
+                          Navigator.pop(context);
+                        });
                       },
                       child: Row(
                           children: [Icon(Icons.delete_outline), Text("상품삭제")]),
