@@ -732,13 +732,15 @@ class _PostContentState extends State<PostContent>
     //If PostWritter Or Already wrote Comment in post
     bool isAlreadyWroteComment = (postData.uid == currentUid ||
         wroteUserMapList.containsKey(currentUid));
-
+    bool isPostWritter = postData.uid == currentUid;
     if (comment != "") if (!commentFlag) {
       textEditingControllerComment.clear();
       loadingDialogTipDialog(
           CommentData.toRealtimeDataWithPostData(postData).toRealtimeDatabase(
-              comment.trimRight(), currentUid, isAlreadyWroteComment),
-          thenFunction: (value) {
+              comment.trimRight(),
+              currentUid,
+              isAlreadyWroteComment,
+              isPostWritter), thenFunction: (value) {
         // _panelOpen(false);
         context
             .read(commentProvider)
@@ -752,7 +754,7 @@ class _PostContentState extends State<PostContent>
         textEditingControllerComment.clear();
         loadingDialogTipDialog(
             commentData.addchildComment(
-                comment, currentUid, isAlreadyWroteComment),
+                comment, currentUid, isAlreadyWroteComment, isPostWritter),
             thenFunction: (value) {
           // _panelOpen(false);
           context
@@ -768,8 +770,12 @@ class _PostContentState extends State<PostContent>
         textEditingControllerComment.clear();
         loadingDialogTipDialog(
             CommentData.toRealtimeDataWithPostData(postData)
-                .addChildchildComment(comment, commentData.parentCommentId,
-                    currentUid, isAlreadyWroteComment), thenFunction: (value) {
+                .addChildchildComment(
+                    comment,
+                    commentData.parentCommentId,
+                    currentUid,
+                    isAlreadyWroteComment,
+                    isPostWritter), thenFunction: (value) {
           // _panelOpen(false);
           context
               .read(commentProvider)
