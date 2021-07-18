@@ -10,9 +10,11 @@ class SearchFirebaseApi {
   static Future<List<AlgoliaObjectSnapshot>> getSearchProducts(
       int page, int limit, String search,
       {int startAfter}) async {
+    print(search);
     AlgoliaQuery query = algolia.instance
         .index('university_' + currentUserModel.university + '_product')
         .query(search)
+        .filters('NOT uid:${currentUserModel.uid}')
         .setHitsPerPage(limit);
 
     AlgoliaQuerySnapshot querySnap;
@@ -23,6 +25,9 @@ class SearchFirebaseApi {
     }
 
     List<AlgoliaObjectSnapshot> results = querySnap.hits;
+    if (results.length != 0)
+      print(currentUserModel.uid == results.first.data['uid']);
+
     return results;
   }
 }

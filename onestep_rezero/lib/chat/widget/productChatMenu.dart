@@ -86,8 +86,6 @@ class ProductChatMenu {
         Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => ReportUserPage(chatId, friendId)));
 
-        Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => ReportUserPage(chatId, friendId)));
         // OnestepCustomDialog.show(
         //   context,
         //   title: '신고하기',

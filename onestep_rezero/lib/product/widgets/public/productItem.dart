@@ -157,6 +157,7 @@ class _ProductItemState extends State<ProductItem> {
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
+            settings: RouteSettings(name: ModalRoute.of(context).settings.name),
             builder: (context) =>
                 ProductDetail(docId: widget.product.firestoreid),
           ),

@@ -8,10 +8,10 @@ import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/report/pages/Deal/cocommentReport/reportCocommentPage.dart';
 import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 import 'package:onestep_rezero/utils/timeUtil.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ChildComment extends StatelessWidget implements Comment {
   final postWriterUID;
-  final openSlidingPanelCallback;
   final coCommentCallback;
   final childCommentList;
   final commentMap;
@@ -20,10 +20,11 @@ class ChildComment extends StatelessWidget implements Comment {
   final postId;
   final SlidableController slidableController;
   final showDialogCallback;
+  final commentNameCallback;
 
   ChildComment(
       {this.coCommentCallback,
-      this.openSlidingPanelCallback,
+      this.commentNameCallback,
       this.postWriterUID,
       this.commentMap,
       this.childCommentList,
@@ -48,8 +49,8 @@ class ChildComment extends StatelessWidget implements Comment {
     bool isEmpty = childCommentList.length == 0 ? true : false;
     if (!isEmpty)
       return Container(
-          margin: EdgeInsets.only(left: 10),
-          padding: EdgeInsets.only(left: 5),
+          margin: EdgeInsets.only(left: 10.w),
+          padding: EdgeInsets.only(left: 5.w),
           child: animationLimiterListView(
               childCommentList, deviceWidth, deviceHeight));
     else
@@ -80,22 +81,21 @@ class ChildComment extends StatelessWidget implements Comment {
         itemBuilder: (BuildContext context, int index) {
           CommentData currentIndexCommentData = comment[index];
           currentIndexCommentData
-            ..userName = commentName(
-                currentIndexCommentData.uid, postWriterUID, commentMap);
+            ..userName = commentNickName(currentIndexCommentData.uid);
           bool isDeleted = comment[index].deleted;
           return AnimationConfiguration.staggeredList(
             position: index,
             duration: const Duration(milliseconds: 0),
             child: SlideAnimation(
-              verticalOffset: 50.0,
+              verticalOffset: 50.0.h,
               child: FadeInAnimation(
                 child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 15),
+                  padding: EdgeInsets.symmetric(vertical: 15.w),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(Icons.subdirectory_arrow_right, size: 10),
+                      Icon(Icons.subdirectory_arrow_right, size: 10.sp),
                       Expanded(
                         child: !isDeleted
                             ? commentListSwipeMenu(
@@ -147,7 +147,9 @@ class ChildComment extends StatelessWidget implements Comment {
       secondaryActions: <Widget>[
         IconSlideAction(
           caption: '댓글달기',
-          color: Colors.black45,
+          foregroundColor: OnestepColors().mainColor,
+          closeOnTap: true,
+          // color: Colors.black45,
           icon: Icons.add_comment,
           onTap: () {
             coCommentCallback(comment..isUnderComment = true);
@@ -155,8 +157,10 @@ class ChildComment extends StatelessWidget implements Comment {
         ),
         isWritter
             ? IconSlideAction(
+                closeOnTap: true,
+                foregroundColor: Colors.red,
                 caption: '삭제',
-                color: Colors.red,
+                // color: Colors.red,
                 icon: Icons.delete,
                 onTap: () async {
                   bool result = await comment.dismissComment() ?? false;
@@ -170,28 +174,11 @@ class ChildComment extends StatelessWidget implements Comment {
                 onTap: () =>
                     reportedEventMethod(context, currentLogInUid, comment),
                 caption: '신고하기',
-                color: Colors.red,
+                foregroundColor: Colors.redAccent,
                 icon: Icons.flag,
               ),
       ],
     );
-  }
-
-  @override
-  commentName(commentUID, postWriterUid, commentList) {
-    Map<String, dynamic> commentUserMap = commentList ?? {};
-    List commentUserList = commentUserMap.keys.toList();
-    if (commentUID.toString() == postWriterUid) {
-      return "작성자";
-    } else {
-      for (int i = 0; i < commentUserList.length; i++) {
-        if (commentUserList[i].toString() == commentUID)
-          return "익명 ${i + 1}";
-        else
-          return "익명 ${commentUserList.length + 1}";
-      }
-    }
-    return "";
   }
 
   @override
@@ -211,7 +198,7 @@ class ChildComment extends StatelessWidget implements Comment {
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           deletedTimeWithDay
               ? GestureDetector(
-                  onLongPress: () => showDialogCallback(comment),
+                  // onLongPress: () => showDialogCallback(comment),
                   child: Container(
                     width: deviceWidth,
                     child: Text(
@@ -228,7 +215,7 @@ class ChildComment extends StatelessWidget implements Comment {
             alignment: Alignment.centerRight,
             child: Text(
               "${TimeUtil.timeAgo(date: uploadTime)}",
-              style: TextStyle(color: Colors.grey[700], fontSize: 10),
+              style: TextStyle(color: Colors.grey[700], fontSize: 10.sp),
             ),
           )
         ]));
@@ -258,14 +245,14 @@ class ChildComment extends StatelessWidget implements Comment {
         ),
         Container(
           padding: EdgeInsets.only(
-            left: 10,
-            top: 10,
+            left: 10.w,
+            top: 10.h,
           ),
           alignment: Alignment.centerLeft,
           child: Text(comment.textContent ?? "NO"),
         ),
         Container(
-          margin: EdgeInsets.only(top: 10),
+          margin: EdgeInsets.only(top: 10.h),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -274,7 +261,7 @@ class ChildComment extends StatelessWidget implements Comment {
                   Row(
                     children: [
                       Container(
-                        padding: EdgeInsets.only(left: 10),
+                        padding: EdgeInsets.only(left: 10.w),
                         alignment: Alignment.centerRight,
                         child: GestureDetector(
                           onTap: () =>
@@ -282,13 +269,13 @@ class ChildComment extends StatelessWidget implements Comment {
                           child: Text(
                             "댓글달기",
                             style: TextStyle(
-                                color: Colors.grey[700], fontSize: 10),
+                                color: Colors.grey[700], fontSize: 10.sp),
                           ),
                         ),
                       ),
                       comment.uid == uid
                           ? Container(
-                              padding: EdgeInsets.only(left: 10),
+                              padding: EdgeInsets.only(left: 10.w),
                               alignment: Alignment.centerRight,
                               child: GestureDetector(
                                 onTap: () async {
@@ -302,7 +289,7 @@ class ChildComment extends StatelessWidget implements Comment {
                                 child: Text(
                                   "삭제",
                                   style: TextStyle(
-                                      color: Colors.redAccent, fontSize: 10),
+                                      color: Colors.redAccent, fontSize: 10.sp),
                                 ),
                               ),
                             )
@@ -327,7 +314,7 @@ class ChildComment extends StatelessWidget implements Comment {
                 alignment: Alignment.centerRight,
                 child: Text(
                   "${TimeUtil.timeAgo(date: uploadTime)}",
-                  style: TextStyle(color: Colors.grey[700], fontSize: 10),
+                  style: TextStyle(color: Colors.grey[700], fontSize: 10.sp),
                 ),
               ),
             ],
@@ -336,6 +323,9 @@ class ChildComment extends StatelessWidget implements Comment {
       ],
     );
   }
+
+  @override
+  commentNickName(String uid) => commentNameCallback(uid);
 
   reportedEventMethod(
           BuildContext context, String currentUid, CommentData commentData) =>

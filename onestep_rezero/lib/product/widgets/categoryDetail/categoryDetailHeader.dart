@@ -1,9 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 import 'package:onestep_rezero/product/widgets/categoryDetail/categoryDetailBody.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

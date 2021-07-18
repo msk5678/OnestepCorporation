@@ -220,7 +220,7 @@ class JoinBody extends ConsumerWidget {
                                 context,
                                 title: '한발자국 회원가입을 환영합니다!',
                                 description:
-                                    '한발자국을 이용하기 위해서는 \n 학교이메일 인증이 필수입니다. \n모든 서비스는 대학교인증을 하고 난 뒤에 \n 이용이 가능합니다.',
+                                    '한발자국을 이용하기 위해서는 학교이메일 인증이 필수입니다. 모든 서비스는 대학교인증을 하고 난 뒤에 이용이 가능합니다.',
                                 confirmButtonText: '확인',
                                 confirmButtonOnPress: () {
                                   Navigator.of(context).push(MaterialPageRoute(

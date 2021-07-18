@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CustomCommentTextField extends StatefulWidget {
   final String hintText;
@@ -32,42 +33,40 @@ class SearchTextFieldState extends State<CustomCommentTextField> {
               : Colors.grey,
         ),
         new SizedBox(
-          width: 10.0,
+          width: 10.0.w,
         ),
         new Expanded(
-          child: new Stack(
-              alignment: const Alignment(1.0, 1.0),
-              children: <Widget>[
-                new TextField(
-                  minLines: 1,
-                  maxLines: 4,
-                  decoration: InputDecoration(
-                    hintText: hintText ?? "",
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: OnestepColors().mainColor),
-                    ),
-                  ),
-                  onChanged: (text) {
-                    setState(() {});
-                  },
-                  controller: _textController,
+          child: new Stack(alignment: Alignment(1.0, 1.0), children: <Widget>[
+            new TextField(
+              minLines: 1,
+              maxLines: 4,
+              decoration: InputDecoration(
+                hintText: hintText ?? "",
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: OnestepColors().mainColor),
                 ),
-                _textController.text.length > 0
-                    ? new IconButton(
-                        icon: new Icon(
-                          Icons.send_rounded,
-                          color: OnestepColors().mainColor,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            callback(_textController.text);
-                            _textController.clear();
-                          });
-                        })
-                    : new Container(
-                        height: 0.0,
-                      )
-              ]),
+              ),
+              onChanged: (text) {
+                setState(() {});
+              },
+              controller: _textController,
+            ),
+            _textController.text.length > 0
+                ? new IconButton(
+                    icon: new Icon(
+                      Icons.send_rounded,
+                      color: OnestepColors().mainColor,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        callback(_textController.text);
+                        _textController.clear();
+                      });
+                    })
+                : new Container(
+                    height: 0.0.h,
+                  )
+          ]),
         ),
       ],
     );

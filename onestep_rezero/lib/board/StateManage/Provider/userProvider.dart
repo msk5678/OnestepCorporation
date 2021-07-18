@@ -32,7 +32,8 @@ class UserProvider with ChangeNotifier {
           .child('favorite')
           .once()
           .then((DataSnapshot dataSnapshot) {
-        dataSnapshot.value.forEach((key, value) {
+        var value = dataSnapshot.value ?? {};
+        value.forEach((key, value) {
           _userFavoritePostList
               .addAll({key: UserData.fromRealtimeUserFavoriteList(value)});
           notifyListeners();
@@ -62,7 +63,7 @@ class UserProvider with ChangeNotifier {
           .once()
           .then((DataSnapshot dataSnapshot) {
         Map<dynamic, dynamic> userCommentedMap =
-            Map<dynamic, dynamic>.from(dataSnapshot.value);
+            Map<dynamic, dynamic>.from(dataSnapshot.value ?? {});
         userCommentedMap.forEach((commentId, commentData) {
           _userWrittenCommentList.add(
               UserData.fromRealtimeUserWrittenCommentList(
@@ -71,6 +72,7 @@ class UserProvider with ChangeNotifier {
       });
       await Future.forEach(_userWrittenCommentList, (UserData data) async {
         var commentDb;
+
         if (data.parentCommentId != "") {
           commentDb = db
               .reference()
@@ -90,16 +92,17 @@ class UserProvider with ChangeNotifier {
         }
         CommentData _commentData =
             await commentDb.once().then((DataSnapshot dataSnapshot) {
-          return CommentData.fromRealtimeData(dataSnapshot,
-              ignoreDeleted: true);
+          if (dataSnapshot.value != null)
+            return CommentData.fromRealtimeData(dataSnapshot,
+                ignoreDeleted: true);
+          else
+            return CommentData();
         });
-        if (_commentData != null) {
+        if (_commentData.boardId != null) {
           // _postIdListAboutWrittenComment
           //     .addAll({_commentData.postId: _commentData});
           _userCommentList.add(_commentData);
         }
-
-        notifyListeners();
       });
       _userCommentList.sort((a, b) => b.uploadTime.compareTo(a.uploadTime));
     } catch (e) {
@@ -159,19 +162,29 @@ class UserData {
   final String boardId;
   final String postId;
   final String parentCommentId;
+
   String commentId;
 
-  UserData({this.boardId, this.postId, this.parentCommentId, this.commentId});
+  UserData({
+    this.boardId,
+    this.postId,
+    this.parentCommentId,
+    this.commentId,
+  });
   factory UserData.fromRealtimeUserFavoriteList(var mapData) {
     mapData = Map<dynamic, dynamic>.from(mapData);
-    return UserData(boardId: mapData["boardId"], postId: mapData["postId"]);
+    return UserData(
+      boardId: mapData["boardId"],
+      postId: mapData["postId"],
+    );
   }
   factory UserData.fromRealtimeUserWrittenCommentList(
       String commId, var mapData) {
     return UserData(
-        boardId: mapData["boardId"],
-        postId: mapData["postId"],
-        commentId: commId,
-        parentCommentId: mapData["parentCommentId"]);
+      boardId: mapData["boardId"],
+      postId: mapData["postId"],
+      commentId: commId,
+      parentCommentId: mapData["parentCommentId"],
+    );
   }
 }

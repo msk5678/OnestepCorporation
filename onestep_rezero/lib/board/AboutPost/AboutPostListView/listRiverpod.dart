@@ -19,7 +19,7 @@ class ListRiverPod extends ConsumerWidget {
     double deviceWidth = MediaQuery.of(context).size.width;
     final listprovider = watch(listProvider);
     bool isFetching = listprovider.isFetch;
-
+    bool isNextFetching = listprovider.nextFetching;
     if (boardCategory != null) {
       Widget postListWidget;
 
@@ -45,7 +45,7 @@ class ListRiverPod extends ConsumerWidget {
       return Column(
         children: [
           postListWidget,
-          isFetching
+          isNextFetching
               ? Container(
                   height: deviceHeight,
                   width: deviceWidth,

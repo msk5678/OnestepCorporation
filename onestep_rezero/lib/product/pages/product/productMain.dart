@@ -1,25 +1,28 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kakao_flutter_sdk/link.dart';
 import 'package:onestep_rezero/favorite/pages/favoriteMain.dart';
+import 'package:onestep_rezero/product/models/product.dart';
+import 'package:onestep_rezero/product/widgets/detail/productDetailBody.dart';
 
 import 'package:onestep_rezero/product/widgets/main/productMainBody.dart';
 import 'package:onestep_rezero/product/widgets/main/productMainHeader.dart';
-import 'package:onestep_rezero/home/pages/homeNotificationPage.dart';
-import 'package:onestep_rezero/product/pages/category/categorySidebar.dart';
 
-import 'package:onestep_rezero/product/widgets/main/productMainBody.dart';
-import 'package:onestep_rezero/report/reportPageTest.dart';
 import 'package:onestep_rezero/search/pages/searchMain.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:onestep_rezero/signIn/loggedInWidget.dart';
+import 'package:onestep_rezero/utils/onestepCustom/CustomFloatingActionButton.dart';
 import 'package:onestep_rezero/utils/onestepCustom/dialog/onestepCustomDialog.dart';
-
-import '../../../spinkitTest.dart';
+import 'package:onestep_rezero/utils/onestepCustom/dialog/onestepCustomDialogNotCancel.dart';
+import 'package:rxdart/rxdart.dart';
+import 'dart:io' show Platform, exit;
 
 class ProductMain extends StatefulWidget {
   @override
@@ -35,6 +38,7 @@ void _testShowDialog(BuildContext context) {
     confirmButtonText: '확인',
     cancleButtonText: '취소',
     confirmButtonOnPress: () {
+      // pushCheck value bool change
       // FirebaseFirestore.instance
       //     .collection('user')
       //     .doc(googleSignIn.currentUser.id)
@@ -60,26 +64,92 @@ void _testShowDialog(BuildContext context) {
 
 class _ProductMainState extends State<ProductMain> {
   final ScrollController _scrollController = ScrollController();
-  final StreamController<bool> _scrollToTopstreamController =
-      StreamController<bool>();
+  final StreamController<bool> _scrollToTopstreamController = BehaviorSubject();
 
   bool _isVisibility = false;
 
   @override
   void initState() {
-    FirebaseFirestore.instance
-        .collection('user')
-        .doc(currentUserModel.uid)
-        .get()
-        .then((value) => {
-              if (value.data()['pushCheck'] == 0)
-                {
-                  _testShowDialog(context),
-                }
-            });
+    // FirebaseFirestore.instance
+    //     .collection('user')
+    //     .doc(currentUserModel.uid)
+    //     .get()
+    //     .then((value) => {
+    //           if (value.data()['pushCheck'] == 0)
+    //             {
+    //               _testShowDialog(context),
+    //             }
+    //         });
+
+    // kakao
+    String kakaoAppKey = "88b99cb950dc222f10f369161182d008";
+    KakaoContext.clientId = kakaoAppKey;
+    initDynamicLinks();
+
     _scrollController.addListener(scrollListener);
     context.read(productMainService).fetchProducts();
     super.initState();
+  }
+
+  void initDynamicLinks() async {
+    // 앱이 active이거나 background 상태일때 들어온 링크를 알 수 있는 링크 콜백에 대한 리스너 onLink()
+    FirebaseDynamicLinks.instance.onLink(
+        onSuccess: (PendingDynamicLinkData dynamicLink) async {
+      final Uri deepLink = dynamicLink?.link;
+
+      print(deepLink.path);
+
+      if (deepLink != null) {
+        _handleDynamicLink(deepLink);
+      }
+    }, onError: (OnLinkErrorException e) async {
+      print('onLinkError');
+      print(e.message);
+    });
+
+    // 앱을 새로 런치한 링크를 알 수 있는 getInitialLink()
+    final PendingDynamicLinkData data =
+        await FirebaseDynamicLinks.instance.getInitialLink();
+    final Uri deepLink = data?.link;
+
+    print(deepLink);
+    if (deepLink != null) {
+      _handleDynamicLink(deepLink);
+    }
+  }
+
+  Future<void> _handleDynamicLink(Uri deepLink) async {
+    if (deepLink.path == "/" + currentUserModel.university) {
+      var uploadTime = deepLink.queryParameters['uploadTime'];
+      DocumentSnapshot snapshot = await FirebaseFirestore.instance
+          .collection('university')
+          .doc(currentUserModel.university)
+          .collection('product')
+          .doc(uploadTime)
+          .get();
+      print("deepLink.path = ${deepLink.path}");
+      print("currentUserModel.university = ${currentUserModel.university}");
+      Product product = Product.fromJson(snapshot.data(), snapshot.id);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ProductDetailBody(
+            product: product,
+          ),
+        ),
+      );
+    } else {
+      // 이거 확인해봐야함
+      OnestepCustomDialogNotCancel.show(context,
+          title: '해당 학교가 다릅니다.',
+          confirmButtonText: '확인', confirmButtonOnPress: () {
+        if (Platform.isAndroid) {
+          SystemNavigator.pop();
+        } else if (Platform.isIOS) {
+          exit(0);
+        }
+      });
+    }
   }
 
   @override
@@ -108,8 +178,8 @@ class _ProductMainState extends State<ProductMain> {
     }
   }
 
-  resetKMUCategory() {
-    FirebaseFirestore.instance.collection("category").doc("kmu").set({
+  resetUniversityCategory(String university) {
+    FirebaseFirestore.instance.collection("category").doc(university).set({
       "여성의류": {
         "image": 'assets/icons/category/dress.png',
         "detail": {
@@ -406,7 +476,9 @@ class _ProductMainState extends State<ProductMain> {
           ),
           onPressed: () => {
             Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => SearchMain(searchKey: 1)),
+              MaterialPageRoute(
+                  settings: RouteSettings(name: 'Search'),
+                  builder: (context) => SearchMain(searchKey: 1)),
             ),
           },
         ),
@@ -418,6 +490,7 @@ class _ProductMainState extends State<ProductMain> {
           onPressed: () => {
             Navigator.of(context).push(
               MaterialPageRoute(
+                settings: RouteSettings(name: 'Favorite'),
                 builder: (context) => FavoriteMain(),
               ),
             ),
@@ -438,9 +511,9 @@ class _ProductMainState extends State<ProductMain> {
                   //     MaterialPageRoute(builder: (context) => LoginJoinPage(user))),
 
                   // 알림으로 넘어가는 부분
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => HomeNotificationPage(),
-                  )),
+                  // Navigator.of(context).push(MaterialPageRoute(
+                  //   builder: (context) => HomeNotificationPage(),
+                  // )),
 
                   // 신고 page test
                   // Navigator.of(context).push(MaterialPageRoute(
@@ -452,7 +525,7 @@ class _ProductMainState extends State<ProductMain> {
                   // 약관 page
                   // Navigator.of(context).push(
                   //     MaterialPageRoute(builder: (context) => TermsPage(user))),
-                  // resetKMUCategory(),
+                  // resetUniversityCategory("kmu"),
                 }),
       ],
     );
@@ -462,97 +535,46 @@ class _ProductMainState extends State<ProductMain> {
     context.read(productMainService).fetchProducts();
   }
 
-  Widget scrollToTopFloatingActionButton() {
-    return StreamBuilder<bool>(
-      stream: _scrollToTopstreamController.stream,
-      initialData: false,
-      builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-        return Visibility(
-          visible: snapshot.data,
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(100),
-                  topRight: Radius.circular(100),
-                  bottomLeft: Radius.circular(100),
-                  bottomRight: Radius.circular(100)),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.1),
-                  spreadRadius: 3,
-                  blurRadius: 7,
-                  offset: Offset(0, 3), // changes position of shadow
-                ),
-              ],
-            ),
-            height: 40.0.h,
-            width: 40.0.w,
-            child: FittedBox(
-              child: FloatingActionButton(
-                elevation: 0,
-                heroTag: null,
-                onPressed: () {
-                  _scrollController.position
-                      .moveTo(0.5, duration: Duration(milliseconds: 200));
-                },
-                child:
-                    Icon(Icons.keyboard_arrow_up_rounded, color: Colors.black),
-                backgroundColor: Colors.white,
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: appBar(),
-      body: RefreshIndicator(
-        onRefresh: _refreshPage,
-        child: SingleChildScrollView(
-          physics: AlwaysScrollableScrollPhysics(),
-          controller: _scrollController,
-          child: Container(
-            color: Colors.white,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: 180.h,
-                  child: Image.asset(
-                    "assets/banner.png",
-                    fit: BoxFit.cover,
+        backgroundColor: Colors.white,
+        appBar: appBar(),
+        body: RefreshIndicator(
+          onRefresh: _refreshPage,
+          child: SingleChildScrollView(
+            physics: AlwaysScrollableScrollPhysics(),
+            controller: _scrollController,
+            child: Container(
+              color: Colors.white,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: 180.h,
+                    child: Image.asset(
+                      "assets/banner.png",
+                      fit: BoxFit.cover,
+                    ),
                   ),
-                ),
-                ProductMainHeader(),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                      padding: EdgeInsets.only(left: 15.w),
-                      child: Text("방금 올라온 상품",
-                          style: TextStyle(
-                              fontSize: 15.sp, fontWeight: FontWeight.w600))),
-                ),
-                ProductMainBody(),
-              ],
+                  ProductMainHeader(),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                        padding: EdgeInsets.only(left: 15.w),
+                        child: Text("방금 올라온 상품",
+                            style: TextStyle(
+                                fontSize: 15.sp, fontWeight: FontWeight.w600))),
+                  ),
+                  ProductMainBody(),
+                ],
+              ),
             ),
           ),
         ),
-      ),
-      floatingActionButton: Stack(
-        children: <Widget>[
-          Align(
-            alignment: Alignment.bottomRight,
-            child: scrollToTopFloatingActionButton(),
-          ),
-        ],
-      ),
-    );
+        floatingActionButton: CustomFloatingActionButton.scrollToTopButton(
+            scrollController: _scrollController,
+            streamController: _scrollToTopstreamController));
   }
 }

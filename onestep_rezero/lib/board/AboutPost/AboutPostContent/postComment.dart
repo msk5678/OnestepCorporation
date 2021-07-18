@@ -11,6 +11,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:onestep_rezero/report/pages/Deal/commentReport/reportCommentPage.dart';
 import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 import 'package:onestep_rezero/utils/timeUtil.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 final commentProvider =
     ChangeNotifierProvider<CommentProvider>((ref) => CommentProvider());
@@ -19,35 +20,34 @@ abstract class Comment {
   commentBoxDesignMethod(BuildContext context, int index, CommentData comment,
       double deviceWidth, double deviceHeight);
 
-  commentName(String commentUID, String postWriterUid, commentList);
   animationLimiterListView(
       List comment, double deviceWidth, double deviceHeight);
   commentListEmptyWidget();
-  commentListSwipeMenu(comment, BuildContext context, currentLogInUid,
+  commentListSwipeMenu(
+      CommentData comment, BuildContext context, currentLogInUid,
       {Widget child});
   deletedCommentWidget(
       int index, CommentData comment, double deviceWidth, double deviceHeight);
   commentWidget(BuildContext context, int index, CommentData comment,
       String uid, double deviceWidth, double deviceHeight);
+  commentNickName(String uid);
 }
 
 class CommentWidget extends CommentParent {
   final boardId;
   final postId;
-  final commentMap;
   final postWriterUID;
-  final openSlidingPanelCallback;
   final coCommentCallback;
   final showDialogCallback;
+  final commentUserCallback;
   final SlidableController slidableController = SlidableController();
 
   CommentWidget(
       {this.boardId,
       this.postId,
-      this.openSlidingPanelCallback,
-      this.commentMap,
       this.postWriterUID,
       this.coCommentCallback,
+      this.commentUserCallback,
       this.showDialogCallback});
   @override
   Widget build(BuildContext context, watch) {
@@ -67,26 +67,27 @@ class CommentWidget extends CommentParent {
         return Container(child: commentListEmptyWidget());
     }
   }
+
+  @override
+  commentNickName(String uid) => commentUserCallback(uid);
 }
 
 abstract class CommentParent extends ConsumerWidget implements Comment {
   final boardId;
   final postId;
-  final commentMap;
   final postWriterUID;
-  final openSlidingPanelCallback;
   final coCommentCallback;
   final showDialogCallback;
+
   final SlidableController slidableController = SlidableController();
 
-  CommentParent(
-      {this.boardId,
-      this.postId,
-      this.openSlidingPanelCallback,
-      this.commentMap,
-      this.postWriterUID,
-      this.coCommentCallback,
-      this.showDialogCallback});
+  CommentParent({
+    this.boardId,
+    this.postId,
+    this.postWriterUID,
+    this.coCommentCallback,
+    this.showDialogCallback,
+  });
 
   @override
   Widget commentBoxDesignMethod(BuildContext context, int index,
@@ -98,23 +99,6 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
       //is deleted
       return commentWidget(context, index, comment, currentUserModel.uid,
           deviceWidth, deviceHeight);
-  }
-
-  @override
-  commentName(commentUID, postWriterUid, commentList) {
-    Map<String, dynamic> commentUserMap = commentList ?? {};
-    List commentUserList = commentUserMap.keys.toList();
-    if (commentUID.toString() == postWriterUid) {
-      return "작성자";
-    } else {
-      for (int i = 0; i < commentUserList.length; i++) {
-        if (commentUserList[i].toString() == commentUID)
-          return "익명 ${i + 1}";
-        else
-          return "익명 ${commentUserList.length + 1}";
-      }
-    }
-    return "";
   }
 
   @override
@@ -135,14 +119,13 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
         bool isDeleted = currentIndexCommentData.deleted;
         bool haveChildComment = currentIndexCommentData.haveChildComment;
         currentIndexCommentData
-          ..userName = commentName(
-              currentIndexCommentData.uid, postWriterUID, commentMap);
+          ..userName = commentNickName(currentIndexCommentData.uid);
 
         return AnimationConfiguration.staggeredList(
           position: index,
           duration: const Duration(milliseconds: 0),
           child: SlideAnimation(
-            verticalOffset: 50.0,
+            verticalOffset: 50.0.h,
             child: FadeInAnimation(
               child: Column(
                 children: [
@@ -192,12 +175,11 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
 
   childCommentWidget(childCommentList) {
     return ChildComment(
+      commentNameCallback: commentNickName,
       childCommentList: childCommentList,
       coCommentCallback: coCommentCallback,
-      openSlidingPanelCallback: openSlidingPanelCallback,
       slidableController: slidableController,
       postWriterUID: postWriterUID,
-      commentMap: commentMap,
       refreshCallback: refreshComment,
       showDialogCallback: showDialogCallback,
     );
@@ -227,7 +209,7 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
   }
 
   @override
-  commentListSwipeMenu(comment, context, currentLogInUid,
+  commentListSwipeMenu(CommentData comment, context, currentLogInUid,
       {Widget child, Key slidableKey}) {
     Widget childWidget = child ?? Container();
 
@@ -256,16 +238,16 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
       secondaryActions: <Widget>[
         IconSlideAction(
           caption: '댓글달기',
-          color: Colors.black45,
+          foregroundColor: OnestepColors().mainColor,
           icon: Icons.add_comment,
           onTap: () {
-            coCommentCallback(comment);
+            coCommentCallback(comment..isUnderComment = false);
           },
         ),
         isWritter
             ? IconSlideAction(
                 caption: '삭제',
-                color: Colors.red,
+                foregroundColor: Colors.red,
                 icon: Icons.delete,
                 onTap: () async {
                   bool result = await comment.dismissComment() ?? false;
@@ -276,7 +258,7 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
                 onTap: () =>
                     reportedEventMethod(context, currentLogInUid, comment),
                 caption: '신고하기',
-                color: Colors.red,
+                foregroundColor: Colors.redAccent,
                 icon: Icons.flag,
               ),
       ],
@@ -295,12 +277,12 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
     return Container(
         alignment: Alignment.centerLeft,
         padding: EdgeInsets.only(
-          left: 8,
+          left: 8.w,
         ),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           deletedTimeWithDay
               ? GestureDetector(
-                  onLongPress: () => showDialogCallback(comment),
+                  // onLongPress: () => showDialogCallback(comment),
                   child: Container(
                     width: deviceWidth,
                     child: Text(
@@ -317,7 +299,7 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
             alignment: Alignment.centerRight,
             child: Text(
               "${TimeUtil.timeAgo(date: uploadTime)}",
-              style: TextStyle(color: Colors.grey[700], fontSize: 10),
+              style: TextStyle(color: Colors.grey[700], fontSize: 10.sp),
             ),
           )
         ]));
@@ -360,33 +342,34 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
             ),
             Container(
               padding: EdgeInsets.only(
-                left: 8,
-                top: 10,
+                left: 8.w,
+                top: 10.h,
               ),
               alignment: Alignment.centerLeft,
-              child: Text(comment.textContent ?? "NO"),
+              child: Text(comment.textContent ?? "ERROR COMMENT"),
             ),
             Container(
-              margin: EdgeInsets.only(top: 10),
+              margin: EdgeInsets.only(top: 10.h),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Row(
                     children: [
                       Container(
-                        padding: EdgeInsets.only(left: 10),
+                        padding: EdgeInsets.only(left: 10.h),
                         alignment: Alignment.centerRight,
                         child: GestureDetector(
                           onTap: () => coCommentCallback(comment),
                           child: Text(
                             "댓글달기",
-                            style: TextStyle(color: Colors.grey, fontSize: 10),
+                            style: TextStyle(
+                                color: Colors.grey[700], fontSize: 10.sp),
                           ),
                         ),
                       ),
                       comment.uid == uid
                           ? Container(
-                              padding: EdgeInsets.only(left: 10),
+                              padding: EdgeInsets.only(left: 10.w),
                               alignment: Alignment.centerRight,
                               child: GestureDetector(
                                 onTap: () async {
@@ -398,7 +381,7 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
                                 child: Text(
                                   "삭제",
                                   style: TextStyle(
-                                      color: Colors.redAccent, fontSize: 10),
+                                      color: Colors.redAccent, fontSize: 10.sp),
                                 ),
                               ),
                             )
@@ -421,7 +404,8 @@ abstract class CommentParent extends ConsumerWidget implements Comment {
                     alignment: Alignment.centerRight,
                     child: Text(
                       "${TimeUtil.timeAgo(date: uploadTime)}",
-                      style: TextStyle(color: Colors.grey, fontSize: 10),
+                      style:
+                          TextStyle(color: Colors.grey[700], fontSize: 10.sp),
                     ),
                   ),
                 ],

@@ -13,8 +13,17 @@ class SearchProductBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ScopedReader watch) {
+    bool isFetching = watch(searchProductProvider).isFetching;
+    if (isFetching) {
+      return Center(child: CircularProgressIndicator());
+    }
+
     final searchProductlist = watch(searchProductProvider).products;
 
-    return ProductGridView(itemList: searchProductlist);
+    if (searchProductlist.length == 0) {
+      return Center(child: Text("등록된 상품이 없습니다"));
+    } else {
+      return ProductGridView(itemList: searchProductlist);
+    }
   }
 }

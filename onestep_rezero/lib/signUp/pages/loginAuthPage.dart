@@ -516,24 +516,19 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                                     _emailController.text)
                                               }
                                           });
-
-                                      Future.delayed(
-                                          const Duration(milliseconds: 100),
-                                          () {
-                                        OnestepCustomDialogNotCancel.show(
-                                          context,
-                                          title: '한발자국 대학교인증 성공!',
-                                          description:
-                                              '이제 한발자국의 모든 기능들을 이용할 수 있습니다.',
-                                          confirmButtonText: '확인',
-                                          confirmButtonOnPress: () {
-                                            Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        MainPage()));
-                                          },
-                                        );
-                                      });
+                                      OnestepCustomDialogNotCancel.show(
+                                        context,
+                                        title: '한발자국 대학교인증 성공!',
+                                        description:
+                                            '이제 한발자국의 모든 기능들을 이용할 수 있습니다.',
+                                        confirmButtonText: '확인',
+                                        confirmButtonOnPress: () {
+                                          Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      MainPage()));
+                                        },
+                                      );
                                     } else if (timeOver == true) {
                                       _isEmailCheck
                                           .changedAuthTimeOverChecked(false);

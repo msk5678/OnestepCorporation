@@ -11,12 +11,14 @@ class PostListProvider with ChangeNotifier {
   int documentLimit = 15;
   bool _hasNext = true;
   bool _isFetching = false;
+  bool _isNextListFetching = false;
 
   List<PostData> boardData = [];
 
   String get errorMessage => _errorMessage;
   bool get hasNext => _hasNext;
   bool get isFetch => _isFetching;
+  bool get nextFetching => _isNextListFetching;
 
   List<PostData> get posts => _productsSnapshot.map((snap) {
         return PostData.fromFireStore(snap);
@@ -24,7 +26,8 @@ class PostListProvider with ChangeNotifier {
 
   fetchNextProducts(String boardId) async {
     if (_isFetching) return;
-    _isFetching = true;
+    if (_isNextListFetching) return;
+    _isNextListFetching = true;
 
     try {
       final snap = await PostFirebaseApi.getAllPost(
@@ -41,9 +44,10 @@ class PostListProvider with ChangeNotifier {
       print("error is " + error.toString());
       _errorMessage = error.toString();
       notifyListeners();
+      _isNextListFetching = false;
     }
 
-    _isFetching = false;
+    _isNextListFetching = false;
   }
 
   Future fetchPosts(String boardId) async {
