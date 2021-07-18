@@ -137,7 +137,7 @@ class _TaskManager extends State<TaskManager> {
   }
 
   Future<void> _downloadBytes(firebase_storage.Reference ref) async {
-    final bytes = await ref.getData();
+    // final bytes = await ref.getData();
     // Download...
     //await saveAsBytes(bytes, 'some-image.jpg');
   }

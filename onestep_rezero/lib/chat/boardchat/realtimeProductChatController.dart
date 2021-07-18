@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:onestep_rezero/signIn/loggedInWidget.dart';
-import 'package:onestep_rezero/main.dart';
 
 import 'model/productSendMessage.dart';
 

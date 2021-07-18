@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth_platform_interface/src/user_info.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 Future<void> joinNickNameDML(List<UserInfo> user, String text) async {
   await FirebaseFirestore.instance

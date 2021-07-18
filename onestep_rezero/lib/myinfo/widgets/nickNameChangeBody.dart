@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
-import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 import 'package:onestep_rezero/myinfo/dml/myinfoSetDml.dart';
 import 'package:onestep_rezero/myinfo/providers/providers.dart';
 import 'package:onestep_rezero/utils/onestepCustom/dialog/onestepCustomDialogNotCancel.dart';

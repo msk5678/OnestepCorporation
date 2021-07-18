@@ -527,7 +527,8 @@ class _LastChatState extends State<ChatScreen> {
 
       // height: 30,
       constraints: BoxConstraints(
-        maxWidth: deviceWidth / 1.6.w,
+        maxWidth: messageWidth,
+        // deviceWidth / 1.6.w,
         minWidth: 1.w,
       ),
       child: Text(
