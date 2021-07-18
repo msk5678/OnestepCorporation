@@ -120,6 +120,7 @@ class _AdmobListState extends State<AnonymousChatBody> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            //nickNameField
             Container(
               // color: Colors.black,
               // color: Colors.grey[300],
@@ -183,7 +184,7 @@ class _AdmobListState extends State<AnonymousChatBody> {
                 constraints: BoxConstraints(
                   // minWidth: 200,
                   // maxWidth: 250,
-                  maxWidth: deviceWidth / 1.3.w,
+                  maxWidth: deviceWidth / 1.33.w,
 
                   minHeight: deviceHeight / 27.h,
                   maxHeight: deviceHeight / 4.h,
@@ -230,6 +231,7 @@ class _AdmobListState extends State<AnonymousChatBody> {
               ),
               // ),
             ),
+
             // Container(
             //   color: Colors.blue,
             //   width: 10,
@@ -254,6 +256,10 @@ class _AdmobListState extends State<AnonymousChatBody> {
                     disabledColor: Colors.red,
                     onPressed: () {
                       _checkTextField();
+                      // Fluttertoast.showToast(msg: "어나니누름");
+                      // VoidCallback d = TextField().onEditingComplete;
+
+                      // return d;
                     }),
               ),
             ),

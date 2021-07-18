@@ -141,4 +141,32 @@ class ProductChatListController {
           }
         });
   }
+
+  FutureBuilder getReportUserNickName(String reportUserId, double fontSize) {
+    return FutureBuilder(
+        future: FirebaseFirestore.instance
+            .collection('user')
+            .doc(reportUserId)
+            .get(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Text("대기중");
+          } else {
+            if (snapshot.hasData == false) {
+              return Text("불러오기 실패");
+            } else if (snapshot.hasError) {
+              return Text("불러오기 에러");
+            } else {
+              return AutoSizeText(
+                snapshot.data.data()['nickName'],
+                style: TextStyle(fontSize: fontSize, color: Colors.black), //15
+                minFontSize: 10,
+                stepGranularity: 10,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              );
+            }
+          }
+        });
+  }
 }
