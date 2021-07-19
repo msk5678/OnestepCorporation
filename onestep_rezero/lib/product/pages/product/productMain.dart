@@ -18,11 +18,14 @@ import 'package:onestep_rezero/product/widgets/main/productMainHeader.dart';
 import 'package:onestep_rezero/search/pages/searchMain.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:onestep_rezero/signIn/loggedInWidget.dart';
+import 'package:onestep_rezero/spinkitTest.dart';
 import 'package:onestep_rezero/utils/onestepCustom/CustomFloatingActionButton.dart';
 import 'package:onestep_rezero/utils/onestepCustom/dialog/onestepCustomDialog.dart';
 import 'package:onestep_rezero/utils/onestepCustom/dialog/onestepCustomDialogNotCancel.dart';
 import 'package:rxdart/rxdart.dart';
 import 'dart:io' show Platform, exit;
+
+import '../../../lottiePageTest.dart';
 
 class ProductMain extends StatefulWidget {
   @override
@@ -90,6 +93,21 @@ class _ProductMainState extends State<ProductMain> {
     context.read(productMainService).fetchProducts();
     super.initState();
   }
+
+  // @override
+  // void didChangeDependencies() {
+  //   FirebaseFirestore.instance
+  //       .collection('user')
+  //       .doc(currentUserModel.uid)
+  //       .get()
+  //       .then((value) => {
+  //             if (value.data()['pushCheck'] == 0)
+  //               {
+  //                 _testShowDialog(context),
+  //               }
+  //           });
+  //   super.didChangeDependencies();
+  // }
 
   void initDynamicLinks() async {
     // 앱이 active이거나 background 상태일때 들어온 링크를 알 수 있는 링크 콜백에 대한 리스너 onLink()
@@ -424,6 +442,7 @@ class _ProductMainState extends State<ProductMain> {
         '장터',
         style: TextStyle(color: Colors.black),
       ),
+      automaticallyImplyLeading: false,
       elevation: 0,
       backgroundColor: Colors.white,
       // leading: IconButton(
@@ -521,6 +540,9 @@ class _ProductMainState extends State<ProductMain> {
 
                   // Navigator.of(context).push(
                   //     MaterialPageRoute(builder: (context) => SpinkitTest())),
+
+                  // Navigator.of(context).push(MaterialPageRoute(
+                  //     builder: (context) => LottiePageTest())),
 
                   // 약관 page
                   // Navigator.of(context).push(

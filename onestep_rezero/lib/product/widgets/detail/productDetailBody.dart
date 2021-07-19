@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_share/flutter_share.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/favorite/animation/favoriteAnimation.dart';
@@ -322,7 +323,7 @@ class _ProductDetailBodyState extends State<ProductDetailBody>
                           RawMaterialButton(
                             onPressed: () {
                               print("URL");
-                              // URL 이거 말고 flutter_share: ^2.0.0 이거 사용하기 -> ios, android 세팅 다르니까 맥북 세팅 끝나면 진행
+                              // URL
                               // KakaoShareManager()
                               //     .getDynamicLink(widget.product);
                             },

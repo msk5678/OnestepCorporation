@@ -11,7 +11,14 @@ import 'package:onestep_rezero/myinfo/widgets/myProfileImage.dart';
 import 'package:onestep_rezero/utils/onestepCustom/dialog/onestepCustomDialogNotCancel.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../spinkitTest.dart';
+
 final f = DateFormat('yyyy-MM-dd hh:mm a');
+
+// 카카오톡 처럼 뒤에 화면 남기고 로딩 화면 보여주고 로딩 끝나면 넘어가는건 화면 넘어오고 나서가 아니라 넘어가기전에 세팅해줘야할듯, 근데 그건 구조를 바꿔야하는거 같은데 일단 이렇게 세팅
+testLoading() {
+  return Stack(children: <Widget>[SpinkitTest()]);
+}
 
 class MyinfoMainBody extends ConsumerWidget {
   @override
@@ -25,68 +32,7 @@ class MyinfoMainBody extends ConsumerWidget {
           (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.waiting:
-            // showDialog(
-            //   context: context,
-            //   builder: (_) => Material(
-            //     type: MaterialType.transparency,
-            //     child: Center(
-            //       child: Container(
-            //         child: SpinKitWave(
-            //           color: OnestepColors().mainColor,
-            //           type: SpinKitWaveType.start,
-            //         ),
-            //       ),
-            //     ),
-            //   ),
-            // );
-            return Center(child: CircularProgressIndicator());
-          // showDialog(
-          //   context: context,
-          //   builder: (_) => Material(
-          //     type: MaterialType.transparency,
-          //     child: Center(
-          //       child: Container(
-          //         child: SpinKitWave(
-          //           color: OnestepColors().mainColor,
-          //           type: SpinKitWaveType.start,
-          //         ),
-          //       ),
-          //     ),
-          //   ),
-          // );
-
-          // Material(
-          //   type: MaterialType.transparency,
-          //   child: Center(
-          //     child: Container(
-          //       child: SpinKitWave(
-          //         color: OnestepColors().mainColor,
-          //         type: SpinKitWaveType.start,
-          //       ),
-          //     ),
-          //   ),
-          // );
-
-          // AlertDialog(
-          //     contentPadding: EdgeInsets.zero,
-          //     backgroundColor: Colors.transparent,
-          //     content: Material(
-          //       type: MaterialType.transparency,
-          //       child: Center(
-          //         child: Container(
-          //           child: SpinKitWave(
-          //             color: OnestepColors().mainColor,
-          //             type: SpinKitWaveType.start,
-          //           ),
-          //         ),
-          //       ),
-          //     ));
-
-          // Container(
-          //     child: SpinKitWave(
-          //   color: OnestepColors().mainColor,
-          //   type: SpinKitWaveType.start,
-          // ));
+            return Center(child: testLoading());
           default:
             return SingleChildScrollView(
               child: Column(

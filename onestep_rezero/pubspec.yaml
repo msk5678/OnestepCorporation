@@ -33,7 +33,7 @@ dependencies:
   firebase_core: ^1.0.1
   cloud_firestore: ^1.0.1
   firebase_storage: ^8.0.0
-  firebase_messaging: ^9.0.0
+  firebase_messaging: ^10.0.4
   firebase_auth: ^1.0.1
   firebase_dynamic_links: ^0.8.0
   google_sign_in: ^5.0.0
@@ -105,6 +105,22 @@ dependencies:
   #share
   share: ^2.0.4
   ########
+
+  #flutter_share
+  flutter_share: ^2.0.0
+  ############
+  
+  #package_info
+  package_info: ^2.0.2
+  #########
+
+  #flutter_local_notifications
+  flutter_local_notifications: ^6.0.0
+  #############
+
+  #lottie
+  lottie: ^1.1.0
+  ###########
   
   #floatingButton
   unicorndial: "^1.1.5"        # multi floatingActionButton 

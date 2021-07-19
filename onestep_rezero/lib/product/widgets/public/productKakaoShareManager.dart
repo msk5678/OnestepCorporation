@@ -31,7 +31,8 @@ class KakaoShareManager {
 
   void shareMyCode(Product product) async {
     try {
-      var dynamicLink = await _getDynamicLink(product.imagesUrl[0], product);
+      var dynamicLink =
+          await _getDynamicLink(product, imag: product.imagesUrl[0]);
       var template = _getTemplate(dynamicLink, product);
       var uri = await LinkClient.instance.defaultWithTalk(template);
       await LinkClient.instance.launchKakaoTalk(uri);
@@ -42,7 +43,8 @@ class KakaoShareManager {
 
   void getDynamicLink(Product product) async {
     try {
-      var dynamicLink = await _getDynamicLink(product.imagesUrl[0], product);
+      var dynamicLink =
+          await _getDynamicLink(product, imag: product.imagesUrl[0]);
       print("dynamicLink = $dynamicLink");
       Share.share("$dynamicLink");
     } catch (error) {
@@ -50,7 +52,7 @@ class KakaoShareManager {
     }
   }
 
-  Future<Uri> _getDynamicLink(imag, Product product) async {
+  Future<Uri> _getDynamicLink(Product product, {imag}) async {
     final DynamicLinkParameters parameters = DynamicLinkParameters(
       uriPrefix: 'https://onestep.page.link',
       link: Uri.parse(
