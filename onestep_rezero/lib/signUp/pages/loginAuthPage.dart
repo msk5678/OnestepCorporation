@@ -6,9 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:onestep_rezero/chat/widget/appColor.dart';
-import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 import 'package:onestep_rezero/signUp/dml/authDml.dart';
-import 'package:onestep_rezero/signUp/model/user.dart';
 import 'package:onestep_rezero/signUp/providers/providers.dart';
 import 'package:onestep_rezero/utils/onestepCustom/dialog/onestepCustomDialogNotCancel.dart';
 
@@ -335,7 +333,8 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                             false)
                                     ? () async {
                                         checkPassword =
-                                            await getRandomString(6);
+                                            // await getRandomString(6); //성훈 스트링에 await 안됨
+                                            getRandomString(6);
                                         _isEmailCheck
                                             .changedAuthSendUnderLine(false);
                                         _isEmailCheck
@@ -458,7 +457,9 @@ class _LoginAuthPageState extends State<LoginAuthPage>
                                       true
                                   ? () async {
                                       _authNumberController.text = "";
-                                      checkPassword = await getRandomString(6);
+                                      //성훈 이거 스트링 ㅇ await 지움
+                                      // checkPassword = await getRandomString(6);
+                                      checkPassword = getRandomString(6);
                                       Fluttertoast.showToast(
                                           msg: '인증번호가 재전송 되었습니다',
                                           toastLength: Toast.LENGTH_SHORT,

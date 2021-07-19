@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onestep_rezero/chat/widget/appColor.dart';
 import 'package:onestep_rezero/report/public/reportDefaultText.dart';
 import 'package:onestep_rezero/signIn/loggedInWidget.dart';
@@ -278,7 +279,10 @@ class UserCase extends StatelessWidget {
                                   reportState.data()['reportState'] == 0
                                       ? report(chatId, reportedUid, reportCase,
                                           context)
-                                      : null;
+                                      :
+                                      //null; //이거 오류뜬다 성훈
+                                      Fluttertoast.showToast(
+                                          msg: "성훈아 null 오류떠서 바꿈");
                                   Navigator.pop(context);
                                 },
                                 cancleButtonOnPress: () {
