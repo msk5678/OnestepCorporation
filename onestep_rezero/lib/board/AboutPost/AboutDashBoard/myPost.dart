@@ -10,6 +10,7 @@ import 'package:onestep_rezero/board/declareData/boardData.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:onestep_rezero/board/declareData/postData.dart';
 import 'package:onestep_rezero/signIn/loggedInWidget.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class UserPostingList extends StatefulWidget {
   final dashBoardIconData;
@@ -103,7 +104,7 @@ class MyPostRiverPod extends ConsumerWidget {
     bool isFetching = userPostList.isFetch;
     if (!isFetching && userPostList.posts.length == 0) {
       return Container(
-        height: deviceHeight / 2,
+        height: deviceHeight / 2.h,
         width: deviceWidth,
         child: Center(
           child: ShowUp(delay: 300, child: Text("작성한 게시글이 없습니다.")),
@@ -120,7 +121,7 @@ class MyPostRiverPod extends ConsumerWidget {
               : Container(),
           isFetching
               ? Container(
-                  height: deviceHeight / 2,
+                  height: deviceHeight / 2.h,
                   width: deviceWidth,
                   child: Center(
                     child: CupertinoActivityIndicator(),

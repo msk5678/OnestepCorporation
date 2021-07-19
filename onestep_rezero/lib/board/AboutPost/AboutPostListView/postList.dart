@@ -161,7 +161,7 @@ class PostList extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
                   // color: !myself ? Colors.black : OnestepColors().mainColor,
-                  fontSize: 17.sp,
+                  fontSize: 15.sp,
                   fontWeight: FontWeight.bold),
             )),
       ],
@@ -262,7 +262,7 @@ class PostList extends StatelessWidget {
                 size: 12.sp,
               )),
               Container(
-                padding: EdgeInsets.only(right: 5),
+                padding: EdgeInsets.only(right: 5.w),
                 child: Text(
                   postData.commentCount.toString(),
                   style: TextStyle(
@@ -289,8 +289,8 @@ class PostList extends StatelessWidget {
               Spacer(),
 
               Container(
-                padding: EdgeInsets.only(left: 3),
-                margin: EdgeInsets.only(right: 3),
+                padding: EdgeInsets.only(left: 3.w),
+                margin: EdgeInsets.only(right: 3.w),
                 child: Text(
                   '${PostTime(dateTime: postData.uploadTime).dateToString()}',
                   style: TextStyle(fontSize: 10.sp),

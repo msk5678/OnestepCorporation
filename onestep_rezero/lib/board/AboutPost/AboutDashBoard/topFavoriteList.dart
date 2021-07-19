@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:onestep_rezero/board/AboutPost/AboutPostListView/listRiverpod.dart';
@@ -105,7 +105,7 @@ class TopFavoriteListRiverPod extends ConsumerWidget {
     bool isFetching = topFavoriteList.isFetch;
     if (!isFetching && topFavoriteList.posts.length == 0) {
       return Container(
-        height: deviceHeight / 2,
+        height: deviceHeight / 2.h,
         width: deviceWidth,
         child: Center(
           child: ShowUp(delay: 300, child: Text("인기게시글이 없습니다.")),
@@ -122,7 +122,7 @@ class TopFavoriteListRiverPod extends ConsumerWidget {
               : Container(),
           isFetching
               ? Container(
-                  height: deviceHeight / 2,
+                  height: deviceHeight / 2.h,
                   width: deviceWidth,
                   child: Center(
                     child: CupertinoActivityIndicator(),

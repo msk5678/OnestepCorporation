@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:onestep_rezero/board/AboutPost/AboutPostListView/listRiverpod.dart';
 import 'package:onestep_rezero/board/AboutPost/AboutPostListView/postList.dart';
 import 'package:onestep_rezero/board/AboutPost/AboutPostListView/postListMain.dart';
@@ -114,7 +114,7 @@ class UserFavoriteListRiverPod extends ConsumerWidget {
 
     if (!isFetching && _userFavoritePostIdList.length == 0) {
       return Container(
-        height: deviceHeight / 2,
+        height: deviceHeight / 2.h,
         width: deviceWidth,
         child: Center(
           child: ShowUp(delay: 300, child: Text("좋아하는 게시글이 없습니다.")),
@@ -131,7 +131,7 @@ class UserFavoriteListRiverPod extends ConsumerWidget {
               : Container(),
           isFetching
               ? Container(
-                  height: deviceHeight / 2,
+                  height: deviceHeight / 2.h,
                   width: deviceWidth,
                   child: Center(
                     child: CupertinoActivityIndicator(),

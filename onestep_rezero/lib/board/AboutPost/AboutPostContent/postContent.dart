@@ -121,7 +121,7 @@ class PostContentRiverPod extends ConsumerWidget {
                     errorWidget: (context, url, error) =>
                         Icon(Icons.error), // 로딩 오류 시 이미지
 
-                    fit: BoxFit.fill,
+                    fit: BoxFit.cover,
                   ),
                 ),
               ),
@@ -340,9 +340,9 @@ class _PostContentState extends State<PostContent>
                                     favoriteButton(currentPostData)),
                             bottomStatusBar(currentPostData),
                             Container(
-                              width: deviceWidth / 2,
+                              width: deviceWidth / 2.w,
                               margin: EdgeInsets.only(
-                                  bottom: deviceHeight / 50, top: 10.h),
+                                  bottom: deviceHeight / 50.h, top: 10.h),
                               decoration: BoxDecoration(
                                   border: Border(
                                       bottom: BorderSide(
@@ -358,10 +358,11 @@ class _PostContentState extends State<PostContent>
                               // openSlidingPanelCallback: slidingUpDownMethod,
                               coCommentCallback: coCommentCallback,
                               commentUserCallback: commentUserCallback,
+
                               // showDialogCallback: showingDismissCommentCallback,
                             ))
                             ..add(SizedBox(
-                              height: deviceHeight / 5,
+                              height: deviceHeight / 5.h,
                             )),
                         ),
                       ),

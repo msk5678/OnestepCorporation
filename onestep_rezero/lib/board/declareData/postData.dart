@@ -175,8 +175,19 @@ class PostData {
         );
   }
 
-  factory PostData.fromFireStore(DocumentSnapshot snapshot) {
+  factory PostData.fromFireStore(DocumentSnapshot snapshot,
+      {bool ignoreDeleted, bool ignoreReported}) {
     Map postData = snapshot.data();
+    ignoreDeleted = ignoreDeleted ?? false;
+    ignoreReported = ignoreReported ?? false;
+    bool isDeleted = postData["deleted"] ?? false;
+    bool isReported = postData["reported"] ?? false;
+    if (ignoreDeleted && isDeleted) {
+      return null;
+    }
+    if (ignoreReported && isReported) {
+      return null;
+    }
     return PostData(
         title: postData["title"],
         contentCategory: postData["contentCategory"] ?? '',
@@ -199,7 +210,7 @@ class PostData {
         // scribeCount: postData["commentUserList"] != null
         //     ? postData["commentUserList"].length
         //     : 0,
-        reported: postData["reported"],
+        reported: postData["reported"] ?? false,
         reportedTime: postData["reportedTime"] ?? 0);
   }
   Future<bool> updateFavorite(String currentUid, bool isUndo) async {

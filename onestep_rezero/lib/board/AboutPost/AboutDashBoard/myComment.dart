@@ -232,7 +232,7 @@ class UserWrittenCommentListWidget extends ConsumerWidget implements Comment {
   @override
   commentListEmptyWidget({double deviceHeight, double deviceWidth}) {
     return Container(
-      height: deviceHeight / 2,
+      height: deviceHeight / 2.h,
       width: deviceWidth,
       child: Center(
         child: ShowUp(

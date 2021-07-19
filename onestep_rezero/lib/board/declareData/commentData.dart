@@ -44,8 +44,11 @@ class CommentData {
       this.reportedTime,
       this.postTitle,
       this.isUnderComment});
-  factory CommentData.toRealtimeDataWithPostData(PostData postData) {
+  factory CommentData.toRealtimeDataWithPostData(
+    PostData postData,
+  ) {
     String currentTimeStamp = DateTime.now().millisecondsSinceEpoch.toString();
+
     return CommentData(
       uid: currentUserModel.uid,
       boardId: postData.boardId,
@@ -56,8 +59,10 @@ class CommentData {
     );
   }
   factory CommentData.fromRealtimeData(DataSnapshot dataSnapshot,
-      {bool ignoreDeleted}) {
+      {bool ignoreDeleted, bool ignoreReported}) {
     ignoreDeleted = ignoreDeleted ?? false;
+    ignoreReported = ignoreReported ?? false;
+
     Map<dynamic, dynamic> value = dataSnapshot.value ?? {};
     int reportCount;
     int uploadTime;
@@ -98,6 +103,17 @@ class CommentData {
         return null;
       }
     }
+    if (ignoreReported) {
+      bool isReported = value["reported"] != null
+          ? value["reported"].toString() == 'true'
+              ? true
+              : false
+          : false;
+
+      if (isReported) {
+        return null;
+      }
+    }
     return CommentData(
         uid: value["uid"],
         boardId: value["boardId"],
@@ -106,7 +122,11 @@ class CommentData {
         deleted: value["deleted"].toString() == 'true' ? true : false,
         deletedTime: value["deletedTime"],
         reportCount: reportCount,
-        reported: value['reported'].toString() == 'true' ? true : false,
+        reported: value['reported'] != null
+            ? value['reported'].toString() == 'true'
+                ? true
+                : false
+            : false,
         updateTime: updateTime,
         uploadTime: uploadTime,
         reportedTime: reportedTime,
