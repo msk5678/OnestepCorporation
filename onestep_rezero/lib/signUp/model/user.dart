@@ -16,7 +16,8 @@ class User {
 
   final int joinTime;
   final int pushCheck;
-
+  final bool presence;
+  final String lastConnectTime;
   const User({
     this.auth,
     this.authTime,
@@ -30,6 +31,8 @@ class User {
     this.joinTime,
     // this.reportTime,
     this.pushCheck,
+    this.presence,
+    this.lastConnectTime,
   });
 
   factory User.fromDocument(DocumentSnapshot document) {
@@ -46,6 +49,8 @@ class User {
       universityEmail: document['universityEmail'],
       joinTime: document['joinTime'],
       pushCheck: document['pushCheck'],
+      presence: document['presence'],
+      lastConnectTime: document['lastConnectTime'],
     );
   }
 }

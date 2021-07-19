@@ -25,6 +25,22 @@ class GoogleAdmob {
     request: AdRequest(),
   )..load();
 
+  final BannerAd boardBottomBanner = BannerAd(
+    listener: AdListener(),
+    size: AdSize.banner,
+    adUnitId: BannerAd.testAdUnitId,
+    // AdManager.bannerAdUnitId,
+    request: AdRequest(),
+  )..load();
+
+  final BannerAd boardPostBottomBanner = BannerAd(
+    listener: AdListener(),
+    size: AdSize.banner,
+    adUnitId: BannerAd.testAdUnitId,
+    // AdManager.bannerAdUnitId,
+    request: AdRequest(),
+  )..load();
+
   getProductMainBottomBanner(double diviceWidth) {
     return Container(
       height: productMainBottomBanner == null ? 0 : 50.h,
@@ -52,6 +68,42 @@ class GoogleAdmob {
           ? Container()
           : AdWidget(
               ad: chatMainBottomBanner,
+            ),
+    );
+  }
+
+  getBoardBottomBanner(double diviceWidth) {
+    return Container(
+      height: boardBottomBanner == null ? 0 : 50.h,
+      width: diviceWidth,
+      color: Colors.white,
+      child: boardBottomBanner == null
+          ? Container(
+              // color: Colors.yellow,
+              // width: 40,
+              // height: 20,
+              // child: Text("null"),
+              )
+          : AdWidget(
+              ad: boardBottomBanner,
+            ),
+    );
+  }
+
+  getBoardPostBottomBanner(double diviceWidth) {
+    return Container(
+      height: boardPostBottomBanner == null ? 0 : 50.h,
+      width: diviceWidth,
+      color: Colors.white,
+      child: boardPostBottomBanner == null
+          ? Container(
+              // color: Colors.yellow,
+              // width: 40,
+              // height: 20,
+              // child: Text("null"),
+              )
+          : AdWidget(
+              ad: boardPostBottomBanner,
             ),
     );
   }

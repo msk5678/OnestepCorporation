@@ -1,24 +1,17 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as FBA;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hive/hive.dart';
-import 'package:onestep_rezero/product/models/product.dart';
-import 'package:onestep_rezero/product/widgets/detail/productDetailBody.dart';
 import 'package:onestep_rezero/signIn/loggedInWidget.dart';
 import 'package:onestep_rezero/signUp/pages/signUpWidget.dart';
-import 'package:kakao_flutter_sdk/link.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:onestep_rezero/utils/onestepCustom/dialog/onestepCustomDialogNotCancel.dart';
 import 'package:onestep_rezero/utils/timeUtil.dart';
 import 'appmain/routeGenterator.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'dart:io' show Platform, exit;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // 비동기 함수 사용 처리
